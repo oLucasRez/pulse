@@ -1,0 +1,25 @@
+{
+  "semi": true,
+  "tabWidth": 2,
+  "printWidth": 80,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "jsxSingleQuote": true,
+  "bracketSpacing": true,
+
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^(.*)domain(.*)$",
+    "^(.*)data(.*)$",
+    "^(.*)infra(.*)$",
+    "^(.*)utils(.*)$",
+    "^(.*)presentation(.*)$",
+    "^(.*)validation(.*)$",
+    "^(.*)main(.*)$",
+    "^(.*)types(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderCaseInsensitive": true
+}
