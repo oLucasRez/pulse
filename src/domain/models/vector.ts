@@ -1,5 +1,12 @@
-import { Result } from '@meta/domain/models';
+import { Result } from '@domain/models';
 
+/**
+ * Is a 2D entity with x and y components, used for direction and magnitude.
+ *
+ * @properties
+ * - `x`: The horizontal coordinate
+ * - `y`: The vertical coordinate
+ */
 export class Vector {
   public static create(
     props: Vector.CreateProps,

@@ -1,4 +1,4 @@
-import { DomainError } from '@common/domain/errors';
+import { DomainError } from '@domain/errors';
 
 type Props<ValueType, ErrorType extends DomainError> = {
   value?: ValueType;
@@ -7,9 +7,24 @@ type Props<ValueType, ErrorType extends DomainError> = {
 
 type Class<Type> = new (...args: any[]) => Type;
 
+/**
+ * Represents the result of a domain function. Similar to Promises, it can
+ * contain a value or an error. Provides methods for handling success and error
+ * cases.
+ *
+ * @template ValueType - The type of the value returned by the domain function
+ * @template ErrorType - The type of the error thrown by the domain function
+ *
+ * @properties
+ * - `id`: Instance ID
+ * - `gap`: The distance between pulses
+ * - `amount`: The amount of pulses
+ * - `landmarkID`: The central coordinate of the Pulse
+ * - `subjectID`: The subject referenced by the Pulse
+ */
 export class Result<ValueType, ErrorType extends DomainError> {
-  public readonly value: ValueType;
-  public readonly error: ErrorType;
+  private readonly value: ValueType;
+  private readonly error: ErrorType;
 
   private constructor(props: Props<ValueType, ErrorType>) {
     if ('value' in props) this.value = props.value;
@@ -44,5 +59,10 @@ export class Result<ValueType, ErrorType extends DomainError> {
       return callback(this.error as SpecificErrorType);
 
     return this;
+  }
+
+  public await(): ValueType {
+    if (this.value) return this.value;
+    if (this.error) throw this.error;
   }
 }

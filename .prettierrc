@@ -9,14 +9,17 @@
 
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
-    "^(.*)domain(.*)$",
-    "^(.*)data(.*)$",
-    "^(.*)infra(.*)$",
-    "^(.*)utils(.*)$",
-    "^(.*)presentation(.*)$",
-    "^(.*)validation(.*)$",
-    "^(.*)main(.*)$",
-    "^(.*)types(.*)$",
+
+    "(.*)models",
+    "(.*)enums",
+    "(.*)errors",
+
+    "(.*)app",
+
+    "(.*)utils",
+
+    "(.*)types",
+
     "^[./]"
   ],
   "importOrderSeparation": true,

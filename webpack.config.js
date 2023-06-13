@@ -23,9 +23,10 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      '@common': path.resolve(__dirname, 'src/@common'),
-      '@meta': path.resolve(__dirname, 'src/@meta'),
-      '@pulse': path.resolve(__dirname, 'src/@pulse'),
+      '@domain': path.resolve(__dirname, 'src/domain'),
+      '@presentation': path.resolve(__dirname, 'src/presentation'),
+      '@types': path.resolve(__dirname, 'src/types'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
     },
   },
   plugins: [

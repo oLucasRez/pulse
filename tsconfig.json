@@ -1,6 +1,16 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "paths": {
+      "@domain/*": ["./domain/*"],
+      "@presentation/*": ["./presentation/*"],
+      "@utils/*": ["./utils/*"],
+      "@utils": ["./utils"],
+      "@types/*": ["./types/*"],
+      "@types": ["./types"],
+      "@enums/*": ["./enums/*"],
+      "@enums": ["./enums"]
+    }
   }
 }
