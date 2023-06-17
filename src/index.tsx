@@ -1,6 +1,17 @@
+/* eslint-disable  */
 import { createRoot } from 'react-dom/client';
 
-import { Game, Landmark, Player, Pulse, Subject, User } from '@domain/models';
+import {
+  Answer,
+  Dice,
+  Game,
+  Landmark,
+  Player,
+  Pulse,
+  Question,
+  Subject,
+  User,
+} from '@domain/models';
 
 import { Color } from '@domain/enums';
 
@@ -8,54 +19,90 @@ import { App } from '@presentation/app';
 
 const container = document.getElementById('app');
 
-const user = User.create({ name: 'Lucas Rezende' }).await();
+const lucasUser = User.create({ name: 'Lucas Rezende' }).await();
 
-const game = Game.create({ userID: user.id }).await();
+const game = Game.create({ userID: lucasUser.id }).await();
 
-const identifiedPlayer = Player.create({
-  name: user.name,
+const lucasPlayer = Player.create({
+  name: lucasUser.name,
   color: Color.ORANGE,
   gameID: game.id,
-  userID: user.id,
+  userID: lucasUser.id,
 }).await();
 
-const anonymousPlayer = Player.create({
+const estherPlayer = Player.create({
   name: 'Esther Rezende',
   color: Color.RED,
   gameID: game.id,
 }).await();
 
-const subject1 = Subject.create({
+const swordSubject = Subject.create({
   description: 'Sword',
-  color: identifiedPlayer.color,
-  playerID: identifiedPlayer.id,
+  color: lucasPlayer.color,
+  playerID: lucasPlayer.id,
 }).await();
 
-const subject2 = Subject.create({
+const glassesSubject = Subject.create({
   description: 'Glasses',
-  color: anonymousPlayer.color,
-  playerID: anonymousPlayer.id,
+  color: estherPlayer.color,
+  playerID: estherPlayer.id,
 }).await();
 
-const landmark1 = Landmark.create({ position: [10, 10] }).await();
+const d4Dice = Dice.create({
+  sides: 4,
+  value: 2,
+  position: [10, 10],
+  playerID: lucasPlayer.id,
+}).await();
 
-const pulse1 = Pulse.create({
-  amount: 3,
+const d6Dice = Dice.create({
+  sides: 6,
+  value: 5,
+  position: [4, -5],
+  playerID: estherPlayer.id,
+}).await();
+
+const swordLandmark = Landmark.create({ position: d4Dice.position }).await();
+
+const swordPulse = Pulse.create({
+  amount: d4Dice.value,
   gap: 20,
-  landmarkID: landmark1.id,
-  subjectID: subject1.id,
+  landmarkID: swordLandmark.id,
+  subjectID: swordSubject.id,
 }).await();
 
-const landmark2 = Landmark.create({ position: [4, -5] }).await();
+const glassesLandmark = Landmark.create({ position: d6Dice.position }).await();
 
-const pulse2 = Pulse.create({
-  amount: 3,
+const glassesPulse = Pulse.create({
+  amount: d6Dice.value,
   gap: 20,
-  landmarkID: landmark2.id,
-  subjectID: subject2.id,
+  landmarkID: glassesLandmark.id,
+  subjectID: glassesSubject.id,
 }).await();
 
-console.log([pulse1, pulse2]);
+console.log({
+  users: [lucasUser],
+  games: [game],
+  players: [lucasPlayer, estherPlayer],
+  subjects: [swordSubject, glassesSubject],
+  dices: [d4Dice, d6Dice],
+  landmarks: [swordLandmark, glassesLandmark],
+  pulses: [swordPulse, glassesPulse],
+});
+
+const question = Question.create({
+  html: '<p>Se ele tinha uma arma, <b>por quê não atirou</b>?</p>',
+  landmarkID: swordLandmark.id,
+}).await();
+
+const answer = Answer.create({
+  html: '<p>Ele estava com medo</p>',
+  questionID: question.id,
+}).await();
+
+answer.update({ isFact: true });
+
+console.log({ question, answer });
 
 const root = createRoot(container);
 

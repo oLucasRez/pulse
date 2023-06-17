@@ -14,13 +14,6 @@ type Class<Type> = new (...args: any[]) => Type;
  *
  * @template ValueType - The type of the value returned by the domain function
  * @template ErrorType - The type of the error thrown by the domain function
- *
- * @properties
- * - `id`: Instance ID
- * - `gap`: The distance between pulses
- * - `amount`: The amount of pulses
- * - `landmarkID`: The central coordinate of the Pulse
- * - `subjectID`: The subject referenced by the Pulse
  */
 export class Result<ValueType, ErrorType extends DomainError> {
   private readonly value: ValueType;

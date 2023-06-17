@@ -1,7 +1,5 @@
 import { Result, Vector } from '@domain/models';
 
-import { DomainError } from '@domain/errors';
-
 import { uuid } from '@utils';
 
 import { ID } from '@types';
@@ -31,11 +29,12 @@ export class Landmark {
   }
 
   public readonly id: ID;
+
   public readonly position: Vector;
 }
 
 export namespace Landmark {
-  export type Errors = DomainError;
+  export type Errors = Vector.Errors;
 
   export type CreateProps = {
     id?: ID;

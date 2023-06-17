@@ -2,7 +2,7 @@ import { Result } from '@domain/models';
 
 import { NotIntegerError, NotPositiveError } from '@domain/errors';
 
-import { uuid } from '@utils';
+import { isGreaterThanOrEqualTo, isInteger, uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -21,24 +21,47 @@ export class CentralPulse {
   ): Result<CentralPulse, CentralPulse.Errors> {
     const { id = uuid(), amount } = props;
 
-    if (amount <= 0)
+    if (!isGreaterThanOrEqualTo(amount, 0))
       return Result.reject(
-        new NotPositiveError('Amount must be greater than zero'),
+        new NotPositiveError('Amount must be greater than or equal to zero'),
       );
-    if (amount % 1 !== 0)
+    if (!isInteger(amount))
       return Result.reject(new NotIntegerError('Amount must be integer'));
 
     return Result.resolve(new CentralPulse({ id, gap: 1, amount }));
   }
 
+  public update(
+    props: CentralPulse.UpdateProps,
+  ): Result<CentralPulse, CentralPulse.Errors> {
+    if ('amount' in props) {
+      if (!isGreaterThanOrEqualTo(props.amount, 0))
+        return Result.reject(
+          new NotPositiveError('Amount must be greater than or equal to zero'),
+        );
+      if (!isInteger(props.amount))
+        return Result.reject(new NotIntegerError('Amount must be integer'));
+
+      this._amount = props.amount;
+    }
+
+    return Result.resolve(this);
+  }
+
   private constructor(props: CentralPulse.Props) {
     this.id = props.id;
-    this.amount = props.amount;
+    this.gap = props.gap;
+    this._amount = props.amount;
   }
 
   public readonly id: ID;
+
   public readonly gap: number;
-  public readonly amount: number;
+
+  private _amount: number;
+  public get amount() {
+    return this._amount;
+  }
 }
 
 export namespace CentralPulse {
@@ -47,6 +70,10 @@ export namespace CentralPulse {
   export type CreateProps = {
     id?: ID;
     amount: number;
+  };
+
+  export type UpdateProps = {
+    amount?: number;
   };
 
   export type Props = {

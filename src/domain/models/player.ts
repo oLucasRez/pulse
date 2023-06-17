@@ -34,18 +34,37 @@ export class Player {
     return Result.resolve(new Player({ id, name, color, gameID, userID }));
   }
 
+  public update(props: Player.UpdateProps): Result<Player, Player.Errors> {
+    const { name } = props;
+
+    if ('name' in props) {
+      if (!name) return Result.reject(new EmptyStringError('Name is empty'));
+
+      this._name = name;
+    }
+
+    return Result.resolve(this);
+  }
+
   private constructor(props: Player.Props) {
     this.id = props.id;
-    this.name = props.name;
+    this._name = props.name;
     this.color = props.color;
     this.gameID = props.gameID;
     this.userID = props.userID;
   }
 
   public readonly id: ID;
-  public readonly name: string;
+
+  private _name: string;
+  public get name() {
+    return this._name;
+  }
+
   public readonly color: Color;
+
   public readonly gameID: ID;
+
   public readonly userID: ID | null;
 }
 
@@ -58,6 +77,10 @@ export namespace Player {
     color: Color;
     gameID: ID;
     userID?: ID;
+  };
+
+  export type UpdateProps = {
+    name?: string;
   };
 
   export type Props = {

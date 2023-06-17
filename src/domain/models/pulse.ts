@@ -6,7 +6,7 @@ import {
   NotPositiveError,
 } from '@domain/errors';
 
-import { uuid } from '@utils';
+import { isGreaterThan, isInteger, uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -33,16 +33,16 @@ export class Pulse {
         new MissingForeignKeyError('Subject ID foreign key is missing'),
       );
 
-    if (gap <= 0)
+    if (!isGreaterThan(gap, 0))
       return Result.reject(
         new NotPositiveError('Gap must be greater than zero'),
       );
 
-    if (amount <= 0)
+    if (!isGreaterThan(amount, 0))
       return Result.reject(
         new NotPositiveError('Amount must be greater than zero'),
       );
-    if (amount % 1 !== 0)
+    if (!isInteger(amount))
       return Result.reject(new NotIntegerError('Amount must be integer'));
 
     return Result.resolve(
@@ -59,9 +59,13 @@ export class Pulse {
   }
 
   public readonly id: ID;
+
   public readonly gap: number;
+
   public readonly amount: number;
+
   public readonly landmarkID: ID;
+
   public readonly subjectID: ID;
 }
 

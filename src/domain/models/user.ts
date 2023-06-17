@@ -28,6 +28,7 @@ export class User {
   }
 
   public readonly id: ID;
+
   public readonly name: string;
 }
 

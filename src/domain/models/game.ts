@@ -26,14 +26,27 @@ export class Game {
     return Result.resolve(new Game({ id, state, userID }));
   }
 
+  public update(props: Game.UpdateProps): Result<Game, Game.Errors> {
+    const { state } = props;
+
+    if ('state' in props) this._state = state;
+
+    return Result.resolve(this);
+  }
+
   private constructor(props: Game.Props) {
     this.id = props.id;
-    this.state = props.state;
+    this._state = props.state;
     this.userID = props.userID;
   }
 
   public readonly id: ID;
-  public readonly state: Game.State;
+
+  private _state: Game.State;
+  get state() {
+    return this._state;
+  }
+
   public readonly userID: ID;
 }
 
@@ -44,6 +57,10 @@ export namespace Game {
     id?: ID;
     state?: State;
     userID: ID;
+  };
+
+  export type UpdateProps = {
+    state?: State;
   };
 
   export type Props = {

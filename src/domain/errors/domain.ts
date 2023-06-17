@@ -13,8 +13,11 @@ export namespace DomainError {
   export enum Code {
     UNEXPECTED = 'unexpected',
     EMPTY_STRING = 'empty-string',
+    INVALID_HTML = 'invalid-html',
     MISSING_FOREIGN_KEY = 'missing-foreign-key',
     NOT_INTEGER = 'not-integer',
+    NOT_NUMBER = 'not-number',
     NOT_POSITIVE = 'not-positive',
+    OUT_OF_BOUND = 'out-of-bound',
   }
 }

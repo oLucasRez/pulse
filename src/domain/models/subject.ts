@@ -40,16 +40,40 @@ export class Subject {
     return Result.resolve(new Subject({ id, description, color, playerID }));
   }
 
+  public update(props: Subject.UpdateProps): Result<Subject, Subject.Errors> {
+    const { description, color } = props;
+
+    if ('description' in props) {
+      if (!description)
+        return Result.reject(new EmptyStringError('Description is empty'));
+
+      this._description = description;
+    }
+
+    if ('color' in props) this._color = color;
+
+    return Result.resolve(this);
+  }
+
   private constructor(props: Subject.Props) {
     this.id = props.id;
-    this.description = props.description;
-    this.color = props.color;
+    this._description = props.description;
+    this._color = props.color;
     this.playerID = props.playerID;
   }
 
   public readonly id: ID;
-  public readonly description: string;
-  public readonly color: Color;
+
+  private _description: string;
+  public get description() {
+    return this._description;
+  }
+
+  private _color: Color;
+  public get color() {
+    return this._color;
+  }
+
   public readonly playerID: ID;
 }
 
@@ -61,6 +85,11 @@ export namespace Subject {
     description: string;
     color: Color;
     playerID: ID;
+  };
+
+  export type UpdateProps = {
+    description?: string;
+    color?: Color;
   };
 
   export type Props = {
