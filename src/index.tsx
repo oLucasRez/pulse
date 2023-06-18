@@ -12,6 +12,7 @@ import {
   Subject,
   User,
 } from '@domain/models';
+import { RichText } from '@domain/models/rich-text';
 
 import { Color } from '@domain/enums';
 
@@ -95,8 +96,11 @@ const question = Question.create({
   landmarkID: swordLandmark.id,
 }).await();
 
+const answerRichText = RichText.create({
+  content: '<p>O sniper foi <b>mais rápido</b> e o baleou antes</p>',
+}).await();
 const answer = Answer.create({
-  html: '<p>Ele estava com medo</p>',
+  richTextID: answerRichText.id,
   questionID: question.id,
 }).await();
 

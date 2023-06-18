@@ -1,5 +1,5 @@
 export function isHTMLValid(htmlString: string): boolean {
-  const element = document.createElement('p');
+  const element = document.createElement('div');
   element.innerHTML = htmlString;
   const childNodes = element.childNodes;
 

@@ -1,8 +1,8 @@
 import { Result } from '@domain/models';
 
-import { InvalidHTMLError, MissingForeignKeyError } from '@domain/errors';
+import { MissingForeignKeyError } from '@domain/errors';
 
-import { isHTMLValid, uuid } from '@utils';
+import { uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -12,34 +12,30 @@ import { ID } from '@types';
  *
  * @properties
  * - `id`: Instance ID
- * - `html`: The content of the Answer
  * - `isFact`: A flag to indicate if the answer is a fact
+ * - `richTextID`: The text that describes the Answer
  * - `questionID`: The question the answer is answering
  */
 export class Answer {
   public static create(
     props: Answer.CreateProps,
   ): Result<Answer, Answer.Errors> {
-    const { id = uuid(), html, isFact = false, questionID } = props;
+    const { id = uuid(), isFact = false, richTextID, questionID } = props;
 
-    if (!isHTMLValid(html)) return Result.reject(new InvalidHTMLError());
+    if (!richTextID)
+      return Result.reject(
+        new MissingForeignKeyError('Rich Text ID foreign key is missing'),
+      );
 
     if (!questionID)
       return Result.reject(
         new MissingForeignKeyError('Question ID foreign key is missing'),
       );
 
-    return Result.resolve(new Answer({ id, html, isFact, questionID }));
+    return Result.resolve(new Answer({ id, isFact, richTextID, questionID }));
   }
 
   public update(props: Answer.UpdateProps): Result<Answer, Answer.Errors> {
-    if ('html' in props) {
-      if (!isHTMLValid(props.html))
-        return Result.reject(new InvalidHTMLError());
-
-      this._html = props.html;
-    }
-
     if ('isFact' in props) this._isFact = props.isFact;
 
     return Result.resolve(this);
@@ -47,45 +43,41 @@ export class Answer {
 
   private constructor(props: Answer.Props) {
     this.id = props.id;
-    this._html = props.html;
     this._isFact = props.isFact;
+    this.richTextID = props.richTextID;
     this.questionID = props.questionID;
   }
 
   public readonly id: ID;
-
-  private _html: string;
-  public get html() {
-    return this._html;
-  }
 
   private _isFact: boolean;
   public get isFact() {
     return this._isFact;
   }
 
+  public readonly richTextID: ID;
+
   public readonly questionID: ID;
 }
 
 export namespace Answer {
-  export type Errors = InvalidHTMLError | MissingForeignKeyError;
+  export type Errors = MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
-    html: string;
     isFact?: boolean;
+    richTextID: ID;
     questionID: ID;
   };
 
   export type UpdateProps = {
-    html?: string;
     isFact?: boolean;
   };
 
   export type Props = {
     id: ID;
-    html: string;
     isFact: boolean;
+    richTextID: ID;
     questionID: ID;
   };
 }

@@ -19,9 +19,19 @@ export class Result<ValueType, ErrorType extends DomainError> {
   private readonly value: ValueType;
   private readonly error: ErrorType;
 
+  public readonly resolved: boolean = false;
+  public readonly rejected: boolean = false;
+
   private constructor(props: Props<ValueType, ErrorType>) {
-    if ('value' in props) this.value = props.value;
-    if ('error' in props) this.error = props.error;
+    if ('value' in props) {
+      this.value = props.value;
+      this.resolved = true;
+    }
+
+    if ('error' in props) {
+      this.error = props.error;
+      this.rejected = true;
+    }
   }
 
   public static resolve<ValueType, ErrorType extends DomainError>(
@@ -39,7 +49,7 @@ export class Result<ValueType, ErrorType extends DomainError> {
   public then(
     callback: (value: ValueType) => any,
   ): Result<ValueType, ErrorType> {
-    if (this.value) callback(this.value);
+    if (this.resolved) callback(this.value);
 
     return this;
   }
@@ -48,7 +58,7 @@ export class Result<ValueType, ErrorType extends DomainError> {
     errorClass: Class<SpecificErrorType>,
     callback: (error: SpecificErrorType) => any,
   ): Result<ValueType, ErrorType> {
-    if (this.error instanceof errorClass)
+    if (this.rejected && this.error instanceof errorClass)
       return callback(this.error as SpecificErrorType);
 
     return this;

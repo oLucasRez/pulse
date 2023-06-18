@@ -28,7 +28,7 @@
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-inferrable-types": "off"
   },
-  "ignorePatterns": ["webpack.config.js"],
+  "ignorePatterns": ["*.config.js"],
   "settings": {
     "import/resolver": {
       "typescript": {}
