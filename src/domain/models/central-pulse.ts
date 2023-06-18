@@ -1,6 +1,10 @@
 import { Result } from '@domain/models';
 
-import { NotIntegerError, NotPositiveError } from '@domain/errors';
+import {
+  MissingForeignKeyError,
+  NotIntegerError,
+  NotPositiveError,
+} from '@domain/errors';
 
 import { isGreaterThanOrEqualTo, isInteger, uuid } from '@utils';
 
@@ -14,12 +18,13 @@ import { ID } from '@types';
  * - `id`: Instance ID
  * - `gap`: The distance between pulses (value = 1)
  * - `amount`: The amount of pulses
+ * - `gameID`: The game of the Central Pulse
  */
 export class CentralPulse {
   public static create(
     props: CentralPulse.CreateProps,
   ): Result<CentralPulse, CentralPulse.Errors> {
-    const { id = uuid(), amount } = props;
+    const { id = uuid(), amount, gameID } = props;
 
     if (!isGreaterThanOrEqualTo(amount, 0))
       return Result.reject(
@@ -28,7 +33,12 @@ export class CentralPulse {
     if (!isInteger(amount))
       return Result.reject(new NotIntegerError('Amount must be integer'));
 
-    return Result.resolve(new CentralPulse({ id, gap: 1, amount }));
+    if (!gameID)
+      return Result.reject(
+        new MissingForeignKeyError('Game ID foreign key is missing'),
+      );
+
+    return Result.resolve(new CentralPulse({ id, gap: 1, amount, gameID }));
   }
 
   public update(
@@ -52,6 +62,7 @@ export class CentralPulse {
     this.id = props.id;
     this.gap = props.gap;
     this._amount = props.amount;
+    this.gameID = props.gameID;
   }
 
   public readonly id: ID;
@@ -62,14 +73,20 @@ export class CentralPulse {
   public get amount() {
     return this._amount;
   }
+
+  public readonly gameID: ID;
 }
 
 export namespace CentralPulse {
-  export type Errors = NotPositiveError | NotIntegerError;
+  export type Errors =
+    | NotPositiveError
+    | NotIntegerError
+    | MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
     amount: number;
+    gameID: ID;
   };
 
   export type UpdateProps = {
@@ -80,5 +97,6 @@ export namespace CentralPulse {
     id: ID;
     gap: number;
     amount: number;
+    gameID: ID;
   };
 }

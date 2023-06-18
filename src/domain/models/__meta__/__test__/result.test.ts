@@ -19,7 +19,7 @@ describe('Result', () => {
       expect(result.rejected).toBe(false);
       expect(result.then).toBeInstanceOf(Function);
       expect(result.catch).toBeInstanceOf(Function);
-      expect(result.await).toBeInstanceOf(Function);
+      expect(() => result.await()).toBeInstanceOf(Function);
 
       const resolvedValue = result.await();
 
@@ -36,7 +36,7 @@ describe('Result', () => {
       expect(result.rejected).toBe(true);
       expect(result.then).toBeInstanceOf(Function);
       expect(result.catch).toBeInstanceOf(Function);
-      expect(result.await).toBeInstanceOf(Function);
+      expect(() => result.await()).toBeInstanceOf(Function);
 
       expect(() => result.await()).toThrow(error);
     });

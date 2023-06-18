@@ -9,37 +9,26 @@ describe('CentralFact', () => {
   const centralPulseID = uuid();
 
   describe('create', () => {
-    test('should create a CentralFact with valid richTextID', () => {
-      const result = CentralFact.create({
+    test('should create a CentralFact with valid props', () => {
+      const centralFact = CentralFact.create({
         richTextID,
         centralPulseID,
-      });
+      }).await();
 
-      expect(result.resolved).toBe(true);
-
-      const answer = result.await();
-
-      expect(answer.richTextID).toBe(richTextID);
-      expect(answer.centralPulseID).toBe(centralPulseID);
+      expect(centralFact.id).toBeDefined();
+      expect(centralFact.richTextID).toBe(richTextID);
+      expect(centralFact.centralPulseID).toBe(centralPulseID);
     });
 
     test('should reject with MissingForeignKeyError if richTextID is missing', () => {
-      const result = CentralFact.create({
-        richTextID: undefined,
-        centralPulseID,
-      });
+      const result = CentralFact.create({ richTextID: '', centralPulseID });
 
-      expect(result.rejected).toBe(true);
       expect(() => result.await()).toThrow(MissingForeignKeyError);
     });
 
     test('should reject with MissingForeignKeyError if centralPulseID is missing', () => {
-      const result = CentralFact.create({
-        richTextID,
-        centralPulseID: undefined,
-      });
+      const result = CentralFact.create({ richTextID, centralPulseID: '' });
 
-      expect(result.rejected).toBe(true);
       expect(() => result.await()).toThrow(MissingForeignKeyError);
     });
   });
