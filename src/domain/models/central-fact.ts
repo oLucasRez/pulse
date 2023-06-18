@@ -1,8 +1,8 @@
 import { Result } from '@domain/models';
 
-import { InvalidHTMLError, MissingForeignKeyError } from '@domain/errors';
+import { MissingForeignKeyError } from '@domain/errors';
 
-import { isHTMLValid, uuid } from '@utils';
+import { uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -14,59 +14,53 @@ import { ID } from '@types';
  *
  * @properties
  * - `id`: Instance ID
- * - `html`: The content of Central Fact
+ * - `richTextID`: The text that describes the Central Fact
+ * - `centralPulseID`: The pulse related to the Central Fact
  */
 export class CentralFact {
   public static create(
     props: CentralFact.CreateProps,
   ): Result<CentralFact, CentralFact.Errors> {
-    const { id = uuid(), html } = props;
+    const { id = uuid(), richTextID, centralPulseID } = props;
 
-    if (!isHTMLValid(html)) return Result.reject(new InvalidHTMLError());
+    if (!richTextID)
+      return Result.reject(
+        new MissingForeignKeyError('Rich Text ID foreign key is missing'),
+      );
 
-    return Result.resolve(new CentralFact({ id, html }));
-  }
+    if (!centralPulseID)
+      return Result.reject(
+        new MissingForeignKeyError('Central Pulse ID foreign key is missing'),
+      );
 
-  public update(
-    props: CentralFact.UpdateProps,
-  ): Result<CentralFact, CentralFact.Errors> {
-    if ('html' in props) {
-      if (!isHTMLValid(props.html))
-        return Result.reject(new InvalidHTMLError());
-
-      this._html = props.html;
-    }
-
-    return Result.resolve(this);
+    return Result.resolve(new CentralFact({ id, richTextID, centralPulseID }));
   }
 
   private constructor(props: CentralFact.Props) {
     this.id = props.id;
-    this._html = props.html;
+    this.richTextID = props.richTextID;
+    this.centralPulseID = props.centralPulseID;
   }
 
   public readonly id: ID;
 
-  private _html: string;
-  public get html() {
-    return this._html;
-  }
+  public readonly richTextID: ID;
+
+  public readonly centralPulseID: ID;
 }
 
 export namespace CentralFact {
-  export type Errors = InvalidHTMLError | MissingForeignKeyError;
+  export type Errors = MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
-    html: string;
-  };
-
-  export type UpdateProps = {
-    html?: string;
+    richTextID: ID;
+    centralPulseID: ID;
   };
 
   export type Props = {
     id: ID;
-    html: string;
+    richTextID: ID;
+    centralPulseID: ID;
   };
 }
