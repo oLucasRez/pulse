@@ -58,7 +58,7 @@ export class Dice {
   }
 
   public update(props: Dice.UpdateProps): Result<Dice, Dice.Errors> {
-    const { value, position } = props;
+    const { value } = props;
 
     if ('value' in props) {
       if (value !== null) {
@@ -79,10 +79,6 @@ export class Dice {
       this._value = value;
     }
 
-    if ('position' in props) {
-      this._position.update(position).await();
-    }
-
     return Result.resolve(this);
   }
 
@@ -90,7 +86,7 @@ export class Dice {
     this.id = props.id;
     this.sides = props.sides;
     this._value = props.value;
-    this._position = props.position;
+    this.position = props.position;
     this.playerID = props.playerID;
   }
 
@@ -103,10 +99,7 @@ export class Dice {
     return this._value;
   }
 
-  private _position: Vector;
-  public get position() {
-    return this._position;
-  }
+  public readonly position: Vector;
 
   public readonly playerID: ID;
 }
@@ -128,7 +121,6 @@ export namespace Dice {
 
   export type UpdateProps = {
     value?: number | null;
-    position?: Vector.UpdateProps;
   };
 
   export type Props = {
