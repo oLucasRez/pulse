@@ -1,6 +1,7 @@
 import { Result, Vector } from '@domain/models';
 
 import {
+  MissingForeignKeyError,
   NotIntegerError,
   NotPositiveError,
   OutOfBoundError,
@@ -11,6 +12,7 @@ import {
   isGreaterThanOrEqualTo,
   isInteger,
   isLowerThanOrEqualTo,
+  nowISO,
   uuid,
 } from '@utils';
 
@@ -25,10 +27,22 @@ import { ID } from '@types';
  * - `value`: The current value of the dice
  * - `position`: The current position on the map
  * - `playerID`: The player owner of the dice
+ * - `createdAt`: When was it created
+ * - `updatedAt`: When was the last update
  */
 export class Dice {
-  public static create(props: Dice.CreateProps): Result<Dice, Dice.Errors> {
-    const { id = uuid(), sides, value = null, playerID } = props;
+  public static create(
+    props: Dice.CreateProps,
+  ): Result<Dice, Dice.CreateErrors> {
+    const {
+      id = uuid(),
+      sides,
+      value = null,
+      position,
+      playerID,
+      createdAt = nowISO(),
+      updatedAt = createdAt,
+    } = props;
 
     if (!isGreaterThan(sides, 0))
       return Result.reject(
@@ -52,13 +66,18 @@ export class Dice {
         );
     }
 
-    const position = Vector.create(props.position).await();
+    if (!playerID)
+      return Result.reject(
+        new MissingForeignKeyError('Player ID foreign key is missing'),
+      );
 
-    return Result.resolve(new Dice({ id, sides, value, position, playerID }));
+    return Result.resolve(
+      new Dice({ id, sides, value, position, playerID, createdAt, updatedAt }),
+    );
   }
 
-  public update(props: Dice.UpdateProps): Result<Dice, Dice.Errors> {
-    const { value } = props;
+  public update(props: Dice.UpdateProps): Result<Dice, Dice.UpdateErrors> {
+    const { value, updatedAt = nowISO() } = props;
 
     if ('value' in props) {
       if (value !== null) {
@@ -77,57 +96,96 @@ export class Dice {
       }
 
       this._value = value;
+      this._updatedAt = updatedAt;
     }
 
     return Result.resolve(this);
   }
 
   private constructor(props: Dice.Props) {
-    this.id = props.id;
-    this.sides = props.sides;
+    this._id = props.id;
+
+    this._sides = props.sides;
     this._value = props.value;
-    this.position = props.position;
-    this.playerID = props.playerID;
+    this._position = props.position;
+    this._playerID = props.playerID;
+
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
   }
 
-  public readonly id: ID;
+  private _id: ID;
+  public get id() {
+    return this._id;
+  }
 
-  public readonly sides: number;
+  private _sides: number;
+  public get sides() {
+    return this._sides;
+  }
 
   private _value: number | null;
   public get value() {
     return this._value;
   }
 
-  public readonly position: Vector;
+  private _position: Vector;
+  public get position() {
+    return this._position;
+  }
 
-  public readonly playerID: ID;
+  private _playerID: ID;
+  public get playerID() {
+    return this._playerID;
+  }
+
+  private _createdAt: string;
+  public get createdAt() {
+    return this._createdAt;
+  }
+
+  private _updatedAt: string;
+  public get updatedAt() {
+    return this._updatedAt;
+  }
 }
 
 export namespace Dice {
-  export type Errors =
+  export type CreateErrors =
     | NotPositiveError
     | NotIntegerError
     | OutOfBoundError
-    | Vector.Errors;
+    | MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
+
     sides: number;
     value?: number;
-    position: Vector.CreateProps;
+    position: Vector;
     playerID: ID;
+
+    createdAt?: string;
+    updatedAt?: string;
   };
+
+  export type UpdateErrors = NotIntegerError | OutOfBoundError;
 
   export type UpdateProps = {
     value?: number | null;
+
+    updatedAt?: string;
   };
 
   export type Props = {
     id: ID;
+
     sides: number;
     value: number | null;
     position: Vector;
     playerID: ID;
+
+    createdAt: string;
+    updatedAt: string;
   };
 }

@@ -55,10 +55,10 @@ export class Result<ValueType, ErrorType extends DomainError> {
   }
 
   public catch<SpecificErrorType extends ErrorType>(
-    errorClass: Class<SpecificErrorType>,
     callback: (error: SpecificErrorType) => any,
+    errorClass?: Class<SpecificErrorType>,
   ): Result<ValueType, ErrorType> {
-    if (this.rejected && this.error instanceof errorClass)
+    if (this.rejected && (!errorClass || this.error instanceof errorClass))
       return callback(this.error as SpecificErrorType);
 
     return this;

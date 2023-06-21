@@ -4,4 +4,6 @@ export { isHTMLValid } from './is-html-valid';
 export { isInteger } from './is-integer';
 export { isLowerThanOrEqualTo } from './is-lower-than-or-equal-to';
 export { isNumber } from './is-number';
+export { nowISO } from './now-iso';
+export { sleep } from './sleep';
 export { uuid } from './uuid';

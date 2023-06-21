@@ -65,12 +65,22 @@ describe('Result', () => {
   });
 
   describe('catch', () => {
+    test('should call the callback when the Result is rejected without a specified error class', () => {
+      const error = new TestError('error');
+      const result = Result.reject(error);
+      const callback = jest.fn();
+
+      result.catch(callback);
+
+      expect(callback).toHaveBeenCalledWith(error);
+    });
+
     test('should call the callback when the Result is rejected with the specified error class', () => {
       const error = new TestError('error');
       const result = Result.reject(error);
       const callback = jest.fn();
 
-      result.catch(TestError, callback);
+      result.catch(callback, TestError);
 
       expect(callback).toHaveBeenCalledWith(error);
     });
@@ -80,7 +90,7 @@ describe('Result', () => {
       const result = Result.resolve(value);
       const callback = jest.fn();
 
-      result.catch(TestError, callback);
+      result.catch(callback, TestError);
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -97,7 +107,7 @@ describe('Result', () => {
       const result = Result.reject(error);
       const callback = jest.fn();
 
-      result.catch(TestError, callback);
+      result.catch(callback, TestError);
 
       expect(callback).not.toHaveBeenCalled();
     });

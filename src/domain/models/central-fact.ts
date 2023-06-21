@@ -2,7 +2,7 @@ import { Result } from '@domain/models';
 
 import { MissingForeignKeyError } from '@domain/errors';
 
-import { uuid } from '@utils';
+import { nowISO, uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -16,12 +16,20 @@ import { ID } from '@types';
  * - `id`: Instance ID
  * - `richTextID`: The text that describes the Central Fact
  * - `centralPulseID`: The pulse related to the Central Fact
+ * - `createdAt`: When was it created
+ * - `updatedAt`: When was the last update
  */
 export class CentralFact {
   public static create(
     props: CentralFact.CreateProps,
-  ): Result<CentralFact, CentralFact.Errors> {
-    const { id = uuid(), richTextID, centralPulseID } = props;
+  ): Result<CentralFact, CentralFact.CreateErrors> {
+    const {
+      id = uuid(),
+      richTextID,
+      centralPulseID,
+      createdAt = nowISO(),
+      updatedAt = createdAt,
+    } = props;
 
     if (!richTextID)
       return Result.reject(
@@ -33,34 +41,67 @@ export class CentralFact {
         new MissingForeignKeyError('Central Pulse ID foreign key is missing'),
       );
 
-    return Result.resolve(new CentralFact({ id, richTextID, centralPulseID }));
+    return Result.resolve(
+      new CentralFact({ id, richTextID, centralPulseID, createdAt, updatedAt }),
+    );
   }
 
   private constructor(props: CentralFact.Props) {
-    this.id = props.id;
-    this.richTextID = props.richTextID;
-    this.centralPulseID = props.centralPulseID;
+    this._id = props.id;
+
+    this._richTextID = props.richTextID;
+    this._centralPulseID = props.centralPulseID;
+
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
   }
 
-  public readonly id: ID;
+  private _id: ID;
+  public get id() {
+    return this._id;
+  }
 
-  public readonly richTextID: ID;
+  private _richTextID: ID;
+  public get richTextID() {
+    return this._richTextID;
+  }
 
-  public readonly centralPulseID: ID;
+  private _centralPulseID: ID;
+  public get centralPulseID() {
+    return this._centralPulseID;
+  }
+
+  private _createdAt: string;
+  public get createdAt() {
+    return this._createdAt;
+  }
+
+  private _updatedAt: string;
+  public get updatedAt() {
+    return this._updatedAt;
+  }
 }
 
 export namespace CentralFact {
-  export type Errors = MissingForeignKeyError;
+  export type CreateErrors = MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
+
     richTextID: ID;
     centralPulseID: ID;
+
+    createdAt?: string;
+    updatedAt?: string;
   };
 
   export type Props = {
     id: ID;
+
     richTextID: ID;
     centralPulseID: ID;
+
+    createdAt: string;
+    updatedAt: string;
   };
 }

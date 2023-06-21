@@ -1,8 +1,8 @@
 import { Result } from '@domain/models';
 
-import { MissingForeignKeyError } from '@domain/errors';
+import { DomainError, MissingForeignKeyError } from '@domain/errors';
 
-import { uuid } from '@utils';
+import { nowISO, uuid } from '@utils';
 
 import { ID } from '@types';
 
@@ -13,60 +13,107 @@ import { ID } from '@types';
  * - `id`: Instance ID
  * - `state`: The current state of the game
  * - `userID`: The host user, who created the game
+ * - `createdAt`: When was it created
+ * - `updatedAt`: When was the last update
  */
 export class Game {
-  public static create(props: Game.CreateProps): Result<Game, Game.Errors> {
-    const { id = uuid(), state = Game.State.START, userID } = props;
+  public static create(
+    props: Game.CreateProps,
+  ): Result<Game, Game.CreateErrors> {
+    const {
+      id = uuid(),
+      state = Game.State.START,
+      userID,
+      createdAt = nowISO(),
+      updatedAt = createdAt,
+    } = props;
 
     if (!userID)
       return Result.reject(
         new MissingForeignKeyError('User ID foreign key is missing'),
       );
 
-    return Result.resolve(new Game({ id, state, userID }));
+    return Result.resolve(
+      new Game({ id, state, userID, createdAt, updatedAt }),
+    );
   }
 
-  public update(props: Game.UpdateProps): Result<Game, Game.Errors> {
-    const { state } = props;
+  public update(props: Game.UpdateProps): Result<Game, Game.UpdateErrors> {
+    const { state, updatedAt = nowISO() } = props;
 
-    if ('state' in props) this._state = state;
+    if ('state' in props) {
+      this._state = state;
+      this._updatedAt = updatedAt;
+    }
 
     return Result.resolve(this);
   }
 
   private constructor(props: Game.Props) {
-    this.id = props.id;
+    this._id = props.id;
+
     this._state = props.state;
-    this.userID = props.userID;
+    this._userID = props.userID;
+
+    this._createdAt = props.createdAt;
+    this._updatedAt = props.updatedAt;
   }
 
-  public readonly id: ID;
+  private _id: ID;
+  public get id() {
+    return this._id;
+  }
 
   private _state: Game.State;
   get state() {
     return this._state;
   }
 
-  public readonly userID: ID;
+  private _userID: ID;
+  public get userID() {
+    return this._userID;
+  }
+
+  private _createdAt: string;
+  public get createdAt() {
+    return this._createdAt;
+  }
+
+  private _updatedAt: string;
+  public get updatedAt() {
+    return this._updatedAt;
+  }
 }
 
 export namespace Game {
-  export type Errors = MissingForeignKeyError;
+  export type CreateErrors = MissingForeignKeyError;
 
   export type CreateProps = {
     id?: ID;
+
     state?: State;
     userID: ID;
+
+    createdAt?: string;
+    updatedAt?: string;
   };
+
+  export type UpdateErrors = DomainError;
 
   export type UpdateProps = {
     state?: State;
+
+    updatedAt?: string;
   };
 
   export type Props = {
     id: ID;
+
     state: State;
     userID: ID;
+
+    createdAt: string;
+    updatedAt: string;
   };
 
   export enum State {
