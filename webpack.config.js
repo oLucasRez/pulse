@@ -36,4 +36,5 @@ module.exports = {
       favicon: 'public/favicon.ico',
     }),
   ],
+  bail: false,
 };

@@ -1,9 +1,6 @@
-export { isGreaterThanOrEqualTo } from './is-greater-than-or-equal-to';
-export { isGreaterThan } from './is-greater-than';
-export { isHTMLValid } from './is-html-valid';
-export { isInteger } from './is-integer';
-export { isLowerThanOrEqualTo } from './is-lower-than-or-equal-to';
-export { isNumber } from './is-number';
-export { nowISO } from './now-iso';
-export { sleep } from './sleep';
-export { uuid } from './uuid';
+export { generateAll } from './_generate-all';
+export { isNumber } from './_is-number';
+export { random } from './_random';
+export { round } from './_round';
+export { uuid } from './_uuid';
+export { Vector } from './_vector';

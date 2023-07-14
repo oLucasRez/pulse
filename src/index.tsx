@@ -1,113 +1,166 @@
-/* eslint-disable  */
+import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
-import {
-  Answer,
-  Dice,
-  Game,
-  Landmark,
-  Player,
-  Pulse,
-  Question,
-  Subject,
-  User,
-} from '@domain/models';
-import { RichText } from '@domain/models/rich-text';
+import { Game, Landmark, SubjectPulse, User } from '@domain/models';
 
 import { Color } from '@domain/enums';
 
 import { App } from '@presentation/app';
 
-const container = document.getElementById('app');
+import { random, Vector } from './utils';
 
-const lucasUser = User.create({ name: 'Lucas Rezende' }).await();
+// ----------------------------------------------------------------------------
+console.log('');
 
-const game = Game.create({ userID: lucasUser.id }).await();
+const hostUser = new User({ name: 'Lucas' });
 
-const lucasPlayer = Player.create({
-  name: lucasUser.name,
+console.log('1. INÍCIO DO JOGO');
+
+const game = new Game({ host: hostUser });
+
+const mapWidth = window.innerWidth;
+const mapHeight = window.innerHeight;
+
+const player1 = game.createPlayer({
+  name: hostUser.name,
   color: Color.ORANGE,
-  gameID: game.id,
-  userID: lucasUser.id,
-}).await();
-
-const estherPlayer = Player.create({
-  name: 'Esther Rezende',
-  color: Color.RED,
-  gameID: game.id,
-}).await();
-
-const swordSubject = Subject.create({
-  description: 'Sword',
-  color: lucasPlayer.color,
-  playerID: lucasPlayer.id,
-}).await();
-
-const glassesSubject = Subject.create({
-  description: 'Glasses',
-  color: estherPlayer.color,
-  playerID: estherPlayer.id,
-}).await();
-
-const d4Dice = Dice.create({
-  sides: 4,
-  value: 2,
-  position: [10, 10],
-  playerID: lucasPlayer.id,
-}).await();
-
-const d6Dice = Dice.create({
-  sides: 6,
-  value: 5,
-  position: [4, -5],
-  playerID: estherPlayer.id,
-}).await();
-
-const swordLandmark = Landmark.create({ position: d4Dice.position }).await();
-
-const swordPulse = Pulse.create({
-  amount: d4Dice.value,
-  gap: 20,
-  landmarkID: swordLandmark.id,
-  subjectID: swordSubject.id,
-}).await();
-
-const glassesLandmark = Landmark.create({ position: d6Dice.position }).await();
-
-const glassesPulse = Pulse.create({
-  amount: d6Dice.value,
-  gap: 20,
-  landmarkID: glassesLandmark.id,
-  subjectID: glassesSubject.id,
-}).await();
-
-console.log({
-  users: [lucasUser],
-  games: [game],
-  players: [lucasPlayer, estherPlayer],
-  subjects: [swordSubject, glassesSubject],
-  dices: [d4Dice, d6Dice],
-  landmarks: [swordLandmark, glassesLandmark],
-  pulses: [swordPulse, glassesPulse],
+  user: hostUser,
 });
 
-const question = Question.create({
-  html: '<p>Se ele tinha uma arma, <b>por quê não atirou</b>?</p>',
-  landmarkID: swordLandmark.id,
-}).await();
+console.log(
+  `    player "${player1.name}" (de cor ${
+    player1.color
+  }) entrou no jogo e recebeu o dice ${player1.dice.toString()}`,
+);
 
-const answerRichText = RichText.create({
-  content: '<p>O sniper foi <b>mais rápido</b> e o baleou antes</p>',
-}).await();
-const answer = Answer.create({
-  richTextID: answerRichText.id,
-  questionID: question.id,
-}).await();
+const player2 = game.createPlayer({
+  name: 'Esther',
+  color: Color.CRIMSON,
+});
 
-answer.update({ isFact: true });
+console.log(
+  `    player "${player2.name}" (de cor ${
+    player2.color
+  }) entrou no jogo e recebeu o dice ${player2.dice.toString()}`,
+);
 
-console.log({ question, answer });
+const otherUser = new User({ name: 'Davi' });
 
-const root = createRoot(container);
+const player3 = game.createPlayer({
+  name: otherUser.name,
+  color: Color.BLUE,
+  user: otherUser,
+});
 
-root.render(<App />);
+console.log(
+  `    player "${player3.name}" (de cor ${
+    player3.color
+  }) entrou no jogo e recebeu o dice ${player3.dice.toString()}`,
+);
+
+console.log('');
+
+// criação dos elementos ======================================================
+console.log('  1.1 CRIAÇÀO DOS ELEMENTOS');
+for (const player of game.players) {
+  // player cria seu subject --------------------------------------------------
+  const subject = player.createSubject({
+    description: faker.word.noun(),
+  });
+
+  console.log(
+    `    player ${player.name} cria seu subject "${subject.description}"`,
+  );
+
+  console.log('');
+}
+
+// criação do fato central ====================================================
+console.log('  1.2 CRIAÇÀO DO FATO CENTRAL');
+for (const player of game.players.reverse()) {
+  // @todo: player adiciona seu subject no centralFact
+  console.log(
+    `    (todo) player "${player.name}" atualiza o centralFact com seu subject "${player.subject?.description}"`,
+  );
+
+  // player rola o dado -------------------------------------------------------
+  const randomRollPosition = Vector(
+    random({ max: mapWidth }),
+    random({ max: mapHeight }),
+  );
+  const value = player.dice.roll(randomRollPosition);
+
+  console.log(
+    `    dice ${player.dice.toString()} do player ${
+      player.name
+    } pára na posição ${player.dice.position?.toString(
+      0,
+    )} com resultado ${value}`,
+  );
+
+  // player gera os pulsos do seu subject -------------------------------------
+  if (!player.dice.position) throw 'Dice must be somewhere in the map';
+
+  const landmark = new Landmark({ position: player.dice.position });
+
+  if (!player.subject) throw 'Player must have a subject';
+
+  const pulse = new SubjectPulse({
+    gap: random({ min: 0.5, max: 2 }),
+    amount: value,
+    landmark,
+    subject: player.subject,
+  });
+
+  game.addPulse(pulse);
+
+  console.log(
+    `    pulse criado na posição ${pulse.origin.toString(0)} com ${
+      pulse.amount
+    } pulsos pro subject "${pulse.subject.description}"`,
+  );
+
+  console.log('');
+}
+
+console.log('2. DESENVOLVIMENTO');
+for (const lightSpotPlayer of [...game.players].reverse()) {
+  // investigação =============================================================
+  console.log('  2.1 INVESTIGAÇÃO');
+  for (const player of game.players.reverse()) {
+    console.log(player.name);
+
+    console.log('');
+  }
+
+  // conjecturas ==============================================================
+  console.log('  2.2 CONJECTURAS');
+  for (const player of game.players.reverse()) {
+    console.log(player.name);
+
+    console.log('');
+  }
+
+  // ponto de luz =============================================================
+  console.log('  2.3 PONTO DE LUZ');
+  console.log(lightSpotPlayer.name);
+
+  console.log('');
+
+  // verificar sobrecarga =====================================================
+  console.log('  2.4 VERIFICAR SOBRECARGA');
+  // resumo da história =======================================================
+  console.log('  2.5 RESUMO DA HISTÓRIA');
+}
+
+console.log('3. CONCLUSÃO DE JOGO');
+
+console.log('');
+// ----------------------------------------------------------------------------
+const container = document.getElementById('app');
+
+if (container) {
+  const root = createRoot(container);
+
+  root.render(<App />);
+}

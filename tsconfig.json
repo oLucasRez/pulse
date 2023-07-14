@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "strict": true,
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "paths": {
       "@domain/*": ["./domain/*"],
       "@presentation/*": ["./presentation/*"],
@@ -13,5 +15,6 @@
       "@enums/*": ["./enums/*"],
       "@enums": ["./enums"]
     }
-  }
+  },
+  "exclude": ["bkp"]
 }
