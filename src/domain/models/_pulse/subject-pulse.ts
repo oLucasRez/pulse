@@ -1,29 +1,29 @@
 import { Color } from '@domain/enums';
 
-import { Landmark, Subject } from '..';
+import { vector } from '@types';
+
+import { Subject } from '..';
 import { Pulse } from './pulse';
 
 type ConstructorProps = {
   id?: string;
+  origin: vector;
   gap: number;
   amount: number;
-  landmark: Landmark;
   subject: Subject;
 };
 
-export class SubjectPulse extends Pulse {
-  private _subject: Subject;
+export class SubjectPulse extends Pulse<Subject> {
   public get subject(): Subject {
-    return this._subject;
+    return this.landmark;
   }
 
   public constructor(props: ConstructorProps) {
-    const { id, gap, amount, landmark, subject } = props;
+    const { id, origin, gap, amount, subject } = props;
 
-    const origin = landmark.position;
+    subject.updatePosition(origin);
 
-    super({ id, origin, gap, amount, landmark });
-    this._subject = subject;
+    super({ id, origin, gap, amount, landmark: subject });
   }
 
   public toString(): string {
@@ -43,7 +43,7 @@ export class SubjectPulse extends Pulse {
       [Color.GREY]: '\x1b[37m',
     };
 
-    return `${colorMap[this._subject.color]}[SubjectPulse(${this.origin},${
+    return `${colorMap[this.subject.color]}[SubjectPulse(${this.origin},${
       this.amount
     })]\x1b[0m`;
   }

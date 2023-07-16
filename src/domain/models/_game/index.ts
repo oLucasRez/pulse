@@ -4,7 +4,15 @@ import { uuid } from '@utils';
 
 import { circle } from '@types';
 
-import { CentralPulse, Dice, Player, Pulse, User } from '..';
+import {
+  CentralPulse,
+  Dice,
+  Player,
+  Pulse,
+  Question,
+  SubjectPulse,
+  User,
+} from '..';
 
 type ConstructorProps = {
   id?: string;
@@ -36,9 +44,13 @@ export class Game {
     return this._centralPulse;
   }
 
-  private _pulses: Pulse[];
+  private _subjectPulses: SubjectPulse[];
+  public get subjectPulses(): SubjectPulse[] {
+    return this._subjectPulses;
+  }
+
   public get pulses(): Pulse[] {
-    return [...this._pulses, this.centralPulse];
+    return [...this._subjectPulses, this.centralPulse];
   }
 
   public get circles(): circle[] {
@@ -46,6 +58,11 @@ export class Game {
       (array, pulse) => [...array, ...pulse.circles],
       [] as circle[],
     );
+  }
+
+  private _questions: Question[];
+  public get questions(): Question[] {
+    return this._questions;
   }
 
   private _availableDices: Dice[];
@@ -56,7 +73,8 @@ export class Game {
     this.id = id;
     this._host = host;
     this._players = [];
-    this._pulses = [];
+    this._subjectPulses = [];
+    this._questions = [];
 
     this._centralPulse = new CentralPulse({});
 
@@ -83,8 +101,12 @@ export class Game {
     return player;
   }
 
-  public addPulse(pulse: Pulse): void {
-    this._pulses.push(pulse);
+  public addSubjectPulse(pulse: SubjectPulse): void {
+    this._subjectPulses.push(pulse);
+  }
+
+  public addQuestion(question: Question): void {
+    this._questions.push(question);
   }
 
   public *start(): Generator<string> {

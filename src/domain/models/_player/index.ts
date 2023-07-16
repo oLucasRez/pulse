@@ -2,7 +2,7 @@ import { Color } from '@domain/enums';
 
 import { uuid } from '@utils';
 
-import { Dice, Game, Subject, User } from '..';
+import { Dice, Game, Question, Subject, User } from '..';
 
 type ConstructorProps = {
   id?: string;
@@ -14,6 +14,10 @@ type ConstructorProps = {
 };
 
 type CreateSubjectProps = {
+  description: string;
+};
+
+type CreateQuestionProps = {
   description: string;
 };
 
@@ -70,12 +74,21 @@ export class Player {
     const subject = new Subject({
       description,
       color: this.color,
+      position: this.dice.position,
       author: this,
     });
 
     this._subject = subject;
 
     return subject;
+  }
+
+  public createQuestion(props: CreateQuestionProps): Question {
+    const { description } = props;
+
+    if (!this.dice.position) throw 'Dice must be in the map';
+
+    return new Question({ description, position: this.dice.position });
   }
 
   public toString(): string {

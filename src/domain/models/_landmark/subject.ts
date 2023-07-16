@@ -2,18 +2,20 @@ import { Color } from '@domain/enums';
 
 import { uuid } from '@utils';
 
+import { vector } from '@types';
+
 import { Player } from '..';
+import { Landmark } from './landmark';
 
 type ConstructorProps = {
   id?: string;
   description: string;
   color: Color;
+  position?: vector | null;
   author: Player;
 };
 
-export class Subject {
-  public readonly id: string;
-
+export class Subject extends Landmark {
   private _description: string;
   public get description(): string {
     return this._description;
@@ -30,9 +32,10 @@ export class Subject {
   }
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), description, color, author } = props;
+    const { id = uuid(), description, color, position, author } = props;
 
-    this.id = id;
+    super({ id, position });
+
     this._description = description;
     this._color = color;
     this._author = author;
@@ -56,5 +59,9 @@ export class Subject {
     };
 
     return `${colorMap[this.color]}[Subject(${this.description})]\x1b[0m`;
+  }
+
+  public updatePosition(value: vector): void {
+    this._position = value;
   }
 }

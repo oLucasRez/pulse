@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
-import { Game, Landmark, SubjectPulse, User } from '@domain/models';
+import { Game, SubjectPulse, User } from '@domain/models';
 
 import { Color } from '@domain/enums';
 
@@ -62,10 +62,12 @@ for (const player of game.players) {
 console.log('  1.2 CRIAÇÀO DO FATO CENTRAL');
 for (const player of game.players.reverse()) {
   // player adiciona seu subject no centralFact -------------------------------
-  game.centralPulse.updateCentralFact(`     ${faker.lorem.sentence()}`);
+  game.centralPulse.centralFact.updateDescription(
+    `     ${faker.lorem.sentence()}`,
+  );
 
   console.log(`    ${player} atualiza o centralFact com ${player.subject}`);
-  console.log(`    "\n${game.centralPulse.centralFact}    "`);
+  console.log(`    "\n${game.centralPulse.centralFact.description}    "`);
 
   // player rola o dado -------------------------------------------------------
   const value = player.dice.roll();
@@ -101,29 +103,30 @@ for (const lightspotPlayer of [...game.players].reverse()) {
     // player cria um subjectPulse onde seu dice está -------------------------
     if (!player.dice.position) throw 'Dice must be in the map';
 
-    const landmark = new Landmark({ position: player.dice.position });
-
     const value = player.dice.roll();
 
     console.log(`    ${player} rola ${player.dice} e o resultado é ${value}`);
 
     if (!player.subject) throw 'Player must have a subject';
 
-    const pulse = new SubjectPulse({
+    const subjectPulse = new SubjectPulse({
+      origin: player.dice.position,
       gap: random({ min: 0.5, max: 2 }),
       amount: value,
-      landmark,
       subject: player.subject,
     });
 
-    console.log(`    ${pulse} criado onde ${player.dice} estava`);
+    console.log(`    ${subjectPulse} criado onde ${player.dice} estava`);
 
-    game.addPulse(pulse);
+    game.addSubjectPulse(subjectPulse);
 
     // player muda seu dice de lugar ------------------------------------------
-    if (!pulse.lastCircle) throw 'Pulse must have circles';
+    if (!subjectPulse.lastCircle) throw 'Pulse must have circles';
 
-    const crossings = pulse.lastCircle.getCrossings(game.circles, 0.0001);
+    const crossings = subjectPulse.lastCircle.getCrossings(
+      game.circles,
+      0.0001,
+    );
     const newPosition =
       crossings[random({ max: crossings.length, type: 'int' })];
 
@@ -133,10 +136,16 @@ for (const lightspotPlayer of [...game.players].reverse()) {
       `    ${player.dice} é deslocado pra posição ${player.dice.position}`,
     );
 
-    console.log('');
-
     // player faz uma question onde está --------------------------------------
-    // @todo
+    const question = player.createQuestion({
+      description: faker.lorem.sentence().replace('.', '?'),
+    });
+
+    game.addQuestion(question);
+
+    console.log(`    ${player} cria ${question}`);
+
+    console.log('');
   }
 
   // conjecturas ==============================================================

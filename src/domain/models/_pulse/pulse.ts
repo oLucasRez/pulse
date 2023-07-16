@@ -4,15 +4,15 @@ import { circle, vector } from '@types';
 
 import { Landmark } from '..';
 
-type ConstructorProps = {
+type ConstructorProps<LandmarkType extends Landmark> = {
   id?: string;
   origin: vector;
   gap: number;
   amount: number;
-  landmark: Landmark;
+  landmark: LandmarkType;
 };
 
-export class Pulse {
+export class Pulse<LandmarkType extends Landmark = Landmark> {
   public readonly id: string;
 
   private _origin: vector;
@@ -41,12 +41,12 @@ export class Pulse {
     return this._gap;
   }
 
-  private _landmark: Landmark;
-  public get landmark(): Landmark {
+  private _landmark: LandmarkType;
+  protected get landmark(): LandmarkType {
     return this._landmark;
   }
 
-  protected constructor(props: ConstructorProps) {
+  protected constructor(props: ConstructorProps<LandmarkType>) {
     const { id = uuid(), origin, gap, amount, landmark } = props;
 
     this.id = id;
