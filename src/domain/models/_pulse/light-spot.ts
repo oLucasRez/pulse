@@ -1,27 +1,26 @@
 import { Color } from '@domain/enums';
 
-import { vector } from '@types';
+import { Vector } from '@utils';
 
 import { Subject } from '..';
-import { Pulse } from './pulse';
+import { SubjectPulse } from './subject-pulse';
 
 type ConstructorProps = {
   id?: string;
-  origin: vector;
-  gap: number;
-  amount: number;
   subject: Subject;
 };
 
-export class SubjectPulse extends Pulse<Subject> {
-  public get subject(): Subject {
-    return this.landmark;
-  }
-
+export class LightSpot extends SubjectPulse {
   public constructor(props: ConstructorProps) {
-    const { id, origin, gap, amount, subject } = props;
+    const { id, subject } = props;
 
-    super({ id, origin, gap, amount, landmark: subject });
+    const origin = Vector(0, 0);
+
+    if (!subject.position) throw 'Subject must have a position';
+
+    const gap = subject.position.sub(origin).mag();
+
+    super({ id, origin, gap, amount: 1, subject });
   }
 
   public toString(): string {
@@ -41,8 +40,8 @@ export class SubjectPulse extends Pulse<Subject> {
       [Color.GREY]: '\x1b[37m',
     };
 
-    return `${colorMap[this.subject.color]}[SubjectPulse(${this.origin},${
-      this.amount
-    })]\x1b[0m`;
+    return `${colorMap[this.subject.color]}[LightSpot(${
+      this.subject.position
+    },${this.amount})]\x1b[0m`;
   }
 }

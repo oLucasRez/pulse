@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
-import { Game, SubjectPulse, User } from '@domain/models';
+import { Game, LightSpot, Subject, SubjectPulse, User } from '@domain/models';
 
 import { Color } from '@domain/enums';
 
@@ -96,7 +96,8 @@ for (const player of game.players.reverse()) {
 }
 
 console.log('2. DESENVOLVIMENTO');
-for (const lightspotPlayer of [...game.players].reverse()) {
+const lightSpotColors = [Color.GREEN, Color.PURPLE, Color.CYAN];
+for (const lightSpotPlayer of [...game.players].reverse()) {
   // investigação =============================================================
   console.log('  2.1 INVESTIGAÇÃO');
   for (const player of game.players.reverse()) {
@@ -136,6 +137,13 @@ for (const lightspotPlayer of [...game.players].reverse()) {
       `    ${player.dice} é deslocado pra posição ${player.dice.position}`,
     );
 
+    // subject atualiza sua posição pra onde o dice está ----------------------
+    player.subject.updatePosition(player.dice.position);
+
+    console.log(
+      `    ${player.subject} reposicionado pra posição do ${player.dice}`,
+    );
+
     // player faz uma question onde está --------------------------------------
     const question = player.createQuestion({
       description: faker.lorem.sentence().replace('.', '?'),
@@ -158,7 +166,23 @@ for (const lightspotPlayer of [...game.players].reverse()) {
 
   // ponto de luz =============================================================
   console.log('  2.3 PONTO DE LUZ');
-  console.log(lightspotPlayer.name);
+  const newPosition = Vector(
+    random({ min: -10, max: 10 }),
+    random({ min: -10, max: 10 }),
+  );
+
+  const subject = new Subject({
+    description: faker.word.noun(),
+    color: lightSpotColors.pop() || Color.GREY,
+    position: newPosition,
+    author: lightSpotPlayer,
+  });
+
+  const lightSpot = new LightSpot({ subject });
+
+  game.addSubjectPulse(lightSpot);
+
+  console.log(`    ${lightSpot} criado por ${lightSpotPlayer} com ${subject}`);
 
   console.log('');
 
