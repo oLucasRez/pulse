@@ -1,9 +1,9 @@
 import { vector } from '@types';
 
-import { round } from '..';
+import { cos, round, sin, sqrt } from '..';
 
 function mag(u: vector): number {
-  return Math.sqrt(Math.pow(u.x, 2) + Math.pow(u.y, 2));
+  return sqrt(u.x * u.x + u.y * u.y);
 }
 
 function add(u: vector, v: vector): vector {
@@ -23,31 +23,33 @@ function div(u: vector, a: number): vector {
 }
 
 export function Vector(x: number, y: number): vector {
-  return {
+  return Object.freeze({
     x,
     y,
     mag() {
       return mag(Vector(x, y));
     },
-    '+'(u: vector) {
+    add(u: vector) {
       return add(Vector(x, y), u);
     },
-    '-'(u: vector) {
+    sub(u: vector) {
       return sub(Vector(x, y), u);
     },
-    '*'(a: number) {
+    mult(a: number) {
       return mult(Vector(x, y), a);
     },
-    '/'(a: number) {
+    div(a: number) {
       return div(Vector(x, y), a);
     },
-    toString(precision?: number) {
+    toString(precision: number = 4) {
       const precisedX = precision !== undefined ? round(x, precision) : x;
       const precisedY = precision !== undefined ? round(y, precision) : y;
 
-      return `(${precisedX},${precisedY})`;
+      return `(${precisedX.toFixed(precision)},${precisedY.toFixed(
+        precision,
+      )})`;
     },
-  };
+  });
 }
 
 Vector.mag = mag;
@@ -55,3 +57,12 @@ Vector.add = add;
 Vector.sub = sub;
 Vector.mult = mult;
 Vector.div = div;
+
+Vector.polar = (r: number, θ: number): vector => {
+  const x = r * cos(θ);
+  const y = r * sin(θ);
+
+  return Vector(x, y);
+};
+
+Object.freeze(Vector);

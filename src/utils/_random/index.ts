@@ -1,3 +1,5 @@
+import { floor } from '..';
+
 type Options = {
   min?: number;
   max?: number;
@@ -10,5 +12,5 @@ export function random(options: Options = {}): number {
   const floatRandom = min + Math.random() * (max - min);
 
   if (type === 'float') return floatRandom;
-  return Math.floor(floatRandom);
+  return floor(floatRandom);
 }

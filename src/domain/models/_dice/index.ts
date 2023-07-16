@@ -1,13 +1,10 @@
+import { Color } from '@domain/enums';
+
 import { random, uuid } from '@utils';
 
 import { vector } from '@types';
 
-export interface Dice {
-  id: string;
-  sides: number;
-  value: number | null;
-  position: vector | null;
-}
+import { Player } from '..';
 
 type ConstructorProps = {
   id?: string;
@@ -16,25 +13,76 @@ type ConstructorProps = {
   position?: vector;
 };
 
-export class Dice implements Dice {
-  static friction: number = 0.1;
+export class Dice {
+  public readonly id: string;
 
-  constructor(props: ConstructorProps) {
+  private _sides: number;
+  public get sides(): number {
+    return this._sides;
+  }
+
+  private _value: number | null;
+  public get value(): number | null {
+    return this._value;
+  }
+
+  private _position: vector | null;
+  public get position(): vector | null {
+    return this._position;
+  }
+
+  private _owner: Player | null;
+  public get owner(): Player | null {
+    return this._owner;
+  }
+
+  public constructor(props: ConstructorProps) {
     const { id = uuid(), sides, value = null, position = null } = props;
 
     this.id = id;
-    this.sides = sides;
-    this.value = value;
-    this.position = position;
+    this._sides = sides;
+    this._value = value;
+    this._position = position;
+    this._owner = null;
   }
 
-  roll(newPosition: vector) {
-    const value = random({ min: 1, max: this.sides, type: 'int' });
+  public setOwner(owner: Player): void {
+    this._owner = owner;
+  }
 
-    this.position = newPosition;
-    this.value = value;
+  public roll(newPosition?: vector): number {
+    const value = random({ max: this.sides, type: 'int' }) + 1;
+
+    if (newPosition) this._position = newPosition;
+    this._value = value;
 
     return value;
+  }
+
+  public updatePosition(value: vector): void {
+    this._position = value;
+  }
+
+  public toString(): string {
+    const colorMap: Record<Color, string> = {
+      [Color.RED]: '\x1b[31m',
+      [Color.GREEN]: '\x1b[32m',
+      [Color.BLUE]: '\x1b[34m',
+      [Color.CYAN]: '\x1b[36m',
+      [Color.PURPLE]: '\x1b[35m',
+      [Color.YELLOW]: '\x1b[33m',
+      [Color.ORANGE]: '\x1b[33m',
+      [Color.PINK]: '\x1b[35m',
+      [Color.BROWN]: '\x1b[31m',
+      [Color.CRIMSON]: '\x1b[31m',
+      [Color.TURQUOISE]: '\x1b[36m',
+      [Color.BEIGE]: '\x1b[37m',
+      [Color.GREY]: '\x1b[37m',
+    };
+
+    return `${this.owner?.color && colorMap[this.owner.color]}[Dice(D${
+      this.sides
+    })]\x1b[0m`;
   }
 
   // // @todo: criar bounds pro dado conseguir ricochetear
@@ -70,8 +118,4 @@ export class Dice implements Dice {
 
   //   return random({ min: 1, max: this.sides, type: 'int' });
   // }
-
-  toString() {
-    return `D${this.sides}`;
-  }
 }

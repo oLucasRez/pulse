@@ -18,31 +18,20 @@ console.log('1. INÍCIO DO JOGO');
 
 const game = new Game({ host: hostUser });
 
-const mapWidth = window.innerWidth;
-const mapHeight = window.innerHeight;
-
 const player1 = game.createPlayer({
   name: hostUser.name,
   color: Color.ORANGE,
   user: hostUser,
 });
 
-console.log(
-  `    player "${player1.name}" (de cor ${
-    player1.color
-  }) entrou no jogo e recebeu o dice ${player1.dice.toString()}`,
-);
+console.log(`    ${player1} entra no jogo e recebe ${player1.dice}`);
 
 const player2 = game.createPlayer({
   name: 'Esther',
   color: Color.CRIMSON,
 });
 
-console.log(
-  `    player "${player2.name}" (de cor ${
-    player2.color
-  }) entrou no jogo e recebeu o dice ${player2.dice.toString()}`,
-);
+console.log(`    ${player2} entra no jogo e recebe ${player2.dice}`);
 
 const otherUser = new User({ name: 'Davi' });
 
@@ -52,11 +41,7 @@ const player3 = game.createPlayer({
   user: otherUser,
 });
 
-console.log(
-  `    player "${player3.name}" (de cor ${
-    player3.color
-  }) entrou no jogo e recebeu o dice ${player3.dice.toString()}`,
-);
+console.log(`    ${player3} entra no jogo e recebe ${player3.dice}`);
 
 console.log('');
 
@@ -68,9 +53,7 @@ for (const player of game.players) {
     description: faker.word.noun(),
   });
 
-  console.log(
-    `    player ${player.name} cria seu subject "${subject.description}"`,
-  );
+  console.log(`    ${player} cria ${subject}`);
 
   console.log('');
 }
@@ -78,59 +61,82 @@ for (const player of game.players) {
 // criação do fato central ====================================================
 console.log('  1.2 CRIAÇÀO DO FATO CENTRAL');
 for (const player of game.players.reverse()) {
-  // @todo: player adiciona seu subject no centralFact
-  console.log(
-    `    (todo) player "${player.name}" atualiza o centralFact com seu subject "${player.subject?.description}"`,
-  );
+  // player adiciona seu subject no centralFact -------------------------------
+  game.centralPulse.updateCentralFact(`     ${faker.lorem.sentence()}`);
+
+  console.log(`    ${player} atualiza o centralFact com ${player.subject}`);
+  console.log(`    "\n${game.centralPulse.centralFact}    "`);
 
   // player rola o dado -------------------------------------------------------
-  const randomRollPosition = Vector(
-    random({ max: mapWidth }),
-    random({ max: mapHeight }),
-  );
-  const value = player.dice.roll(randomRollPosition);
+  const value = player.dice.roll();
 
   console.log(
-    `    dice ${player.dice.toString()} do player ${
-      player.name
-    } pára na posição ${player.dice.position?.toString(
-      0,
-    )} com resultado ${value}`,
+    `    ${player} rola ${player.dice.toString()} e o resultado é ${value}`,
   );
 
-  // player gera os pulsos do seu subject -------------------------------------
-  if (!player.dice.position) throw 'Dice must be somewhere in the map';
-
-  const landmark = new Landmark({ position: player.dice.position });
-
-  if (!player.subject) throw 'Player must have a subject';
-
-  const pulse = new SubjectPulse({
-    gap: random({ min: 0.5, max: 2 }),
-    amount: value,
-    landmark,
-    subject: player.subject,
-  });
-
-  game.addPulse(pulse);
+  // atualiza a quantidade de pulsos do centralPulse --------------------------
+  game.centralPulse.updateAmount(value);
 
   console.log(
-    `    pulse criado na posição ${pulse.origin.toString(0)} com ${
-      pulse.amount
-    } pulsos pro subject "${pulse.subject.description}"`,
+    `    centralPulse atualiza seus pulsos para ${game.centralPulse.amount}`,
+  );
+
+  // atualiza a posição do dice no pulso referente ao valor resultante --------
+  const newPosition = Vector.polar(value, random({ max: 2 * Math.PI }));
+
+  player.dice.updatePosition(newPosition);
+
+  console.log(
+    `    ${player.dice} reposicionado pra posição ${player.dice.position}`,
   );
 
   console.log('');
 }
 
 console.log('2. DESENVOLVIMENTO');
-for (const lightSpotPlayer of [...game.players].reverse()) {
+for (const lightspotPlayer of [...game.players].reverse()) {
   // investigação =============================================================
   console.log('  2.1 INVESTIGAÇÃO');
   for (const player of game.players.reverse()) {
-    console.log(player.name);
+    // player cria um subjectPulse onde seu dice está -------------------------
+    if (!player.dice.position) throw 'Dice must be in the map';
+
+    const landmark = new Landmark({ position: player.dice.position });
+
+    const value = player.dice.roll();
+
+    console.log(`    ${player} rola ${player.dice} e o resultado é ${value}`);
+
+    if (!player.subject) throw 'Player must have a subject';
+
+    const pulse = new SubjectPulse({
+      gap: random({ min: 0.5, max: 2 }),
+      amount: value,
+      landmark,
+      subject: player.subject,
+    });
+
+    console.log(`    ${pulse} criado onde ${player.dice} estava`);
+
+    game.addPulse(pulse);
+
+    // player muda seu dice de lugar ------------------------------------------
+    if (!pulse.lastCircle) throw 'Pulse must have circles';
+
+    const crossings = pulse.lastCircle.getCrossings(game.circles, 0.0001);
+    const newPosition =
+      crossings[random({ max: crossings.length, type: 'int' })];
+
+    player.dice.updatePosition(newPosition);
+
+    console.log(
+      `    ${player.dice} é deslocado pra posição ${player.dice.position}`,
+    );
 
     console.log('');
+
+    // player faz uma question onde está --------------------------------------
+    // @todo
   }
 
   // conjecturas ==============================================================
@@ -143,7 +149,7 @@ for (const lightSpotPlayer of [...game.players].reverse()) {
 
   // ponto de luz =============================================================
   console.log('  2.3 PONTO DE LUZ');
-  console.log(lightSpotPlayer.name);
+  console.log(lightspotPlayer.name);
 
   console.log('');
 

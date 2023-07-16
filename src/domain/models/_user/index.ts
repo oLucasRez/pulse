@@ -1,20 +1,22 @@
 import { uuid } from '@utils';
 
-export interface User {
-  id: string;
-  name: string;
-}
-
 type ConstructorProps = {
   id?: string;
   name: string;
 };
 
-export class User implements User {
-  constructor(props: ConstructorProps) {
+export class User {
+  public readonly id: string;
+
+  private _name: string;
+  public get name(): string {
+    return this._name;
+  }
+
+  public constructor(props: ConstructorProps) {
     const { id = uuid(), name } = props;
 
     this.id = id;
-    this.name = name;
+    this._name = name;
   }
 }
