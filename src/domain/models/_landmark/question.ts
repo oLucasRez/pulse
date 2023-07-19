@@ -1,35 +1,103 @@
-import { uuid } from '@utils';
+import { Color } from '@domain/enums';
 
 import { vector } from '@types';
 
+import { Answer, Player, Subject } from '..';
 import { Landmark } from './landmark';
 
 type ConstructorProps = {
   id?: string;
   description: string;
+  scope: Subject[];
   position: vector;
+  author: Player;
+};
+
+type CreateAnswerProps = {
+  description: string;
+  author: Player;
 };
 
 export class Question extends Landmark {
-  public readonly id: string;
-
   private _description: string;
   public get description(): string {
     return this._description;
   }
 
+  private _scope: Subject[];
+  public get scope(): Subject[] {
+    return this._scope;
+  }
+
+  private _author: Player;
+  public get author(): Player {
+    return this._author;
+  }
+
+  private _answers: Answer[];
+  public get answers(): Answer[] {
+    return this._answers;
+  }
+
+  private _fact: Answer | null;
+  public get fact(): Answer | null {
+    return this._fact;
+  }
+
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), description, position } = props;
+    const { id, description, scope, position, author } = props;
 
     super({ id, position });
 
-    this.id = id;
     this._description = description;
+    this._scope = scope;
+    this._author = author;
+    this._answers = [];
+    this._fact = null;
+  }
+
+  public createAnswer(props: CreateAnswerProps): Answer {
+    const { description, author } = props;
+
+    const answer = new Answer({
+      description,
+      question: this,
+      author,
+    });
+
+    this._answers.push(answer);
+
+    return answer;
+  }
+
+  public solve(decidedAnswer: Answer): void {
+    this._answers.map((answer) => {
+      if (answer.id === decidedAnswer.id) this._fact = decidedAnswer;
+    });
   }
 
   public toString(): string {
-    const ellipsis = this._description.length > 20 ? '...?' : '';
+    const color = {
+      [Color.RED]: '\x1b[31m',
+      [Color.GREEN]: '\x1b[32m',
+      [Color.BLUE]: '\x1b[34m',
+      [Color.CYAN]: '\x1b[36m',
+      [Color.PURPLE]: '\x1b[35m',
+      [Color.YELLOW]: '\x1b[33m',
+      [Color.ORANGE]: '\x1b[33m',
+      [Color.PINK]: '\x1b[35m',
+      [Color.BROWN]: '\x1b[31m',
+      [Color.CRIMSON]: '\x1b[31m',
+      [Color.TURQUOISE]: '\x1b[36m',
+      [Color.BEIGE]: '\x1b[37m',
+      [Color.GREY]: '\x1b[37m',
+    }[this.author.color];
 
-    return `[Question(${this._description.slice(0, 20)}${ellipsis})]`;
+    const ellipsis = this.description.length > 20 ? '...?' : '';
+
+    return `${color}[Question(${this.description.slice(
+      0,
+      20,
+    )}${ellipsis})]\x1b[0m.about(${this.scope.join(',')})`;
   }
 }

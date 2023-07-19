@@ -1,27 +1,28 @@
 import { Color } from '@domain/enums';
 
-import { vector } from '@types';
-
-import { Player } from '..';
-import { Landmark } from './landmark';
+import { Player, Question } from '..';
+import { Model } from '../model';
 
 type ConstructorProps = {
   id?: string;
   description: string;
-  color: Color;
-  position?: vector | null;
+  question: Question;
   author: Player;
 };
 
-export class Subject extends Landmark {
+export class Answer extends Model {
   private _description: string;
   public get description(): string {
     return this._description;
   }
 
-  private _color: Color;
-  public get color(): Color {
-    return this._color;
+  private _question: Question;
+  public get question(): Question {
+    return this._question;
+  }
+
+  public get isFact(): boolean {
+    return this.id === this.question.fact?.id;
   }
 
   private _author: Player;
@@ -30,12 +31,12 @@ export class Subject extends Landmark {
   }
 
   public constructor(props: ConstructorProps) {
-    const { id, description, color, position, author } = props;
+    const { id, description, question, author } = props;
 
-    super({ id, position });
+    super({ id });
 
     this._description = description;
-    this._color = color;
+    this._question = question;
     this._author = author;
   }
 
@@ -54,12 +55,14 @@ export class Subject extends Landmark {
       [Color.TURQUOISE]: '\x1b[36m',
       [Color.BEIGE]: '\x1b[37m',
       [Color.GREY]: '\x1b[37m',
-    }[this._color];
+    }[this.author.color];
 
-    return `${color}[Subject(${this.description})]\x1b[0m`;
-  }
+    const fact = this.isFact ? 'fact,' : '';
+    const ellipsis = this.description.length > 20 ? '...' : '';
 
-  public updatePosition(value: vector): void {
-    this._position = value;
+    return `${color}[Answer(${fact}${this.description.slice(
+      0,
+      20,
+    )}${ellipsis})]\x1b[0m`;
   }
 }

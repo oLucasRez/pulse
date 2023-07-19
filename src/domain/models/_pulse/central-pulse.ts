@@ -25,4 +25,8 @@ export class CentralPulse extends Pulse<CentralFact> {
   public updateAmount(value: number): void {
     super.updateAmount(value);
   }
+
+  public toString(): string {
+    return `\x1b[37m[CentralPulse(${this.amount})]\x1b[0m`;
+  }
 }

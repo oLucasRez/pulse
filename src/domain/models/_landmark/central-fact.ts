@@ -1,5 +1,3 @@
-import { uuid } from '@utils';
-
 import { vector } from '@types';
 
 import { Landmark } from './landmark';
@@ -11,19 +9,16 @@ type ConstructorProps = {
 };
 
 export class CentralFact extends Landmark {
-  public readonly id: string;
-
   private _description: string;
   public get description(): string {
     return this._description;
   }
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), description, position } = props;
+    const { id, description, position } = props;
 
     super({ id, position });
 
-    this.id = id;
     this._description = description;
   }
 
@@ -32,6 +27,6 @@ export class CentralFact extends Landmark {
   }
 
   public toString(): string {
-    return `[CentralFact(${this.description})]`;
+    return `\x1b[37m[CentralFact(${this.description})]\x1b[0m`;
   }
 }

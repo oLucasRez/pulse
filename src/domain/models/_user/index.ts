@@ -1,22 +1,21 @@
-import { uuid } from '@utils';
+import { Model } from '../model';
 
 type ConstructorProps = {
   id?: string;
   name: string;
 };
 
-export class User {
-  public readonly id: string;
-
+export class User extends Model {
   private _name: string;
   public get name(): string {
     return this._name;
   }
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), name } = props;
+    const { id, name } = props;
 
-    this.id = id;
+    super({ id });
+
     this._name = name;
   }
 }

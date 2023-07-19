@@ -24,7 +24,7 @@ export class LightSpot extends SubjectPulse {
   }
 
   public toString(): string {
-    const colorMap: Record<Color, string> = {
+    const color = {
       [Color.RED]: '\x1b[31m',
       [Color.GREEN]: '\x1b[32m',
       [Color.BLUE]: '\x1b[34m',
@@ -38,10 +38,8 @@ export class LightSpot extends SubjectPulse {
       [Color.TURQUOISE]: '\x1b[36m',
       [Color.BEIGE]: '\x1b[37m',
       [Color.GREY]: '\x1b[37m',
-    };
+    }[this.subject.color];
 
-    return `${colorMap[this.subject.color]}[LightSpot(${
-      this.subject.position
-    },${this.amount})]\x1b[0m`;
+    return `${color}[LightSpot(${this.subject.position},${this.subject})]\x1b[0m`;
   }
 }

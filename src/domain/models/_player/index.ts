@@ -1,8 +1,7 @@
 import { Color } from '@domain/enums';
 
-import { uuid } from '@utils';
-
 import { Dice, Game, Question, Subject, User } from '..';
+import { Model } from '../model';
 
 type ConstructorProps = {
   id?: string;
@@ -19,11 +18,10 @@ type CreateSubjectProps = {
 
 type CreateQuestionProps = {
   description: string;
+  scope: Subject[];
 };
 
-export class Player {
-  public readonly id: string;
-
+export class Player extends Model {
   private _name: string;
   public get name(): string {
     return this._name;
@@ -55,9 +53,10 @@ export class Player {
   }
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), name, color, user = null, game, dice } = props;
+    const { id, name, color, user = null, game, dice } = props;
 
-    this.id = id;
+    super({ id });
+
     this._name = name;
     this._color = color;
     this._user = user;
@@ -84,15 +83,20 @@ export class Player {
   }
 
   public createQuestion(props: CreateQuestionProps): Question {
-    const { description } = props;
+    const { description, scope } = props;
 
     if (!this.dice.position) throw 'Dice must be in the map';
 
-    return new Question({ description, position: this.dice.position });
+    return new Question({
+      description,
+      scope,
+      position: this.dice.position,
+      author: this,
+    });
   }
 
   public toString(): string {
-    const colorMap: Record<Color, string> = {
+    const color = {
       [Color.RED]: '\x1b[31m',
       [Color.GREEN]: '\x1b[32m',
       [Color.BLUE]: '\x1b[34m',
@@ -106,8 +110,8 @@ export class Player {
       [Color.TURQUOISE]: '\x1b[36m',
       [Color.BEIGE]: '\x1b[37m',
       [Color.GREY]: '\x1b[37m',
-    };
+    }[this.color];
 
-    return `${colorMap[this.color]}[Player(${this.name})]\x1b[0m`;
+    return `${color}[Player(${this.name})]\x1b[0m`;
   }
 }

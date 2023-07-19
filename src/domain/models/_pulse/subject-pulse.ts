@@ -25,7 +25,7 @@ export class SubjectPulse extends Pulse<Subject> {
   }
 
   public toString(): string {
-    const colorMap: Record<Color, string> = {
+    const color = {
       [Color.RED]: '\x1b[31m',
       [Color.GREEN]: '\x1b[32m',
       [Color.BLUE]: '\x1b[34m',
@@ -39,10 +39,8 @@ export class SubjectPulse extends Pulse<Subject> {
       [Color.TURQUOISE]: '\x1b[36m',
       [Color.BEIGE]: '\x1b[37m',
       [Color.GREY]: '\x1b[37m',
-    };
+    }[this.subject.color];
 
-    return `${colorMap[this.subject.color]}[SubjectPulse(${this.origin},${
-      this.amount
-    })]\x1b[0m`;
+    return `${color}[SubjectPulse(${this.origin},${this.amount})]\x1b[0m`;
   }
 }

@@ -1,8 +1,8 @@
 import { Color } from '@domain/enums';
 
-import { uuid } from '@utils';
+import { abs, pow, sqrt, unique, Vector } from '@utils';
 
-import { circle } from '@types';
+import { circle, vector } from '@types';
 
 import {
   CentralPulse,
@@ -10,9 +10,11 @@ import {
   Player,
   Pulse,
   Question,
+  Subject,
   SubjectPulse,
   User,
 } from '..';
+import { Model } from '../model';
 
 type ConstructorProps = {
   id?: string;
@@ -26,9 +28,9 @@ type CreatePlayerProps = {
   user?: User;
 };
 
-export class Game {
-  public readonly id: string;
+type Crossing = { scope: Subject[]; position: vector };
 
+export class Game extends Model {
   private _host: User;
   public get host(): User {
     return this._host;
@@ -68,9 +70,10 @@ export class Game {
   private _availableDices: Dice[];
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), host } = props;
+    const { id, host } = props;
 
-    this.id = id;
+    super({ id });
+
     this._host = host;
     this._players = [];
     this._subjectPulses = [];
@@ -107,6 +110,99 @@ export class Game {
 
   public addQuestion(question: Question): void {
     this._questions.push(question);
+  }
+
+  public getCrossings(
+    targetPulse: SubjectPulse,
+    tolerance: number = 0,
+  ): Crossing[] {
+    if (!targetPulse.lastCircle) return [];
+
+    function calcCrossings(c1: circle, c2: circle): vector[] {
+      const d = c1.c.sub(c2.c).mag();
+      const a = (pow(c1.r, 2) - pow(c2.r, 2) + pow(d, 2)) / (2 * d);
+      const h = sqrt(pow(c1.r, 2) - pow(a, 2));
+      const p3 = c1.c.add(c2.c.sub(c1.c).mult(a / d));
+
+      if (isNaN(h)) return [];
+
+      return [
+        Vector(
+          p3.x + ((c2.c.y - c1.c.y) * h) / d,
+          p3.y - ((c2.c.x - c1.c.x) * h) / d,
+        ),
+        Vector(
+          p3.x - ((c2.c.y - c1.c.y) * h) / d,
+          p3.y + ((c2.c.x - c1.c.x) * h) / d,
+        ),
+      ];
+    }
+
+    const crossings: Crossing[] = [];
+
+    for (const pulse of this.subjectPulses) {
+      if (targetPulse.isEqual(pulse)) continue;
+
+      for (const circle of pulse.circles) {
+        const positions = calcCrossings(targetPulse.lastCircle, circle);
+
+        positions.map((position) =>
+          crossings.push({
+            scope: [targetPulse.subject, pulse.subject],
+            position,
+          }),
+        );
+      }
+    }
+
+    for (const circle of this.centralPulse.circles) {
+      const positions = calcCrossings(targetPulse.lastCircle, circle);
+
+      positions.map((position) =>
+        crossings.push({
+          scope: [targetPulse.subject],
+          position,
+        }),
+      );
+    }
+
+    const crossingsAreEqual = (
+      crossingA: Crossing,
+      crossingB: Crossing,
+    ): boolean =>
+      abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
+
+    const replaceCrossingsWith = (
+      crossingA: Crossing,
+      crossingB: Crossing,
+    ): Crossing => {
+      const pA = crossingA.scope.length;
+      const pB = crossingB.scope.length;
+
+      const position = crossingA.position
+        .mult(pA)
+        .add(crossingB.position.mult(pB))
+        .div(pA + pB);
+
+      return { position, scope: [...crossingA.scope, ...crossingB.scope] };
+    };
+
+    const filteredCrossings = unique(
+      crossings,
+      crossingsAreEqual,
+      replaceCrossingsWith,
+    );
+
+    for (const crossing of filteredCrossings) {
+      const subjectsAreEqual = (
+        subjectA: Subject,
+        subjectB: Subject,
+      ): boolean => subjectA.isEqual(subjectB);
+
+      crossing.scope = unique(crossing.scope, subjectsAreEqual);
+    }
+
+    return filteredCrossings;
   }
 
   public *start(): Generator<string> {

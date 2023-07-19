@@ -1,24 +1,23 @@
-import { uuid } from '@utils';
-
 import { vector } from '@types';
+
+import { Model } from '../model';
 
 type ConstructorProps = {
   id?: string;
   position?: vector | null;
 };
 
-export class Landmark {
-  public readonly id: string;
-
+export class Landmark extends Model {
   protected _position: vector | null;
   public get position(): vector | null {
     return this._position;
   }
 
   public constructor(props: ConstructorProps) {
-    const { id = uuid(), position = null } = props;
+    const { id, position = null } = props;
 
-    this.id = id;
+    super({ id });
+
     this._position = position;
   }
 }

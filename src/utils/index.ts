@@ -1,3 +1,4 @@
+export { unique } from './_array';
 export { Circle } from './_circle';
 export { generateAll } from './_generate-all';
 export { isNumber } from './_is-number';

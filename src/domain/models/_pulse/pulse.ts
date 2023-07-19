@@ -1,8 +1,9 @@
-import { Circle, uuid } from '@utils';
+import { Circle } from '@utils';
 
 import { circle, vector } from '@types';
 
 import { Landmark } from '..';
+import { Model } from '../model';
 
 type ConstructorProps<LandmarkType extends Landmark> = {
   id?: string;
@@ -12,9 +13,7 @@ type ConstructorProps<LandmarkType extends Landmark> = {
   landmark: LandmarkType;
 };
 
-export class Pulse<LandmarkType extends Landmark = Landmark> {
-  public readonly id: string;
-
+export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
   private _origin: vector;
   public get origin(): vector {
     return this._origin;
@@ -42,14 +41,15 @@ export class Pulse<LandmarkType extends Landmark = Landmark> {
   }
 
   private _landmark: LandmarkType;
-  protected get landmark(): LandmarkType {
+  public get landmark(): LandmarkType {
     return this._landmark;
   }
 
   protected constructor(props: ConstructorProps<LandmarkType>) {
-    const { id = uuid(), origin, gap, amount, landmark } = props;
+    const { id, origin, gap, amount, landmark } = props;
 
-    this.id = id;
+    super({ id });
+
     this._origin = origin;
     this._gap = gap;
     this._circles = [];
@@ -59,7 +59,7 @@ export class Pulse<LandmarkType extends Landmark = Landmark> {
   }
 
   protected updateAmount(value: number): void {
-    for (let i = this._circles.length; i <= value; i++)
+    for (let i = this._circles.length + 1; i <= value; i++)
       this._circles.push(Circle(this.origin, i * this.gap));
   }
 }
