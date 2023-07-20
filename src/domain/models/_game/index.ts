@@ -15,6 +15,7 @@ import {
   User,
 } from '..';
 import { Model } from '../model';
+import { GameState, InitialState } from './_game-states';
 
 type ConstructorProps = {
   id?: string;
@@ -39,6 +40,11 @@ export class Game extends Model {
   private _players: Player[];
   public get players(): Player[] {
     return this._players;
+  }
+
+  private _currentPlayer: Player | null;
+  public get currentPlayer(): Player | null {
+    return this.currentPlayer;
   }
 
   private _centralPulse: CentralPulse;
@@ -69,6 +75,8 @@ export class Game extends Model {
 
   private _availableDices: Dice[];
 
+  private state: GameState;
+
   public constructor(props: ConstructorProps) {
     const { id, host } = props;
 
@@ -76,6 +84,7 @@ export class Game extends Model {
 
     this._host = host;
     this._players = [];
+    this._currentPlayer = null;
     this._subjectPulses = [];
     this._questions = [];
 
@@ -88,6 +97,12 @@ export class Game extends Model {
     const d12 = new Dice({ sides: 12 });
 
     this._availableDices = [d4, d6, d8, d10, d12];
+
+    this.state = new InitialState({ game: this });
+  }
+
+  public transitionTo(gameState: GameState): void {
+    this.state = gameState;
   }
 
   public createPlayer(props: CreatePlayerProps): Player {
@@ -102,6 +117,14 @@ export class Game extends Model {
     this.players.push(player);
 
     return player;
+  }
+
+  public setCurrentPlayer(player: Player): Player {
+    this._currentPlayer = player;
+
+    if (!this.currentPlayer) throw 'Fail to set current player';
+
+    return this.currentPlayer;
   }
 
   public addSubjectPulse(pulse: SubjectPulse): void {

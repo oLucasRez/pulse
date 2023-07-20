@@ -82,6 +82,10 @@ export class Player extends Model {
     return subject;
   }
 
+  public setSubject(subject: Subject): void {
+    this._subject = subject;
+  }
+
   public createQuestion(props: CreateQuestionProps): Question {
     const { description, scope } = props;
 
