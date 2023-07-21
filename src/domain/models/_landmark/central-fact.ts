@@ -2,22 +2,16 @@ import { vector } from '@types';
 
 import { Landmark } from './landmark';
 
-type ConstructorProps = {
-  id?: string;
-  description: string;
-  position: vector;
-};
-
 export class CentralFact extends Landmark {
   private _description: string;
   public get description(): string {
     return this._description;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, description, position } = props;
+  public constructor(props: CentralFact.ConstructorProps) {
+    const { description, ...landmarkProps } = props;
 
-    super({ id, position });
+    super({ ...landmarkProps });
 
     this._description = description;
   }
@@ -29,4 +23,11 @@ export class CentralFact extends Landmark {
   public toString(): string {
     return `\x1b[37m[CentralFact(${this.description})]\x1b[0m`;
   }
+}
+
+export namespace CentralFact {
+  export type ConstructorProps = Landmark.ConstructorProps & {
+    description: string;
+    position: vector;
+  };
 }

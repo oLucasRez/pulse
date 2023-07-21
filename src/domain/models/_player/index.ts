@@ -3,24 +3,6 @@ import { Color } from '@domain/enums';
 import { Dice, Game, Question, Subject, User } from '..';
 import { Model } from '../model';
 
-type ConstructorProps = {
-  id?: string;
-  name: string;
-  color: Color;
-  user?: User;
-  game: Game;
-  dice: Dice;
-};
-
-type CreateSubjectProps = {
-  description: string;
-};
-
-type CreateQuestionProps = {
-  description: string;
-  scope: Subject[];
-};
-
 export class Player extends Model {
   private _name: string;
   public get name(): string {
@@ -52,10 +34,10 @@ export class Player extends Model {
     return this._subject;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, name, color, user = null, game, dice } = props;
+  public constructor(props: Player.ConstructorProps) {
+    const { name, color, user = null, game, dice, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._name = name;
     this._color = color;
@@ -67,11 +49,11 @@ export class Player extends Model {
     this._dice.setOwner(this);
   }
 
-  public createSubject(props: CreateSubjectProps): Subject {
-    const { description } = props;
+  public createSubject(props: Player.CreateSubjectProps): Subject {
+    const { ...subjectProps } = props;
 
     const subject = new Subject({
-      description,
+      ...subjectProps,
       color: this.color,
       position: this.dice.position,
       author: this,
@@ -82,14 +64,13 @@ export class Player extends Model {
     return subject;
   }
 
-  public createQuestion(props: CreateQuestionProps): Question {
-    const { description, scope } = props;
+  public createQuestion(props: Player.CreateQuestionProps): Question {
+    const { ...questionProps } = props;
 
     if (!this.dice.position) throw 'Dice must be in the map';
 
     return new Question({
-      description,
-      scope,
+      ...questionProps,
       position: this.dice.position,
       author: this,
     });
@@ -114,4 +95,24 @@ export class Player extends Model {
 
     return `${color}[Player(${this.name})]\x1b[0m`;
   }
+}
+
+export namespace Player {
+  export type ConstructorProps = Model.ConstructorProps & {
+    name: string;
+    color: Color;
+    user?: User;
+    game: Game;
+    dice: Dice;
+  };
+
+  export type CreateSubjectProps = Omit<
+    Subject.ConstructorProps,
+    'color' | 'position' | 'author'
+  >;
+
+  export type CreateQuestionProps = Omit<
+    Question.ConstructorProps,
+    'position' | 'author'
+  >;
 }

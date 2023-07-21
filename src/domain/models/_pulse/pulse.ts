@@ -5,14 +5,6 @@ import { circle, vector } from '@types';
 import { Landmark } from '..';
 import { Model } from '../model';
 
-type ConstructorProps<LandmarkType extends Landmark> = {
-  id?: string;
-  origin: vector;
-  gap: number;
-  amount: number;
-  landmark: LandmarkType;
-};
-
 export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
   private _origin: vector;
   public get origin(): vector {
@@ -45,10 +37,10 @@ export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
     return this._landmark;
   }
 
-  protected constructor(props: ConstructorProps<LandmarkType>) {
-    const { id, origin, gap, amount, landmark } = props;
+  protected constructor(props: Pulse.ConstructorProps<LandmarkType>) {
+    const { origin, gap, amount, landmark, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._origin = origin;
     this._gap = gap;
@@ -62,4 +54,14 @@ export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
     for (let i = this._circles.length + 1; i <= value; i++)
       this._circles.push(Circle(this.origin, i * this.gap));
   }
+}
+
+export namespace Pulse {
+  export type ConstructorProps<LandmarkType extends Landmark> =
+    Model.ConstructorProps & {
+      origin: vector;
+      gap: number;
+      amount: number;
+      landmark: LandmarkType;
+    };
 }

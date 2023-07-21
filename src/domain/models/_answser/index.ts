@@ -3,13 +3,6 @@ import { Color } from '@domain/enums';
 import { Player, Question } from '..';
 import { Model } from '../model';
 
-type ConstructorProps = {
-  id?: string;
-  description: string;
-  question: Question;
-  author: Player;
-};
-
 export class Answer extends Model {
   private _description: string;
   public get description(): string {
@@ -30,10 +23,10 @@ export class Answer extends Model {
     return this._author;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, description, question, author } = props;
+  public constructor(props: Answer.ConstructorProps) {
+    const { description, question, author, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._description = description;
     this._question = question;
@@ -65,4 +58,12 @@ export class Answer extends Model {
       20,
     )}${ellipsis})]\x1b[0m`;
   }
+}
+
+export namespace Answer {
+  export type ConstructorProps = Model.ConstructorProps & {
+    description: string;
+    question: Question;
+    author: Player;
+  };
 }

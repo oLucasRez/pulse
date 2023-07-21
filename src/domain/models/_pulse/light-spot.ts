@@ -5,14 +5,9 @@ import { Vector } from '@utils';
 import { Subject } from '..';
 import { SubjectPulse } from './subject-pulse';
 
-type ConstructorProps = {
-  id?: string;
-  subject: Subject;
-};
-
 export class LightSpot extends SubjectPulse {
-  public constructor(props: ConstructorProps) {
-    const { id, subject } = props;
+  public constructor(props: LightSpot.ConstructorProps) {
+    const { subject, ...subjectPulseProps } = props;
 
     const origin = Vector(0, 0);
 
@@ -20,7 +15,7 @@ export class LightSpot extends SubjectPulse {
 
     const gap = subject.position.sub(origin).mag();
 
-    super({ id, origin, gap, amount: 1, subject });
+    super({ ...subjectPulseProps, origin, gap, amount: 1, subject });
   }
 
   public toString(): string {
@@ -42,4 +37,13 @@ export class LightSpot extends SubjectPulse {
 
     return `${color}[LightSpot(${this.subject.position},${this.subject})]\x1b[0m`;
   }
+}
+
+export namespace LightSpot {
+  export type ConstructorProps = Omit<
+    SubjectPulse.ConstructorProps,
+    'origin' | 'amount' | 'gap'
+  > & {
+    subject: Subject;
+  };
 }

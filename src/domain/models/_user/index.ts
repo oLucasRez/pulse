@@ -1,21 +1,22 @@
 import { Model } from '../model';
 
-type ConstructorProps = {
-  id?: string;
-  name: string;
-};
-
 export class User extends Model {
   private _name: string;
   public get name(): string {
     return this._name;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, name } = props;
+  public constructor(props: User.ConstructorProps) {
+    const { name, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._name = name;
   }
+}
+
+export namespace User {
+  export type ConstructorProps = Model.ConstructorProps & {
+    name: string;
+  };
 }

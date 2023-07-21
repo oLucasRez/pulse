@@ -5,14 +5,6 @@ import { vector } from '@types';
 import { Player } from '..';
 import { Landmark } from './landmark';
 
-type ConstructorProps = {
-  id?: string;
-  description: string;
-  color: Color;
-  position?: vector | null;
-  author: Player;
-};
-
 export class Subject extends Landmark {
   private _description: string;
   public get description(): string {
@@ -29,10 +21,10 @@ export class Subject extends Landmark {
     return this._author;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, description, color, position, author } = props;
+  public constructor(props: Subject.ConstructorProps) {
+    const { description, color, author, ...landmarkProps } = props;
 
-    super({ id, position });
+    super({ ...landmarkProps });
 
     this._description = description;
     this._color = color;
@@ -62,4 +54,12 @@ export class Subject extends Landmark {
   public updatePosition(value: vector): void {
     this._position = value;
   }
+}
+
+export namespace Subject {
+  export type ConstructorProps = Landmark.ConstructorProps & {
+    description: string;
+    color: Color;
+    author: Player;
+  };
 }

@@ -5,19 +5,6 @@ import { vector } from '@types';
 import { Answer, Player, Subject } from '..';
 import { Landmark } from './landmark';
 
-type ConstructorProps = {
-  id?: string;
-  description: string;
-  scope: Subject[];
-  position: vector;
-  author: Player;
-};
-
-type CreateAnswerProps = {
-  description: string;
-  author: Player;
-};
-
 export class Question extends Landmark {
   private _description: string;
   public get description(): string {
@@ -44,10 +31,10 @@ export class Question extends Landmark {
     return this._fact;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, description, scope, position, author } = props;
+  public constructor(props: Question.ConstructorProps) {
+    const { description, scope, author, ...landmarkProps } = props;
 
-    super({ id, position });
+    super({ ...landmarkProps });
 
     this._description = description;
     this._scope = scope;
@@ -56,14 +43,10 @@ export class Question extends Landmark {
     this._fact = null;
   }
 
-  public createAnswer(props: CreateAnswerProps): Answer {
-    const { description, author } = props;
+  public createAnswer(props: Question.CreateAnswerProps): Answer {
+    const { ...answerProps } = props;
 
-    const answer = new Answer({
-      description,
-      question: this,
-      author,
-    });
+    const answer = new Answer({ ...answerProps, question: this });
 
     this._answers.push(answer);
 
@@ -100,4 +83,15 @@ export class Question extends Landmark {
       20,
     )}${ellipsis})]\x1b[0m.about(${this.scope.join(',')})`;
   }
+}
+
+export namespace Question {
+  export type ConstructorProps = Landmark.ConstructorProps & {
+    description: string;
+    scope: Subject[];
+    position: vector;
+    author: Player;
+  };
+
+  export type CreateAnswerProps = Omit<Answer.ConstructorProps, 'question'>;
 }

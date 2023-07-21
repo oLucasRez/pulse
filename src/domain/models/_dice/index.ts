@@ -7,13 +7,6 @@ import { vector } from '@types';
 import { Player } from '..';
 import { Model } from '../model';
 
-type ConstructorProps = {
-  id?: string;
-  sides: number;
-  value?: number;
-  position?: vector;
-};
-
 export class Dice extends Model {
   private _sides: number;
   public get sides(): number {
@@ -35,10 +28,10 @@ export class Dice extends Model {
     return this._owner;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, sides, value = null, position = null } = props;
+  public constructor(props: Dice.ConstructorProps) {
+    const { sides, value = null, position = null, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._sides = sides;
     this._value = value;
@@ -118,4 +111,12 @@ export class Dice extends Model {
 
   //   return random({ min: 1, max: this.sides, type: 'int' });
   // }
+}
+
+export namespace Dice {
+  export type ConstructorProps = Model.ConstructorProps & {
+    sides: number;
+    value?: number;
+    position?: vector;
+  };
 }

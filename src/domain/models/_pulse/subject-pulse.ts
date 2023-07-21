@@ -1,27 +1,17 @@
 import { Color } from '@domain/enums';
 
-import { vector } from '@types';
-
 import { Subject } from '..';
 import { Pulse } from './pulse';
-
-type ConstructorProps = {
-  id?: string;
-  origin: vector;
-  gap: number;
-  amount: number;
-  subject: Subject;
-};
 
 export class SubjectPulse extends Pulse<Subject> {
   public get subject(): Subject {
     return this.landmark;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, origin, gap, amount, subject } = props;
+  public constructor(props: SubjectPulse.ConstructorProps) {
+    const { subject, ...pulseProps } = props;
 
-    super({ id, origin, gap, amount, landmark: subject });
+    super({ ...pulseProps, landmark: subject });
   }
 
   public toString(): string {
@@ -43,4 +33,13 @@ export class SubjectPulse extends Pulse<Subject> {
 
     return `${color}[SubjectPulse(${this.origin},${this.amount})]\x1b[0m`;
   }
+}
+
+export namespace SubjectPulse {
+  export type ConstructorProps = Omit<
+    Pulse.ConstructorProps<Subject>,
+    'landmark'
+  > & {
+    subject: Subject;
+  };
 }

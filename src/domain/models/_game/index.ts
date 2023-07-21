@@ -1,5 +1,3 @@
-import { Color } from '@domain/enums';
-
 import { abs, pow, sqrt, unique, Vector } from '@utils';
 
 import { circle, vector } from '@types';
@@ -15,18 +13,6 @@ import {
   User,
 } from '..';
 import { Model } from '../model';
-
-type ConstructorProps = {
-  id?: string;
-  host: User;
-};
-
-type CreatePlayerProps = {
-  id?: string;
-  name: string;
-  color: Color;
-  user?: User;
-};
 
 type Crossing = { scope: Subject[]; position: vector };
 
@@ -69,10 +55,10 @@ export class Game extends Model {
 
   private _availableDices: Dice[];
 
-  public constructor(props: ConstructorProps) {
-    const { id, host } = props;
+  public constructor(props: Game.ConstructorProps) {
+    const { host, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._host = host;
     this._players = [];
@@ -90,14 +76,14 @@ export class Game extends Model {
     this._availableDices = [d4, d6, d8, d10, d12];
   }
 
-  public createPlayer(props: CreatePlayerProps): Player {
-    const { id, name, color, user } = props;
+  public createPlayer(props: Game.CreatePlayerProps): Player {
+    const { ...playerProps } = props;
 
     const dice = this._availableDices.shift();
 
     if (!dice) throw 'Limit of players achieved';
 
-    const player = new Player({ id, name, color, user, game: this, dice });
+    const player = new Player({ ...playerProps, dice, game: this });
 
     this.players.push(player);
 
@@ -204,33 +190,15 @@ export class Game extends Model {
 
     return filteredCrossings;
   }
+}
 
-  public *start(): Generator<string> {
-    const clockwise = this.players;
-    const counterclockwise = [...this.players].reverse();
+export namespace Game {
+  export type ConstructorProps = Model.ConstructorProps & {
+    host: User;
+  };
 
-    for (const player of clockwise) {
-      yield `Criação de Elementos (${player.name})`;
-    }
-
-    for (const player of counterclockwise) {
-      yield `Criação do Fato Central (${player.name})`;
-    }
-
-    for (const lightpotPlayer of clockwise) {
-      for (const player of clockwise) {
-        yield `Investigação (${player.name})`;
-      }
-
-      for (const player of counterclockwise) {
-        yield `Conjecturas (${player.name})`;
-      }
-
-      yield `Ponto de Luz (${lightpotPlayer.name})`;
-
-      yield 'Verificar Sobrecarga';
-    }
-
-    yield 'Conclusão do Fato Central';
-  }
+  export type CreatePlayerProps = Omit<
+    Player.ConstructorProps,
+    'dice' | 'game'
+  >;
 }

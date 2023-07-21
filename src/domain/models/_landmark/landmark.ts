@@ -2,22 +2,23 @@ import { vector } from '@types';
 
 import { Model } from '../model';
 
-type ConstructorProps = {
-  id?: string;
-  position?: vector | null;
-};
-
 export class Landmark extends Model {
   protected _position: vector | null;
   public get position(): vector | null {
     return this._position;
   }
 
-  public constructor(props: ConstructorProps) {
-    const { id, position = null } = props;
+  public constructor(props: Landmark.ConstructorProps) {
+    const { position = null, ...modelProps } = props;
 
-    super({ id });
+    super({ ...modelProps });
 
     this._position = position;
   }
+}
+
+export namespace Landmark {
+  export type ConstructorProps = Model.ConstructorProps & {
+    position?: vector | null;
+  };
 }
