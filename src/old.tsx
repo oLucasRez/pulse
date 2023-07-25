@@ -1,127 +1,52 @@
-import { faker } from '@faker-js/faker';
-import { createRoot } from 'react-dom/client';
+// import { faker } from '@faker-js/faker';
+// import { createRoot } from 'react-dom/client';
 
-import { User } from '@domain/models';
+// import { LightSpot, Subject, SubjectPulse, User } from '@domain/models';
 
-import { Color } from '@domain/enums';
+// import { Color } from '@domain/enums';
 
-import { App } from '@presentation/app';
+// import { App } from '@presentation/app';
 
-const scope = (a: () => any): any => a();
+// import { random, Vector } from './utils';
 
-const user = new User({ name: 'Lucas' });
+// // ----------------------------------------------------------------------------
+// console.log('');
 
-const game = user.createGame({});
+// const user = new User({ name: 'Lucas' });
 
-game.createPlayer({
-  name: user.name,
-  color: Color.ORANGE,
-  user: user,
-});
+// console.log('1. INÍCIO DO JOGO');
 
-game.createPlayer({
-  name: 'Esther',
-  color: Color.CRIMSON,
-});
+// const game = user.createGame({});
 
-const otherUser = new User({ name: 'Davi' });
+// const player1 = game.createPlayer({
+//   name: user.name,
+//   color: Color.ORANGE,
+//   user: user,
+// });
 
-game.createPlayer({
-  name: otherUser.name,
-  color: Color.BLUE,
-  user: otherUser,
-});
+// console.log(`    ${player1} entra no jogo e recebe ${player1.dice}`);
 
-console.log('1. INÍCIO DO JOGO');
+// const player2 = game.createPlayer({
+//   name: 'Esther',
+//   color: Color.CRIMSON,
+// });
 
-game.start();
+// console.log(`    ${player2} entra no jogo e recebe ${player2.dice}`);
 
-console.log('  1.1 CRIAÇÀO DOS ELEMENTOS'); // ================================
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+// const otherUser = new User({ name: 'Davi' });
 
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
+// const player3 = game.createPlayer({
+//   name: otherUser.name,
+//   color: Color.BLUE,
+//   user: otherUser,
+// });
 
-  game.finishTurn();
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+// console.log(`    ${player3} entra no jogo e recebe ${player3.dice}`);
 
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
+// console.log('');
 
-  game.finishTurn();
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
-
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
-
-  game.finishTurn();
-});
-console.log('  1.2 CRIAÇÀO DO FATO CENTRAL'); // ==============================
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
-
-  const centralFact = game.getCentralFact();
-
-  game.updateCentralFactDescription(
-    `${centralFact.description}\n${faker.lorem.sentence()}`,
-  );
-  console.log(`${centralFact}`);
-
-  const value = game.rollDice();
-
-  game.updateCentralPulseAmount(value);
-
-  game.finishTurn();
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
-
-  const centralFact = game.getCentralFact();
-
-  game.updateCentralFactDescription(
-    `${centralFact.description}\n${faker.lorem.sentence()}`,
-  );
-  console.log(`${centralFact}`);
-
-  const value = game.rollDice();
-
-  game.updateCentralPulseAmount(value);
-
-  game.finishTurn();
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
-
-  const centralFact = game.getCentralFact();
-
-  game.updateCentralFactDescription(
-    `${centralFact.description}\n${faker.lorem.sentence()}`,
-  );
-  console.log(`${centralFact}`);
-
-  const value = game.rollDice();
-
-  game.updateCentralPulseAmount(value);
-
-  game.finishTurn();
-});
-// ----------------------------------------------------------------------------
-
+// // criação dos elementos ======================================================
+// console.log('  1.1 CRIAÇÀO DOS ELEMENTOS');
 // for (const player of game.players) {
 //   // player cria seu subject --------------------------------------------------
 //   const subject = player.createSubject({
@@ -318,10 +243,10 @@ scope(() => {
 
 // console.log('');
 // // ----------------------------------------------------------------------------
-const container = document.getElementById('app');
+// const container = document.getElementById('app');
 
-if (container) {
-  const root = createRoot(container);
+// if (container) {
+//   const root = createRoot(container);
 
-  root.render(<App />);
-}
+//   root.render(<App />);
+// }

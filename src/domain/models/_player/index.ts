@@ -1,7 +1,7 @@
 import { Color } from '@domain/enums';
 
 import { Dice, Game, Question, Subject, User } from '..';
-import { Model } from '../model';
+import { Model } from '../this';
 
 export class Player extends Model {
   private _name: string;
@@ -34,7 +34,7 @@ export class Player extends Model {
     return this._subject;
   }
 
-  public constructor(props: Player.ConstructorProps) {
+  public constructor(props: Player.NewProps) {
     const { name, color, user = null, game, dice, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -98,7 +98,7 @@ export class Player extends Model {
 }
 
 export namespace Player {
-  export type ConstructorProps = Model.ConstructorProps & {
+  export type NewProps = Model.NewProps & {
     name: string;
     color: Color;
     user?: User;
@@ -107,12 +107,12 @@ export namespace Player {
   };
 
   export type CreateSubjectProps = Omit<
-    Subject.ConstructorProps,
+    Subject.NewProps,
     'color' | 'position' | 'author'
   >;
 
   export type CreateQuestionProps = Omit<
-    Question.ConstructorProps,
+    Question.NewProps,
     'position' | 'author'
   >;
 }

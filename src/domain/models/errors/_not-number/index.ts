@@ -2,7 +2,7 @@ import { DomainError } from '@domain/errors';
 
 type Metadata = { prop: string; value: any };
 
-type ConstructorProps = {
+type NewProps = {
   message?: string;
   metadata: Metadata;
 };
@@ -13,7 +13,7 @@ export class NotNumberError extends DomainError {
   public constructor({
     metadata,
     message = `{${metadata.prop}} must be a number`,
-  }: ConstructorProps) {
+  }: NewProps) {
     super({ message });
 
     this.metadata = metadata;

@@ -1,7 +1,7 @@
 import { Color } from '@domain/enums';
 
 import { Player, Question } from '..';
-import { Model } from '../model';
+import { Model } from '../this';
 
 export class Answer extends Model {
   private _description: string;
@@ -23,7 +23,7 @@ export class Answer extends Model {
     return this._author;
   }
 
-  public constructor(props: Answer.ConstructorProps) {
+  public constructor(props: Answer.NewProps) {
     const { description, question, author, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -61,7 +61,7 @@ export class Answer extends Model {
 }
 
 export namespace Answer {
-  export type ConstructorProps = Model.ConstructorProps & {
+  export type NewProps = Model.NewProps & {
     description: string;
     question: Question;
     author: Player;

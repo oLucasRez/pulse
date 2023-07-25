@@ -1,14 +1,14 @@
 import { Color } from '@domain/enums';
 
-import { Subject } from '..';
-import { Pulse } from './pulse';
+import { Subject } from '../..';
+import { Pulse } from '../this';
 
 export class SubjectPulse extends Pulse<Subject> {
   public get subject(): Subject {
     return this.landmark;
   }
 
-  public constructor(props: SubjectPulse.ConstructorProps) {
+  public constructor(props: SubjectPulse.NewProps) {
     const { subject, ...pulseProps } = props;
 
     super({ ...pulseProps, landmark: subject });
@@ -36,10 +36,7 @@ export class SubjectPulse extends Pulse<Subject> {
 }
 
 export namespace SubjectPulse {
-  export type ConstructorProps = Omit<
-    Pulse.ConstructorProps<Subject>,
-    'landmark'
-  > & {
+  export type NewProps = Omit<Pulse.NewProps<Subject>, 'landmark'> & {
     subject: Subject;
   };
 }

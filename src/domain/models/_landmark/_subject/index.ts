@@ -2,8 +2,8 @@ import { Color } from '@domain/enums';
 
 import { vector } from '@types';
 
-import { Player } from '..';
-import { Landmark } from './landmark';
+import { Player } from '../..';
+import { Landmark } from '../landmark';
 
 export class Subject extends Landmark {
   private _description: string;
@@ -21,7 +21,7 @@ export class Subject extends Landmark {
     return this._author;
   }
 
-  public constructor(props: Subject.ConstructorProps) {
+  public constructor(props: Subject.NewProps) {
     const { description, color, author, ...landmarkProps } = props;
 
     super({ ...landmarkProps });
@@ -57,7 +57,7 @@ export class Subject extends Landmark {
 }
 
 export namespace Subject {
-  export type ConstructorProps = Landmark.ConstructorProps & {
+  export type NewProps = Landmark.NewProps & {
     description: string;
     color: Color;
     author: Player;

@@ -3,7 +3,7 @@ import { Circle } from '@utils';
 import { circle, vector } from '@types';
 
 import { Landmark } from '..';
-import { Model } from '../model';
+import { Model } from '../this';
 
 export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
   private _origin: vector;
@@ -37,7 +37,7 @@ export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
     return this._landmark;
   }
 
-  protected constructor(props: Pulse.ConstructorProps<LandmarkType>) {
+  protected constructor(props: Pulse.NewProps<LandmarkType>) {
     const { origin, gap, amount, landmark, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -57,11 +57,10 @@ export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
 }
 
 export namespace Pulse {
-  export type ConstructorProps<LandmarkType extends Landmark> =
-    Model.ConstructorProps & {
-      origin: vector;
-      gap: number;
-      amount: number;
-      landmark: LandmarkType;
-    };
+  export type NewProps<LandmarkType extends Landmark> = Model.NewProps & {
+    origin: vector;
+    gap: number;
+    amount: number;
+    landmark: LandmarkType;
+  };
 }

@@ -2,11 +2,11 @@ import { Color } from '@domain/enums';
 
 import { Vector } from '@utils';
 
-import { Subject } from '..';
-import { SubjectPulse } from './subject-pulse';
+import { Subject } from '../..';
+import { SubjectPulse } from '../_subject-pulse';
 
 export class LightSpot extends SubjectPulse {
-  public constructor(props: LightSpot.ConstructorProps) {
+  public constructor(props: LightSpot.NewProps) {
     const { subject, ...subjectPulseProps } = props;
 
     const origin = Vector(0, 0);
@@ -40,8 +40,8 @@ export class LightSpot extends SubjectPulse {
 }
 
 export namespace LightSpot {
-  export type ConstructorProps = Omit<
-    SubjectPulse.ConstructorProps,
+  export type NewProps = Omit<
+    SubjectPulse.NewProps,
     'origin' | 'amount' | 'gap'
   > & {
     subject: Subject;

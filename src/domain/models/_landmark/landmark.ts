@@ -1,6 +1,6 @@
 import { vector } from '@types';
 
-import { Model } from '../model';
+import { Model } from '../this';
 
 export class Landmark extends Model {
   protected _position: vector | null;
@@ -8,7 +8,7 @@ export class Landmark extends Model {
     return this._position;
   }
 
-  public constructor(props: Landmark.ConstructorProps) {
+  public constructor(props: Landmark.NewProps) {
     const { position = null, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -18,7 +18,7 @@ export class Landmark extends Model {
 }
 
 export namespace Landmark {
-  export type ConstructorProps = Model.ConstructorProps & {
+  export type NewProps = Model.NewProps & {
     position?: vector | null;
   };
 }

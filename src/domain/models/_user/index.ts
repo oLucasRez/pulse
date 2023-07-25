@@ -1,4 +1,5 @@
-import { Model } from '../model';
+import { Game } from '../_game';
+import { Model } from '../this';
 
 export class User extends Model {
   private _name: string;
@@ -6,17 +7,30 @@ export class User extends Model {
     return this._name;
   }
 
-  public constructor(props: User.ConstructorProps) {
+  public constructor(props: User.NewProps) {
     const { name, ...modelProps } = props;
 
     super({ ...modelProps });
 
     this._name = name;
   }
+
+  public createGame(props: User.CreateGame.Props): User.CreateGame.Return {
+    const { ...gameProps } = props;
+
+    const game = new Game({ ...gameProps, host: this });
+
+    return game;
+  }
 }
 
 export namespace User {
-  export type ConstructorProps = Model.ConstructorProps & {
+  export type NewProps = Model.NewProps & {
     name: string;
   };
+
+  export namespace CreateGame {
+    export type Props = Omit<Game.NewProps, 'host'>;
+    export type Return = Game;
+  }
 }

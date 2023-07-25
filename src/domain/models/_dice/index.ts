@@ -5,7 +5,7 @@ import { random } from '@utils';
 import { vector } from '@types';
 
 import { Player } from '..';
-import { Model } from '../model';
+import { Model } from '../this';
 
 export class Dice extends Model {
   private _sides: number;
@@ -28,7 +28,7 @@ export class Dice extends Model {
     return this._owner;
   }
 
-  public constructor(props: Dice.ConstructorProps) {
+  public constructor(props: Dice.NewProps) {
     const { sides, value = null, position = null, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -114,7 +114,7 @@ export class Dice extends Model {
 }
 
 export namespace Dice {
-  export type ConstructorProps = Model.ConstructorProps & {
+  export type NewProps = Model.NewProps & {
     sides: number;
     value?: number;
     position?: vector;

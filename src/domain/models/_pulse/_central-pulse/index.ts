@@ -1,14 +1,14 @@
 import { Vector } from '@utils';
 
-import { CentralFact } from '..';
-import { Pulse } from './pulse';
+import { CentralFact } from '../..';
+import { Pulse } from '../this';
 
 export class CentralPulse extends Pulse<CentralFact> {
   public get centralFact(): CentralFact {
     return this.landmark;
   }
 
-  public constructor(props: CentralPulse.ConstructorProps) {
+  public constructor(props: CentralPulse.NewProps) {
     const { amount = 0, ...pulseProps } = props;
 
     const origin = Vector(0, 0);
@@ -17,8 +17,10 @@ export class CentralPulse extends Pulse<CentralFact> {
     super({ ...pulseProps, origin, gap: 1, amount, landmark });
   }
 
-  public updateAmount(value: number): void {
+  public updateAmount(value: number): CentralPulse {
     super.updateAmount(value);
+
+    return this;
   }
 
   public toString(): string {
@@ -27,8 +29,8 @@ export class CentralPulse extends Pulse<CentralFact> {
 }
 
 export namespace CentralPulse {
-  export type ConstructorProps = Omit<
-    Pulse.ConstructorProps<CentralFact>,
+  export type NewProps = Omit<
+    Pulse.NewProps<CentralFact>,
     'origin' | 'gap' | 'amount' | 'landmark'
   > & {
     amount?: number;
