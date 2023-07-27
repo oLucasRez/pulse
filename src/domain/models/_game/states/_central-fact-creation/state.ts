@@ -1,8 +1,14 @@
-import { CentralFact, CentralPulse, Player, Subject } from '@domain/models';
+import {
+  CentralFact,
+  CentralPulse,
+  Dice,
+  Player,
+  Subject,
+} from '@domain/models';
 
 import { Round } from '../../_round';
 import { InitialGameState } from '../_initial';
-import { GameState } from '../this';
+import { GameState } from '../state';
 import {
   CentralFactCreationState,
   CentralFactDescriptionUpdationState,
@@ -21,7 +27,9 @@ export class CentralFactCreationGameState extends GameState {
   public constructor(context: CentralFactCreationGameState.NewProps) {
     super(context);
 
-    this._rounding = this.context.round.start(Round.Rotation.ANTICLOCKWISE);
+    this._rounding = this.context
+      .getRound()
+      .start(Round.Rotation.ANTICLOCKWISE);
     this._turn = this._rounding.next();
     this._state = new CentralFactDescriptionUpdationState(this);
   }
@@ -52,21 +60,15 @@ export class CentralFactCreationGameState extends GameState {
   }
 
   public updateCentralFactDescription(description: string): CentralFact {
-    const centralFact = this._state.updateCentralFactDescription(description);
-
-    return centralFact;
+    return this._state.updateCentralFactDescription(description);
   }
 
-  public rollDice(): number {
-    const value = this._state.rollDice();
-
-    return value;
+  public updateDiceValue(value: number): Dice {
+    return this._state.updateDiceValue(value);
   }
 
-  public updateCentralPulseAmount(amount: number): CentralPulse {
-    const centralPulse = this._state.updateCentralPulseAmount(amount);
-
-    return centralPulse;
+  public updateCentralPulseAmount(): CentralPulse {
+    return this._state.updateCentralPulseAmount();
   }
 }
 

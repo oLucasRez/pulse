@@ -9,12 +9,22 @@ export class Model {
     this.id = id;
   }
 
+  protected toDTO(): Model.DTO {
+    return Object.freeze({
+      id: this.id,
+    });
+  }
+
   public isEqual(model: Model.IsEqual.Props): Model.IsEqual.Return {
     return this.id === model.id;
   }
 }
 
 export namespace Model {
+  export type DTO = {
+    id: string;
+  };
+
   export type NewProps = {
     id?: string;
   };

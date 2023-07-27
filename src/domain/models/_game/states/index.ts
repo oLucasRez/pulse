@@ -1,5 +1,5 @@
-export { CentralFactCreationGameState } from './_central-fact-creation';
-export { InitialGameState } from './_initial';
-export { SubjectCreationGameState } from './_subject-creation';
+export * from './_central-fact-creation';
+export * from './_initial';
+export * from './_subject-creation';
 
-export { GameState } from './this';
+export { GameState } from './state';

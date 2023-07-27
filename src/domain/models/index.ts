@@ -1,9 +1,9 @@
-export { Answer } from './_answer';
-export { Dice } from './_dice';
-export { Game } from './_game';
-export { CentralFact, Landmark, Question, Subject } from './_landmark';
-export { Player } from './_player';
-export { CentralPulse, LightSpot, Pulse, SubjectPulse } from './_pulse';
-export { User } from './_user';
+export * from './_answer';
+export * from './_dice';
+export * from './_game';
+export * from './_landmark';
+export * from './_player';
+export * from './_pulse';
+export * from './_user';
 
-export { Model } from './this';
+export { Model } from './model';

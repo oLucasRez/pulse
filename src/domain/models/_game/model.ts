@@ -13,71 +13,35 @@ import {
   SubjectPulse,
   User,
 } from '..';
-import { Model } from '../this';
+import { Model } from '../model';
 import { Round } from './_round';
 import { GameState, InitialGameState } from './states';
 
 type Crossing = { scope: Subject[]; position: vector };
 
 export class Game extends Model {
-  private _host: User;
-  public get host(): User {
-    return this._host;
-  }
-
-  private _round: Round;
-  public get round(): Round {
-    return this._round;
-  }
-
-  private _lightSpotRound: Round;
-  public get lightSpotRound(): Round {
-    return this._lightSpotRound;
-  }
-
-  private _state: GameState;
-
-  private _centralPulse: CentralPulse;
-  public get centralPulse(): CentralPulse {
-    return this._centralPulse;
-  }
-
-  private _subjectPulses: SubjectPulse[];
-  public get subjectPulses(): SubjectPulse[] {
-    return this._subjectPulses;
-  }
-
-  public get pulses(): Pulse[] {
-    return [...this._subjectPulses, this.centralPulse];
-  }
-
-  public get circles(): circle[] {
-    return this.pulses.reduce(
-      (array, pulse) => [...array, ...pulse.circles],
-      [] as circle[],
-    );
-  }
-
-  private _questions: Question[];
-  public get questions(): Question[] {
-    return this._questions;
-  }
-
-  private _availableDices: Dice[];
+  private host: User;
+  private round: Round;
+  // private lightSpotRound: Round;
+  private state: GameState;
+  private centralPulse: CentralPulse;
+  private subjectPulses: SubjectPulse[];
+  private questions: Question[];
+  private availableDices: Dice[];
 
   public constructor(props: Game.NewProps) {
     const { host, ...modelProps } = props;
 
     super({ ...modelProps });
 
-    this._host = host;
-    this._round = new Round();
-    this._lightSpotRound = new Round();
-    this._state = new InitialGameState(this);
-    this._subjectPulses = [];
-    this._questions = [];
+    this.host = host;
+    this.round = new Round();
+    // this.lightSpotRound = new Round();
+    this.state = new InitialGameState(this);
+    this.subjectPulses = [];
+    this.questions = [];
 
-    this._centralPulse = new CentralPulse({});
+    this.centralPulse = new CentralPulse({});
 
     const d4 = new Dice({ sides: 4 });
     const d6 = new Dice({ sides: 6 });
@@ -85,53 +49,77 @@ export class Game extends Model {
     const d10 = new Dice({ sides: 10 });
     const d12 = new Dice({ sides: 12 });
 
-    this._availableDices = [d4, d6, d8, d10, d12];
+    this.availableDices = [d4, d6, d8, d10, d12];
+  }
+
+  public toDTO(): Game.DTO {
+    const modelDTO = super.toDTO();
+
+    return Object.freeze({
+      ...modelDTO,
+      hostID: this.host.id,
+    });
+  }
+
+  public getRound(): Round {
+    return this.round;
+  }
+
+  public getCentralPulse(): CentralPulse {
+    return this.centralPulse;
+  }
+
+  public getPulses(): Pulse[] {
+    return [...this.subjectPulses, this.centralPulse];
+  }
+
+  public getCircles(): circle[] {
+    const pulses = this.getPulses();
+
+    return pulses.reduce<circle[]>(
+      (array, pulse) => [...array, ...pulse.getCircles()],
+      [],
+    );
   }
 
   public setState(state: GameState): void {
-    this._state = state;
+    this.state = state;
   }
 
   public start(): void {
-    this._state.start();
+    this.state.start();
   }
 
   public getCurrentPlayer(): Player | null {
-    const currentPlayer = this._state.getCurrentPlayer();
-
-    return currentPlayer;
+    return this.state.getCurrentPlayer();
   }
 
   public finishTurn(): void {
-    this._state.finishTurn();
+    this.state.finishTurn();
   }
 
   public createSubject(props: Game.CreateSubjectProps): Subject {
-    const subject = this._state.createSubject(props);
+    const subject = this.state.createSubject(props);
 
     return subject;
   }
 
   public getCentralFact(): CentralFact {
-    const { centralFact } = this._centralPulse;
-
-    return centralFact;
+    return this.centralPulse.getCentralFact();
   }
 
   public updateCentralFactDescription(description: string): CentralFact {
-    const centralFact = this._state.updateCentralFactDescription(description);
+    const centralFact = this.state.updateCentralFactDescription(description);
 
     return centralFact;
   }
 
-  public rollDice(): number {
-    const value = this._state.rollDice();
-
-    return value;
+  public updateDiceValue(value: number): Dice {
+    return this.state.updateDiceValue(value);
   }
 
-  public updateCentralPulseAmount(amount: number): CentralPulse {
-    const centralPulse = this._state.updateCentralPulseAmount(amount);
+  public updateCentralPulseAmount(): CentralPulse {
+    const centralPulse = this.state.updateCentralPulseAmount();
 
     return centralPulse;
   }
@@ -139,30 +127,32 @@ export class Game extends Model {
   public createPlayer(props: Game.CreatePlayerProps): Player {
     const { ...playerProps } = props;
 
-    const dice = this._availableDices.shift();
+    const dice = this.availableDices.shift();
 
     if (!dice) throw 'Limit of players achieved';
 
     const player = new Player({ ...playerProps, dice, game: this });
 
-    this._round.addPlayer(player);
+    this.round.addPlayer(player);
 
     return player;
   }
 
   public addSubjectPulse(pulse: SubjectPulse): void {
-    this._subjectPulses.push(pulse);
+    this.subjectPulses.push(pulse);
   }
 
   public addQuestion(question: Question): void {
-    this._questions.push(question);
+    this.questions.push(question);
   }
 
   public getCrossings(
     targetPulse: SubjectPulse,
     tolerance: number = 0,
   ): Crossing[] {
-    if (!targetPulse.lastCircle) return [];
+    const targetLastCircle = targetPulse.getLastCircle();
+
+    if (!targetLastCircle) return [];
 
     function calcCrossings(c1: circle, c2: circle): vector[] {
       const d = c1.c.sub(c2.c).mag();
@@ -189,24 +179,24 @@ export class Game extends Model {
     for (const pulse of this.subjectPulses) {
       if (targetPulse.isEqual(pulse)) continue;
 
-      for (const circle of pulse.circles) {
-        const positions = calcCrossings(targetPulse.lastCircle, circle);
+      for (const circle of pulse.getCircles()) {
+        const positions = calcCrossings(targetLastCircle, circle);
 
         positions.map((position) =>
           crossings.push({
-            scope: [targetPulse.subject, pulse.subject],
+            scope: [targetPulse.getSubject(), pulse.getSubject()],
             position,
           }),
         );
       }
     }
 
-    for (const circle of this.centralPulse.circles) {
-      const positions = calcCrossings(targetPulse.lastCircle, circle);
+    for (const circle of this.centralPulse.getCircles()) {
+      const positions = calcCrossings(targetLastCircle, circle);
 
       positions.map((position) =>
         crossings.push({
-          scope: [targetPulse.subject],
+          scope: [targetPulse.getSubject()],
           position,
         }),
       );
@@ -253,6 +243,10 @@ export class Game extends Model {
 }
 
 export namespace Game {
+  export type DTO = Model.DTO & {
+    hostID: string;
+  };
+
   export type NewProps = Model.NewProps & {
     host: User;
   };

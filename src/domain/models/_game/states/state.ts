@@ -1,6 +1,12 @@
-import { CentralFact, CentralPulse, Player, Subject } from '@domain/models';
+import {
+  CentralFact,
+  CentralPulse,
+  Dice,
+  Player,
+  Subject,
+} from '@domain/models';
 
-import { Game } from '../this';
+import { Game } from '../model';
 
 export abstract class GameState {
   private _context: Game;
@@ -19,8 +25,8 @@ export abstract class GameState {
   public abstract updateCentralFactDescription(
     description: string,
   ): CentralFact;
-  public abstract rollDice(): number;
-  public abstract updateCentralPulseAmount(amount: number): CentralPulse;
+  public abstract updateDiceValue(value: number): Dice;
+  public abstract updateCentralPulseAmount(): CentralPulse;
 }
 
 export namespace GameState {

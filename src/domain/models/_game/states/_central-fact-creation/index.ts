@@ -1,1 +1,1 @@
-export { CentralFactCreationGameState } from './this';
+export { CentralFactCreationGameState } from './state';

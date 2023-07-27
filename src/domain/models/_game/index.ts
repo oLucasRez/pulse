@@ -1,3 +1,3 @@
-export { Round } from './_round';
+export * from './_round';
 
-export { Game } from './this';
+export { Game } from './model';

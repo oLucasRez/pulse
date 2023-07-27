@@ -26,6 +26,12 @@ export function Vector(x: number, y: number): vector {
   return Object.freeze({
     x,
     y,
+    toDTO() {
+      return Object.freeze({
+        x,
+        y,
+      });
+    },
     mag() {
       return mag(Vector(x, y));
     },

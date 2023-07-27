@@ -1,124 +1,164 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
-import { User } from '@domain/models';
-
 import { Color } from '@domain/enums';
 
 import { App } from '@presentation/app';
 
+import { random } from './utils';
+
+import {
+  createGame,
+  createPlayer,
+  createSubject,
+  createUser,
+  finishTurn,
+  getCentralFact,
+  getCurrentDice,
+  getCurrentPlayer,
+  startGame,
+  updateCentralFactDescription,
+  updateCentralPulseAmount,
+  updateDiceValue,
+} from './usecases';
+
 const scope = (a: () => any): any => a();
 
-const user = new User({ name: 'Lucas' });
+const user = createUser({ name: 'Lucas' });
 
-const game = user.createGame({});
+const game = createGame(user.id);
 
-game.createPlayer({
+createPlayer(game.id, {
   name: user.name,
   color: Color.ORANGE,
-  user: user,
+  userID: user.id,
 });
 
-game.createPlayer({
+createPlayer(game.id, {
   name: 'Esther',
   color: Color.CRIMSON,
 });
 
-const otherUser = new User({ name: 'Davi' });
+const otherUser = createUser({ name: 'Davi' });
 
-game.createPlayer({
+createPlayer(game.id, {
   name: otherUser.name,
   color: Color.BLUE,
-  user: otherUser,
+  userID: otherUser.id,
 });
 
 console.log('1. INÍCIO DO JOGO');
 
-game.start();
+startGame(game.id);
 
 console.log('  1.1 CRIAÇÀO DOS ELEMENTOS'); // ================================
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
+  const subject = createSubject(game.id, { description: faker.word.noun() });
+  console.log(subject);
 
-  game.finishTurn();
+  finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
+  const subject = createSubject(game.id, { description: faker.word.noun() });
+  console.log(subject);
 
-  game.finishTurn();
+  finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const subject = game.createSubject({ description: faker.word.noun() });
-  console.log(`${subject}`);
+  const subject = createSubject(game.id, { description: faker.word.noun() });
+  console.log(subject);
 
-  game.finishTurn();
+  finishTurn(game.id);
 });
 console.log('  1.2 CRIAÇÀO DO FATO CENTRAL'); // ==============================
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const centralFact = game.getCentralFact();
-
-  game.updateCentralFactDescription(
-    `${centralFact.description}\n${faker.lorem.sentence()}`,
+  const centralFact = updateCentralFactDescription(
+    game.id,
+    faker.lorem.sentence(),
   );
-  console.log(`${centralFact}`);
+  console.log(centralFact);
 
-  const value = game.rollDice();
+  const dice = getCurrentDice(game.id);
 
-  game.updateCentralPulseAmount(value);
+  if (!dice) throw 'currentDice not found';
 
-  game.finishTurn();
+  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+
+  updateDiceValue(game.id, randomValue);
+
+  updateCentralPulseAmount(game.id);
+
+  finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const centralFact = game.getCentralFact();
+  const centralFact = getCentralFact(game.id);
 
-  game.updateCentralFactDescription(
+  updateCentralFactDescription(
+    game.id,
     `${centralFact.description}\n${faker.lorem.sentence()}`,
   );
-  console.log(`${centralFact}`);
+  console.log(centralFact);
 
-  const value = game.rollDice();
+  const dice = getCurrentDice(game.id);
 
-  game.updateCentralPulseAmount(value);
+  if (!dice) throw 'currentDice not found';
 
-  game.finishTurn();
+  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+
+  updateDiceValue(game.id, randomValue);
+
+  updateCentralPulseAmount(game.id);
+
+  finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
-  const player = game.getCurrentPlayer();
-  console.log(`${player}`);
+  const currentPlayer = getCurrentPlayer(game.id);
+  if (!currentPlayer) throw 'currentPlayer not found';
+  console.log(currentPlayer);
 
-  const centralFact = game.getCentralFact();
+  const centralFact = getCentralFact(game.id);
 
-  game.updateCentralFactDescription(
+  updateCentralFactDescription(
+    game.id,
     `${centralFact.description}\n${faker.lorem.sentence()}`,
   );
-  console.log(`${centralFact}`);
+  console.log(centralFact);
 
-  const value = game.rollDice();
+  const dice = getCurrentDice(game.id);
 
-  game.updateCentralPulseAmount(value);
+  if (!dice) throw 'currentDice not found';
 
-  game.finishTurn();
+  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+
+  updateDiceValue(game.id, randomValue);
+
+  updateCentralPulseAmount(game.id);
+
+  finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 

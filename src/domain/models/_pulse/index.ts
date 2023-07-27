@@ -1,5 +1,5 @@
-export { CentralPulse } from './_central-pulse';
-export { LightSpot } from './_light-spot';
-export { SubjectPulse } from './_subject-pulse';
+export * from './_central-pulse';
+export * from './_light-spot';
+export * from './_subject-pulse';
 
-export { Pulse } from './this';
+export { Pulse } from './model';
