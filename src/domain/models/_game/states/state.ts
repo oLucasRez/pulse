@@ -3,19 +3,20 @@ import {
   CentralPulse,
   Dice,
   Player,
+  Question,
   Subject,
+  SubjectPulse,
 } from '@domain/models';
+
+import { vector } from '@types';
 
 import { Game } from '../model';
 
 export abstract class GameState {
-  private _context: Game;
-  public get context(): Game {
-    return this._context;
-  }
+  public readonly context: Game;
 
   protected constructor(context: GameState.NewProps) {
-    this._context = context;
+    this.context = context;
   }
 
   public abstract start(): void;
@@ -25,12 +26,20 @@ export abstract class GameState {
   public abstract updateCentralFactDescription(
     description: string,
   ): CentralFact;
-  public abstract updateDiceValue(value: number): Dice;
+  public abstract updateCurrentDiceValue(value: number): Dice;
   public abstract updateCentralPulseAmount(): CentralPulse;
+  public abstract updateCurrentDicePosition(position: vector): Dice;
+  public abstract updateCurrentSubjectPosition(): Subject;
+  public abstract createSubjectPulse(gap: number): SubjectPulse;
+  public abstract createQuestion(
+    props: GameState.CreateQuestionProps,
+  ): Question;
 }
 
 export namespace GameState {
   export type NewProps = Game;
 
   export type CreateSubjectProps = Player.CreateSubjectProps;
+
+  export type CreateQuestionProps = Player.CreateQuestionProps;
 }

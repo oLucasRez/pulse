@@ -3,7 +3,9 @@ import {
   CentralPulse,
   Dice,
   Player,
+  Question,
   Subject,
+  SubjectPulse,
 } from '@domain/models';
 
 import { SubjectCreationGameState } from '../_subject-creation';
@@ -34,12 +36,28 @@ export class InitialGameState extends GameState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateDiceValue(): Dice {
-    throw 'updateDiceValue() method not allowed';
+  public updateCurrentDiceValue(): Dice {
+    throw 'updateCurrentDiceValue() method not allowed';
   }
 
   public updateCentralPulseAmount(): CentralPulse {
     throw 'updateCentralPulseAmount() method not allowed';
+  }
+
+  public updateCurrentDicePosition(): Dice {
+    throw 'updateCurrentDicePosition() method not allowed';
+  }
+
+  public updateCurrentSubjectPosition(): Subject {
+    throw 'updateCurrentSubjectPosition() method not allowed';
+  }
+
+  public createSubjectPulse(): SubjectPulse {
+    throw 'createSubjectPulse() method not allowed';
+  }
+
+  public createQuestion(): Question {
+    throw 'createQuestion() method not allowed';
   }
 }
 

@@ -5,10 +5,13 @@ import {
   Game,
   Player,
   Subject,
+  SubjectPulse,
   User,
 } from '@domain/models';
 
 import { Color } from '@domain/enums';
+
+import { vector } from './types';
 
 const userRepository: User[] = [];
 const gameRepository: Game[] = [];
@@ -135,11 +138,16 @@ export function getCurrentDice(gameID: string): Dice.DTO | null {
   return dice.toDTO();
 }
 // ----------------------------------------------------------------------------
-export function updateDiceValue(gameID: string, value: number): void {
+export function updateCurrentDiceValue(
+  gameID: string,
+  value: number,
+): Dice.DTO {
   const game = gameRepository.find(({ id }) => id === gameID);
   if (!game) throw `Game not found for ID ${gameID}`;
 
-  game.updateDiceValue(value);
+  const dice = game.updateCurrentDiceValue(value);
+
+  return dice.toDTO();
 }
 // ----------------------------------------------------------------------------
 export function updateCentralPulseAmount(gameID: string): CentralPulse.DTO {
@@ -149,4 +157,37 @@ export function updateCentralPulseAmount(gameID: string): CentralPulse.DTO {
   const centralPulse = game.updateCentralPulseAmount();
 
   return centralPulse.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function updateCurrentDicePosition(
+  gameID: string,
+  position: vector,
+): Dice.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const dice = game.updateCurrentDicePosition(position);
+
+  return dice.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function updateCurrentSubjectPosition(gameID: string): Subject.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const subject = game.updateCurrentSubjectPosition();
+
+  return subject.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function createSubjectPulse(
+  gameID: string,
+  gap: number,
+): SubjectPulse.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const subjectPulse = game.createSubjectPulse(gap);
+
+  return subjectPulse.toDTO();
 }

@@ -1,16 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
+import { Dice } from '@domain/models';
+
 import { Color } from '@domain/enums';
 
 import { App } from '@presentation/app';
 
-import { random } from './utils';
+import { random, Vector } from './utils';
 
 import {
   createGame,
   createPlayer,
   createSubject,
+  createSubjectPulse,
   createUser,
   finishTurn,
   getCentralFact,
@@ -19,10 +22,14 @@ import {
   startGame,
   updateCentralFactDescription,
   updateCentralPulseAmount,
-  updateDiceValue,
+  updateCurrentDicePosition,
+  updateCurrentDiceValue,
+  updateCurrentSubjectPosition,
 } from './usecases';
 
 const scope = (a: () => any): any => a();
+const rollDice = (dice: Dice.DTO): number =>
+  random({ max: dice.sides, type: 'int' }) + 1;
 
 const user = createUser({ name: 'Lucas' });
 
@@ -86,129 +93,182 @@ scope(() => {
 });
 console.log('  1.2 CRIAÇÀO DO FATO CENTRAL'); // ==============================
 scope(() => {
+  // busca o player atual
   const currentPlayer = getCurrentPlayer(game.id);
   if (!currentPlayer) throw 'currentPlayer not found';
   console.log(currentPlayer);
 
-  const centralFact = updateCentralFactDescription(
-    game.id,
-    faker.lorem.sentence(),
-  );
+  // busca o central-fact
+  const centralFact = getCentralFact(game.id);
+
+  // player atualiza o central-fact com sua contribuição
+  updateCentralFactDescription(game.id, faker.lorem.sentence());
   console.log(centralFact);
 
-  const dice = getCurrentDice(game.id);
-
+  // busca o dice atual
+  let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  dice = updateCurrentDiceValue(game.id, randomValue);
 
-  updateDiceValue(game.id, randomValue);
-
+  // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
 
+  // posiciona o dice ao redor do circle correto
+  if (!dice.value) throw 'Dice must have a value';
+  const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
+  updateCurrentDicePosition(game.id, newPosition);
+
+  // posiciona o subject onde o dice está
+  updateCurrentSubjectPosition(game.id);
+
+  // passa pro próximo
   finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
+  // busca o player atual
   const currentPlayer = getCurrentPlayer(game.id);
   if (!currentPlayer) throw 'currentPlayer not found';
   console.log(currentPlayer);
 
+  // busca o central-fact
   const centralFact = getCentralFact(game.id);
 
+  // player atualiza o central-fact com sua contribuição
   updateCentralFactDescription(
     game.id,
     `${centralFact.description}\n${faker.lorem.sentence()}`,
   );
   console.log(centralFact);
 
-  const dice = getCurrentDice(game.id);
-
+  // busca o dice atual
+  let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  dice = updateCurrentDiceValue(game.id, randomValue);
 
-  updateDiceValue(game.id, randomValue);
-
+  // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
 
+  // posiciona o dice ao redor do circle correto
+  if (!dice.value) throw 'Dice must have a value';
+  const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
+  updateCurrentDicePosition(game.id, newPosition);
+
+  // posiciona o subject onde o dice está
+  updateCurrentSubjectPosition(game.id);
+
+  // passa pro próximo
   finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
 scope(() => {
+  // busca o player atual
   const currentPlayer = getCurrentPlayer(game.id);
   if (!currentPlayer) throw 'currentPlayer not found';
   console.log(currentPlayer);
 
+  // busca o central-fact
   const centralFact = getCentralFact(game.id);
 
+  // player atualiza o central-fact com sua contribuição
   updateCentralFactDescription(
     game.id,
     `${centralFact.description}\n${faker.lorem.sentence()}`,
   );
   console.log(centralFact);
 
-  const dice = getCurrentDice(game.id);
-
+  // busca o dice atual
+  let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  const randomValue = random({ max: dice.sides, type: 'int' }) + 1;
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  dice = updateCurrentDiceValue(game.id, randomValue);
 
-  updateDiceValue(game.id, randomValue);
-
+  // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
 
+  // posiciona o dice ao redor do circle correto
+  if (!dice.value) throw 'Dice must have a value';
+  const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
+  updateCurrentDicePosition(game.id, newPosition);
+
+  // posiciona o subject onde o dice está
+  updateCurrentSubjectPosition(game.id);
+
+  // passa pro próximo
+  finishTurn(game.id);
+});
+console.log('2. DESENVOLVIMENTO'); // =========================================
+console.log('  2.1 INVESTIGAÇÃO'); // =========================================
+scope(() => {
+  // busca o dice atual
+  const dice = getCurrentDice(game.id);
+  if (!dice) throw 'currentDice not found';
+
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  updateCurrentDiceValue(game.id, randomValue);
+
+  // cria um subject-pulse onde o dice está, com {value} circles
+  const randomGap = random({ min: 0.5, max: 2 });
+  createSubjectPulse(game.id, randomGap);
+
+  // posiciona o dice em algum cruzamento disponível
+
+  // cria uma question
+
+  // passa pro próximo
   finishTurn(game.id);
 });
 // ----------------------------------------------------------------------------
+scope(() => {
+  // busca o dice atual
+  const dice = getCurrentDice(game.id);
+  if (!dice) throw 'currentDice not found';
 
-// for (const player of game.players) {
-//   // player cria seu subject --------------------------------------------------
-//   const subject = player.createSubject({
-//     description: faker.word.noun(),
-//   });
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  updateCurrentDiceValue(game.id, randomValue);
 
-//   console.log(`    ${player} cria ${subject}`);
+  // cria um subject-pulse onde o dice está, com {value} circles
+  const randomGap = random({ min: 0.5, max: 2 });
+  createSubjectPulse(game.id, randomGap);
 
-//   console.log('');
-// }
+  // posiciona o dice em algum cruzamento disponível
 
-// // criação do fato central ====================================================
-// console.log('  1.2 CRIAÇÀO DO FATO CENTRAL');
-// for (const player of game.players.reverse()) {
-//   // player adiciona seu subject no centralFact -------------------------------
-//   game.centralPulse.centralFact.updateDescription(
-//     `     ${faker.lorem.sentence()}`,
-//   );
+  // cria uma question
 
-//   console.log(`    ${player} atualiza o centralFact com ${player.subject}`);
-//   console.log(`    "\n${game.centralPulse.centralFact.description}    "`);
+  // passa pro próximo
+  finishTurn(game.id);
+});
+// ----------------------------------------------------------------------------
+scope(() => {
+  // busca o dice atual
+  const dice = getCurrentDice(game.id);
+  if (!dice) throw 'currentDice not found';
 
-//   // player rola o dado -------------------------------------------------------
-//   const value = player.dice.roll();
+  // rola o dice e atualiza seu value
+  const randomValue = rollDice(dice);
+  updateCurrentDiceValue(game.id, randomValue);
 
-//   console.log(
-//     `    ${player} rola ${player.dice.toString()} e o resultado é ${value}`,
-//   );
+  // cria um subject-pulse onde o dice está, com {value} circles
+  const randomGap = random({ min: 0.5, max: 2 });
+  createSubjectPulse(game.id, randomGap);
 
-//   // atualiza a quantidade de pulsos do centralPulse --------------------------
-//   game.centralPulse.updateAmount(value);
+  // posiciona o dice em algum cruzamento disponível
 
-//   console.log(
-//     `    ${game.centralPulse} atualiza seus pulsos para ${game.centralPulse.amount}`,
-//   );
+  // cria uma question
 
-//   // atualiza a posição do dice no pulso referente ao valor resultante --------
-//   const newPosition = Vector.polar(value, random({ max: 2 * Math.PI }));
-
-//   player.dice.updatePosition(newPosition);
-
-//   console.log(
-//     `    ${player.dice} reposicionado pra posição ${player.dice.position}`,
-//   );
-
-//   console.log('');
-// }
+  // passa pro próximo
+  finishTurn(game.id);
+});
 
 // console.log('2. DESENVOLVIMENTO');
 // const lightSpotColors = [Color.GREEN, Color.PURPLE, Color.CYAN];

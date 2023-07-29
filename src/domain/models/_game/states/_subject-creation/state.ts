@@ -3,7 +3,9 @@ import {
   CentralPulse,
   Dice,
   Player,
+  Question,
   Subject,
+  SubjectPulse,
 } from '@domain/models';
 
 import { Round } from '../../_round';
@@ -15,7 +17,7 @@ export class SubjectCreationGameState extends GameState {
 
   private _turn: IteratorResult<Player, null>;
 
-  public constructor(context: SubjectCreationGameState.NewProps) {
+  public constructor(context: GameState.NewProps) {
     super(context);
 
     this._rounding = this.context.getRound().start(Round.Rotation.CLOCKWISE);
@@ -41,11 +43,8 @@ export class SubjectCreationGameState extends GameState {
       );
   }
 
-  public createSubject(
-    props: SubjectCreationGameState.CreateSubjectProps,
-  ): Subject {
+  public createSubject(props: GameState.CreateSubjectProps): Subject {
     const currentPlayer = this._turn.value;
-
     if (!currentPlayer) throw 'currentPlayer not found';
 
     if (currentPlayer.getSubject()) throw 'Player already have a subject';
@@ -59,9 +58,8 @@ export class SubjectCreationGameState extends GameState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateDiceValue(value: number): Dice {
+  public updateCurrentDiceValue(value: number): Dice {
     const currentPlayer = this.getCurrentPlayer();
-
     if (!currentPlayer) throw 'currentPlayer not found';
 
     const dice = currentPlayer.getDice();
@@ -74,10 +72,20 @@ export class SubjectCreationGameState extends GameState {
   public updateCentralPulseAmount(): CentralPulse {
     throw 'updateCentralPulseAmount() method not allowed';
   }
-}
 
-export namespace SubjectCreationGameState {
-  export type NewProps = GameState.NewProps;
+  public updateCurrentDicePosition(): Dice {
+    throw 'updateCurrentDicePosition() method not allowed';
+  }
 
-  export type CreateSubjectProps = Player.CreateSubjectProps;
+  public updateCurrentSubjectPosition(): Subject {
+    throw 'updateCurrentSubjectPosition() method not allowed';
+  }
+
+  public createSubjectPulse(): SubjectPulse {
+    throw 'createSubjectPulse() method not allowed';
+  }
+
+  public createQuestion(): Question {
+    throw 'createQuestion() method not allowed';
+  }
 }

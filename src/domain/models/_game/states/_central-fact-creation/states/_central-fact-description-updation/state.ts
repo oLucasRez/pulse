@@ -1,10 +1,10 @@
-import { CentralFact, CentralPulse, Dice } from '@domain/models';
+import { CentralFact, CentralPulse, Dice, Subject } from '@domain/models';
 
-import { DiceRollingState } from '../_dice-rolling';
+import { DiceValueUpdationState } from '../_dice-value-updation';
 import { CentralFactCreationState } from '../state';
 
 export class CentralFactDescriptionUpdationState extends CentralFactCreationState {
-  public constructor(context: CentralFactDescriptionUpdationState.NewProps) {
+  public constructor(context: CentralFactCreationState.NewProps) {
     super(context);
   }
 
@@ -14,20 +14,24 @@ export class CentralFactDescriptionUpdationState extends CentralFactCreationStat
       .getCentralFact()
       .updateDescription(description);
 
-    this.context.setState(new DiceRollingState(this.context));
+    this.context.setState(new DiceValueUpdationState(this.context));
 
     return centralFact;
   }
 
-  public updateDiceValue(): Dice {
-    throw 'updateDiceValue() method not allowed';
+  public updateCurrentDiceValue(): Dice {
+    throw 'updateCurrentDiceValue() method not allowed';
   }
 
   public updateCentralPulseAmount(): CentralPulse {
     throw 'updateCentralPulseAmount() method not allowed';
   }
-}
 
-export namespace CentralFactDescriptionUpdationState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  public updateCurrentDicePosition(): Dice {
+    throw 'updateCurrentDicePosition() method not allowed';
+  }
+
+  public updateCurrentSubjectPosition(): Subject {
+    throw 'updateCurrentSubjectPosition() method not allowed';
+  }
 }

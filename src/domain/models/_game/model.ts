@@ -114,14 +114,26 @@ export class Game extends Model {
     return centralFact;
   }
 
-  public updateDiceValue(value: number): Dice {
-    return this.state.updateDiceValue(value);
+  public updateCurrentDiceValue(value: number): Dice {
+    return this.state.updateCurrentDiceValue(value);
   }
 
   public updateCentralPulseAmount(): CentralPulse {
     const centralPulse = this.state.updateCentralPulseAmount();
 
     return centralPulse;
+  }
+
+  public updateCurrentDicePosition(position: vector): Dice {
+    return this.state.updateCurrentDicePosition(position);
+  }
+
+  public updateCurrentSubjectPosition(): Subject {
+    return this.state.updateCurrentSubjectPosition();
+  }
+
+  public createSubjectPulse(gap: number): SubjectPulse {
+    return this.state.createSubjectPulse(gap);
   }
 
   public createPlayer(props: Game.CreatePlayerProps): Player {

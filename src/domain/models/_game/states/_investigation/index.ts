@@ -1,0 +1,1 @@
+export { InvestigationGameState } from './state';

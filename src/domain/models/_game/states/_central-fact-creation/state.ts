@@ -3,11 +3,15 @@ import {
   CentralPulse,
   Dice,
   Player,
+  Question,
   Subject,
+  SubjectPulse,
 } from '@domain/models';
 
+import { vector } from '@types';
+
 import { Round } from '../../_round';
-import { InitialGameState } from '../_initial';
+import { InvestigationGameState } from '../_investigation';
 import { GameState } from '../state';
 import {
   CentralFactCreationState,
@@ -15,27 +19,20 @@ import {
 } from './states';
 
 export class CentralFactCreationGameState extends GameState {
-  private _rounding: Round.StartReturn;
+  private rounding: Round.StartReturn;
+  private turn: IteratorResult<Player, null>;
 
-  private _turn: IteratorResult<Player, null>;
-  public get turn(): IteratorResult<Player, null> {
-    return this._turn;
-  }
-
-  private _state: CentralFactCreationState;
+  private state: CentralFactCreationState;
 
   public constructor(context: CentralFactCreationGameState.NewProps) {
     super(context);
 
-    this._rounding = this.context
-      .getRound()
-      .start(Round.Rotation.ANTICLOCKWISE);
-    this._turn = this._rounding.next();
-    this._state = new CentralFactDescriptionUpdationState(this);
+    this.rounding = this.context.getRound().start(Round.Rotation.ANTICLOCKWISE);
+    this.turn = this.rounding.next();
+    this.state = new CentralFactDescriptionUpdationState(this);
   }
-
   public setState(state: CentralFactCreationState): void {
-    this._state = state;
+    this.state = state;
   }
 
   public start(): void {
@@ -43,16 +40,16 @@ export class CentralFactCreationGameState extends GameState {
   }
 
   public getCurrentPlayer(): Player | null {
-    const currentPlayer = this._turn.value;
+    const currentPlayer = this.turn.value;
 
     return currentPlayer;
   }
 
   public finishTurn(): void {
-    this._turn = this._rounding.next();
+    this.turn = this.rounding.next();
 
-    if (this._turn.done)
-      return this.context.setState(new InitialGameState(this.context));
+    if (this.turn.done)
+      return this.context.setState(new InvestigationGameState(this.context));
   }
 
   public createSubject(): Subject {
@@ -60,15 +57,31 @@ export class CentralFactCreationGameState extends GameState {
   }
 
   public updateCentralFactDescription(description: string): CentralFact {
-    return this._state.updateCentralFactDescription(description);
+    return this.state.updateCentralFactDescription(description);
   }
 
-  public updateDiceValue(value: number): Dice {
-    return this._state.updateDiceValue(value);
+  public updateCurrentDiceValue(value: number): Dice {
+    return this.state.updateCurrentDiceValue(value);
   }
 
   public updateCentralPulseAmount(): CentralPulse {
-    return this._state.updateCentralPulseAmount();
+    return this.state.updateCentralPulseAmount();
+  }
+
+  public updateCurrentDicePosition(position: vector): Dice {
+    return this.state.updateCurrentDicePosition(position);
+  }
+
+  public updateCurrentSubjectPosition(): Subject {
+    return this.state.updateCurrentSubjectPosition();
+  }
+
+  public createSubjectPulse(): SubjectPulse {
+    throw 'createSubjectPulse() method not allowed';
+  }
+
+  public createQuestion(): Question {
+    throw 'createQuestion() method not allowed';
   }
 }
 
