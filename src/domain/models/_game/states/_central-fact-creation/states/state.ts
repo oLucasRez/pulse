@@ -14,7 +14,7 @@ export abstract class CentralFactCreationState {
   public abstract updateCentralFactDescription(
     description: string,
   ): CentralFact;
-  public abstract updateCurrentDiceValue(value: number): Dice;
+  public abstract rollCurrentDice(): Dice;
   public abstract updateCentralPulseAmount(): CentralPulse;
   public abstract updateCurrentDicePosition(position: vector): Dice;
   public abstract updateCurrentSubjectPosition(): Subject;

@@ -8,6 +8,8 @@ import {
   SubjectPulse,
 } from '@domain/models';
 
+import { crossing } from '@types';
+
 import { SubjectCreationGameState } from '../_subject-creation';
 import { GameState } from '../state';
 
@@ -36,8 +38,8 @@ export class InitialGameState extends GameState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateCurrentDiceValue(): Dice {
-    throw 'updateCurrentDiceValue() method not allowed';
+  public rollCurrentDice(): Dice {
+    throw 'rollCurrentDice() method not allowed';
   }
 
   public updateCentralPulseAmount(): CentralPulse {
@@ -54,6 +56,10 @@ export class InitialGameState extends GameState {
 
   public createSubjectPulse(): SubjectPulse {
     throw 'createSubjectPulse() method not allowed';
+  }
+
+  public getCrossings(): crossing[] {
+    throw 'getCrossings() method not allowed';
   }
 
   public createQuestion(): Question {

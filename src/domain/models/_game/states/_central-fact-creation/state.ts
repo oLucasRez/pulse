@@ -8,7 +8,7 @@ import {
   SubjectPulse,
 } from '@domain/models';
 
-import { vector } from '@types';
+import { crossing, vector } from '@types';
 
 import { Round } from '../../_round';
 import { InvestigationGameState } from '../_investigation';
@@ -60,8 +60,8 @@ export class CentralFactCreationGameState extends GameState {
     return this.state.updateCentralFactDescription(description);
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
-    return this.state.updateCurrentDiceValue(value);
+  public rollCurrentDice(): Dice {
+    return this.state.rollCurrentDice();
   }
 
   public updateCentralPulseAmount(): CentralPulse {
@@ -78,6 +78,10 @@ export class CentralFactCreationGameState extends GameState {
 
   public createSubjectPulse(): SubjectPulse {
     throw 'createSubjectPulse() method not allowed';
+  }
+
+  public getCrossings(): crossing[] {
+    throw 'getCrossings() method not allowed';
   }
 
   public createQuestion(): Question {

@@ -1,5 +1,6 @@
 export { unique } from './_array';
 export { Circle } from './_circle';
+export { Crossing } from './_crossing';
 export { generateAll } from './_generate-all';
 export { isNumber } from './_is-number';
 export { cos, sin, sqrt, abs, floor, pow } from './_math';

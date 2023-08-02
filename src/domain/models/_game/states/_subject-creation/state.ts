@@ -8,6 +8,8 @@ import {
   SubjectPulse,
 } from '@domain/models';
 
+import { crossing } from '@types';
+
 import { Round } from '../../_round';
 import { CentralFactCreationGameState } from '../_central-fact-creation';
 import { GameState } from '../state';
@@ -58,13 +60,13 @@ export class SubjectCreationGameState extends GameState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
+  public rollCurrentDice(): Dice {
     const currentPlayer = this.getCurrentPlayer();
     if (!currentPlayer) throw 'currentPlayer not found';
 
     const dice = currentPlayer.getDice();
 
-    dice.updateValue(value);
+    dice.roll();
 
     return dice;
   }
@@ -83,6 +85,10 @@ export class SubjectCreationGameState extends GameState {
 
   public createSubjectPulse(): SubjectPulse {
     throw 'createSubjectPulse() method not allowed';
+  }
+
+  public getCrossings(): crossing[] {
+    throw 'getCrossings() method not allowed';
   }
 
   public createQuestion(): Question {

@@ -1,19 +1,21 @@
 import { Dice, SubjectPulse } from '@domain/models';
 
+import { crossing } from '@types';
+
 import { SubjectPulseCreationState } from '../_subject-pulse-creation';
 import { InvestigationState } from '../state';
 
-export class DiceValueUpdationState extends InvestigationState {
+export class DiceRollingState extends InvestigationState {
   public constructor(context: InvestigationState.NewProps) {
     super(context);
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
+  public rollCurrentDice(): Dice {
     const currentPlayer = this.context.getCurrentPlayer();
     if (!currentPlayer) throw 'currentPlayer not found';
 
     const dice = currentPlayer.getDice();
-    dice.updateValue(value);
+    dice.roll();
 
     this.context.setState(new SubjectPulseCreationState(this.context));
 
@@ -22,5 +24,9 @@ export class DiceValueUpdationState extends InvestigationState {
 
   public createSubjectPulse(): SubjectPulse {
     throw 'createSubjectPulse() method not allowed';
+  }
+
+  public getCrossings(): crossing[] {
+    throw 'getCrossings() method not allowed';
   }
 }

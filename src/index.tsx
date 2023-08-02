@@ -1,8 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
-import { Dice } from '@domain/models';
-
 import { Color } from '@domain/enums';
 
 import { App } from '@presentation/app';
@@ -17,19 +15,18 @@ import {
   createUser,
   finishTurn,
   getCentralFact,
+  getCrossings,
   getCurrentDice,
   getCurrentPlayer,
+  rollCurrentDice,
   startGame,
   updateCentralFactDescription,
   updateCentralPulseAmount,
   updateCurrentDicePosition,
-  updateCurrentDiceValue,
   updateCurrentSubjectPosition,
 } from './usecases';
 
 const scope = (a: () => any): any => a();
-const rollDice = (dice: Dice.DTO): number =>
-  random({ max: dice.sides, type: 'int' }) + 1;
 
 const user = createUser({ name: 'Lucas' });
 
@@ -109,9 +106,8 @@ scope(() => {
   let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  dice = updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  dice = rollCurrentDice(game.id);
 
   // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
@@ -148,9 +144,8 @@ scope(() => {
   let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  dice = updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  dice = rollCurrentDice(game.id);
 
   // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
@@ -187,9 +182,8 @@ scope(() => {
   let dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  dice = updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  dice = rollCurrentDice(game.id);
 
   // atualiza o central-pulse com amount referente ao value do dice
   updateCentralPulseAmount(game.id);
@@ -212,15 +206,16 @@ scope(() => {
   const dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  rollCurrentDice(game.id);
 
   // cria um subject-pulse onde o dice está, com {value} circles
   const randomGap = random({ min: 0.5, max: 2 });
   createSubjectPulse(game.id, randomGap);
 
   // posiciona o dice em algum cruzamento disponível
+  const crossings = getCrossings(game.id);
+  console.log(crossings);
 
   // cria uma question
 
@@ -233,15 +228,16 @@ scope(() => {
   const dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  rollCurrentDice(game.id);
 
   // cria um subject-pulse onde o dice está, com {value} circles
   const randomGap = random({ min: 0.5, max: 2 });
   createSubjectPulse(game.id, randomGap);
 
   // posiciona o dice em algum cruzamento disponível
+  const crossings = getCrossings(game.id);
+  console.log(crossings);
 
   // cria uma question
 
@@ -254,15 +250,16 @@ scope(() => {
   const dice = getCurrentDice(game.id);
   if (!dice) throw 'currentDice not found';
 
-  // rola o dice e atualiza seu value
-  const randomValue = rollDice(dice);
-  updateCurrentDiceValue(game.id, randomValue);
+  // rola o dice
+  rollCurrentDice(game.id);
 
   // cria um subject-pulse onde o dice está, com {value} circles
   const randomGap = random({ min: 0.5, max: 2 });
   createSubjectPulse(game.id, randomGap);
 
   // posiciona o dice em algum cruzamento disponível
+  const crossings = getCrossings(game.id);
+  console.log(crossings);
 
   // cria uma question
 

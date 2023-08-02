@@ -11,7 +11,7 @@ import {
 
 import { Color } from '@domain/enums';
 
-import { vector } from './types';
+import { crossing, vector } from './types';
 
 const userRepository: User[] = [];
 const gameRepository: Game[] = [];
@@ -138,14 +138,11 @@ export function getCurrentDice(gameID: string): Dice.DTO | null {
   return dice.toDTO();
 }
 // ----------------------------------------------------------------------------
-export function updateCurrentDiceValue(
-  gameID: string,
-  value: number,
-): Dice.DTO {
+export function rollCurrentDice(gameID: string): Dice.DTO {
   const game = gameRepository.find(({ id }) => id === gameID);
   if (!game) throw `Game not found for ID ${gameID}`;
 
-  const dice = game.updateCurrentDiceValue(value);
+  const dice = game.rollCurrentDice();
 
   return dice.toDTO();
 }
@@ -190,4 +187,13 @@ export function createSubjectPulse(
   const subjectPulse = game.createSubjectPulse(gap);
 
   return subjectPulse.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function getCrossings(gameID: string): crossing.DTO[] {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const crossings = game.getCrossings();
+
+  return crossings.map((crossing) => crossing.toDTO());
 }

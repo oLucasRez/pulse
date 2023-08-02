@@ -12,12 +12,12 @@ export class DiceValueUpdationState extends CentralFactCreationState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
+  public rollCurrentDice(): Dice {
     const currentPlayer = this.context.getCurrentPlayer();
     if (!currentPlayer) throw 'currentPlayer not found';
 
     const dice = currentPlayer.getDice();
-    dice.updateValue(value);
+    dice.roll();
 
     this.context.setState(new CentralPulseAmountUpdationState(this.context));
 

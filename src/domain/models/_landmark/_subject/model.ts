@@ -2,13 +2,14 @@ import { Color } from '@domain/enums';
 
 import { vector } from '@types';
 
-import { Player } from '../..';
+import { Player, SubjectPulse } from '../..';
 import { Landmark } from '../model';
 
 export class Subject extends Landmark {
   private description: string;
   private color: Color;
   private author: Player;
+  private path: SubjectPulse[];
 
   public constructor(props: Subject.NewProps) {
     const { description, color, author, ...landmarkProps } = props;
@@ -18,6 +19,7 @@ export class Subject extends Landmark {
     this.description = description;
     this.color = color;
     this.author = author;
+    this.path = [];
   }
 
   public toDTO(): Subject.DTO {
@@ -28,6 +30,7 @@ export class Subject extends Landmark {
       description: this.description,
       color: this.color,
       authorID: this.author.id,
+      pathID: this.path.map(({ id }) => id),
     });
   }
 
@@ -41,6 +44,26 @@ export class Subject extends Landmark {
 
   public updatePosition(value: vector): void {
     this.position = value;
+  }
+
+  public createPulse(props: Subject.CreatePulseProps): SubjectPulse {
+    if (!this.position) throw 'Subject must be on the map';
+
+    const pulse = new SubjectPulse({
+      ...props,
+      origin: this.position,
+      subject: this,
+    });
+
+    this.path.push(pulse);
+
+    return pulse;
+  }
+
+  public getLastPulse(): SubjectPulse | null {
+    if (!this.path.length) return null;
+
+    return this.path[this.path.length - 1];
   }
 
   public toString(): string {
@@ -69,6 +92,7 @@ export namespace Subject {
     description: string;
     color: Color;
     authorID: string;
+    pathID: string[];
   };
 
   export type NewProps = Landmark.NewProps & {
@@ -76,4 +100,9 @@ export namespace Subject {
     color: Color;
     author: Player;
   };
+
+  export type CreatePulseProps = Omit<
+    SubjectPulse.NewProps,
+    'origin' | 'subject'
+  >;
 }

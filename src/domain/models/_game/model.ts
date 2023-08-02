@@ -1,6 +1,4 @@
-import { abs, pow, sqrt, unique, Vector } from '@utils';
-
-import { circle, vector } from '@types';
+import { circle, crossing, vector } from '@types';
 
 import {
   CentralFact,
@@ -16,8 +14,6 @@ import {
 import { Model } from '../model';
 import { Round } from './_round';
 import { GameState, InitialGameState } from './states';
-
-type Crossing = { scope: Subject[]; position: vector };
 
 export class Game extends Model {
   private host: User;
@@ -114,8 +110,8 @@ export class Game extends Model {
     return centralFact;
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
-    return this.state.updateCurrentDiceValue(value);
+  public rollCurrentDice(): Dice {
+    return this.state.rollCurrentDice();
   }
 
   public updateCentralPulseAmount(): CentralPulse {
@@ -158,99 +154,98 @@ export class Game extends Model {
     this.questions.push(question);
   }
 
-  public getCrossings(
-    targetPulse: SubjectPulse,
-    tolerance: number = 0,
-  ): Crossing[] {
-    const targetLastCircle = targetPulse.getLastCircle();
+  public getCrossings(tolerance: number = 0): crossing[] {
+    return this.state.getCrossings(tolerance);
 
-    if (!targetLastCircle) return [];
+    // const targetLastCircle = targetPulse.getLastCircle();
 
-    function calcCrossings(c1: circle, c2: circle): vector[] {
-      const d = c1.c.sub(c2.c).mag();
-      const a = (pow(c1.r, 2) - pow(c2.r, 2) + pow(d, 2)) / (2 * d);
-      const h = sqrt(pow(c1.r, 2) - pow(a, 2));
-      const p3 = c1.c.add(c2.c.sub(c1.c).mult(a / d));
+    // if (!targetLastCircle) return [];
 
-      if (isNaN(h)) return [];
+    // function calcCrossings(c1: circle, c2: circle): vector[] {
+    //   const d = c1.c.sub(c2.c).mag();
+    //   const a = (pow(c1.r, 2) - pow(c2.r, 2) + pow(d, 2)) / (2 * d);
+    //   const h = sqrt(pow(c1.r, 2) - pow(a, 2));
+    //   const p3 = c1.c.add(c2.c.sub(c1.c).mult(a / d));
 
-      return [
-        Vector(
-          p3.x + ((c2.c.y - c1.c.y) * h) / d,
-          p3.y - ((c2.c.x - c1.c.x) * h) / d,
-        ),
-        Vector(
-          p3.x - ((c2.c.y - c1.c.y) * h) / d,
-          p3.y + ((c2.c.x - c1.c.x) * h) / d,
-        ),
-      ];
-    }
+    //   if (isNaN(h)) return [];
 
-    const crossings: Crossing[] = [];
+    //   return [
+    //     Vector(
+    //       p3.x + ((c2.c.y - c1.c.y) * h) / d,
+    //       p3.y - ((c2.c.x - c1.c.x) * h) / d,
+    //     ),
+    //     Vector(
+    //       p3.x - ((c2.c.y - c1.c.y) * h) / d,
+    //       p3.y + ((c2.c.x - c1.c.x) * h) / d,
+    //     ),
+    //   ];
+    // }
 
-    for (const pulse of this.subjectPulses) {
-      if (targetPulse.isEqual(pulse)) continue;
+    // const crossings: Crossing[] = [];
 
-      for (const circle of pulse.getCircles()) {
-        const positions = calcCrossings(targetLastCircle, circle);
+    // for (const pulse of this.subjectPulses) {
+    //   if (targetPulse.isEqual(pulse)) continue;
 
-        positions.map((position) =>
-          crossings.push({
-            scope: [targetPulse.getSubject(), pulse.getSubject()],
-            position,
-          }),
-        );
-      }
-    }
+    //   for (const circle of pulse.getCircles()) {
+    //     const positions = calcCrossings(targetLastCircle, circle);
 
-    for (const circle of this.centralPulse.getCircles()) {
-      const positions = calcCrossings(targetLastCircle, circle);
+    //     positions.map((position) =>
+    //       crossings.push({
+    //         scope: [targetPulse.getSubject(), pulse.getSubject()],
+    //         position,
+    //       }),
+    //     );
+    //   }
+    // }
 
-      positions.map((position) =>
-        crossings.push({
-          scope: [targetPulse.getSubject()],
-          position,
-        }),
-      );
-    }
+    // for (const circle of this.centralPulse.getCircles()) {
+    //   const positions = calcCrossings(targetLastCircle, circle);
 
-    const crossingsAreEqual = (
-      crossingA: Crossing,
-      crossingB: Crossing,
-    ): boolean =>
-      abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
+    //   positions.map((position) =>
+    //     crossings.push({
+    //       scope: [targetPulse.getSubject()],
+    //       position,
+    //     }),
+    //   );
+    // }
 
-    const replaceCrossingsWith = (
-      crossingA: Crossing,
-      crossingB: Crossing,
-    ): Crossing => {
-      const pA = crossingA.scope.length;
-      const pB = crossingB.scope.length;
+    // const crossingsAreEqual = (
+    //   crossingA: Crossing,
+    //   crossingB: Crossing,
+    // ): boolean =>
+    //   abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
 
-      const position = crossingA.position
-        .mult(pA)
-        .add(crossingB.position.mult(pB))
-        .div(pA + pB);
+    // const replaceCrossingsWith = (
+    //   crossingA: Crossing,
+    //   crossingB: Crossing,
+    // ): Crossing => {
+    //   const pA = crossingA.scope.length;
+    //   const pB = crossingB.scope.length;
 
-      return { position, scope: [...crossingA.scope, ...crossingB.scope] };
-    };
+    //   const position = crossingA.position
+    //     .mult(pA)
+    //     .add(crossingB.position.mult(pB))
+    //     .div(pA + pB);
 
-    const filteredCrossings = unique(
-      crossings,
-      crossingsAreEqual,
-      replaceCrossingsWith,
-    );
+    //   return { position, scope: [...crossingA.scope, ...crossingB.scope] };
+    // };
 
-    for (const crossing of filteredCrossings) {
-      const subjectsAreEqual = (
-        subjectA: Subject,
-        subjectB: Subject,
-      ): boolean => subjectA.isEqual(subjectB);
+    // const filteredCrossings = unique(
+    //   crossings,
+    //   crossingsAreEqual,
+    //   replaceCrossingsWith,
+    // );
 
-      crossing.scope = unique(crossing.scope, subjectsAreEqual);
-    }
+    // for (const crossing of filteredCrossings) {
+    //   const subjectsAreEqual = (
+    //     subjectA: Subject,
+    //     subjectB: Subject,
+    //   ): boolean => subjectA.isEqual(subjectB);
 
-    return filteredCrossings;
+    //   crossing.scope = unique(crossing.scope, subjectsAreEqual);
+    // }
+
+    // return filteredCrossings;
   }
 }
 

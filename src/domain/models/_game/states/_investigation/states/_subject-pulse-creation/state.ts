@@ -1,6 +1,8 @@
 import { Dice, SubjectPulse } from '@domain/models';
 
-import { DiceValueUpdationState } from '../_dice-value-updation';
+import { crossing } from '@types';
+
+import { CrossingsGettionState } from '../_crossings-gettion';
 import { InvestigationState } from '../state';
 
 export class SubjectPulseCreationState extends InvestigationState {
@@ -8,8 +10,8 @@ export class SubjectPulseCreationState extends InvestigationState {
     super(context);
   }
 
-  public updateCurrentDiceValue(): Dice {
-    throw 'updateCurrentDiceValue() method not allowed';
+  public rollCurrentDice(): Dice {
+    throw 'rollCurrentDice() method not allowed';
   }
 
   public createSubjectPulse(gap: number): SubjectPulse {
@@ -27,15 +29,17 @@ export class SubjectPulseCreationState extends InvestigationState {
     const playerSubject = currentPlayer.getSubject();
     if (!playerSubject) throw 'Current player must have a subject';
 
-    const subjectPulse = new SubjectPulse({
-      origin: dicePosition,
+    const subjectPulse = playerSubject.createPulse({
       gap,
       amount: diceValue,
-      subject: playerSubject,
     });
 
-    this.context.setState(new DiceValueUpdationState(this.context));
+    this.context.setState(new CrossingsGettionState(this.context));
 
     return subjectPulse;
+  }
+
+  public getCrossings(): crossing[] {
+    throw 'getCrossings() method not allowed';
   }
 }

@@ -19,8 +19,8 @@ export class CentralFactDescriptionUpdationState extends CentralFactCreationStat
     return centralFact;
   }
 
-  public updateCurrentDiceValue(): Dice {
-    throw 'updateCurrentDiceValue() method not allowed';
+  public rollCurrentDice(): Dice {
+    throw 'rollCurrentDice() method not allowed';
   }
 
   public updateCentralPulseAmount(): CentralPulse {

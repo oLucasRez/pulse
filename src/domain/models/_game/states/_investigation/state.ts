@@ -9,8 +9,10 @@ import {
   SubjectPulse,
 } from '@domain/models';
 
+import { crossing } from '@types';
+
 import { GameState } from '../state';
-import { DiceValueUpdationState, InvestigationState } from './states';
+import { DiceRollingState, InvestigationState } from './states';
 
 export class InvestigationGameState extends GameState {
   private rounding: Round.StartReturn;
@@ -23,7 +25,7 @@ export class InvestigationGameState extends GameState {
 
     this.rounding = this.context.getRound().start(Round.Rotation.CLOCKWISE);
     this.turn = this.rounding.next();
-    this.state = new DiceValueUpdationState(this);
+    this.state = new DiceRollingState(this);
   }
 
   public setState(state: InvestigationState): void {
@@ -55,8 +57,8 @@ export class InvestigationGameState extends GameState {
     throw 'updateCentralFactDescription() method not allowed';
   }
 
-  public updateCurrentDiceValue(value: number): Dice {
-    return this.state.updateCurrentDiceValue(value);
+  public rollCurrentDice(): Dice {
+    return this.state.rollCurrentDice();
   }
 
   public updateCentralPulseAmount(): CentralPulse {
@@ -73,6 +75,10 @@ export class InvestigationGameState extends GameState {
 
   public createSubjectPulse(gap: number): SubjectPulse {
     return this.state.createSubjectPulse(gap);
+  }
+
+  public getCrossings(tolerance?: number): crossing[] {
+    return this.state.getCrossings(tolerance);
   }
 
   public createQuestion(props: GameState.CreateQuestionProps): Question {

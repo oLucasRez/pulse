@@ -1,5 +1,7 @@
 import { Color } from '@domain/enums';
 
+import { random } from '@utils';
+
 import { vector } from '@types';
 
 import { Player } from '..';
@@ -46,20 +48,13 @@ export class Dice extends Model {
     this.owner = owner;
   }
 
-  public updateValue(value: number): number {
+  public roll(): number {
+    const value = random({ max: this.sides, type: 'int' }) + 1;
+
     this.value = value;
 
     return value;
   }
-
-  // public roll(newPosition?: vector): number {
-  //   const value = random({ max: this.sides, type: 'int' }) + 1;
-
-  //   if (newPosition) this.position = newPosition;
-  //   this.value = value;
-
-  //   return value;
-  // }
 
   public updatePosition(value: vector): void {
     this.position = value;
