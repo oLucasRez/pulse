@@ -9,7 +9,9 @@ import {
   SubjectPulse,
 } from '@domain/models';
 
-import { crossing } from '@types';
+import { Crossing } from '@utils';
+
+import { crossing, vector } from '@types';
 
 import { GameState } from '../state';
 import { DiceRollingState, InvestigationState } from './states';
@@ -65,8 +67,8 @@ export class InvestigationGameState extends GameState {
     throw 'updateCentralPulseAmount() method not allowed';
   }
 
-  public updateCurrentDicePosition(): Dice {
-    throw 'updateCurrentDicePosition() method not allowed';
+  public updateCurrentDicePosition(position: vector): Dice {
+    return this.state.updateCurrentDicePosition(position);
   }
 
   public updateCurrentSubjectPosition(): Subject {
@@ -78,15 +80,25 @@ export class InvestigationGameState extends GameState {
   }
 
   public getCrossings(tolerance?: number): crossing[] {
-    return this.state.getCrossings(tolerance);
+    const currentPlayer = this.context.getCurrentPlayer();
+    if (!currentPlayer) throw 'currentPlayer not found';
+
+    const playerSubject = currentPlayer.getSubject();
+    if (!playerSubject) throw 'Current player must have a subject';
+
+    const lastPulse = playerSubject.getLastPulse();
+    if (!lastPulse) return [];
+
+    const crossings = Crossing.get(
+      lastPulse,
+      this.context.getPulses(),
+      tolerance,
+    );
+
+    return crossings;
   }
 
   public createQuestion(props: GameState.CreateQuestionProps): Question {
-    const currentPlayer = this.getCurrentPlayer();
-    if (!currentPlayer) throw 'currentPlayer not found';
-
-    const question = currentPlayer.createQuestion(props);
-
-    return question;
+    return this.state.createQuestion(props);
   }
 }

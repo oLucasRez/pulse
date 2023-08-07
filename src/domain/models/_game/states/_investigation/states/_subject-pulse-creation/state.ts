@@ -1,8 +1,6 @@
-import { Dice, SubjectPulse } from '@domain/models';
+import { Dice, Question, SubjectPulse } from '@domain/models';
 
-import { crossing } from '@types';
-
-import { CrossingsGettionState } from '../_crossings-gettion';
+import { DicePositionUpdationState } from '../_dice-position-updation';
 import { InvestigationState } from '../state';
 
 export class SubjectPulseCreationState extends InvestigationState {
@@ -34,12 +32,16 @@ export class SubjectPulseCreationState extends InvestigationState {
       amount: diceValue,
     });
 
-    this.context.setState(new CrossingsGettionState(this.context));
+    this.context.setState(new DicePositionUpdationState(this.context));
 
     return subjectPulse;
   }
 
-  public getCrossings(): crossing[] {
-    throw 'getCrossings() method not allowed';
+  public updateCurrentDicePosition(): Dice {
+    throw 'updateCurrentDicePosition() method not allowed';
+  }
+
+  public createQuestion(): Question {
+    throw 'createQuestion() method not allowed';
   }
 }

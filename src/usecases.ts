@@ -4,12 +4,15 @@ import {
   Dice,
   Game,
   Player,
+  Question,
   Subject,
   SubjectPulse,
   User,
 } from '@domain/models';
 
 import { Color } from '@domain/enums';
+
+import { Vector } from '@utils';
 
 import { crossing, vector } from './types';
 
@@ -33,6 +36,13 @@ export function createGame(userID: string): Game.DTO {
   const game = user.createGame({});
 
   gameRepository.push(game);
+
+  return game.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function getGame(gameID: string): Game.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
 
   return game.toDTO();
 }
@@ -158,12 +168,13 @@ export function updateCentralPulseAmount(gameID: string): CentralPulse.DTO {
 // ----------------------------------------------------------------------------
 export function updateCurrentDicePosition(
   gameID: string,
-  position: vector,
+  position: vector.DTO,
 ): Dice.DTO {
   const game = gameRepository.find(({ id }) => id === gameID);
   if (!game) throw `Game not found for ID ${gameID}`;
 
-  const dice = game.updateCurrentDicePosition(position);
+  // @todo: extirpar vector.DTO
+  const dice = game.updateCurrentDicePosition(Vector(position.x, position.y));
 
   return dice.toDTO();
 }
@@ -196,4 +207,29 @@ export function getCrossings(gameID: string): crossing.DTO[] {
   const crossings = game.getCrossings();
 
   return crossings.map((crossing) => crossing.toDTO());
+}
+// ----------------------------------------------------------------------------
+type CreateQuestionPayload = {
+  description: string;
+  scope: Subject.DTO[];
+};
+export function createQuestion(
+  gameID: string,
+  payload: CreateQuestionPayload,
+): Question.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const { description } = payload;
+
+  const scope: Subject[] = [];
+  subjectRepository.map(
+    (subject) =>
+      payload.scope.map(({ id }) => id).includes(subject.id) &&
+      scope.push(subject),
+  );
+
+  const question = game.createQuestion({ description, scope });
+
+  return question.toDTO();
 }

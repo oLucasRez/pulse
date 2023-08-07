@@ -38,12 +38,13 @@ export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
       amount: this.getAmount(),
       circles: this.circles.map((circle) => circle.toDTO()),
       lastCircle: this.getLastCircle()?.toDTO() || null,
+      landmarkID: this.landmark.id,
     });
   }
 
   public getLastCircle(): circle | null {
     const lastCircle = this.circles.reduce(
-      (circleA, circleB) => (circleA?.r ?? 0 > circleB.r ? circleA : circleB),
+      (lastOne, circle) => (lastOne?.r ?? 0 < circle.r ? circle : lastOne),
       null as circle | null,
     );
 
@@ -69,6 +70,7 @@ export namespace Pulse {
     amount: number;
     circles: circle.DTO[];
     lastCircle: circle.DTO | null;
+    landmarkID: string;
   };
 
   export type NewProps<LandmarkType extends Landmark> = Model.NewProps & {

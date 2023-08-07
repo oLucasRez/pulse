@@ -8,12 +8,12 @@
     "paths": {
       "@domain/*": ["./domain/*"],
       "@presentation/*": ["./presentation/*"],
-      "@utils/*": ["./utils/*"],
       "@utils": ["./utils"],
-      "@types/*": ["./types/*"],
+      "@utils/*": ["./utils/*"],
       "@types": ["./types"],
-      "@enums/*": ["./enums/*"],
-      "@enums": ["./enums"]
+      "@types/*": ["./types/*"],
+      "@enums": ["./enums"],
+      "@enums/*": ["./enums/*"]
     }
   },
   "exclude": ["bkp"]

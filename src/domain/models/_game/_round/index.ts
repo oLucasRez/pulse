@@ -1,21 +1,22 @@
 import { Player } from '@domain/models';
 
 export class Round {
-  private _players: Player[];
-  public get players(): Player[] {
-    return this._players;
-  }
+  private players: Player[];
 
   public constructor() {
-    this._players = [];
+    this.players = [];
+  }
+
+  public getPlayers(): Player[] {
+    return this.players;
   }
 
   public addPlayer(player: Player): void {
-    this._players.push(player);
+    this.players.push(player);
   }
 
   public *start(rotation: Round.StartProps): Round.StartReturn {
-    const maxI = this._players.length - 1;
+    const maxI = this.players.length - 1;
 
     for (let i = 0; i <= maxI; i++) {
       let j: number;
@@ -30,7 +31,7 @@ export class Round {
           throw 'Unknown rotation';
       }
 
-      const currentPlayer = this._players[j];
+      const currentPlayer = this.players[j];
 
       yield currentPlayer;
     }

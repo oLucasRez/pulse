@@ -18,7 +18,6 @@ import { GameState, InitialGameState } from './states';
 export class Game extends Model {
   private host: User;
   private round: Round;
-  // private lightSpotRound: Round;
   private state: GameState;
   private centralPulse: CentralPulse;
   private subjectPulses: SubjectPulse[];
@@ -32,7 +31,6 @@ export class Game extends Model {
 
     this.host = host;
     this.round = new Round();
-    // this.lightSpotRound = new Round();
     this.state = new InitialGameState(this);
     this.subjectPulses = [];
     this.questions = [];
@@ -53,6 +51,12 @@ export class Game extends Model {
 
     return Object.freeze({
       ...modelDTO,
+      subjects: this.subjectPulses.map((subjectPulse) =>
+        subjectPulse.getSubject().toDTO(),
+      ),
+      pulses: this.getPulses().map((pulse) => pulse.toDTO()),
+      dices: this.round.getPlayers().map((player) => player.getDice().toDTO()),
+      players: this.round.getPlayers().map((player) => player.toDTO()),
       hostID: this.host.id,
     });
   }
@@ -115,9 +119,7 @@ export class Game extends Model {
   }
 
   public updateCentralPulseAmount(): CentralPulse {
-    const centralPulse = this.state.updateCentralPulseAmount();
-
-    return centralPulse;
+    return this.state.updateCentralPulseAmount();
   }
 
   public updateCurrentDicePosition(position: vector): Dice {
@@ -129,7 +131,11 @@ export class Game extends Model {
   }
 
   public createSubjectPulse(gap: number): SubjectPulse {
-    return this.state.createSubjectPulse(gap);
+    const subjectPulse = this.state.createSubjectPulse(gap);
+
+    this.subjectPulses.push(subjectPulse);
+
+    return subjectPulse;
   }
 
   public createPlayer(props: Game.CreatePlayerProps): Player {
@@ -146,111 +152,21 @@ export class Game extends Model {
     return player;
   }
 
-  public addSubjectPulse(pulse: SubjectPulse): void {
-    this.subjectPulses.push(pulse);
-  }
-
-  public addQuestion(question: Question): void {
-    this.questions.push(question);
-  }
-
   public getCrossings(tolerance: number = 0): crossing[] {
     return this.state.getCrossings(tolerance);
+  }
 
-    // const targetLastCircle = targetPulse.getLastCircle();
-
-    // if (!targetLastCircle) return [];
-
-    // function calcCrossings(c1: circle, c2: circle): vector[] {
-    //   const d = c1.c.sub(c2.c).mag();
-    //   const a = (pow(c1.r, 2) - pow(c2.r, 2) + pow(d, 2)) / (2 * d);
-    //   const h = sqrt(pow(c1.r, 2) - pow(a, 2));
-    //   const p3 = c1.c.add(c2.c.sub(c1.c).mult(a / d));
-
-    //   if (isNaN(h)) return [];
-
-    //   return [
-    //     Vector(
-    //       p3.x + ((c2.c.y - c1.c.y) * h) / d,
-    //       p3.y - ((c2.c.x - c1.c.x) * h) / d,
-    //     ),
-    //     Vector(
-    //       p3.x - ((c2.c.y - c1.c.y) * h) / d,
-    //       p3.y + ((c2.c.x - c1.c.x) * h) / d,
-    //     ),
-    //   ];
-    // }
-
-    // const crossings: Crossing[] = [];
-
-    // for (const pulse of this.subjectPulses) {
-    //   if (targetPulse.isEqual(pulse)) continue;
-
-    //   for (const circle of pulse.getCircles()) {
-    //     const positions = calcCrossings(targetLastCircle, circle);
-
-    //     positions.map((position) =>
-    //       crossings.push({
-    //         scope: [targetPulse.getSubject(), pulse.getSubject()],
-    //         position,
-    //       }),
-    //     );
-    //   }
-    // }
-
-    // for (const circle of this.centralPulse.getCircles()) {
-    //   const positions = calcCrossings(targetLastCircle, circle);
-
-    //   positions.map((position) =>
-    //     crossings.push({
-    //       scope: [targetPulse.getSubject()],
-    //       position,
-    //     }),
-    //   );
-    // }
-
-    // const crossingsAreEqual = (
-    //   crossingA: Crossing,
-    //   crossingB: Crossing,
-    // ): boolean =>
-    //   abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
-
-    // const replaceCrossingsWith = (
-    //   crossingA: Crossing,
-    //   crossingB: Crossing,
-    // ): Crossing => {
-    //   const pA = crossingA.scope.length;
-    //   const pB = crossingB.scope.length;
-
-    //   const position = crossingA.position
-    //     .mult(pA)
-    //     .add(crossingB.position.mult(pB))
-    //     .div(pA + pB);
-
-    //   return { position, scope: [...crossingA.scope, ...crossingB.scope] };
-    // };
-
-    // const filteredCrossings = unique(
-    //   crossings,
-    //   crossingsAreEqual,
-    //   replaceCrossingsWith,
-    // );
-
-    // for (const crossing of filteredCrossings) {
-    //   const subjectsAreEqual = (
-    //     subjectA: Subject,
-    //     subjectB: Subject,
-    //   ): boolean => subjectA.isEqual(subjectB);
-
-    //   crossing.scope = unique(crossing.scope, subjectsAreEqual);
-    // }
-
-    // return filteredCrossings;
+  public createQuestion(props: Game.CreateQuestionProps): Question {
+    return this.state.createQuestion(props);
   }
 }
 
 export namespace Game {
   export type DTO = Model.DTO & {
+    pulses: Pulse.DTO[];
+    subjects: Subject.DTO[];
+    dices: Dice.DTO[];
+    players: Player.DTO[];
     hostID: string;
   };
 
@@ -261,4 +177,6 @@ export namespace Game {
   export type CreateSubjectProps = GameState.CreateSubjectProps;
 
   export type CreatePlayerProps = Omit<Player.NewProps, 'dice' | 'game'>;
+
+  export type CreateQuestionProps = Player.CreateQuestionProps;
 }

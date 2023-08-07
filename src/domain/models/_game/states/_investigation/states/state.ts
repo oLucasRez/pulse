@@ -1,6 +1,6 @@
-import { Dice, SubjectPulse } from '@domain/models';
+import { Dice, Player, Question, SubjectPulse } from '@domain/models';
 
-import { crossing } from '@types';
+import { vector } from '@types';
 
 import { InvestigationGameState } from '../state';
 
@@ -13,9 +13,14 @@ export abstract class InvestigationState {
 
   public abstract rollCurrentDice(): Dice;
   public abstract createSubjectPulse(gap: number): SubjectPulse;
-  public abstract getCrossings(tolerance?: number): crossing[];
+  public abstract updateCurrentDicePosition(position: vector): Dice;
+  public abstract createQuestion(
+    props: InvestigationState.CreateQuestionProps,
+  ): Question;
 }
 
 export namespace InvestigationState {
   export type NewProps = InvestigationGameState;
+
+  export type CreateQuestionProps = Player.CreateQuestionProps;
 }

@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { createRoot } from 'react-dom/client';
 
+import { Game } from '@domain/models';
+
 import { Color } from '@domain/enums';
 
 import { App } from '@presentation/app';
@@ -10,6 +12,7 @@ import { random, Vector } from './utils';
 import {
   createGame,
   createPlayer,
+  createQuestion,
   createSubject,
   createSubjectPulse,
   createUser,
@@ -18,6 +21,7 @@ import {
   getCrossings,
   getCurrentDice,
   getCurrentPlayer,
+  getGame,
   rollCurrentDice,
   startGame,
   updateCentralFactDescription,
@@ -26,11 +30,20 @@ import {
   updateCurrentSubjectPosition,
 } from './usecases';
 
-const scope = (a: () => any): any => a();
+const scope = (loop: number, a: () => any): any => {
+  while (loop--) a();
+};
+const chooseAny = <ValueType,>(array: ValueType[]): ValueType =>
+  array[random({ max: array.length, type: 'int' })];
+
+const snapshots: { game: Game.DTO }[] = [];
+const takeSnapshot = (): any => snapshots.push({ game: getGame(game.id) });
 
 const user = createUser({ name: 'Lucas' });
 
 const game = createGame(user.id);
+
+snapshots.push({ game: getGame(game.id) });
 
 createPlayer(game.id, {
   name: user.name,
@@ -55,30 +68,10 @@ console.log('1. INÍCIO DO JOGO');
 
 startGame(game.id);
 
+takeSnapshot();
+
 console.log('  1.1 CRIAÇÀO DOS ELEMENTOS'); // ================================
-scope(() => {
-  const currentPlayer = getCurrentPlayer(game.id);
-  if (!currentPlayer) throw 'currentPlayer not found';
-  console.log(currentPlayer);
-
-  const subject = createSubject(game.id, { description: faker.word.noun() });
-  console.log(subject);
-
-  finishTurn(game.id);
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  const currentPlayer = getCurrentPlayer(game.id);
-  if (!currentPlayer) throw 'currentPlayer not found';
-  console.log(currentPlayer);
-
-  const subject = createSubject(game.id, { description: faker.word.noun() });
-  console.log(subject);
-
-  finishTurn(game.id);
-});
-// ----------------------------------------------------------------------------
-scope(() => {
+scope(3, () => {
   const currentPlayer = getCurrentPlayer(game.id);
   if (!currentPlayer) throw 'currentPlayer not found';
   console.log(currentPlayer);
@@ -89,42 +82,7 @@ scope(() => {
   finishTurn(game.id);
 });
 console.log('  1.2 CRIAÇÀO DO FATO CENTRAL'); // ==============================
-scope(() => {
-  // busca o player atual
-  const currentPlayer = getCurrentPlayer(game.id);
-  if (!currentPlayer) throw 'currentPlayer not found';
-  console.log(currentPlayer);
-
-  // busca o central-fact
-  const centralFact = getCentralFact(game.id);
-
-  // player atualiza o central-fact com sua contribuição
-  updateCentralFactDescription(game.id, faker.lorem.sentence());
-  console.log(centralFact);
-
-  // busca o dice atual
-  let dice = getCurrentDice(game.id);
-  if (!dice) throw 'currentDice not found';
-
-  // rola o dice
-  dice = rollCurrentDice(game.id);
-
-  // atualiza o central-pulse com amount referente ao value do dice
-  updateCentralPulseAmount(game.id);
-
-  // posiciona o dice ao redor do circle correto
-  if (!dice.value) throw 'Dice must have a value';
-  const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
-  updateCurrentDicePosition(game.id, newPosition);
-
-  // posiciona o subject onde o dice está
-  updateCurrentSubjectPosition(game.id);
-
-  // passa pro próximo
-  finishTurn(game.id);
-});
-// ----------------------------------------------------------------------------
-scope(() => {
+scope(3, () => {
   // busca o player atual
   const currentPlayer = getCurrentPlayer(game.id);
   if (!currentPlayer) throw 'currentPlayer not found';
@@ -158,115 +116,45 @@ scope(() => {
   // posiciona o subject onde o dice está
   updateCurrentSubjectPosition(game.id);
 
-  // passa pro próximo
-  finishTurn(game.id);
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  // busca o player atual
-  const currentPlayer = getCurrentPlayer(game.id);
-  if (!currentPlayer) throw 'currentPlayer not found';
-  console.log(currentPlayer);
-
-  // busca o central-fact
-  const centralFact = getCentralFact(game.id);
-
-  // player atualiza o central-fact com sua contribuição
-  updateCentralFactDescription(
-    game.id,
-    `${centralFact.description}\n${faker.lorem.sentence()}`,
-  );
-  console.log(centralFact);
-
-  // busca o dice atual
-  let dice = getCurrentDice(game.id);
-  if (!dice) throw 'currentDice not found';
-
-  // rola o dice
-  dice = rollCurrentDice(game.id);
-
-  // atualiza o central-pulse com amount referente ao value do dice
-  updateCentralPulseAmount(game.id);
-
-  // posiciona o dice ao redor do circle correto
-  if (!dice.value) throw 'Dice must have a value';
-  const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
-  updateCurrentDicePosition(game.id, newPosition);
-
-  // posiciona o subject onde o dice está
-  updateCurrentSubjectPosition(game.id);
+  takeSnapshot();
 
   // passa pro próximo
   finishTurn(game.id);
 });
 console.log('2. DESENVOLVIMENTO'); // =========================================
-console.log('  2.1 INVESTIGAÇÃO'); // =========================================
-scope(() => {
-  // busca o dice atual
-  const dice = getCurrentDice(game.id);
-  if (!dice) throw 'currentDice not found';
+scope(3, () => {
+  console.log('  2.1 INVESTIGAÇÃO'); // =======================================
+  scope(3, () => {
+    // busca o dice atual
+    const dice = getCurrentDice(game.id);
+    if (!dice) throw 'currentDice not found';
 
-  // rola o dice
-  rollCurrentDice(game.id);
+    // rola o dice
+    rollCurrentDice(game.id);
 
-  // cria um subject-pulse onde o dice está, com {value} circles
-  const randomGap = random({ min: 0.5, max: 2 });
-  createSubjectPulse(game.id, randomGap);
+    // cria um subject-pulse onde o dice está, com {value} circles
+    const randomGap = random({ min: 0.5, max: 1.5 });
+    createSubjectPulse(game.id, randomGap);
 
-  // posiciona o dice em algum cruzamento disponível
-  const crossings = getCrossings(game.id);
-  console.log(crossings);
+    // posiciona o dice em algum cruzamento disponível
+    const crossings = getCrossings(game.id);
+    const chosenCrossing = chooseAny(crossings);
+    console.log(chosenCrossing);
+    updateCurrentDicePosition(game.id, chosenCrossing.position);
 
-  // cria uma question
+    // cria uma question
+    const question = createQuestion(game.id, {
+      description: faker.lorem.sentence().replace('.', '?'),
+      scope: chosenCrossing.scope,
+    });
+    console.log(question);
 
-  // passa pro próximo
-  finishTurn(game.id);
+    takeSnapshot();
+
+    // passa pro próximo
+    finishTurn(game.id);
+  });
 });
-// ----------------------------------------------------------------------------
-scope(() => {
-  // busca o dice atual
-  const dice = getCurrentDice(game.id);
-  if (!dice) throw 'currentDice not found';
-
-  // rola o dice
-  rollCurrentDice(game.id);
-
-  // cria um subject-pulse onde o dice está, com {value} circles
-  const randomGap = random({ min: 0.5, max: 2 });
-  createSubjectPulse(game.id, randomGap);
-
-  // posiciona o dice em algum cruzamento disponível
-  const crossings = getCrossings(game.id);
-  console.log(crossings);
-
-  // cria uma question
-
-  // passa pro próximo
-  finishTurn(game.id);
-});
-// ----------------------------------------------------------------------------
-scope(() => {
-  // busca o dice atual
-  const dice = getCurrentDice(game.id);
-  if (!dice) throw 'currentDice not found';
-
-  // rola o dice
-  rollCurrentDice(game.id);
-
-  // cria um subject-pulse onde o dice está, com {value} circles
-  const randomGap = random({ min: 0.5, max: 2 });
-  createSubjectPulse(game.id, randomGap);
-
-  // posiciona o dice em algum cruzamento disponível
-  const crossings = getCrossings(game.id);
-  console.log(crossings);
-
-  // cria uma question
-
-  // passa pro próximo
-  finishTurn(game.id);
-});
-
 // console.log('2. DESENVOLVIMENTO');
 // const lightSpotColors = [Color.GREEN, Color.PURPLE, Color.CYAN];
 // const lightSpotPlayers = [...game.players];
@@ -420,5 +308,5 @@ const container = document.getElementById('app');
 if (container) {
   const root = createRoot(container);
 
-  root.render(<App />);
+  root.render(<App snapshots={snapshots} />);
 }

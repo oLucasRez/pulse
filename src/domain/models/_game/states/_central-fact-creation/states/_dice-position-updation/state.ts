@@ -46,9 +46,9 @@ export class DicePositionUpdationState extends CentralFactCreationState {
     if (!value) throw 'Current dice must have a value';
 
     const positionError = position.mag() - value;
-    const isValidPosition = positionError <= this.TOLERANCE;
+    const isValid = positionError <= this.TOLERANCE;
 
-    if (!isValidPosition) throw 'Forbidden position';
+    if (!isValid) throw 'Forbidden position';
   }
 
   public updateCurrentSubjectPosition(): Subject {

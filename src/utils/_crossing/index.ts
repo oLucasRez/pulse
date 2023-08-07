@@ -41,49 +41,58 @@ function get(
     for (const circle of pulse.getCircles()) {
       const positions = calcCrossings(targetLastCircle, circle);
 
-      const scope = [target.getSubject()];
+      const targetSubject = target.getSubject();
 
-      if (pulse instanceof SubjectPulse) scope.push(pulse.getSubject());
+      const scope = [targetSubject];
+
+      if (pulse instanceof SubjectPulse) {
+        const pulseSubject = pulse.getSubject();
+
+        if (!targetSubject.isEqual(pulseSubject))
+          scope.push(pulse.getSubject());
+      }
 
       positions.map((position) => crossings.push(Crossing(scope, position)));
     }
   }
 
-  const crossingsAreEqual = (
-    crossingA: crossing,
-    crossingB: crossing,
-  ): boolean =>
-    abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
+  return crossings;
 
-  const replaceCrossingsWith = (
-    crossingA: crossing,
-    crossingB: crossing,
-  ): crossing => {
-    const pA = crossingA.scope.length;
-    const pB = crossingB.scope.length;
+  // const crossingsAreEqual = (
+  //   crossingA: crossing,
+  //   crossingB: crossing,
+  // ): boolean =>
+  //   abs(crossingA.position.mag() - crossingB.position.mag()) <= tolerance;
 
-    const position = crossingA.position
-      .mult(pA)
-      .add(crossingB.position.mult(pB))
-      .div(pA + pB);
+  // const replaceCrossingsWith = (
+  //   crossingA: crossing,
+  //   crossingB: crossing,
+  // ): crossing => {
+  //   const pA = crossingA.scope.length;
+  //   const pB = crossingB.scope.length;
 
-    return Crossing([...crossingA.scope, ...crossingB.scope], position);
-  };
+  //   const position = crossingA.position
+  //     .mult(pA)
+  //     .add(crossingB.position.mult(pB))
+  //     .div(pA + pB);
 
-  const filteredCrossings = unique(
-    crossings,
-    crossingsAreEqual,
-    replaceCrossingsWith,
-  );
+  //   return Crossing([...crossingA.scope, ...crossingB.scope], position);
+  // };
 
-  for (const crossing of filteredCrossings) {
-    const subjectsAreEqual = (subjectA: Subject, subjectB: Subject): boolean =>
-      subjectA.isEqual(subjectB);
+  // const filteredCrossings = unique(
+  //   crossings,
+  //   crossingsAreEqual,
+  //   replaceCrossingsWith,
+  // );
 
-    crossing.scope = unique(crossing.scope, subjectsAreEqual);
-  }
+  // for (const crossing of filteredCrossings) {
+  //   const subjectsAreEqual = (subjectA: Subject, subjectB: Subject): boolean =>
+  //     subjectA.isEqual(subjectB);
 
-  return filteredCrossings;
+  //   crossing.scope = unique(crossing.scope, subjectsAreEqual);
+  // }
+
+  // return filteredCrossings;
 }
 
 export function Crossing(scope: Subject[], position: vector): crossing {
