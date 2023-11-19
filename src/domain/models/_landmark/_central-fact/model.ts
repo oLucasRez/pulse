@@ -1,8 +1,9 @@
-import { vector } from '@types';
+import { Vector } from '@utils';
 
 import { Landmark } from '../model';
 
 export class CentralFact extends Landmark {
+  protected override position: NonNullable<Landmark['position']>;
   private description: string;
 
   public constructor(props: CentralFact.NewProps) {
@@ -10,36 +11,25 @@ export class CentralFact extends Landmark {
 
     super({ ...landmarkProps });
 
+    this.position = Vector(0, 0);
     this.description = description;
   }
 
-  public toDTO(): CentralFact.DTO {
-    const landmarkDTO = super.toDTO();
-
-    return Object.freeze({
-      ...landmarkDTO,
-      description: this.description,
-    });
+  public getPosition(): CentralFact['position'] {
+    return this.position;
   }
 
-  public updateDescription(description: string): CentralFact {
-    this.description = description;
-
-    return this;
+  public getDescription(): CentralFact['description'] {
+    return this.description;
   }
 
-  public toString(): string {
-    return `\x1b[37m[CentralFact(${this.description})]\x1b[0m`;
+  public updateDescription(value: CentralFact['description']): void {
+    this.description = value;
   }
 }
 
 export namespace CentralFact {
-  export type DTO = Landmark.DTO & {
-    description: string;
-  };
-
-  export type NewProps = Landmark.NewProps & {
-    description: string;
-    position: vector;
+  export type NewProps = Omit<Landmark.NewProps, 'position'> & {
+    description: CentralFact['description'];
   };
 }

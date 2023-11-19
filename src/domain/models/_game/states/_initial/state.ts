@@ -1,8 +1,8 @@
 import {
+  Answer,
   CentralFact,
   CentralPulse,
   Dice,
-  Player,
   Question,
   Subject,
   SubjectPulse,
@@ -10,63 +10,56 @@ import {
 
 import { crossing } from '@types';
 
-import { SubjectCreationGameState } from '../_subject-creation';
+import { SubjectsCreationGameState } from '../_subjects-creation';
 import { GameState } from '../state';
 
 export class InitialGameState extends GameState {
-  public constructor(context: InitialGameState.NewProps) {
-    super(context);
+  public constructor(props: InitialGameState.NewProps) {
+    super(props);
   }
 
   public start(): void {
-    this.context.setState(new SubjectCreationGameState(this.context));
+    this.ctx.setState(new SubjectsCreationGameState({ ctx: this.ctx }));
   }
-
-  public getCurrentPlayer(): Player | null {
-    throw 'getCurrentPlayer() method not allowed';
-  }
-
+  // --------------------------------------------------------------------------
   public createSubject(): Subject {
-    throw 'createSubject() method not allowed';
+    throw 'Method not allowed';
   }
-
-  public finishTurn(): void {
-    throw 'finishTurn() method not allowed';
+  public passTurn(): void {
+    throw 'Method not allowed';
   }
-
   public updateCentralFactDescription(): CentralFact {
-    throw 'updateCentralFactDescription() method not allowed';
+    throw 'Method not allowed';
   }
-
-  public rollCurrentDice(): Dice {
-    throw 'rollCurrentDice() method not allowed';
+  public rollDice(): Dice {
+    throw 'Method not allowed';
   }
-
   public updateCentralPulseAmount(): CentralPulse {
-    throw 'updateCentralPulseAmount() method not allowed';
+    throw 'Method not allowed';
   }
-
-  public updateCurrentDicePosition(): Dice {
-    throw 'updateCurrentDicePosition() method not allowed';
+  public updateDicePosition(): Dice {
+    throw 'Method not allowed';
   }
-
-  public updateCurrentSubjectPosition(): Subject {
-    throw 'updateCurrentSubjectPosition() method not allowed';
-  }
-
   public createSubjectPulse(): SubjectPulse {
-    throw 'createSubjectPulse() method not allowed';
+    throw 'Method not allowed';
   }
-
   public getCrossings(): crossing[] {
-    throw 'getCrossings() method not allowed';
+    throw 'Method not allowed';
   }
-
   public createQuestion(): Question {
-    throw 'createQuestion() method not allowed';
+    throw 'Method not allowed';
+  }
+  public answerQuestion(): Answer {
+    throw 'Method not allowed';
+  }
+  public playerVote(): void {
+    throw 'Method not allowed';
+  }
+  public finishVoting(): boolean {
+    throw 'Method not allowed';
   }
 }
-
+// ============================================================================
 export namespace InitialGameState {
   export type NewProps = GameState.NewProps;
 }

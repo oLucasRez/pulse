@@ -1,25 +1,31 @@
-import { CentralFact, CentralPulse, Dice, Subject } from '@domain/models';
-
-import { vector } from '@types';
+import { CentralFact, CentralPulse, Dice, Model } from '@domain/models';
 
 import { CentralFactCreationGameState } from '../state';
 
-export abstract class CentralFactCreationState {
-  public readonly context: CentralFactCreationGameState;
+export abstract class CentralFactCreationState extends Model {
+  public readonly ctx: CentralFactCreationGameState;
 
-  protected constructor(context: CentralFactCreationState.NewProps) {
-    this.context = context;
+  protected constructor(props: CentralFactCreationState.NewProps) {
+    const { ctx, ...modelProps } = props;
+
+    super(modelProps);
+
+    this.ctx = ctx;
   }
 
   public abstract updateCentralFactDescription(
-    description: string,
+    description: CentralFact['description'],
   ): CentralFact;
-  public abstract rollCurrentDice(): Dice;
+  public abstract rollDice(): Dice;
   public abstract updateCentralPulseAmount(): CentralPulse;
-  public abstract updateCurrentDicePosition(position: vector): Dice;
-  public abstract updateCurrentSubjectPosition(): Subject;
+  public abstract updateDicePosition(
+    position: NonNullable<Dice['position']>,
+  ): Dice;
+  public abstract passTurn(): void;
 }
-
+// ============================================================================
 export namespace CentralFactCreationState {
-  export type NewProps = CentralFactCreationGameState;
+  export type NewProps = Model.NewProps & {
+    ctx: CentralFactCreationState['ctx'];
+  };
 }

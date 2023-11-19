@@ -5,78 +5,66 @@ import { circle, vector } from '@types';
 import { Landmark } from '..';
 import { Model } from '../model';
 
-export class Pulse<LandmarkType extends Landmark = Landmark> extends Model {
+export class Pulse<L extends Landmark = Landmark> extends Model {
   protected origin: vector;
   protected gap: number;
-  protected circles: circle[];
-  protected landmark: LandmarkType;
+  protected amount: number;
+  protected landmark: L;
 
-  protected constructor(props: Pulse.NewProps<LandmarkType>) {
+  protected constructor(props: Pulse.NewProps<L>) {
     const { origin, gap, amount, landmark, ...modelProps } = props;
 
     super({ ...modelProps });
 
     this.origin = origin;
     this.gap = gap;
-    this.circles = [];
+    this.amount = amount;
     this.landmark = landmark;
+  }
 
-    this.updateAmount(amount);
+  public getOrigin(): Pulse<L>['origin'] {
+    return this.origin;
+  }
+
+  public getGap(): Pulse<L>['gap'] {
+    return this.gap;
+  }
+
+  public getAmount(): Pulse<L>['amount'] {
+    return this.amount;
+  }
+
+  public getLandmark(): Pulse<L>['landmark'] {
+    return this.landmark;
   }
 
   public getCircles(): circle[] {
-    return this.circles;
-  }
+    const circles: circle[] = [];
 
-  public toDTO(): Pulse.DTO {
-    const modelDTO = super.toDTO();
+    for (let i = 1; i <= this.amount; i++)
+      circles.push(Circle(this.origin, i * this.gap));
 
-    return Object.freeze({
-      ...modelDTO,
-      origin: this.origin.toDTO(),
-      gap: this.gap,
-      amount: this.getAmount(),
-      circles: this.circles.map((circle) => circle.toDTO()),
-      lastCircle: this.getLastCircle()?.toDTO() || null,
-      landmarkID: this.landmark.id,
-    });
+    return circles;
   }
 
   public getLastCircle(): circle | null {
-    const lastCircle = this.circles.reduce(
-      (lastOne, circle) => (lastOne?.r ?? 0 < circle.r ? circle : lastOne),
-      null as circle | null,
-    );
+    const lastCircle = this.getCircles().pop() ?? null;
 
     return lastCircle;
   }
 
-  public getAmount(): number {
-    const amount = this.circles.length;
+  protected updateAmount(value: Pulse<L>['amount']): void {
+    if (value < this.amount) throw 'Forbidden to decrease amount';
 
-    return amount;
-  }
-
-  protected updateAmount(value: number): void {
-    for (let i = this.circles.length + 1; i <= value; i++)
-      this.circles.push(Circle(this.origin, i * this.gap));
+    this.amount = value;
   }
 }
 
 export namespace Pulse {
-  export type DTO = Model.DTO & {
-    origin: vector.DTO;
-    gap: number;
-    amount: number;
-    circles: circle.DTO[];
-    lastCircle: circle.DTO | null;
-    landmarkID: string;
-  };
-
-  export type NewProps<LandmarkType extends Landmark> = Model.NewProps & {
-    origin: vector;
-    gap: number;
-    amount: number;
-    landmark: LandmarkType;
+  export type NewProps<L extends Landmark> = Model.NewProps & {
+    origin: Pulse<L>['origin'];
+    gap: Pulse<L>['gap'];
+    amount: Pulse<L>['amount'];
+    landmark: Pulse<L>['landmark'];
   };
 }

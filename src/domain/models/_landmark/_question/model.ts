@@ -1,50 +1,57 @@
-import { Color } from '@domain/enums';
-
-import { vector } from '@types';
-
 import { Answer, Player, Subject } from '../..';
 import { Landmark } from '../model';
 
 export class Question extends Landmark {
+  protected override position: NonNullable<Landmark['position']>;
   private description: string;
-  private scope: Subject[];
+  private subjects: Subject[];
   private author: Player;
   private answers: Answer[];
   private fact: Answer | null;
 
   public constructor(props: Question.NewProps) {
-    const { description, scope, author, ...landmarkProps } = props;
+    const {
+      position,
+      description,
+      subjects,
+      author,
+      answers = [],
+      fact = null,
+      ...landmarkProps
+    } = props;
 
     super({ ...landmarkProps });
 
+    this.position = position;
     this.description = description;
-    this.scope = scope;
+    this.subjects = subjects;
     this.author = author;
-    this.answers = [];
-    this.fact = null;
+    this.answers = answers;
+    this.fact = fact;
   }
 
-  public toDTO(): Question.DTO {
-    const landmarkDTO = super.toDTO();
-
-    return Object.freeze({
-      ...landmarkDTO,
-      description: this.description,
-      scopeIDs: this.scope.map(({ id }) => id),
-      authorID: this.author.id,
-      answerIDs: this.answers.map(({ id }) => id),
-      factID: this.fact?.id || null,
-    });
+  public getPosition(): Question['position'] {
+    return this.position;
   }
 
-  public getFact(): Answer | null {
+  public getDescription(): Question['description'] {
+    return this.description;
+  }
+
+  public getSubjects(): Question['subjects'] {
+    return this.subjects;
+  }
+
+  public getAuthor(): Question['author'] {
+    return this.author;
+  }
+
+  public getFact(): Question['fact'] {
     return this.fact;
   }
 
   public createAnswer(props: Question.CreateAnswerProps): Answer {
-    const { ...answerProps } = props;
-
-    const answer = new Answer({ ...answerProps, question: this });
+    const answer = new Answer({ ...props, question: this });
 
     this.answers.push(answer);
 
@@ -52,51 +59,22 @@ export class Question extends Landmark {
   }
 
   public solve(decidedAnswer: Answer): void {
-    this.answers.map((answer) => {
-      if (answer.id === decidedAnswer.id) this.fact = decidedAnswer;
-    });
-  }
+    const answer = this.answers.find((answer) => answer.equals(decidedAnswer));
 
-  public toString(): string {
-    const color = {
-      [Color.RED]: '\x1b[31m',
-      [Color.GREEN]: '\x1b[32m',
-      [Color.BLUE]: '\x1b[34m',
-      [Color.CYAN]: '\x1b[36m',
-      [Color.PURPLE]: '\x1b[35m',
-      [Color.YELLOW]: '\x1b[33m',
-      [Color.ORANGE]: '\x1b[33m',
-      [Color.PINK]: '\x1b[35m',
-      [Color.BROWN]: '\x1b[31m',
-      [Color.CRIMSON]: '\x1b[31m',
-      [Color.TURQUOISE]: '\x1b[36m',
-      [Color.BEIGE]: '\x1b[37m',
-      [Color.GREY]: '\x1b[37m',
-    }[this.author.getColor()];
+    if (!answer) throw 'Answer not found';
 
-    const ellipsis = this.description.length > 20 ? '...?' : '';
-
-    return `${color}[Question(${this.description.slice(
-      0,
-      20,
-    )}${ellipsis})]\x1b[0m.about(${this.scope.join(',')})`;
+    this.fact = answer;
   }
 }
 
 export namespace Question {
-  export type DTO = Landmark.DTO & {
-    description: string;
-    scopeIDs: string[];
-    authorID: string;
-    answerIDs: string[];
-    factID: string | null;
-  };
-
-  export type NewProps = Landmark.NewProps & {
-    description: string;
-    scope: Subject[];
-    position: vector;
-    author: Player;
+  export type NewProps = Omit<Landmark.NewProps, 'position'> & {
+    position: Question['position'];
+    description: Question['description'];
+    subjects: Question['subjects'];
+    author: Question['author'];
+    answers?: Question['answers'];
+    fact?: Question['fact'];
   };
 
   export type CreateAnswerProps = Omit<Answer.NewProps, 'question'>;

@@ -5,7 +5,7 @@ import { Model } from '../model';
 export class Landmark extends Model {
   protected position: vector | null;
 
-  public constructor(props: Landmark.NewProps) {
+  protected constructor(props: Landmark.NewProps) {
     const { position = null, ...modelProps } = props;
 
     super({ ...modelProps });
@@ -13,22 +13,13 @@ export class Landmark extends Model {
     this.position = position;
   }
 
-  public toDTO(): Landmark.DTO {
-    const modelDTO = super.toDTO();
-
-    return Object.freeze({
-      ...modelDTO,
-      position: this.position?.toDTO() || null,
-    });
+  public getPosition(): Landmark['position'] {
+    return this.position;
   }
 }
 
 export namespace Landmark {
-  export type DTO = Model.DTO & {
-    position: vector.DTO | null;
-  };
-
   export type NewProps = Model.NewProps & {
-    position?: vector | null;
+    position?: Landmark['position'];
   };
 }

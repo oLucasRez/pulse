@@ -1,6 +1,8 @@
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
+import { FC, ReactNode, useMemo, useState } from 'react';
 
-import { Game } from '@domain/models';
+import { Game, Subject } from '@domain/models';
+
+import { unique } from '@utils';
 
 import { Container } from './styles';
 
@@ -17,15 +19,6 @@ const App: FC<AppProps> = ({ snapshots }) => {
 
   const snapshot = useMemo(() => snapshots[i], [i]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(
-  //     () => setI((prevI) => (prevI + 1) % snapshots.length),
-  //     1000,
-  //   );
-
-  //   return () => clearInterval(interval);
-  // }, []);
-
   function translate(value: number): number {
     return value + 300;
   }
@@ -36,11 +29,7 @@ const App: FC<AppProps> = ({ snapshots }) => {
 
   function renderPulses(): ReactNode {
     return snapshot.game.pulses.map((pulse, i) => {
-      const subject = snapshot.game.subjects.find(
-        (subject) => subject.id === pulse.landmarkID,
-      );
-
-      const color = subject?.color ?? 'gray';
+      const color = pulse.color ?? 'gray';
 
       return (
         <g key={i}>
@@ -61,11 +50,7 @@ const App: FC<AppProps> = ({ snapshots }) => {
 
   function renderOrigins(): ReactNode {
     return snapshot.game.pulses.map((pulse, i) => {
-      const subject = snapshot.game.subjects.find(
-        (subject) => subject.id === pulse.landmarkID,
-      );
-
-      const color = subject?.color ?? 'grey';
+      const color = pulse.color ?? 'gray';
 
       return (
         <circle
@@ -81,13 +66,9 @@ const App: FC<AppProps> = ({ snapshots }) => {
 
   function renderDices(): ReactNode {
     return snapshot.game.dices.map((dice, i) => {
-      const player = snapshot.game.players.find(
-        (player) => player.id === dice.ownerID,
-      );
-
-      const color = player?.color ?? 'grey';
-
       if (!dice.position) return null;
+
+      const color = dice.color ?? 'grey';
 
       return (
         <rect
@@ -103,15 +84,77 @@ const App: FC<AppProps> = ({ snapshots }) => {
     });
   }
 
+  function renderQuestions(): ReactNode {
+    return snapshot.game.questions.map((question, i) => {
+      let subjects: Subject.DTO[] = [];
+
+      snapshot.game.subjects.map(
+        (subject) =>
+          question.scopeIDs.includes(subject.id) && subjects.push(subject),
+      );
+
+      subjects = unique(subjects, (a, b) => a.id === b.id);
+
+      if (!question.position) return null;
+
+      return (
+        <g key={i}>
+          <defs>
+            <linearGradient
+              id={`gradient${i}`}
+              x1='0%'
+              y1='0%'
+              x2='0%'
+              y2='100%'
+            >
+              {subjects.length > 1 ? (
+                subjects.map((subject, j) => (
+                  <stop
+                    key={j}
+                    offset={`${(100 * j) / (subjects.length - 1)}%`}
+                    stopColor={subject.color}
+                  />
+                ))
+              ) : (
+                <>
+                  <stop offset='0%' stopColor={subjects[0].color} />
+                  <stop offset='100%' stopColor={subjects[0].color} />
+                </>
+              )}
+            </linearGradient>
+          </defs>
+          <text
+            x={translate(scale(question.position.x)) - 4}
+            y={translate(scale(question.position.y))}
+            stroke='white'
+            strokeWidth={2.5}
+          >
+            ?
+          </text>
+          <text
+            x={translate(scale(question.position.x)) - 4}
+            y={translate(scale(question.position.y))}
+            fill={`url(#gradient${i})`}
+          >
+            ?
+          </text>
+        </g>
+      );
+    });
+  }
+
   return (
     <Container>
-      <button onClick={() => setI((prevI) => (prevI + 1) % snapshots.length)}>
+      <button
+        onClick={(): any => setI((prevI) => (prevI + 1) % snapshots.length)}
+      >
         NEXT
       </button>
       <svg width={600} height={600}>
         {renderPulses()}
         {renderOrigins()}
         {renderDices()}
+        {renderQuestions()}
       </svg>
     </Container>
   );

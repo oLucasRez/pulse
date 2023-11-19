@@ -22,6 +22,7 @@ import {
   getCurrentDice,
   getCurrentPlayer,
   getGame,
+  getQuestions,
   rollCurrentDice,
   startGame,
   updateCentralFactDescription,
@@ -29,6 +30,65 @@ import {
   updateCurrentDicePosition,
   updateCurrentSubjectPosition,
 } from './usecases';
+
+// // busca o player atual
+// const currentPlayer = getCurrentPlayer(game.id);
+// if (!currentPlayer) throw 'currentPlayer not found';
+// console.log(currentPlayer);
+
+// // busca o central-fact
+// const centralFact = getCentralFact(game.id);
+
+// // player atualiza o central-fact com sua contribuição
+// updateCentralFactDescription(
+//   game.id,
+//   `${centralFact.description}\n${faker.lorem.sentence()}`,
+// );
+// console.log(centralFact);
+
+// // busca o dice atual
+// let dice = getCurrentDice(game.id);
+// if (!dice) throw 'currentDice not found';
+
+// // rola o dice
+// dice = rollCurrentDice(game.id);
+
+// // atualiza o central-pulse com amount referente ao value do dice
+// updateCentralPulseAmount(game.id);
+
+// // posiciona o dice ao redor do circle correto
+// if (!dice.value) throw 'Dice must have a value';
+// const newPosition = Vector.polar(dice.value, random({ max: 2 * Math.PI }));
+// updateCurrentDicePosition(game.id, newPosition);
+
+// // posiciona o subject onde o dice está
+// updateCurrentSubjectPosition(game.id);
+
+// takeSnapshot();
+
+// // passa pro próximo
+// finishTurn(game.id);
+
+/*
+Initial
+SubjectsCreation
+  CreatingSubject
+  PassingTurn
+CentralFactCreation
+  UpdatingCentralFactDescription
+  RollingDice
+  UpdatingCentralPulseAmount
+  UpdatingDicePosition
+  PassingTurn
+Investigation
+  RollingDice
+  CreatingSubjectPulse
+  UpdatingDicePosition
+  CreatingQuestion
+  PassingTurn
+Conjectures
+  ...
+*/
 
 const scope = (loop: number, a: () => any): any => {
   while (loop--) a();
@@ -138,8 +198,8 @@ scope(3, () => {
 
     // posiciona o dice em algum cruzamento disponível
     const crossings = getCrossings(game.id);
-    const chosenCrossing = chooseAny(crossings);
-    console.log(chosenCrossing);
+    const chosenCrossing = chooseAny(crossings); // @obs: existe a chance de não haver nenhum crossing (caso o último circle seja muito grande)
+    console.log(crossings, chosenCrossing);
     updateCurrentDicePosition(game.id, chosenCrossing.position);
 
     // cria uma question
@@ -153,6 +213,55 @@ scope(3, () => {
 
     // passa pro próximo
     finishTurn(game.id);
+  });
+  console.log('  2.2 CONJECTURAS'); // ========================================
+  scope(3, () => {
+    // escolhe uma pergunta pra responder
+    const questions = getQuestions(game.id);
+    const chosenQuestion = chooseAny(questions);
+    console.log(chosenQuestion);
+
+    // responde essa pergunta
+
+    // players votam pra decidir se a resposta é um fato
+
+    // for (const player of game.players.reverse()) {
+    //   // player escolhe uma pergunta pra responder ------------------------------
+    //   const question =
+    //     game.questions[random({ max: game.questions.length, type: 'int' })];
+
+    //   // player responde essa pergunta ------------------------------------------
+    //   const answer = question.createAnswer({
+    //     description: faker.lorem.sentence(),
+    //     author: player,
+    //   });
+
+    //   console.log(`    ${player} responde a ${question} com a ${answer}`);
+
+    //   // players votam pra decidir se a resposta é um fato ----------------------
+    //   const unanimousDecision = game.players.reduce((decision, votingPlayer) => {
+    //     const agreed =
+    //       votingPlayer.id === player.id ? true : faker.datatype.boolean();
+
+    //     if (agreed)
+    //       console.log(`    ${votingPlayer} concorda em tornar ${answer} um fato`);
+    //     else
+    //       console.log(`    ${votingPlayer} discorda em tornar ${answer} um fato`);
+
+    //     return agreed ? decision : false;
+    //   }, true);
+
+    //   if (unanimousDecision) question.solve(answer);
+
+    //   if (unanimousDecision)
+    //     console.log(`    por decisão unânime, ${answer} se torna um fato`);
+    //   else
+    //     console.log(
+    //       `    como não houve decisão unânime, ${answer} ainda é uma hipótese`,
+    //     );
+
+    //   console.log('');
+    // }
   });
 });
 // console.log('2. DESENVOLVIMENTO');

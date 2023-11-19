@@ -1,46 +1,62 @@
 import {
+  Answer,
   CentralFact,
   CentralPulse,
   Dice,
+  Model,
   Player,
   Question,
   Subject,
   SubjectPulse,
 } from '@domain/models';
 
-import { crossing, vector } from '@types';
+import { crossing } from '@types';
 
 import { Game } from '../model';
 
-export abstract class GameState {
-  public readonly context: Game;
+export abstract class GameState extends Model {
+  public readonly ctx: Game;
 
-  protected constructor(context: GameState.NewProps) {
-    this.context = context;
+  protected constructor(props: GameState.NewProps) {
+    const { ctx, ...modelProps } = props;
+
+    super(modelProps);
+
+    this.ctx = ctx;
   }
 
   public abstract start(): void;
-  public abstract getCurrentPlayer(): Player | null;
-  public abstract finishTurn(): void;
   public abstract createSubject(props: GameState.CreateSubjectProps): Subject;
+  public abstract passTurn(): void;
   public abstract updateCentralFactDescription(
-    description: string,
+    description: CentralFact['description'],
   ): CentralFact;
-  public abstract rollCurrentDice(): Dice;
+  public abstract rollDice(): Dice;
   public abstract updateCentralPulseAmount(): CentralPulse;
-  public abstract updateCurrentDicePosition(position: vector): Dice;
-  public abstract updateCurrentSubjectPosition(): Subject;
-  public abstract createSubjectPulse(gap: number): SubjectPulse;
+  public abstract updateDicePosition(
+    position: NonNullable<Dice['position']>,
+  ): Dice;
+  public abstract createSubjectPulse(gap: SubjectPulse['gap']): SubjectPulse;
   public abstract getCrossings(tolerance?: number): crossing[];
   public abstract createQuestion(
     props: GameState.CreateQuestionProps,
   ): Question;
+  public abstract answerQuestion(
+    question: Question,
+    props: GameState.AnswerQuestionProps,
+  ): Answer;
+  public abstract playerVote(player: Player, vote: boolean): void;
+  public abstract finishVoting(): boolean;
 }
-
+// ============================================================================
 export namespace GameState {
-  export type NewProps = Game;
+  export type NewProps = Model.NewProps & {
+    ctx: GameState['ctx'];
+  };
 
-  export type CreateSubjectProps = Player.CreateSubjectProps;
+  export type CreateSubjectProps = Game.CreateSubjectProps;
 
-  export type CreateQuestionProps = Player.CreateQuestionProps;
+  export type CreateQuestionProps = Game.CreateQuestionProps;
+
+  export type AnswerQuestionProps = Game.AnswerQuestionProps;
 }

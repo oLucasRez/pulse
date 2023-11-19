@@ -1,4 +1,5 @@
 import {
+  Answer,
   CentralFact,
   CentralPulse,
   Dice,
@@ -14,48 +15,58 @@ import { Color } from '@domain/enums';
 
 import { Vector } from '@utils';
 
-import { crossing, vector } from './types';
+import { crossing, PlayerDTO, toPlayerDTO, vector } from './types';
+import { GameDTO, toGameDTO, toUserDTO, UserDTO } from '@types';
 
 const userRepository: User[] = [];
 const gameRepository: Game[] = [];
 const playerRepository: Player[] = [];
 const subjectRepository: Subject[] = [];
 // ----------------------------------------------------------------------------
-export function createUser(props: User.NewProps): User.DTO {
-  const user = new User(props);
+type CreateUserPayload = Omit<User.NewProps, 'id'>;
+
+export function createUser(payload: CreateUserPayload): UserDTO {
+  const { ...userProps } = payload;
+
+  const user = new User({ ...userProps });
 
   userRepository.push(user);
 
-  return user.toDTO();
+  return toUserDTO(user);
 }
 // ----------------------------------------------------------------------------
-export function createGame(userID: string): Game.DTO {
-  const user = userRepository.find(({ id }) => id === userID);
-  if (!user) throw `User not found for ID ${userID}`;
+interface CreateGamePayload {
+  hostID: Game.NewProps['host']['id'];
+}
+export function createGame(payload: CreateGamePayload): GameDTO {
+  const { hostID } = payload;
 
-  const game = user.createGame({});
+  const host = userRepository.find(({ id }) => id === hostID);
+  if (!host) throw `User not found for ID ${hostID}`;
+
+  const game = new Game({ host });
 
   gameRepository.push(game);
 
-  return game.toDTO();
+  return toGameDTO(game);
 }
 // ----------------------------------------------------------------------------
-export function getGame(gameID: string): Game.DTO {
-  const game = gameRepository.find(({ id }) => id === gameID);
-  if (!game) throw `Game not found for ID ${gameID}`;
+export function getGame(id: string): GameDTO {
+  const game = gameRepository.find((game) => game.id === id);
+  if (!game) throw `Game not found for ID ${id}`;
 
-  return game.toDTO();
+  return toGameDTO(game);
 }
 // ----------------------------------------------------------------------------
 type CreatePlayerPayload = {
-  name: string;
-  color: Color;
-  userID?: string;
+  name: Player['name'];
+  color: Player['color'];
+  userID?: NonNullable<GetID<Player['user']>>;
 };
 export function createPlayer(
   gameID: string,
   payload: CreatePlayerPayload,
-): Player.DTO {
+): PlayerDTO {
   const game = gameRepository.find(({ id }) => id === gameID);
   if (!game) throw `Game not found for ID ${gameID}`;
 
@@ -69,7 +80,7 @@ export function createPlayer(
 
   playerRepository.push(player);
 
-  return player.toDTO();
+  return toPlayerDTO(player);
 }
 // ----------------------------------------------------------------------------
 export function startGame(gameID: string): void {
@@ -232,4 +243,28 @@ export function createQuestion(
   const question = game.createQuestion({ description, scope });
 
   return question.toDTO();
+}
+// ----------------------------------------------------------------------------
+export function getQuestions(gameID: string): Question.DTO[] {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  return game.getQuestions().map((question) => question.toDTO());
+}
+// ----------------------------------------------------------------------------
+type CreateAnswerPayload = {
+  description: string;
+  questionID: string;
+  authorID: string;
+};
+export function createAnswer(
+  gameID: string,
+  payload: CreateAnswerPayload,
+): Answer.DTO {
+  const game = gameRepository.find(({ id }) => id === gameID);
+  if (!game) throw `Game not found for ID ${gameID}`;
+
+  const answer = game.createAnswer();
+
+  return answer.toDTO();
 }

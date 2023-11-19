@@ -16,15 +16,20 @@ export class Answer extends Model {
     this.author = author;
   }
 
-  public toDTO(): Answer.DTO {
-    const modelDTO = super.toDTO();
+  public getDescription(): Answer['description'] {
+    return this.description;
+  }
 
-    return Object.freeze({
-      ...modelDTO,
-      description: this.description,
-      questionID: this.question.id,
-      authorID: this.author.id,
-    });
+  public getQuestion(): Answer['question'] {
+    return this.question;
+  }
+
+  public getAuthor(): Answer['author'] {
+    return this.author;
+  }
+
+  public toFact(): void {
+    this.question.solve(this);
   }
 
   public isFact(): boolean {
@@ -33,15 +38,9 @@ export class Answer extends Model {
 }
 
 export namespace Answer {
-  export type DTO = Model.DTO & {
-    description: string;
-    questionID: string;
-    authorID: string;
-  };
-
   export type NewProps = Model.NewProps & {
-    description: string;
-    question: Question;
-    author: Player;
+    description: Answer['description'];
+    question: Answer['question'];
+    author: Answer['author'];
   };
 }

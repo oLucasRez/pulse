@@ -1,6 +1,6 @@
 import { uuid } from '@utils';
 
-export class Model {
+export abstract class Model {
   public readonly id: string;
 
   protected constructor(props: Model.NewProps) {
@@ -9,28 +9,13 @@ export class Model {
     this.id = id;
   }
 
-  protected toDTO(): Model.DTO {
-    return Object.freeze({
-      id: this.id,
-    });
-  }
-
-  public isEqual(model: Model.IsEqual.Props): Model.IsEqual.Return {
+  public equals(model: Model): boolean {
     return this.id === model.id;
   }
 }
-
+// ============================================================================
 export namespace Model {
-  export type DTO = {
-    id: string;
-  };
-
   export type NewProps = {
-    id?: string;
+    id?: Model['id'];
   };
-
-  export namespace IsEqual {
-    export type Props = Model;
-    export type Return = boolean;
-  }
 }

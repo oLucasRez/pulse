@@ -1,0 +1,1 @@
+export { UpdatingCentralFactDescriptionState } from './state';

@@ -12,52 +12,34 @@ export class Subject extends Landmark {
   private path: SubjectPulse[];
 
   public constructor(props: Subject.NewProps) {
-    const { description, color, author, ...landmarkProps } = props;
+    const { description, color, author, path = [], ...landmarkProps } = props;
 
     super({ ...landmarkProps });
 
     this.description = description;
     this.color = color;
     this.author = author;
-    this.path = [];
+    this.path = path;
   }
 
-  public toDTO(): Subject.DTO {
-    const landmarkDTO = super.toDTO();
-
-    return Object.freeze({
-      ...landmarkDTO,
-      description: this.description,
-      color: this.color,
-      authorID: this.author.id,
-      pathID: this.path.map(({ id }) => id),
-    });
-  }
-
-  public getPosition(): vector | null {
+  public getPosition(): Subject['position'] {
     return this.position;
   }
 
-  public getColor(): Color {
+  public getDescription(): Subject['description'] {
+    return this.description;
+  }
+
+  public getColor(): Subject['color'] {
     return this.color;
   }
 
-  public updatePosition(value: vector): void {
-    this.position = value;
+  public getAuthor(): Subject['author'] {
+    return this.author;
   }
 
-  public createPulse(props: Subject.CreatePulseProps): SubjectPulse {
-    if (!this.position) throw 'Subject must be on the map';
-
-    const pulse = new SubjectPulse({
-      ...props,
-      origin: this.position,
-      subject: this,
-    });
-
-    this.path.push(pulse);
-
-    return pulse;
+  public getPath(): Subject['path'] {
+    return this.path;
   }
 
   public getLastPulse(): SubjectPulse | null {
@@ -65,24 +47,33 @@ export class Subject extends Landmark {
 
     return this.path[this.path.length - 1];
   }
+
+  public updatePosition(value: vector): void {
+    this.position = value;
+  }
+
+  public createPulse(
+    props: Omit<SubjectPulse.NewProps, 'origin' | 'landmark'>,
+  ): SubjectPulse {
+    if (!this.position) throw 'Subject must be on the map';
+
+    const pulse = new SubjectPulse({
+      ...props,
+      origin: this.position,
+      landmark: this,
+    });
+
+    this.path.push(pulse);
+
+    return pulse;
+  }
 }
 
 export namespace Subject {
-  export type DTO = Landmark.DTO & {
-    description: string;
-    color: Color;
-    authorID: string;
-    pathID: string[];
-  };
-
   export type NewProps = Landmark.NewProps & {
-    description: string;
-    color: Color;
-    author: Player;
+    description: Subject['description'];
+    color: Subject['color'];
+    author: Subject['author'];
+    path?: Subject['path'];
   };
-
-  export type CreatePulseProps = Omit<
-    SubjectPulse.NewProps,
-    'origin' | 'subject'
-  >;
 }

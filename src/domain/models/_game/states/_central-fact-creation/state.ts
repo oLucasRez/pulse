@@ -1,94 +1,106 @@
 import {
+  Answer,
   CentralFact,
   CentralPulse,
   Dice,
-  Player,
   Question,
   Subject,
   SubjectPulse,
 } from '@domain/models';
 
-import { crossing, vector } from '@types';
+import { crossing } from '@types';
 
 import { Round } from '../../_round';
 import { InvestigationGameState } from '../_investigation';
 import { GameState } from '../state';
 import {
   CentralFactCreationState,
-  CentralFactDescriptionUpdationState,
+  UpdatingCentralFactDescriptionState,
 } from './states';
 
-export class CentralFactCreationGameState extends GameState {
-  private rounding: Round.StartReturn;
-  private turn: IteratorResult<Player, null>;
-
+export class CentralFactCreationGameState
+  extends GameState
+  implements Round.RoundFinishObserver
+{
   private state: CentralFactCreationState;
 
-  public constructor(context: CentralFactCreationGameState.NewProps) {
-    super(context);
+  public constructor(props: CentralFactCreationGameState.NewProps) {
+    const { state, ...stateProps } = props;
 
-    this.rounding = this.context.getRound().start(Round.Rotation.ANTICLOCKWISE);
-    this.turn = this.rounding.next();
-    this.state = new CentralFactDescriptionUpdationState(this);
+    super(stateProps);
+
+    this.state =
+      state ?? new UpdatingCentralFactDescriptionState({ ctx: this });
+
+    const round = this.ctx.getRound();
+
+    round.subscribeRoundFinishObserver(this);
+
+    round.startRound(Round.Rotation.ANTICLOCKWISE);
   }
-  public setState(state: CentralFactCreationState): void {
+
+  public getState(): CentralFactCreationGameState['state'] {
+    return this.state;
+  }
+
+  public setState(state: CentralFactCreationGameState['state']): void {
     this.state = state;
   }
 
-  public start(): void {
-    throw 'start() method not allowed';
+  public onRoundFinish(): void {
+    this.ctx.setState(new InvestigationGameState({ ctx: this.ctx }));
   }
 
-  public getCurrentPlayer(): Player | null {
-    const currentPlayer = this.turn.value;
-
-    return currentPlayer;
-  }
-
-  public finishTurn(): void {
-    this.turn = this.rounding.next();
-
-    if (this.turn.done)
-      return this.context.setState(new InvestigationGameState(this.context));
-  }
-
-  public createSubject(): Subject {
-    throw 'createSubject() method not allowed';
-  }
-
-  public updateCentralFactDescription(description: string): CentralFact {
+  public updateCentralFactDescription(
+    description: CentralFact['description'],
+  ): CentralFact {
     return this.state.updateCentralFactDescription(description);
   }
 
-  public rollCurrentDice(): Dice {
-    return this.state.rollCurrentDice();
+  public rollDice(): Dice {
+    return this.state.rollDice();
   }
 
   public updateCentralPulseAmount(): CentralPulse {
     return this.state.updateCentralPulseAmount();
   }
 
-  public updateCurrentDicePosition(position: vector): Dice {
-    return this.state.updateCurrentDicePosition(position);
+  public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
+    return this.state.updateDicePosition(position);
   }
 
-  public updateCurrentSubjectPosition(): Subject {
-    return this.state.updateCurrentSubjectPosition();
+  public passTurn(): void {
+    return this.state.passTurn();
   }
-
+  // --------------------------------------------------------------------------
+  public start(): void {
+    throw 'Method not allowed';
+  }
+  public createSubject(): Subject {
+    throw 'Method not allowed';
+  }
   public createSubjectPulse(): SubjectPulse {
-    throw 'createSubjectPulse() method not allowed';
+    throw 'Method not allowed';
   }
-
   public getCrossings(): crossing[] {
-    throw 'getCrossings() method not allowed';
+    throw 'Method not allowed';
   }
-
   public createQuestion(): Question {
-    throw 'createQuestion() method not allowed';
+    throw 'Method not allowed';
+  }
+  public answerQuestion(): Answer {
+    throw 'Method not allowed';
+  }
+  public playerVote(): void {
+    throw 'Method not allowed';
+  }
+  public finishVoting(): boolean {
+    throw 'Method not allowed';
   }
 }
-
+// ============================================================================
 export namespace CentralFactCreationGameState {
-  export type NewProps = GameState.NewProps;
+  export type NewProps = GameState.NewProps & {
+    state?: CentralFactCreationGameState['state'];
+  };
 }

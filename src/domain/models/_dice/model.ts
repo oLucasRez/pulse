@@ -12,38 +12,40 @@ export class Dice extends Model {
   private owner: Player | null;
 
   public constructor(props: Dice.NewProps) {
-    const { sides, value = null, position = null, ...modelProps } = props;
+    const {
+      sides,
+      value = null,
+      position = null,
+      owner = null,
+      ...modelProps
+    } = props;
 
     super({ ...modelProps });
 
     this.sides = sides;
     this.value = value;
     this.position = position;
-    this.owner = null;
+    this.owner = owner;
   }
 
-  public toDTO(): Dice.DTO {
-    const modelDTO = super.toDTO();
-
-    return Object.freeze({
-      ...modelDTO,
-      sides: this.sides,
-      value: this.value,
-      position: this.position,
-      ownerID: this.owner?.id || null,
-    });
+  public getSides(): Dice['sides'] {
+    return this.sides;
   }
 
-  public getValue(): number | null {
+  public getValue(): Dice['value'] {
     return this.value;
   }
 
-  public getPosition(): vector | null {
+  public getPosition(): Dice['position'] {
     return this.position;
   }
 
-  public setOwner(owner: Player): void {
-    this.owner = owner;
+  public getOwner(): Dice['owner'] {
+    return this.owner;
+  }
+
+  public setOwner(value: Dice['owner']): void {
+    this.owner = value;
   }
 
   public roll(): number {
@@ -92,18 +94,12 @@ export class Dice extends Model {
   //   return random({ min: 1, max: this.sides, type: 'int' });
   // }
 }
-
+// ============================================================================
 export namespace Dice {
-  export type DTO = Model.DTO & {
-    sides: number;
-    value: number | null;
-    position: vector.DTO | null;
-    ownerID: string | null;
-  };
-
   export type NewProps = Model.NewProps & {
-    sides: number;
-    value?: number;
-    position?: vector;
+    sides: Dice['sides'];
+    value?: Dice['value'];
+    position?: Dice['position'];
+    owner?: Dice['owner'];
   };
 }

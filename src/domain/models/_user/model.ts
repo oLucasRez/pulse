@@ -1,4 +1,3 @@
-import { Game } from '../_game';
 import { Model } from '../model';
 
 export class User extends Model {
@@ -12,37 +11,13 @@ export class User extends Model {
     this.name = name;
   }
 
-  public toDTO(): User.DTO {
-    const modelDTO = super.toDTO();
-
-    return Object.freeze({
-      ...modelDTO,
-      name: this.name,
-    });
-  }
-
-  public getName(): string {
+  public getName(): User['name'] {
     return this.name;
   }
-
-  public createGame(props: User.CreateGame.Props): User.CreateGame.Return {
-    const game = new Game({ ...props, host: this });
-
-    return game;
-  }
 }
-
+// ============================================================================
 export namespace User {
-  export type DTO = Model.DTO & {
-    name: string;
-  };
-
   export type NewProps = Model.NewProps & {
-    name: string;
+    name: User['name'];
   };
-
-  export namespace CreateGame {
-    export type Props = Omit<Game.NewProps, 'host'>;
-    export type Return = Game;
-  }
 }

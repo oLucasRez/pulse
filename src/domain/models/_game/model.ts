@@ -1,6 +1,7 @@
-import { circle, crossing, vector } from '@types';
+import { circle, crossing } from '@types';
 
 import {
+  Answer,
   CentralFact,
   CentralPulse,
   Dice,
@@ -12,61 +13,68 @@ import {
   User,
 } from '..';
 import { Model } from '../model';
+import { DicePicker } from './_dice-picker';
 import { Round } from './_round';
 import { GameState, InitialGameState } from './states';
 
 export class Game extends Model {
   private host: User;
   private round: Round;
+  private dicePicker: DicePicker;
   private state: GameState;
   private centralPulse: CentralPulse;
   private subjectPulses: SubjectPulse[];
   private questions: Question[];
-  private availableDices: Dice[];
 
   public constructor(props: Game.NewProps) {
-    const { host, ...modelProps } = props;
+    const {
+      host,
+      round = new Round({}),
+      dicePicker = new DicePicker({}),
+      state,
+      centralPulse = new CentralPulse({}),
+      subjectPulses = [],
+      questions = [],
+      ...modelProps
+    } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.host = host;
-    this.round = new Round();
-    this.state = new InitialGameState(this);
-    this.subjectPulses = [];
-    this.questions = [];
-
-    this.centralPulse = new CentralPulse({});
-
-    const d4 = new Dice({ sides: 4 });
-    const d6 = new Dice({ sides: 6 });
-    const d8 = new Dice({ sides: 8 });
-    const d10 = new Dice({ sides: 10 });
-    const d12 = new Dice({ sides: 12 });
-
-    this.availableDices = [d4, d6, d8, d10, d12];
+    this.round = round;
+    this.dicePicker = dicePicker;
+    this.state = state ?? new InitialGameState({ ctx: this });
+    this.centralPulse = centralPulse;
+    this.subjectPulses = subjectPulses;
+    this.questions = questions;
   }
 
-  public toDTO(): Game.DTO {
-    const modelDTO = super.toDTO();
-
-    return Object.freeze({
-      ...modelDTO,
-      subjects: this.subjectPulses.map((subjectPulse) =>
-        subjectPulse.getSubject().toDTO(),
-      ),
-      pulses: this.getPulses().map((pulse) => pulse.toDTO()),
-      dices: this.round.getPlayers().map((player) => player.getDice().toDTO()),
-      players: this.round.getPlayers().map((player) => player.toDTO()),
-      hostID: this.host.id,
-    });
+  public getHost(): Game['host'] {
+    return this.host;
   }
 
-  public getRound(): Round {
+  public getRound(): Game['round'] {
     return this.round;
   }
 
-  public getCentralPulse(): CentralPulse {
+  public getDicePicker(): Game['dicePicker'] {
+    return this.dicePicker;
+  }
+
+  public getState(): Game['state'] {
+    return this.state;
+  }
+
+  public getCentralPulse(): Game['centralPulse'] {
     return this.centralPulse;
+  }
+
+  public getSubjectPulses(): Game['subjectPulses'] {
+    return this.subjectPulses;
+  }
+
+  public getQuestions(): Game['questions'] {
+    return this.questions;
   }
 
   public getPulses(): Pulse[] {
@@ -82,74 +90,65 @@ export class Game extends Model {
     );
   }
 
+  public getCentralFact(): CentralFact {
+    return this.centralPulse.getLandmark();
+  }
+
+  public getCurrentPlayer(): Player | null {
+    return this.round.getCurrentPlayer();
+  }
+
   public setState(state: GameState): void {
     this.state = state;
   }
 
+  public createPlayer(props: Game.CreatePlayerProps): Player {
+    const dice = this.dicePicker.pickDice();
+    if (!dice) throw 'Limit of players achieved';
+
+    const player = new Player({ ...props, dice, game: this });
+
+    this.round.addPlayer(player);
+
+    return player;
+  }
+
   public start(): void {
-    this.state.start();
-  }
-
-  public getCurrentPlayer(): Player | null {
-    return this.state.getCurrentPlayer();
-  }
-
-  public finishTurn(): void {
-    this.state.finishTurn();
+    return this.state.start();
   }
 
   public createSubject(props: Game.CreateSubjectProps): Subject {
-    const subject = this.state.createSubject(props);
-
-    return subject;
+    return this.state.createSubject(props);
   }
 
-  public getCentralFact(): CentralFact {
-    return this.centralPulse.getCentralFact();
+  public passTurn(): void {
+    return this.state.passTurn();
   }
 
-  public updateCentralFactDescription(description: string): CentralFact {
-    const centralFact = this.state.updateCentralFactDescription(description);
-
-    return centralFact;
+  public updateCentralFactDescription(
+    description: CentralFact['description'],
+  ): CentralFact {
+    return this.state.updateCentralFactDescription(description);
   }
 
-  public rollCurrentDice(): Dice {
-    return this.state.rollCurrentDice();
+  public rollDice(): Dice {
+    return this.state.rollDice();
   }
 
   public updateCentralPulseAmount(): CentralPulse {
     return this.state.updateCentralPulseAmount();
   }
 
-  public updateCurrentDicePosition(position: vector): Dice {
-    return this.state.updateCurrentDicePosition(position);
+  public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
+    return this.state.updateDicePosition(position);
   }
 
-  public updateCurrentSubjectPosition(): Subject {
-    return this.state.updateCurrentSubjectPosition();
-  }
-
-  public createSubjectPulse(gap: number): SubjectPulse {
+  public createSubjectPulse(gap: SubjectPulse['gap']): SubjectPulse {
     const subjectPulse = this.state.createSubjectPulse(gap);
 
     this.subjectPulses.push(subjectPulse);
 
     return subjectPulse;
-  }
-
-  public createPlayer(props: Game.CreatePlayerProps): Player {
-    const { ...playerProps } = props;
-
-    const dice = this.availableDices.shift();
-
-    if (!dice) throw 'Limit of players achieved';
-
-    const player = new Player({ ...playerProps, dice, game: this });
-
-    this.round.addPlayer(player);
-
-    return player;
   }
 
   public getCrossings(tolerance: number = 0): crossing[] {
@@ -159,24 +158,39 @@ export class Game extends Model {
   public createQuestion(props: Game.CreateQuestionProps): Question {
     return this.state.createQuestion(props);
   }
+
+  public answerQuestion(
+    question: Question,
+    props: Game.AnswerQuestionProps,
+  ): Answer {
+    return this.state.answerQuestion(question, props);
+  }
+
+  public playerVote(player: Player, vote: boolean): void {
+    return this.state.playerVote(player, vote);
+  }
+
+  public finishVoting(): boolean {
+    return this.state.finishVoting();
+  }
 }
-
+// ============================================================================
 export namespace Game {
-  export type DTO = Model.DTO & {
-    pulses: Pulse.DTO[];
-    subjects: Subject.DTO[];
-    dices: Dice.DTO[];
-    players: Player.DTO[];
-    hostID: string;
-  };
-
   export type NewProps = Model.NewProps & {
-    host: User;
+    host: Game['host'];
+    round?: Game['round'];
+    dicePicker?: Game['dicePicker'];
+    state?: Game['state'];
+    centralPulse?: Game['centralPulse'];
+    subjectPulses?: Game['subjectPulses'];
+    questions?: Game['questions'];
   };
 
-  export type CreateSubjectProps = GameState.CreateSubjectProps;
+  export type CreateSubjectProps = Player.CreateSubjectProps;
 
   export type CreatePlayerProps = Omit<Player.NewProps, 'dice' | 'game'>;
 
   export type CreateQuestionProps = Player.CreateQuestionProps;
+
+  export type AnswerQuestionProps = Question.CreateAnswerProps;
 }

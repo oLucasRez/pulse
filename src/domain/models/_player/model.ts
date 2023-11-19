@@ -12,7 +12,15 @@ export class Player extends Model {
   private subject: Subject | null;
 
   public constructor(props: Player.NewProps) {
-    const { name, color, user = null, game, dice, ...modelProps } = props;
+    const {
+      name,
+      color,
+      user = null,
+      game,
+      dice,
+      subject = null,
+      ...modelProps
+    } = props;
 
     super({ ...modelProps });
 
@@ -21,34 +29,32 @@ export class Player extends Model {
     this.user = user;
     this.game = game;
     this.dice = dice;
-    this.subject = null;
+    this.subject = subject;
 
     this.dice.setOwner(this);
   }
 
-  public toDTO(): Player.DTO {
-    const modelDTO = super.toDTO();
-
-    return Object.freeze({
-      ...modelDTO,
-      name: this.name,
-      color: this.color,
-      userID: this.user?.id || null,
-      gameID: this.game.id,
-      diceID: this.dice.id,
-      subjectID: this.subject?.id || null,
-    });
+  public getName(): Player['name'] {
+    return this.name;
   }
 
-  public getColor(): Color {
+  public getColor(): Player['color'] {
     return this.color;
   }
 
-  public getDice(): Dice {
+  public getUser(): Player['user'] {
+    return this.user;
+  }
+
+  public getGame(): Player['game'] {
+    return this.game;
+  }
+
+  public getDice(): Player['dice'] {
     return this.dice;
   }
 
-  public getSubject(): Subject | null {
+  public getSubject(): Player['subject'] {
     return this.subject;
   }
 
@@ -57,8 +63,8 @@ export class Player extends Model {
 
     const subject = new Subject({
       ...subjectProps,
-      color: this.color,
       position: this.dice.getPosition(),
+      color: this.color,
       author: this,
     });
 
@@ -80,49 +86,21 @@ export class Player extends Model {
       author: this,
     });
   }
-
-  public toString(): string {
-    const color = {
-      [Color.RED]: '\x1b[31m',
-      [Color.GREEN]: '\x1b[32m',
-      [Color.BLUE]: '\x1b[34m',
-      [Color.CYAN]: '\x1b[36m',
-      [Color.PURPLE]: '\x1b[35m',
-      [Color.YELLOW]: '\x1b[33m',
-      [Color.ORANGE]: '\x1b[33m',
-      [Color.PINK]: '\x1b[35m',
-      [Color.BROWN]: '\x1b[31m',
-      [Color.CRIMSON]: '\x1b[31m',
-      [Color.TURQUOISE]: '\x1b[36m',
-      [Color.BEIGE]: '\x1b[37m',
-      [Color.GREY]: '\x1b[37m',
-    }[this.color];
-
-    return `${color}[Player(${this.name})]\x1b[0m`;
-  }
 }
 
 export namespace Player {
-  export type DTO = Model.DTO & {
-    name: string;
-    color: Color;
-    userID: string | null;
-    gameID: string;
-    diceID: string;
-    subjectID: string | null;
-  };
-
   export type NewProps = Model.NewProps & {
-    name: string;
-    color: Color;
-    user?: User;
-    game: Game;
-    dice: Dice;
+    name: Player['name'];
+    color: Player['color'];
+    user?: Player['user'];
+    game: Player['game'];
+    dice: Player['dice'];
+    subject?: Player['subject'];
   };
 
   export type CreateSubjectProps = Omit<
     Subject.NewProps,
-    'color' | 'position' | 'author'
+    'position' | 'color' | 'author'
   >;
 
   export type CreateQuestionProps = Omit<
