@@ -1,26 +1,28 @@
+import { Subject } from '@domain/models';
+
 import { Vector } from '@utils';
 
-import { SubjectPulse } from '../_subject-pulse';
+import { Pulse } from '../model';
 
-export class LightSpot extends SubjectPulse {
+export class LightSpot extends Pulse<Subject> {
   public constructor(props: LightSpot.NewProps) {
-    const { ...subjectPulseProps } = props;
+    const pulseProps = props;
 
     const origin = Vector(0, 0);
     const amount = 1;
 
-    const subjectPosition = props.landmark.getPosition();
-    if (!subjectPosition) throw 'Subject must have a position';
+    const landmarkPosition = props.landmark.getPosition();
+    if (!landmarkPosition) throw 'Landmark must have a position';
 
-    const gap = subjectPosition.sub(origin).mag();
+    const gap = landmarkPosition.sub(origin).mag();
 
-    super({ ...subjectPulseProps, origin, gap, amount });
+    super({ ...pulseProps, origin, gap, amount });
   }
 }
-
+// ============================================================================
 export namespace LightSpot {
   export type NewProps = Omit<
-    SubjectPulse.NewProps,
+    Pulse.NewProps<Subject>,
     'origin' | 'amount' | 'gap'
   >;
 }

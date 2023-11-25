@@ -3,6 +3,7 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Player,
   Question,
   Round,
@@ -102,6 +103,9 @@ export class ConjecturesGameState
     throw 'Method not allowed';
   }
   public createQuestion(): Question {
+    throw 'Method not allowed';
+  }
+  public createLightSpot(): LightSpot {
     throw 'Method not allowed';
   }
 }

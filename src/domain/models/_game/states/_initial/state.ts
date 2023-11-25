@@ -3,6 +3,7 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Question,
   Subject,
   SubjectPulse,
@@ -56,6 +57,9 @@ export class InitialGameState extends GameState {
     throw 'Method not allowed';
   }
   public finishVoting(): boolean {
+    throw 'Method not allowed';
+  }
+  public createLightSpot(): LightSpot {
     throw 'Method not allowed';
   }
 }

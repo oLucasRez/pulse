@@ -3,6 +3,7 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Question,
   Subject,
   SubjectPulse,
@@ -47,7 +48,9 @@ export class SubjectsCreationGameState
     this.ctx.setState(new CentralFactCreationGameState({ ctx: this.ctx }));
   }
 
-  public createSubject(props: GameState.CreateSubjectProps): Subject {
+  public createSubject(
+    props: SubjectsCreationGameState.CreateSubjectProps,
+  ): Subject {
     return this.state.createSubject(props);
   }
 
@@ -88,10 +91,15 @@ export class SubjectsCreationGameState
   public finishVoting(): boolean {
     throw 'Method not allowed';
   }
+  public createLightSpot(): LightSpot {
+    throw 'Method not allowed';
+  }
 }
 // ============================================================================
 export namespace SubjectsCreationGameState {
   export type NewProps = GameState.NewProps & {
     state?: SubjectsCreationGameState['state'];
   };
+
+  export type CreateSubjectProps = GameState.CreateSubjectProps;
 }

@@ -3,28 +3,69 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Question,
+  Round,
   Subject,
   SubjectPulse,
 } from '@domain/models';
 
 import { crossing } from '@types';
 
+import { InvestigationGameState } from '../_investigation';
 import { GameState } from '../state';
+import { LightSpotCreationState, UpdatingDicePositionState } from './states';
 
-export class LightSpotCreationGameState extends GameState {
+export class LightSpotCreationGameState
+  extends GameState
+  implements Round.TurnFinishObserver
+{
+  private state: LightSpotCreationState;
+
   public constructor(props: LightSpotCreationGameState.NewProps) {
-    super(props);
+    const { state, ...stateProps } = props;
+
+    super(stateProps);
+
+    this.state = state ?? new UpdatingDicePositionState({ ctx: this });
+
+    const round = this.ctx.getLightSpotRound();
+
+    round.subscribeTurnFinishObserver(this);
+
+    round.startRound(Round.Rotation.CLOCKWISE);
   }
 
+  public getState(): LightSpotCreationGameState['state'] {
+    return this.state;
+  }
+
+  public setState(state: LightSpotCreationGameState['state']): void {
+    this.state = state;
+  }
+
+  public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
+    return this.state.updateDicePosition(position);
+  }
+
+  public createLightSpot(
+    props: LightSpotCreationGameState.CreateLightSpotProps,
+  ): LightSpot {
+    return this.state.createLightSpot(props);
+  }
+
+  public passTurn(): void {
+    return this.state.passTurn();
+  }
+
+  public onTurnFinish(): void {
+    this.ctx.setState(new InvestigationGameState({ ctx: this.ctx }));
+  }
   // --------------------------------------------------------------------------
   public start(): void {
     throw 'Method not allowed';
   }
   public createSubject(): Subject {
-    throw 'Method not allowed';
-  }
-  public passTurn(): void {
     throw 'Method not allowed';
   }
   public updateCentralFactDescription(): CentralFact {
@@ -34,9 +75,6 @@ export class LightSpotCreationGameState extends GameState {
     throw 'Method not allowed';
   }
   public updateCentralPulseAmount(): CentralPulse {
-    throw 'Method not allowed';
-  }
-  public updateDicePosition(): Dice {
     throw 'Method not allowed';
   }
   public createSubjectPulse(): SubjectPulse {
@@ -60,5 +98,9 @@ export class LightSpotCreationGameState extends GameState {
 }
 // ============================================================================
 export namespace LightSpotCreationGameState {
-  export type NewProps = GameState.NewProps;
+  export type NewProps = GameState.NewProps & {
+    state?: LightSpotCreationGameState['state'];
+  };
+
+  export type CreateLightSpotProps = GameState.CreateLightSpotProps;
 }

@@ -58,17 +58,25 @@ export class Player extends Model {
     return this.subject;
   }
 
-  public createSubject(props: Player.CreateSubjectProps): Subject {
-    const { ...subjectProps } = props;
-
+  public createMySubject(props: Player.CreateMySubjectProps): Subject {
     const subject = new Subject({
-      ...subjectProps,
+      ...props,
       position: this.dice.getPosition(),
       color: this.color,
       author: this,
     });
 
     this.subject = subject;
+
+    return subject;
+  }
+
+  public createSubject(props: Player.CreateSubjectProps): Subject {
+    const subject = new Subject({
+      ...props,
+      position: this.dice.getPosition(),
+      author: this,
+    });
 
     return subject;
   }
@@ -98,9 +106,14 @@ export namespace Player {
     subject?: Player['subject'];
   };
 
-  export type CreateSubjectProps = Omit<
+  export type CreateMySubjectProps = Omit<
     Subject.NewProps,
     'position' | 'color' | 'author'
+  >;
+
+  export type CreateSubjectProps = Omit<
+    Subject.NewProps,
+    'position' | 'author'
   >;
 
   export type CreateQuestionProps = Omit<

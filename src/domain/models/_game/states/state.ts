@@ -3,6 +3,7 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Model,
   Player,
   Question,
@@ -47,6 +48,9 @@ export abstract class GameState extends Model {
   ): Answer;
   public abstract playerVote(player: Player, vote: boolean): void;
   public abstract finishVoting(): boolean;
+  public abstract createLightSpot(
+    props: GameState.CreateLightSpotProps,
+  ): LightSpot;
 }
 // ============================================================================
 export namespace GameState {
@@ -59,4 +63,6 @@ export namespace GameState {
   export type CreateQuestionProps = Game.CreateQuestionProps;
 
   export type AnswerQuestionProps = Game.AnswerQuestionProps;
+
+  export type CreateLightSpotProps = Game.CreateLightSpotProps;
 }

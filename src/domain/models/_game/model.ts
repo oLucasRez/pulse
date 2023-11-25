@@ -5,11 +5,11 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
+  Map,
   Player,
-  Pulse,
   Question,
   Subject,
-  SubjectPulse,
   User,
 } from '..';
 import { Model } from '../model';
@@ -19,21 +19,23 @@ import { GameState, InitialGameState } from './states';
 
 export class Game extends Model {
   private host: User;
+  private players: Player[];
   private round: Round;
+  private lightSpotRound: Round;
   private dicePicker: DicePicker;
   private state: GameState;
-  private centralPulse: CentralPulse;
-  private subjectPulses: SubjectPulse[];
+  private map: Map;
   private questions: Question[];
 
   public constructor(props: Game.NewProps) {
     const {
       host,
-      round = new Round({}),
+      players = [],
+      round,
+      lightSpotRound,
       dicePicker = new DicePicker({}),
       state,
-      centralPulse = new CentralPulse({}),
-      subjectPulses = [],
+      map = new Map({}),
       questions = [],
       ...modelProps
     } = props;
@@ -41,11 +43,12 @@ export class Game extends Model {
     super(modelProps);
 
     this.host = host;
-    this.round = round;
+    this.players = players;
+    this.round = round ?? new Round({ game: this });
+    this.lightSpotRound = lightSpotRound ?? new Round({ game: this });
     this.dicePicker = dicePicker;
     this.state = state ?? new InitialGameState({ ctx: this });
-    this.centralPulse = centralPulse;
-    this.subjectPulses = subjectPulses;
+    this.map = map;
     this.questions = questions;
   }
 
@@ -53,8 +56,16 @@ export class Game extends Model {
     return this.host;
   }
 
+  public getPlayers(): Game['players'] {
+    return this.players;
+  }
+
   public getRound(): Game['round'] {
     return this.round;
+  }
+
+  public getLightSpotRound(): Game['lightSpotRound'] {
+    return this.lightSpotRound;
   }
 
   public getDicePicker(): Game['dicePicker'] {
@@ -65,33 +76,21 @@ export class Game extends Model {
     return this.state;
   }
 
-  public getCentralPulse(): Game['centralPulse'] {
-    return this.centralPulse;
-  }
-
-  public getSubjectPulses(): Game['subjectPulses'] {
-    return this.subjectPulses;
+  public getMap(): Game['map'] {
+    return this.map;
   }
 
   public getQuestions(): Game['questions'] {
     return this.questions;
   }
 
-  public getPulses(): Pulse[] {
-    return [...this.subjectPulses, this.centralPulse];
-  }
-
   public getCircles(): circle[] {
-    const pulses = this.getPulses();
+    const pulses = this.map.getPulses();
 
     return pulses.reduce<circle[]>(
       (array, pulse) => [...array, ...pulse.getCircles()],
       [],
     );
-  }
-
-  public getCentralFact(): CentralFact {
-    return this.centralPulse.getLandmark();
   }
 
   public getCurrentPlayer(): Player | null {
@@ -108,7 +107,7 @@ export class Game extends Model {
 
     const player = new Player({ ...props, dice, game: this });
 
-    this.round.addPlayer(player);
+    this.players.push(player);
 
     return player;
   }
@@ -143,14 +142,6 @@ export class Game extends Model {
     return this.state.updateDicePosition(position);
   }
 
-  public createSubjectPulse(gap: SubjectPulse['gap']): SubjectPulse {
-    const subjectPulse = this.state.createSubjectPulse(gap);
-
-    this.subjectPulses.push(subjectPulse);
-
-    return subjectPulse;
-  }
-
   public getCrossings(tolerance: number = 0): crossing[] {
     return this.state.getCrossings(tolerance);
   }
@@ -173,24 +164,42 @@ export class Game extends Model {
   public finishVoting(): boolean {
     return this.state.finishVoting();
   }
+
+  public createLightSpot(props: Game.CreateLightSpotProps): LightSpot {
+    return this.state.createLightSpot(props);
+  }
 }
 // ============================================================================
 export namespace Game {
   export type NewProps = Model.NewProps & {
     host: Game['host'];
+    players?: Game['players'];
     round?: Game['round'];
+    lightSpotRound?: Game['lightSpotRound'];
     dicePicker?: Game['dicePicker'];
     state?: Game['state'];
-    centralPulse?: Game['centralPulse'];
-    subjectPulses?: Game['subjectPulses'];
+    map?: Game['map'];
     questions?: Game['questions'];
   };
 
-  export type CreateSubjectProps = Player.CreateSubjectProps;
+  export type RenewProps = Model.NewProps & {
+    host: Game['host'];
+    players?: Game['players'];
+    round?: Game['round'];
+    lightSpotRound?: Game['lightSpotRound'];
+    dicePicker?: Game['dicePicker'];
+    state?: Game['state'];
+    map?: Game['map'];
+    questions?: Game['questions'];
+  };
+
+  export type CreateSubjectProps = Player.CreateMySubjectProps;
 
   export type CreatePlayerProps = Omit<Player.NewProps, 'dice' | 'game'>;
 
   export type CreateQuestionProps = Player.CreateQuestionProps;
 
   export type AnswerQuestionProps = Question.CreateAnswerProps;
+
+  export type CreateLightSpotProps = Player.CreateSubjectProps;
 }

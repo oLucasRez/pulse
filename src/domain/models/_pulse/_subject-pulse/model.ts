@@ -3,12 +3,20 @@ import { Pulse } from '../model';
 
 export class SubjectPulse extends Pulse<Subject> {
   public constructor(props: SubjectPulse.NewProps) {
-    const { ...pulseProps } = props;
+    const { landmark, ...pulseProps } = props;
 
-    super({ ...pulseProps });
+    const origin = landmark.getPosition();
+
+    if (!origin) throw 'Landmark must have a position';
+
+    super({
+      ...pulseProps,
+      origin,
+      landmark,
+    });
   }
 }
-
+// ============================================================================
 export namespace SubjectPulse {
-  export type NewProps = Pulse.NewProps<Subject>;
+  export type NewProps = Omit<Pulse.NewProps<Subject>, 'origin'>;
 }

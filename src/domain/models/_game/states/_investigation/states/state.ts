@@ -1,4 +1,4 @@
-import { Dice, Model, Player, Question, SubjectPulse } from '@domain/models';
+import { Dice, Model, Question, SubjectPulse } from '@domain/models';
 
 import { InvestigationGameState } from '../state';
 
@@ -29,5 +29,5 @@ export namespace InvestigationState {
     ctx: InvestigationState['ctx'];
   };
 
-  export type CreateQuestionProps = Player.CreateQuestionProps;
+  export type CreateQuestionProps = InvestigationGameState.CreateQuestionProps;
 }

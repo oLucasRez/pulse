@@ -3,6 +3,7 @@ import {
   CentralFact,
   CentralPulse,
   Dice,
+  LightSpot,
   Question,
   Round,
   Subject,
@@ -67,7 +68,8 @@ export class InvestigationGameState
     const lastPulse = playerSubject.getLastPulse();
     if (!lastPulse) return [];
 
-    const crossings = Crossing.get(lastPulse, this.ctx.getPulses(), tolerance);
+    const map = this.ctx.getMap();
+    const crossings = Crossing.get(lastPulse, map.getPulses(), tolerance);
 
     console.log({ crossings });
 
@@ -107,10 +109,15 @@ export class InvestigationGameState
   public finishVoting(): boolean {
     throw 'Method not allowed';
   }
+  public createLightSpot(): LightSpot {
+    throw 'Method not allowed';
+  }
 }
 // ============================================================================
 export namespace InvestigationGameState {
   export type NewProps = GameState.NewProps & {
     state?: InvestigationGameState['state'];
   };
+
+  export type CreateQuestionProps = GameState.CreateQuestionProps;
 }

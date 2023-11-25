@@ -1,34 +1,70 @@
-import { Model, Player } from '@domain/models';
+import { Game, Model, Player } from '@domain/models';
 
 export class Round extends Model {
-  private players: Player[];
+  private game: Game;
   private rotation: Round.Rotation | null;
   private i: number | null;
 
-  private roundFinishObservers: Round.RoundFinishObserver[] = [];
+  private turnFinishObservers: Round.TurnFinishObserver[];
+  private roundFinishObservers: Round.RoundFinishObserver[];
 
   public constructor(props: Round.NewProps) {
-    const { players = [], rotation = null, i = null, ...modelProps } = props;
+    const {
+      game,
+      rotation = null,
+      i = null,
+      turnFinishObservers = [],
+      roundFinishObservers = [],
+      ...modelProps
+    } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
-    this.players = players;
+    this.game = game;
     this.rotation = rotation;
     this.i = i;
+
+    this.turnFinishObservers = turnFinishObservers;
+    this.roundFinishObservers = roundFinishObservers;
   }
 
-  public getPlayers(): Round['players'] {
-    return this.players;
+  public getGame(): Round['game'] {
+    return this.game;
   }
 
-  public addPlayer(player: Player): void {
-    this.players.push(player);
+  public getRotation(): Round['rotation'] {
+    return this.rotation;
+  }
+
+  public getI(): Round['i'] {
+    return this.i;
+  }
+
+  public getTurnFinishObservers(): Round['turnFinishObservers'] {
+    return this.turnFinishObservers;
+  }
+
+  public getRoundFinishObservers(): Round['roundFinishObservers'] {
+    return this.roundFinishObservers;
   }
 
   public getCurrentPlayer(): Player | null {
     if (!this.i) return null;
 
-    return this.players[this.i] ?? null;
+    const players = this.game.getPlayers();
+
+    return players[this.i] ?? null;
+  }
+
+  public subscribeTurnFinishObserver(observer: Round.TurnFinishObserver): void {
+    const alreadySubscribed = this.turnFinishObservers.includes(observer);
+    if (alreadySubscribed) return;
+
+    this.turnFinishObservers.push(observer);
+  }
+
+  private notifyTurnFinish(): void {
+    this.turnFinishObservers.map((observer) => observer.onTurnFinish(this));
   }
 
   public subscribeRoundFinishObserver(
@@ -45,10 +81,11 @@ export class Round extends Model {
   }
 
   public startRound(rotation: Round.Rotation): void {
-    const hasPlayers = !!this.players.length;
+    const players = this.game.getPlayers();
+    const hasPlayers = !!players.length;
     if (!hasPlayers) throw 'No players to start a round';
 
-    const maxI = this.players.length - 1;
+    const maxI = players.length - 1;
 
     this.rotation = rotation;
 
@@ -59,6 +96,8 @@ export class Round extends Model {
   public nextTurn(): void {
     if (this.rotation === null || this.i === null)
       throw 'Round must start first';
+
+    this.notifyTurnFinish();
 
     this.i += this.rotation;
 
@@ -72,17 +111,24 @@ export class Round extends Model {
     }
   }
 }
-
+// ============================================================================
 export namespace Round {
   export type NewProps = Model.NewProps & {
-    players?: Round['players'];
+    game: Round['game'];
     rotation?: Round['rotation'];
     i?: Round['i'];
+
+    turnFinishObservers?: Round['turnFinishObservers'];
+    roundFinishObservers?: Round['roundFinishObservers'];
   };
 
   export enum Rotation {
     CLOCKWISE = 1,
     ANTICLOCKWISE = -1,
+  }
+
+  export interface TurnFinishObserver {
+    onTurnFinish(context: Round): void;
   }
 
   export interface RoundFinishObserver {

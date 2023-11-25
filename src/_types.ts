@@ -21,22 +21,24 @@ export function toUserDTO(user: User): UserDTO {
 // ----------------------------------------------------------------------------
 export interface GameDTO extends ModelDTO {
   hostID: GetID<Game['host']>;
+  playerIDs: GetID<Game['players']>;
   roundID: GetID<Game['round']>;
+  lightSpotRoundID: GetID<Game['lightSpotRound']>;
   dicePickerID: GetID<Game['dicePicker']>;
   stateID: GetID<Game['state']>;
-  centralPulseID: GetID<Game['centralPulse']>;
-  subjectPulseIDs: GetID<Game['subjectPulses']>;
+  mapID: GetID<Game['map']>;
   questionIDs: GetID<Game['questions']>;
 }
 export function toGameDTO(game: Game): GameDTO {
   return {
     ...toModelDTO(game),
     hostID: game.getHost().id,
+    playerIDs: game.getPlayers().map(({ id }) => id),
     roundID: game.getRound().id,
+    lightSpotRoundID: game.getLightSpotRound().id,
     dicePickerID: game.getDicePicker().id,
     stateID: game.getState().id,
-    centralPulseID: game.getCentralPulse().id,
-    subjectPulseIDs: game.getSubjectPulses().map(({ id }) => id),
+    mapID: game.getMap().id,
     questionIDs: game.getQuestions().map(({ id }) => id),
   };
 }

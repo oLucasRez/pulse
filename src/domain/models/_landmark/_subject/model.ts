@@ -52,14 +52,11 @@ export class Subject extends Landmark {
     this.position = value;
   }
 
-  public createPulse(
-    props: Omit<SubjectPulse.NewProps, 'origin' | 'landmark'>,
-  ): SubjectPulse {
+  public createPulse(props: Subject.CreatePulseProps): SubjectPulse {
     if (!this.position) throw 'Subject must be on the map';
 
     const pulse = new SubjectPulse({
       ...props,
-      origin: this.position,
       landmark: this,
     });
 
@@ -68,7 +65,7 @@ export class Subject extends Landmark {
     return pulse;
   }
 }
-
+// ============================================================================
 export namespace Subject {
   export type NewProps = Landmark.NewProps & {
     description: Subject['description'];
@@ -76,4 +73,9 @@ export namespace Subject {
     author: Subject['author'];
     path?: Subject['path'];
   };
+
+  export type CreatePulseProps = Omit<
+    SubjectPulse.NewProps,
+    'origin' | 'landmark'
+  >;
 }

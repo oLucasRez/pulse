@@ -23,7 +23,9 @@ export class CreatingSubjectPulseState extends InvestigationState {
     const playerSubject = currentPlayer.getSubject();
     if (!playerSubject) throw 'Current player must have a subject';
 
-    const subjectPulse = playerSubject.createPulse({
+    const map = this.ctx.ctx.getMap();
+
+    const subjectPulse = map.createSubjectPulse(playerSubject, {
       gap,
       amount: diceValue,
     });

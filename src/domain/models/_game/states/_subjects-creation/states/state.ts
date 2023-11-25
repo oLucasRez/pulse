@@ -1,4 +1,4 @@
-import { Model, Player, Subject } from '@domain/models';
+import { Model, Subject } from '@domain/models';
 
 import { SubjectsCreationGameState } from '../state';
 
@@ -24,5 +24,5 @@ export namespace SubjectsCreationState {
     ctx: SubjectsCreationState['ctx'];
   };
 
-  export type CreateSubjectProps = Player.CreateSubjectProps;
+  export type CreateSubjectProps = SubjectsCreationGameState.CreateSubjectProps;
 }
