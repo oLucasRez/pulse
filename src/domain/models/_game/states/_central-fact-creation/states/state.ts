@@ -25,7 +25,11 @@ export abstract class CentralFactCreationState extends Model {
 }
 // ============================================================================
 export namespace CentralFactCreationState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: CentralFactCreationState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 }

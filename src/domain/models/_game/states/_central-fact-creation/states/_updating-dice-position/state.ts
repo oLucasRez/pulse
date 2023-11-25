@@ -6,8 +6,18 @@ import { CentralFactCreationState } from '../state';
 export class UpdatingDicePositionState extends CentralFactCreationState {
   private readonly TOLERANCE = 0.0001;
 
-  public constructor(props: UpdatingDicePositionState.NewProps) {
+  protected constructor(props: UpdatingDicePositionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: UpdatingDicePositionState.CreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
+  }
+  public static recreate(
+    props: UpdatingDicePositionState.RecreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
   }
 
   public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
@@ -24,7 +34,7 @@ export class UpdatingDicePositionState extends CentralFactCreationState {
 
     subject.updatePosition(position);
 
-    this.ctx.setState(new PassingTurnState({ ctx: this.ctx }));
+    this.ctx.setState(PassingTurnState.create({ ctx: this.ctx }));
 
     return dice;
   }
@@ -57,5 +67,10 @@ export class UpdatingDicePositionState extends CentralFactCreationState {
 }
 // ============================================================================
 export namespace UpdatingDicePositionState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = CentralFactCreationState.CreateProps;
+
+  export type RecreateProps = CentralFactCreationState.RecreateProps &
+    Required<CreateProps>;
 }

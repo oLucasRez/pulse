@@ -8,7 +8,7 @@ export class Round extends Model {
   private turnFinishObservers: Round.TurnFinishObserver[];
   private roundFinishObservers: Round.RoundFinishObserver[];
 
-  public constructor(props: Round.NewProps) {
+  protected constructor(props: Round.NewProps) {
     const {
       game,
       rotation = null,
@@ -26,6 +26,12 @@ export class Round extends Model {
 
     this.turnFinishObservers = turnFinishObservers;
     this.roundFinishObservers = roundFinishObservers;
+  }
+  public static create(props: Round.CreateProps): Round {
+    return new Round(props);
+  }
+  public static recreate(props: Round.RecreateProps): Round {
+    return new Round(props);
   }
 
   public getGame(): Round['game'] {
@@ -113,14 +119,20 @@ export class Round extends Model {
 }
 // ============================================================================
 export namespace Round {
-  export type NewProps = Model.NewProps & {
-    game: Round['game'];
-    rotation?: Round['rotation'];
-    i?: Round['i'];
+  export type NewProps = CreateProps & Partial<RecreateProps>;
 
-    turnFinishObservers?: Round['turnFinishObservers'];
-    roundFinishObservers?: Round['roundFinishObservers'];
+  export type CreateProps = Model.CreateProps & {
+    game: Round['game'];
   };
+
+  export type RecreateProps = Model.RecreateProps &
+    Required<CreateProps> & {
+      rotation: Round['rotation'];
+      i: Round['i'];
+
+      turnFinishObservers: Round['turnFinishObservers'];
+      roundFinishObservers: Round['roundFinishObservers'];
+    };
 
   export enum Rotation {
     CLOCKWISE = 1,

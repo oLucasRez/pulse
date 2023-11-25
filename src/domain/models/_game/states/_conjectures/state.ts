@@ -24,12 +24,12 @@ export class ConjecturesGameState
   private state: ConjecturesState;
   private currentAnswer: Answer | null;
 
-  public constructor(props: ConjecturesGameState.NewProps) {
+  protected constructor(props: ConjecturesGameState.NewProps) {
     const { state, currentAnswer = null, ...stateProps } = props;
 
     super(stateProps);
 
-    this.state = state ?? new AnsweringQuestionState({ ctx: this });
+    this.state = state ?? AnsweringQuestionState.create({ ctx: this });
     this.currentAnswer = currentAnswer;
 
     const round = this.ctx.getRound();
@@ -37,6 +37,16 @@ export class ConjecturesGameState
     round.subscribeRoundFinishObserver(this);
 
     round.startRound(Round.Rotation.ANTICLOCKWISE);
+  }
+  public static create(
+    props: ConjecturesGameState.CreateProps,
+  ): ConjecturesGameState {
+    return new ConjecturesGameState(props);
+  }
+  public static recreate(
+    props: ConjecturesGameState.RecreateProps,
+  ): ConjecturesGameState {
+    return new ConjecturesGameState(props);
   }
 
   public getState(): ConjecturesGameState['state'] {
@@ -56,7 +66,7 @@ export class ConjecturesGameState
   }
 
   public onRoundFinish(): void {
-    this.ctx.setState(new LightSpotCreationGameState({ ctx: this.ctx }));
+    this.ctx.setState(LightSpotCreationGameState.create({ ctx: this.ctx }));
   }
 
   public answerQuestion(
@@ -111,10 +121,15 @@ export class ConjecturesGameState
 }
 // ============================================================================
 export namespace ConjecturesGameState {
-  export type NewProps = GameState.NewProps & {
-    state?: ConjecturesGameState['state'];
-    currentAnswer?: ConjecturesGameState['currentAnswer'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps &
+    Required<CreateProps> & {
+      state: ConjecturesGameState['state'];
+      currentAnswer: ConjecturesGameState['currentAnswer'];
+    };
 
   export type AnswerQuestionProps = GameState.AnswerQuestionProps;
 }

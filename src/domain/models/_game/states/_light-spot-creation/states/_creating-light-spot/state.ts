@@ -4,8 +4,18 @@ import { PassingTurnState } from '../_passing-turn';
 import { LightSpotCreationState } from '../state';
 
 export class CreatingLightSpotState extends LightSpotCreationState {
-  public constructor(props: CreatingLightSpotState.NewProps) {
+  protected constructor(props: CreatingLightSpotState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: CreatingLightSpotState.CreateProps,
+  ): CreatingLightSpotState {
+    return new CreatingLightSpotState(props);
+  }
+  public static recreate(
+    props: CreatingLightSpotState.RecreateProps,
+  ): CreatingLightSpotState {
+    return new CreatingLightSpotState(props);
   }
 
   public createLightSpot(
@@ -22,7 +32,7 @@ export class CreatingLightSpotState extends LightSpotCreationState {
       landmark: subject,
     });
 
-    this.ctx.setState(new PassingTurnState({ ctx: this.ctx }));
+    this.ctx.setState(PassingTurnState.create({ ctx: this.ctx }));
 
     return lightSpot;
   }
@@ -36,7 +46,12 @@ export class CreatingLightSpotState extends LightSpotCreationState {
 }
 // ============================================================================
 export namespace CreatingLightSpotState {
-  export type NewProps = LightSpotCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = LightSpotCreationState.CreateProps;
+
+  export type RecreateProps = LightSpotCreationState.RecreateProps &
+    Required<CreateProps>;
 
   export type CreateLightSpotProps =
     LightSpotCreationState.CreateLightSpotProps;

@@ -23,9 +23,13 @@ export abstract class LightSpotCreationState extends Model {
 }
 // ============================================================================
 export namespace LightSpotCreationState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: LightSpotCreationState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 
   export type CreateLightSpotProps =
     LightSpotCreationGameState.CreateLightSpotProps;

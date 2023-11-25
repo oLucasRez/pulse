@@ -4,8 +4,16 @@ import { UpdatingCentralFactDescriptionState } from '../_updating-central-fact-d
 import { CentralFactCreationState } from '../state';
 
 export class PassingTurnState extends CentralFactCreationState {
-  public constructor(props: PassingTurnState.NewProps) {
+  protected constructor(props: PassingTurnState.NewProps) {
     super(props);
+  }
+  public static create(props: PassingTurnState.CreateProps): PassingTurnState {
+    return new PassingTurnState(props);
+  }
+  public static recreate(
+    props: PassingTurnState.RecreateProps,
+  ): PassingTurnState {
+    return new PassingTurnState(props);
   }
 
   public passTurn(): void {
@@ -14,7 +22,7 @@ export class PassingTurnState extends CentralFactCreationState {
     round.nextTurn();
 
     this.ctx.setState(
-      new UpdatingCentralFactDescriptionState({ ctx: this.ctx }),
+      UpdatingCentralFactDescriptionState.create({ ctx: this.ctx }),
     );
   }
   // --------------------------------------------------------------------------
@@ -33,5 +41,10 @@ export class PassingTurnState extends CentralFactCreationState {
 }
 // ============================================================================
 export namespace PassingTurnState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = CentralFactCreationState.CreateProps;
+
+  export type RecreateProps = CentralFactCreationState.RecreateProps &
+    Required<CreateProps>;
 }

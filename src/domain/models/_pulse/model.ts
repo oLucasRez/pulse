@@ -14,7 +14,7 @@ export class Pulse<L extends Landmark = Landmark> extends Model {
   protected constructor(props: Pulse.NewProps<L>) {
     const { origin, gap, amount, landmark, ...modelProps } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.origin = origin;
     this.gap = gap;
@@ -59,12 +59,18 @@ export class Pulse<L extends Landmark = Landmark> extends Model {
     this.amount = value;
   }
 }
-
+// ============================================================================
 export namespace Pulse {
-  export type NewProps<L extends Landmark> = Model.NewProps & {
+  export type NewProps<L extends Landmark> = CreateProps<L> &
+    Partial<RecreateProps<L>>;
+
+  export type CreateProps<L extends Landmark> = Model.CreateProps & {
     origin: Pulse<L>['origin'];
     gap: Pulse<L>['gap'];
     amount: Pulse<L>['amount'];
     landmark: Pulse<L>['landmark'];
   };
+
+  export type RecreateProps<L extends Landmark> = Model.RecreateProps &
+    Required<CreateProps<L>>;
 }

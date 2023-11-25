@@ -7,7 +7,7 @@ export class VotingState extends ConjecturesState {
   private answer: Answer;
   private playerVotes: Record<Player['id'], boolean>;
 
-  public constructor(props: VotingState.NewProps) {
+  protected constructor(props: VotingState.NewProps) {
     const { answer, playerVotes = {}, ...conjecturesStateProps } = props;
 
     super(conjecturesStateProps);
@@ -15,14 +15,19 @@ export class VotingState extends ConjecturesState {
     this.answer = answer;
     this.playerVotes = playerVotes;
   }
+  public static create(props: VotingState.CreateProps): VotingState {
+    return new VotingState(props);
+  }
+  public static recreate(props: VotingState.RecreateProps): VotingState {
+    return new VotingState(props);
+  }
 
   public playerVote(player: Player, vote: boolean): void {
     this.playerVotes[player.id] = vote;
   }
 
   public finishVoting(): boolean {
-    const round = this.ctx.ctx.getRound();
-    const players = round.getPlayers();
+    const players = this.ctx.ctx.getPlayers();
 
     let aPlayerDidntVote = false;
     let allPlayersAgreed = true;
@@ -35,7 +40,7 @@ export class VotingState extends ConjecturesState {
 
     if (allPlayersAgreed) this.answer.toFact();
 
-    this.ctx.setState(new PassingTurnState({ ctx: this.ctx }));
+    this.ctx.setState(PassingTurnState.create({ ctx: this.ctx }));
 
     return allPlayersAgreed;
   }
@@ -49,8 +54,14 @@ export class VotingState extends ConjecturesState {
 }
 // ============================================================================
 export namespace VotingState {
-  export type NewProps = ConjecturesState.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = ConjecturesState.CreateProps & {
     answer: VotingState['answer'];
-    playerVotes?: VotingState['playerVotes'];
   };
+
+  export type RecreateProps = ConjecturesState.RecreateProps &
+    Required<CreateProps> & {
+      playerVotes: VotingState['playerVotes'];
+    };
 }

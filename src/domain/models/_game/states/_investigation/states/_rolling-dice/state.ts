@@ -4,8 +4,16 @@ import { CreatingSubjectPulseState } from '../_creating-subject-pulse';
 import { InvestigationState } from '../state';
 
 export class RollingDiceState extends InvestigationState {
-  public constructor(props: RollingDiceState.NewProps) {
+  protected constructor(props: RollingDiceState.NewProps) {
     super(props);
+  }
+  public static create(props: RollingDiceState.CreateProps): RollingDiceState {
+    return new RollingDiceState(props);
+  }
+  public static recreate(
+    props: RollingDiceState.RecreateProps,
+  ): RollingDiceState {
+    return new RollingDiceState(props);
   }
 
   public rollDice(): Dice {
@@ -16,7 +24,7 @@ export class RollingDiceState extends InvestigationState {
 
     dice.roll();
 
-    this.ctx.setState(new CreatingSubjectPulseState({ ctx: this.ctx }));
+    this.ctx.setState(CreatingSubjectPulseState.create({ ctx: this.ctx }));
 
     return dice;
   }
@@ -36,5 +44,10 @@ export class RollingDiceState extends InvestigationState {
 }
 // ============================================================================
 export namespace RollingDiceState {
-  export type NewProps = InvestigationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = InvestigationState.CreateProps;
+
+  export type RecreateProps = InvestigationState.RecreateProps &
+    Required<CreateProps>;
 }

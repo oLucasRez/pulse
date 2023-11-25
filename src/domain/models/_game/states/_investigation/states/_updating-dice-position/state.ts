@@ -6,8 +6,18 @@ import { CreatingQuestionState } from '../_creating-question';
 import { InvestigationState } from '../state';
 
 export class UpdatingDicePositionState extends InvestigationState {
-  public constructor(props: UpdatingDicePositionState.NewProps) {
+  protected constructor(props: UpdatingDicePositionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: UpdatingDicePositionState.CreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
+  }
+  public static recreate(
+    props: UpdatingDicePositionState.RecreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
   }
 
   public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
@@ -23,7 +33,7 @@ export class UpdatingDicePositionState extends InvestigationState {
 
     subject.updatePosition(position);
 
-    this.ctx.setState(new CreatingQuestionState({ ctx: this.ctx }));
+    this.ctx.setState(CreatingQuestionState.create({ ctx: this.ctx }));
 
     return dice;
   }
@@ -53,5 +63,10 @@ export class UpdatingDicePositionState extends InvestigationState {
 }
 // ============================================================================
 export namespace UpdatingDicePositionState {
-  export type NewProps = InvestigationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = InvestigationState.CreateProps;
+
+  export type RecreateProps = InvestigationState.RecreateProps &
+    Required<CreateProps>;
 }

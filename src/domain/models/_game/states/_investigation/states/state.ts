@@ -25,9 +25,13 @@ export abstract class InvestigationState extends Model {
 }
 // ============================================================================
 export namespace InvestigationState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: InvestigationState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 
   export type CreateQuestionProps = InvestigationGameState.CreateQuestionProps;
 }

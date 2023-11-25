@@ -2,13 +2,13 @@ import { vector } from '@types';
 
 import { Model } from '../model';
 
-export class Landmark extends Model {
+export abstract class Landmark extends Model {
   protected position: vector | null;
 
   protected constructor(props: Landmark.NewProps) {
     const { position = null, ...modelProps } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.position = position;
   }
@@ -17,9 +17,13 @@ export class Landmark extends Model {
     return this.position;
   }
 }
-
+// ============================================================================
 export namespace Landmark {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     position?: Landmark['position'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 }

@@ -23,9 +23,13 @@ export abstract class ConjecturesState extends Model {
 }
 // ============================================================================
 export namespace ConjecturesState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: ConjecturesState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 
   export type AnswerQuestionProps = ConjecturesGameState.AnswerQuestionProps;
 }

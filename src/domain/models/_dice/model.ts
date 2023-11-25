@@ -11,7 +11,7 @@ export class Dice extends Model {
   private position: vector | null;
   private owner: Player | null;
 
-  public constructor(props: Dice.NewProps) {
+  protected constructor(props: Dice.NewProps) {
     const {
       sides,
       value = null,
@@ -20,12 +20,18 @@ export class Dice extends Model {
       ...modelProps
     } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.sides = sides;
     this.value = value;
     this.position = position;
     this.owner = owner;
+  }
+  public static create(props: Dice.CreateProps): Dice {
+    return new Dice(props);
+  }
+  public static recreate(props: Dice.RecreateProps): Dice {
+    return new Dice(props);
   }
 
   public getSides(): Dice['sides'] {
@@ -96,10 +102,16 @@ export class Dice extends Model {
 }
 // ============================================================================
 export namespace Dice {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     sides: Dice['sides'];
-    value?: Dice['value'];
-    position?: Dice['position'];
-    owner?: Dice['owner'];
   };
+
+  export type RecreateProps = Model.RecreateProps &
+    Required<CreateProps> & {
+      value: Dice['value'];
+      position: Dice['position'];
+      owner: Dice['owner'];
+    };
 }

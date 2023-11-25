@@ -4,8 +4,16 @@ import { RollingDiceState } from '../_rolling-dice';
 import { InvestigationState } from '../state';
 
 export class PassingTurnState extends InvestigationState {
-  public constructor(props: PassingTurnState.NewProps) {
+  protected constructor(props: PassingTurnState.NewProps) {
     super(props);
+  }
+  public static create(props: PassingTurnState.CreateProps): PassingTurnState {
+    return new PassingTurnState(props);
+  }
+  public static recreate(
+    props: PassingTurnState.RecreateProps,
+  ): PassingTurnState {
+    return new PassingTurnState(props);
   }
 
   public passTurn(): void {
@@ -13,7 +21,7 @@ export class PassingTurnState extends InvestigationState {
 
     round.nextTurn();
 
-    this.ctx.setState(new RollingDiceState({ ctx: this.ctx }));
+    this.ctx.setState(RollingDiceState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public rollDice(): Dice {
@@ -31,5 +39,10 @@ export class PassingTurnState extends InvestigationState {
 }
 // ============================================================================
 export namespace PassingTurnState {
-  export type NewProps = InvestigationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = InvestigationState.CreateProps;
+
+  export type RecreateProps = InvestigationState.RecreateProps &
+    Required<CreateProps>;
 }

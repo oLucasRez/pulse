@@ -5,9 +5,7 @@ import { Vector } from '@utils';
 import { Pulse } from '../model';
 
 export class LightSpot extends Pulse<Subject> {
-  public constructor(props: LightSpot.NewProps) {
-    const pulseProps = props;
-
+  protected constructor(props: LightSpot.NewProps) {
     const origin = Vector(0, 0);
     const amount = 1;
 
@@ -16,13 +14,24 @@ export class LightSpot extends Pulse<Subject> {
 
     const gap = landmarkPosition.sub(origin).mag();
 
-    super({ ...pulseProps, origin, gap, amount });
+    super({ ...props, origin, gap, amount });
+  }
+  public static create(props: LightSpot.CreateProps): LightSpot {
+    return new LightSpot(props);
+  }
+  public static recreate(props: LightSpot.RecreateProps): LightSpot {
+    return new LightSpot(props);
   }
 }
 // ============================================================================
 export namespace LightSpot {
-  export type NewProps = Omit<
-    Pulse.NewProps<Subject>,
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Omit<
+    Pulse.CreateProps<Subject>,
     'origin' | 'amount' | 'gap'
   >;
+
+  export type RecreateProps = Pulse.RecreateProps<Subject> &
+    Required<CreateProps>;
 }

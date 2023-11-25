@@ -4,8 +4,16 @@ import { AnsweringQuestionState } from '../_answering-question';
 import { ConjecturesState } from '../state';
 
 export class PassingTurnState extends ConjecturesState {
-  public constructor(props: PassingTurnState.NewProps) {
+  protected constructor(props: PassingTurnState.NewProps) {
     super(props);
+  }
+  public static create(props: PassingTurnState.CreateProps): PassingTurnState {
+    return new PassingTurnState(props);
+  }
+  public static recreate(
+    props: PassingTurnState.RecreateProps,
+  ): PassingTurnState {
+    return new PassingTurnState(props);
   }
 
   public passTurn(): void {
@@ -13,7 +21,7 @@ export class PassingTurnState extends ConjecturesState {
 
     round.nextTurn();
 
-    this.ctx.setState(new AnsweringQuestionState({ ctx: this.ctx }));
+    this.ctx.setState(AnsweringQuestionState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public answerQuestion(): Answer {
@@ -28,5 +36,10 @@ export class PassingTurnState extends ConjecturesState {
 }
 // ============================================================================
 export namespace PassingTurnState {
-  export type NewProps = ConjecturesState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = ConjecturesState.CreateProps;
+
+  export type RecreateProps = ConjecturesState.RecreateProps &
+    Required<CreateProps>;
 }

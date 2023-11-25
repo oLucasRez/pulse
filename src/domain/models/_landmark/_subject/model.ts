@@ -11,15 +11,21 @@ export class Subject extends Landmark {
   private author: Player;
   private path: SubjectPulse[];
 
-  public constructor(props: Subject.NewProps) {
+  protected constructor(props: Subject.NewProps) {
     const { description, color, author, path = [], ...landmarkProps } = props;
 
-    super({ ...landmarkProps });
+    super(landmarkProps);
 
     this.description = description;
     this.color = color;
     this.author = author;
     this.path = path;
+  }
+  public static create(props: Subject.CreateProps): Subject {
+    return new Subject(props);
+  }
+  public static recreate(props: Subject.RecreateProps): Subject {
+    return new Subject(props);
   }
 
   public getPosition(): Subject['position'] {
@@ -67,12 +73,18 @@ export class Subject extends Landmark {
 }
 // ============================================================================
 export namespace Subject {
-  export type NewProps = Landmark.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Landmark.CreateProps & {
     description: Subject['description'];
     color: Subject['color'];
     author: Subject['author'];
-    path?: Subject['path'];
   };
+
+  export type RecreateProps = Landmark.RecreateProps &
+    Required<CreateProps> & {
+      path: Subject['path'];
+    };
 
   export type CreatePulseProps = Omit<
     SubjectPulse.NewProps,

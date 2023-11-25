@@ -11,7 +11,7 @@ export class Player extends Model {
   private dice: Dice;
   private subject: Subject | null;
 
-  public constructor(props: Player.NewProps) {
+  protected constructor(props: Player.NewProps) {
     const {
       name,
       color,
@@ -22,7 +22,7 @@ export class Player extends Model {
       ...modelProps
     } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.name = name;
     this.color = color;
@@ -32,6 +32,12 @@ export class Player extends Model {
     this.subject = subject;
 
     this.dice.setOwner(this);
+  }
+  public static create(props: Player.CreateProps): Player {
+    return new Player(props);
+  }
+  public static recreate(props: Player.RecreateProps): Player {
+    return new Player(props);
   }
 
   public getName(): Player['name'] {
@@ -59,7 +65,7 @@ export class Player extends Model {
   }
 
   public createMySubject(props: Player.CreateMySubjectProps): Subject {
-    const subject = new Subject({
+    const subject = Subject.create({
       ...props,
       position: this.dice.getPosition(),
       color: this.color,
@@ -72,7 +78,7 @@ export class Player extends Model {
   }
 
   public createSubject(props: Player.CreateSubjectProps): Subject {
-    const subject = new Subject({
+    const subject = Subject.create({
       ...props,
       position: this.dice.getPosition(),
       author: this,
@@ -82,42 +88,45 @@ export class Player extends Model {
   }
 
   public createQuestion(props: Player.CreateQuestionProps): Question {
-    const { ...questionProps } = props;
-
     const dicePosition = this.dice.getPosition();
-
     if (!dicePosition) throw 'Dice must be in the map';
 
-    return new Question({
-      ...questionProps,
+    return Question.create({
+      ...props,
       position: dicePosition,
       author: this,
     });
   }
 }
-
+// ============================================================================
 export namespace Player {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     name: Player['name'];
     color: Player['color'];
     user?: Player['user'];
     game: Player['game'];
     dice: Player['dice'];
-    subject?: Player['subject'];
   };
 
+  export type RecreateProps = Model.RecreateProps &
+    Required<CreateProps> & {
+      subject: Player['subject'];
+    };
+
   export type CreateMySubjectProps = Omit<
-    Subject.NewProps,
+    Subject.CreateProps,
     'position' | 'color' | 'author'
   >;
 
   export type CreateSubjectProps = Omit<
-    Subject.NewProps,
+    Subject.CreateProps,
     'position' | 'author'
   >;
 
   export type CreateQuestionProps = Omit<
-    Question.NewProps,
+    Question.CreateProps,
     'position' | 'author'
   >;
 }

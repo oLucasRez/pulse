@@ -15,7 +15,11 @@ export abstract class Model {
 }
 // ============================================================================
 export namespace Model {
-  export type NewProps = {
-    id?: Model['id'];
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = {};
+
+  export type RecreateProps = CreateProps & {
+    id: Model['id'];
   };
 }

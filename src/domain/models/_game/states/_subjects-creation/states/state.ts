@@ -20,9 +20,13 @@ export abstract class SubjectsCreationState extends Model {
 }
 // ============================================================================
 export namespace SubjectsCreationState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: SubjectsCreationState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 
   export type CreateSubjectProps = SubjectsCreationGameState.CreateSubjectProps;
 }

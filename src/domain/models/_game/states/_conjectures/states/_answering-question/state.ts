@@ -4,8 +4,18 @@ import { VotingState } from '../_voting';
 import { ConjecturesState } from '../state';
 
 export class AnsweringQuestionState extends ConjecturesState {
-  public constructor(props: AnsweringQuestionState.NewProps) {
+  protected constructor(props: AnsweringQuestionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: AnsweringQuestionState.CreateProps,
+  ): AnsweringQuestionState {
+    return new AnsweringQuestionState(props);
+  }
+  public static recreate(
+    props: AnsweringQuestionState.RecreateProps,
+  ): AnsweringQuestionState {
+    return new AnsweringQuestionState(props);
   }
 
   public answerQuestion(
@@ -16,7 +26,7 @@ export class AnsweringQuestionState extends ConjecturesState {
 
     this.ctx.setCurrentAnswer(answer);
 
-    this.ctx.setState(new VotingState({ ctx: this.ctx, answer }));
+    this.ctx.setState(VotingState.create({ ctx: this.ctx, answer }));
 
     return answer;
   }
@@ -33,7 +43,12 @@ export class AnsweringQuestionState extends ConjecturesState {
 }
 // ============================================================================
 export namespace AnsweringQuestionState {
-  export type NewProps = ConjecturesState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = ConjecturesState.CreateProps;
+
+  export type RecreateProps = ConjecturesState.RecreateProps &
+    Required<CreateProps>;
 
   export type AnswerQuestionProps = ConjecturesState.AnswerQuestionProps;
 }

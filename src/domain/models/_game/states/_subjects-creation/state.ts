@@ -22,18 +22,28 @@ export class SubjectsCreationGameState
 {
   private state: SubjectsCreationState;
 
-  public constructor(props: SubjectsCreationGameState.NewProps) {
+  protected constructor(props: SubjectsCreationGameState.NewProps) {
     const { state, ...stateProps } = props;
 
     super(stateProps);
 
-    this.state = state ?? new CreatingSubjectState({ ctx: this });
+    this.state = state ?? CreatingSubjectState.create({ ctx: this });
 
     const round = this.ctx.getRound();
 
     round.subscribeRoundFinishObserver(this);
 
     round.startRound(Round.Rotation.CLOCKWISE);
+  }
+  public static create(
+    props: SubjectsCreationGameState.CreateProps,
+  ): SubjectsCreationGameState {
+    return new SubjectsCreationGameState(props);
+  }
+  public static recreate(
+    props: SubjectsCreationGameState.RecreateProps,
+  ): SubjectsCreationGameState {
+    return new SubjectsCreationGameState(props);
   }
 
   public getState(): SubjectsCreationGameState['state'] {
@@ -45,7 +55,7 @@ export class SubjectsCreationGameState
   }
 
   public onRoundFinish(): void {
-    this.ctx.setState(new CentralFactCreationGameState({ ctx: this.ctx }));
+    this.ctx.setState(CentralFactCreationGameState.create({ ctx: this.ctx }));
   }
 
   public createSubject(
@@ -97,9 +107,14 @@ export class SubjectsCreationGameState
 }
 // ============================================================================
 export namespace SubjectsCreationGameState {
-  export type NewProps = GameState.NewProps & {
-    state?: SubjectsCreationGameState['state'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps &
+    Required<CreateProps> & {
+      state: SubjectsCreationGameState['state'];
+    };
 
   export type CreateSubjectProps = GameState.CreateSubjectProps;
 }

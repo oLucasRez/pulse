@@ -2,10 +2,8 @@ import { Subject } from '../..';
 import { Pulse } from '../model';
 
 export class SubjectPulse extends Pulse<Subject> {
-  public constructor(props: SubjectPulse.NewProps) {
-    const { landmark, ...pulseProps } = props;
-
-    const origin = landmark.getPosition();
+  protected constructor(props: SubjectPulse.NewProps) {
+    const { landmark, origin = landmark.getPosition(), ...pulseProps } = props;
 
     if (!origin) throw 'Landmark must have a position';
 
@@ -18,5 +16,12 @@ export class SubjectPulse extends Pulse<Subject> {
 }
 // ============================================================================
 export namespace SubjectPulse {
-  export type NewProps = Omit<Pulse.NewProps<Subject>, 'origin'>;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Omit<Pulse.CreateProps<Subject>, 'origin'>;
+
+  export type RecreateProps = Pulse.RecreateProps<Subject> &
+    Required<CreateProps> & {
+      origin: SubjectPulse['origin'];
+    };
 }

@@ -27,15 +27,15 @@ export class Game extends Model {
   private map: Map;
   private questions: Question[];
 
-  public constructor(props: Game.NewProps) {
+  protected constructor(props: Game.NewProps) {
     const {
       host,
       players = [],
       round,
       lightSpotRound,
-      dicePicker = new DicePicker({}),
+      dicePicker = DicePicker.create({}),
       state,
-      map = new Map({}),
+      map = Map.create({}),
       questions = [],
       ...modelProps
     } = props;
@@ -44,12 +44,18 @@ export class Game extends Model {
 
     this.host = host;
     this.players = players;
-    this.round = round ?? new Round({ game: this });
-    this.lightSpotRound = lightSpotRound ?? new Round({ game: this });
+    this.round = round ?? Round.create({ game: this });
+    this.lightSpotRound = lightSpotRound ?? Round.create({ game: this });
     this.dicePicker = dicePicker;
-    this.state = state ?? new InitialGameState({ ctx: this });
+    this.state = state ?? InitialGameState.create({ ctx: this });
     this.map = map;
     this.questions = questions;
+  }
+  public static create(props: Game.CreateProps): Game {
+    return new Game(props);
+  }
+  public static recreate(props: Game.RecreateProps): Game {
+    return new Game(props);
   }
 
   public getHost(): Game['host'] {
@@ -105,7 +111,7 @@ export class Game extends Model {
     const dice = this.dicePicker.pickDice();
     if (!dice) throw 'Limit of players achieved';
 
-    const player = new Player({ ...props, dice, game: this });
+    const player = Player.create({ ...props, dice, game: this });
 
     this.players.push(player);
 
@@ -171,31 +177,26 @@ export class Game extends Model {
 }
 // ============================================================================
 export namespace Game {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     host: Game['host'];
-    players?: Game['players'];
-    round?: Game['round'];
-    lightSpotRound?: Game['lightSpotRound'];
-    dicePicker?: Game['dicePicker'];
-    state?: Game['state'];
-    map?: Game['map'];
-    questions?: Game['questions'];
   };
 
-  export type RenewProps = Model.NewProps & {
-    host: Game['host'];
-    players?: Game['players'];
-    round?: Game['round'];
-    lightSpotRound?: Game['lightSpotRound'];
-    dicePicker?: Game['dicePicker'];
-    state?: Game['state'];
-    map?: Game['map'];
-    questions?: Game['questions'];
-  };
+  export type RecreateProps = Model.RecreateProps &
+    Required<CreateProps> & {
+      players: Game['players'];
+      round: Game['round'];
+      lightSpotRound: Game['lightSpotRound'];
+      dicePicker: Game['dicePicker'];
+      state: Game['state'];
+      map: Game['map'];
+      questions: Game['questions'];
+    };
 
   export type CreateSubjectProps = Player.CreateMySubjectProps;
 
-  export type CreatePlayerProps = Omit<Player.NewProps, 'dice' | 'game'>;
+  export type CreatePlayerProps = Omit<Player.CreateProps, 'dice' | 'game'>;
 
   export type CreateQuestionProps = Player.CreateQuestionProps;
 

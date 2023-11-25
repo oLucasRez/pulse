@@ -6,14 +6,20 @@ export class Answer extends Model {
   private question: Question;
   private author: Player;
 
-  public constructor(props: Answer.NewProps) {
+  protected constructor(props: Answer.NewProps) {
     const { description, question, author, ...modelProps } = props;
 
-    super({ ...modelProps });
+    super(modelProps);
 
     this.description = description;
     this.question = question;
     this.author = author;
+  }
+  public static create(props: Answer.CreateProps): Answer {
+    return new Answer(props);
+  }
+  public static recreate(props: Answer.RecreateProps): Answer {
+    return new Answer(props);
   }
 
   public getDescription(): Answer['description'] {
@@ -36,11 +42,15 @@ export class Answer extends Model {
     return this.id === this.question.getFact()?.id;
   }
 }
-
+// ============================================================================
 export namespace Answer {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     description: Answer['description'];
     question: Answer['question'];
     author: Answer['author'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 }

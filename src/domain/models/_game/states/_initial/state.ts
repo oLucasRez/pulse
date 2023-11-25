@@ -15,12 +15,20 @@ import { SubjectsCreationGameState } from '../_subjects-creation';
 import { GameState } from '../state';
 
 export class InitialGameState extends GameState {
-  public constructor(props: InitialGameState.NewProps) {
+  protected constructor(props: InitialGameState.NewProps) {
     super(props);
+  }
+  public static create(props: InitialGameState.CreateProps): InitialGameState {
+    return new InitialGameState(props);
+  }
+  public static recreate(
+    props: InitialGameState.RecreateProps,
+  ): InitialGameState {
+    return new InitialGameState(props);
   }
 
   public start(): void {
-    this.ctx.setState(new SubjectsCreationGameState({ ctx: this.ctx }));
+    this.ctx.setState(SubjectsCreationGameState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public createSubject(): Subject {
@@ -65,5 +73,9 @@ export class InitialGameState extends GameState {
 }
 // ============================================================================
 export namespace InitialGameState {
-  export type NewProps = GameState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps & Required<CreateProps>;
 }

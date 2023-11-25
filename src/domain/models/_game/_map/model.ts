@@ -11,9 +11,9 @@ export class Map extends Model {
   private centralPulse: CentralPulse;
   private subjectPulses: Pulse<Subject>[];
 
-  public constructor(props: Map.NewProps) {
+  protected constructor(props: Map.NewProps) {
     const {
-      centralPulse = new CentralPulse({}),
+      centralPulse = CentralPulse.create({}),
       subjectPulses = [],
       ...modelProps
     } = props;
@@ -22,6 +22,12 @@ export class Map extends Model {
 
     this.centralPulse = centralPulse;
     this.subjectPulses = subjectPulses;
+  }
+  public static create(props: Map.CreateProps): Map {
+    return new Map(props);
+  }
+  public static recreate(props: Map.CreateProps): Map {
+    return new Map(props);
   }
 
   public getCentralPulse(): Map['centralPulse'] {
@@ -48,7 +54,7 @@ export class Map extends Model {
   }
 
   public createLightSpot(props: Map.CreateLightSpotProps): LightSpot {
-    const lightSpot = new LightSpot(props);
+    const lightSpot = LightSpot.create(props);
 
     this.subjectPulses.push(lightSpot);
 
@@ -57,10 +63,15 @@ export class Map extends Model {
 }
 // ============================================================================
 export namespace Map {
-  export type NewProps = Model.NewProps & {
-    centralPulse?: Map['centralPulse'];
-    subjectPulses?: Map['subjectPulses'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps;
+
+  export type RecreateProps = Model.RecreateProps &
+    Required<CreateProps> & {
+      centralPulse: Map['centralPulse'];
+      subjectPulses: Map['subjectPulses'];
+    };
 
   export type CreateSubjectPulseProps = Subject.CreatePulseProps;
 

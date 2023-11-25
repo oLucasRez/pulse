@@ -4,8 +4,16 @@ import { UpdatingCentralPulseAmountState } from '../_updating-central-pulse-amou
 import { CentralFactCreationState } from '../state';
 
 export class RollingDiceState extends CentralFactCreationState {
-  public constructor(props: RollingDiceState.NewProps) {
+  protected constructor(props: RollingDiceState.NewProps) {
     super(props);
+  }
+  public static create(props: RollingDiceState.CreateProps): RollingDiceState {
+    return new RollingDiceState(props);
+  }
+  public static recreate(
+    props: RollingDiceState.RecreateProps,
+  ): RollingDiceState {
+    return new RollingDiceState(props);
   }
 
   public rollDice(): Dice {
@@ -16,7 +24,9 @@ export class RollingDiceState extends CentralFactCreationState {
 
     dice.roll();
 
-    this.ctx.setState(new UpdatingCentralPulseAmountState({ ctx: this.ctx }));
+    this.ctx.setState(
+      UpdatingCentralPulseAmountState.create({ ctx: this.ctx }),
+    );
 
     return dice;
   }
@@ -36,5 +46,10 @@ export class RollingDiceState extends CentralFactCreationState {
 }
 // ============================================================================
 export namespace RollingDiceState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = CentralFactCreationState.CreateProps;
+
+  export type RecreateProps = CentralFactCreationState.RecreateProps &
+    Required<CreateProps>;
 }

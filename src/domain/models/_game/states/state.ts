@@ -54,9 +54,13 @@ export abstract class GameState extends Model {
 }
 // ============================================================================
 export namespace GameState {
-  export type NewProps = Model.NewProps & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Model.CreateProps & {
     ctx: GameState['ctx'];
   };
+
+  export type RecreateProps = Model.RecreateProps & Required<CreateProps>;
 
   export type CreateSubjectProps = Game.CreateSubjectProps;
 

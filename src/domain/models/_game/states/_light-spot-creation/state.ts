@@ -22,18 +22,28 @@ export class LightSpotCreationGameState
 {
   private state: LightSpotCreationState;
 
-  public constructor(props: LightSpotCreationGameState.NewProps) {
+  protected constructor(props: LightSpotCreationGameState.NewProps) {
     const { state, ...stateProps } = props;
 
     super(stateProps);
 
-    this.state = state ?? new UpdatingDicePositionState({ ctx: this });
+    this.state = state ?? UpdatingDicePositionState.create({ ctx: this });
 
     const round = this.ctx.getLightSpotRound();
 
     round.subscribeTurnFinishObserver(this);
 
     round.startRound(Round.Rotation.CLOCKWISE);
+  }
+  public static create(
+    props: LightSpotCreationGameState.CreateProps,
+  ): LightSpotCreationGameState {
+    return new LightSpotCreationGameState(props);
+  }
+  public static recreate(
+    props: LightSpotCreationGameState.RecreateProps,
+  ): LightSpotCreationGameState {
+    return new LightSpotCreationGameState(props);
   }
 
   public getState(): LightSpotCreationGameState['state'] {
@@ -59,7 +69,7 @@ export class LightSpotCreationGameState
   }
 
   public onTurnFinish(): void {
-    this.ctx.setState(new InvestigationGameState({ ctx: this.ctx }));
+    this.ctx.setState(InvestigationGameState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public start(): void {
@@ -98,9 +108,14 @@ export class LightSpotCreationGameState
 }
 // ============================================================================
 export namespace LightSpotCreationGameState {
-  export type NewProps = GameState.NewProps & {
-    state?: LightSpotCreationGameState['state'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps &
+    Required<CreateProps> & {
+      state: LightSpotCreationGameState['state'];
+    };
 
   export type CreateLightSpotProps = GameState.CreateLightSpotProps;
 }

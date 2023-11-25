@@ -4,8 +4,18 @@ import { UpdatingDicePositionState } from '../_updating-dice-position';
 import { InvestigationState } from '../state';
 
 export class CreatingSubjectPulseState extends InvestigationState {
-  public constructor(props: CreatingSubjectPulseState.NewProps) {
+  protected constructor(props: CreatingSubjectPulseState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: CreatingSubjectPulseState.CreateProps,
+  ): CreatingSubjectPulseState {
+    return new CreatingSubjectPulseState(props);
+  }
+  public static recreate(
+    props: CreatingSubjectPulseState.RecreateProps,
+  ): CreatingSubjectPulseState {
+    return new CreatingSubjectPulseState(props);
   }
 
   public createSubjectPulse(gap: SubjectPulse['gap']): SubjectPulse {
@@ -30,7 +40,7 @@ export class CreatingSubjectPulseState extends InvestigationState {
       amount: diceValue,
     });
 
-    this.ctx.setState(new UpdatingDicePositionState({ ctx: this.ctx }));
+    this.ctx.setState(UpdatingDicePositionState.create({ ctx: this.ctx }));
 
     return subjectPulse;
   }
@@ -50,5 +60,10 @@ export class CreatingSubjectPulseState extends InvestigationState {
 }
 // ============================================================================
 export namespace CreatingSubjectPulseState {
-  export type NewProps = InvestigationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = InvestigationState.CreateProps;
+
+  export type RecreateProps = InvestigationState.RecreateProps &
+    Required<CreateProps>;
 }

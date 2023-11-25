@@ -4,10 +4,10 @@ import { CentralFact } from '../..';
 import { Pulse } from '../model';
 
 export class CentralPulse extends Pulse<CentralFact> {
-  public constructor(props: CentralPulse.NewProps) {
+  protected constructor(props: CentralPulse.NewProps) {
     const {
       amount = 0,
-      landmark = new CentralFact({ description: '' }),
+      landmark = CentralFact.create({ description: '' }),
       ...pulseProps
     } = props;
 
@@ -16,18 +16,29 @@ export class CentralPulse extends Pulse<CentralFact> {
 
     super({ ...pulseProps, origin, gap, amount, landmark });
   }
+  public static create(props: CentralPulse.CreateProps): CentralPulse {
+    return new CentralPulse(props);
+  }
+  public static recreate(props: CentralPulse.RecreateProps): CentralPulse {
+    return new CentralPulse(props);
+  }
 
   public updateAmount(amount: CentralPulse['amount']): void {
     this.amount = amount;
   }
 }
-
+// ============================================================================
 export namespace CentralPulse {
-  export type NewProps = Omit<
-    Pulse.NewProps<CentralFact>,
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Omit<
+    Pulse.CreateProps<CentralFact>,
     'origin' | 'gap' | 'amount' | 'landmark'
-  > & {
-    amount?: CentralPulse['amount'];
-    landmark?: CentralPulse['landmark'];
-  };
+  >;
+
+  export type RecreateProps = Pulse.RecreateProps<CentralFact> &
+    Required<CreateProps> & {
+      amount: CentralPulse['amount'];
+      landmark: CentralPulse['landmark'];
+    };
 }

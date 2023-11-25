@@ -25,19 +25,29 @@ export class CentralFactCreationGameState
 {
   private state: CentralFactCreationState;
 
-  public constructor(props: CentralFactCreationGameState.NewProps) {
+  protected constructor(props: CentralFactCreationGameState.NewProps) {
     const { state, ...stateProps } = props;
 
     super(stateProps);
 
     this.state =
-      state ?? new UpdatingCentralFactDescriptionState({ ctx: this });
+      state ?? UpdatingCentralFactDescriptionState.create({ ctx: this });
 
     const round = this.ctx.getRound();
 
     round.subscribeRoundFinishObserver(this);
 
     round.startRound(Round.Rotation.ANTICLOCKWISE);
+  }
+  public static create(
+    props: CentralFactCreationGameState.CreateProps,
+  ): CentralFactCreationGameState {
+    return new CentralFactCreationGameState(props);
+  }
+  public static recreate(
+    props: CentralFactCreationGameState.RecreateProps,
+  ): CentralFactCreationGameState {
+    return new CentralFactCreationGameState(props);
   }
 
   public getState(): CentralFactCreationGameState['state'] {
@@ -49,7 +59,7 @@ export class CentralFactCreationGameState
   }
 
   public onRoundFinish(): void {
-    this.ctx.setState(new InvestigationGameState({ ctx: this.ctx }));
+    this.ctx.setState(InvestigationGameState.create({ ctx: this.ctx }));
   }
 
   public updateCentralFactDescription(
@@ -104,7 +114,12 @@ export class CentralFactCreationGameState
 }
 // ============================================================================
 export namespace CentralFactCreationGameState {
-  export type NewProps = GameState.NewProps & {
-    state?: CentralFactCreationGameState['state'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps &
+    Required<CreateProps> & {
+      state: CentralFactCreationGameState['state'];
+    };
 }

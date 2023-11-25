@@ -9,7 +9,7 @@ export class Question extends Landmark {
   private answers: Answer[];
   private fact: Answer | null;
 
-  public constructor(props: Question.NewProps) {
+  protected constructor(props: Question.NewProps) {
     const {
       position,
       description,
@@ -20,7 +20,7 @@ export class Question extends Landmark {
       ...landmarkProps
     } = props;
 
-    super({ ...landmarkProps });
+    super(landmarkProps);
 
     this.position = position;
     this.description = description;
@@ -28,6 +28,12 @@ export class Question extends Landmark {
     this.author = author;
     this.answers = answers;
     this.fact = fact;
+  }
+  public static create(props: Question.CreateProps): Question {
+    return new Question(props);
+  }
+  public static recreate(props: Question.RecreateProps): Question {
+    return new Question(props);
   }
 
   public getPosition(): Question['position'] {
@@ -51,7 +57,7 @@ export class Question extends Landmark {
   }
 
   public createAnswer(props: Question.CreateAnswerProps): Answer {
-    const answer = new Answer({ ...props, question: this });
+    const answer = Answer.create({ ...props, question: this });
 
     this.answers.push(answer);
 
@@ -66,16 +72,22 @@ export class Question extends Landmark {
     this.fact = answer;
   }
 }
-
+// ============================================================================
 export namespace Question {
-  export type NewProps = Omit<Landmark.NewProps, 'position'> & {
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = Omit<Landmark.CreateProps, 'position'> & {
     position: Question['position'];
     description: Question['description'];
     subjects: Question['subjects'];
     author: Question['author'];
-    answers?: Question['answers'];
-    fact?: Question['fact'];
   };
+
+  export type RecreateProps = Landmark.RecreateProps &
+    Required<CreateProps> & {
+      answers: Question['answers'];
+      fact: Question['fact'];
+    };
 
   export type CreateAnswerProps = Omit<Answer.NewProps, 'question'>;
 }

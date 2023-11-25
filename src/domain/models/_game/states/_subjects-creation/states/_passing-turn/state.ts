@@ -4,8 +4,16 @@ import { CreatingSubjectState } from '../_creating-subject';
 import { SubjectsCreationState } from '../state';
 
 export class PassingTurnState extends SubjectsCreationState {
-  public constructor(props: PassingTurnState.NewProps) {
+  protected constructor(props: PassingTurnState.NewProps) {
     super(props);
+  }
+  public static create(props: PassingTurnState.CreateProps): PassingTurnState {
+    return new PassingTurnState(props);
+  }
+  public static recreate(
+    props: PassingTurnState.RecreateProps,
+  ): PassingTurnState {
+    return new PassingTurnState(props);
   }
 
   public passTurn(): void {
@@ -13,7 +21,7 @@ export class PassingTurnState extends SubjectsCreationState {
 
     round.nextTurn();
 
-    this.ctx.setState(new CreatingSubjectState({ ctx: this.ctx }));
+    this.ctx.setState(CreatingSubjectState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public createSubject(): Subject {
@@ -22,5 +30,10 @@ export class PassingTurnState extends SubjectsCreationState {
 }
 // ============================================================================
 export namespace PassingTurnState {
-  export type NewProps = SubjectsCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = SubjectsCreationState.CreateProps;
+
+  export type RecreateProps = SubjectsCreationState.RecreateProps &
+    Required<CreateProps>;
 }

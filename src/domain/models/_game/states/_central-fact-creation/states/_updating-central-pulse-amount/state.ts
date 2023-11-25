@@ -4,8 +4,18 @@ import { UpdatingDicePositionState } from '../_updating-dice-position';
 import { CentralFactCreationState } from '../state';
 
 export class UpdatingCentralPulseAmountState extends CentralFactCreationState {
-  public constructor(props: UpdatingCentralPulseAmountState.NewProps) {
+  protected constructor(props: UpdatingCentralPulseAmountState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: UpdatingCentralPulseAmountState.CreateProps,
+  ): UpdatingCentralPulseAmountState {
+    return new UpdatingCentralPulseAmountState(props);
+  }
+  public static recreate(
+    props: UpdatingCentralPulseAmountState.RecreateProps,
+  ): UpdatingCentralPulseAmountState {
+    return new UpdatingCentralPulseAmountState(props);
   }
 
   public updateCentralPulseAmount(): CentralPulse {
@@ -16,11 +26,12 @@ export class UpdatingCentralPulseAmountState extends CentralFactCreationState {
     const diceValue = dice.getValue();
     if (!diceValue) throw 'Dice has no value';
 
-    const centralPulse = this.ctx.ctx.getCentralPulse();
+    const map = this.ctx.ctx.getMap();
+    const centralPulse = map.getCentralPulse();
 
     centralPulse.updateAmount(diceValue);
 
-    this.ctx.setState(new UpdatingDicePositionState({ ctx: this.ctx }));
+    this.ctx.setState(UpdatingDicePositionState.create({ ctx: this.ctx }));
 
     return centralPulse;
   }
@@ -40,5 +51,10 @@ export class UpdatingCentralPulseAmountState extends CentralFactCreationState {
 }
 // ============================================================================
 export namespace UpdatingCentralPulseAmountState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = CentralFactCreationState.CreateProps;
+
+  export type RecreateProps = CentralFactCreationState.RecreateProps &
+    Required<CreateProps>;
 }

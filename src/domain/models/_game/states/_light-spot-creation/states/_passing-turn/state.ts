@@ -4,8 +4,16 @@ import { UpdatingDicePositionState } from '../_updating-dice-position';
 import { LightSpotCreationState } from '../state';
 
 export class PassingTurnState extends LightSpotCreationState {
-  public constructor(props: PassingTurnState.NewProps) {
+  protected constructor(props: PassingTurnState.NewProps) {
     super(props);
+  }
+  public static create(props: PassingTurnState.CreateProps): PassingTurnState {
+    return new PassingTurnState(props);
+  }
+  public static recreate(
+    props: PassingTurnState.RecreateProps,
+  ): PassingTurnState {
+    return new PassingTurnState(props);
   }
 
   public passTurn(): void {
@@ -13,7 +21,7 @@ export class PassingTurnState extends LightSpotCreationState {
 
     round.nextTurn();
 
-    this.ctx.setState(new UpdatingDicePositionState({ ctx: this.ctx }));
+    this.ctx.setState(UpdatingDicePositionState.create({ ctx: this.ctx }));
   }
   // --------------------------------------------------------------------------
   public updateDicePosition(): Dice {
@@ -25,5 +33,10 @@ export class PassingTurnState extends LightSpotCreationState {
 }
 // ============================================================================
 export namespace PassingTurnState {
-  export type NewProps = LightSpotCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = LightSpotCreationState.CreateProps;
+
+  export type RecreateProps = LightSpotCreationState.RecreateProps &
+    Required<CreateProps>;
 }

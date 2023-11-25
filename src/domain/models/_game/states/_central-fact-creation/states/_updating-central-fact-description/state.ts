@@ -4,18 +4,30 @@ import { RollingDiceState } from '../_rolling-dice';
 import { CentralFactCreationState } from '../state';
 
 export class UpdatingCentralFactDescriptionState extends CentralFactCreationState {
-  public constructor(props: UpdatingCentralFactDescriptionState.NewProps) {
+  protected constructor(props: UpdatingCentralFactDescriptionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: UpdatingCentralFactDescriptionState.CreateProps,
+  ): UpdatingCentralFactDescriptionState {
+    return new UpdatingCentralFactDescriptionState(props);
+  }
+  public static recreate(
+    props: UpdatingCentralFactDescriptionState.RecreateProps,
+  ): UpdatingCentralFactDescriptionState {
+    return new UpdatingCentralFactDescriptionState(props);
   }
 
   public updateCentralFactDescription(
     description: CentralFact['description'],
   ): CentralFact {
-    const centralFact = this.ctx.ctx.getCentralFact();
+    const map = this.ctx.ctx.getMap();
+    const centralPulse = map.getCentralPulse();
+    const centralFact = centralPulse.getLandmark();
 
     centralFact.updateDescription(description);
 
-    this.ctx.setState(new RollingDiceState({ ctx: this.ctx }));
+    this.ctx.setState(RollingDiceState.create({ ctx: this.ctx }));
 
     return centralFact;
   }
@@ -35,5 +47,10 @@ export class UpdatingCentralFactDescriptionState extends CentralFactCreationStat
 }
 // ============================================================================
 export namespace UpdatingCentralFactDescriptionState {
-  export type NewProps = CentralFactCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = CentralFactCreationState.CreateProps;
+
+  export type RecreateProps = CentralFactCreationState.RecreateProps &
+    Required<CreateProps>;
 }

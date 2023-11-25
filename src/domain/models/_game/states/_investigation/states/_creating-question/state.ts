@@ -4,8 +4,18 @@ import { PassingTurnState } from '../_passing-turn';
 import { InvestigationState } from '../state';
 
 export class CreatingQuestionState extends InvestigationState {
-  public constructor(props: CreatingQuestionState.NewProps) {
+  protected constructor(props: CreatingQuestionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: CreatingQuestionState.CreateProps,
+  ): CreatingQuestionState {
+    return new CreatingQuestionState(props);
+  }
+  public static recreate(
+    props: CreatingQuestionState.RecreateProps,
+  ): CreatingQuestionState {
+    return new CreatingQuestionState(props);
   }
 
   public createQuestion(
@@ -16,7 +26,7 @@ export class CreatingQuestionState extends InvestigationState {
 
     const question = currentPlayer.createQuestion(props);
 
-    this.ctx.setState(new PassingTurnState({ ctx: this.ctx }));
+    this.ctx.setState(PassingTurnState.create({ ctx: this.ctx }));
 
     return question;
   }
@@ -36,7 +46,12 @@ export class CreatingQuestionState extends InvestigationState {
 }
 // ============================================================================
 export namespace CreatingQuestionState {
-  export type NewProps = InvestigationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = InvestigationState.CreateProps;
+
+  export type RecreateProps = InvestigationState.RecreateProps &
+    Required<CreateProps>;
 
   export type CreateQuestionProps = InvestigationState.CreateQuestionProps;
 }

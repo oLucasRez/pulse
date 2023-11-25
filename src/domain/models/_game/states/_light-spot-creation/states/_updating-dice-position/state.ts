@@ -4,8 +4,18 @@ import { CreatingLightSpotState } from '../_creating-light-spot';
 import { LightSpotCreationState } from '../state';
 
 export class UpdatingDicePositionState extends LightSpotCreationState {
-  public constructor(props: UpdatingDicePositionState.NewProps) {
+  protected constructor(props: UpdatingDicePositionState.NewProps) {
     super(props);
+  }
+  public static create(
+    props: UpdatingDicePositionState.CreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
+  }
+  public static recreate(
+    props: UpdatingDicePositionState.RecreateProps,
+  ): UpdatingDicePositionState {
+    return new UpdatingDicePositionState(props);
   }
 
   public updateDicePosition(position: NonNullable<Dice['position']>): Dice {
@@ -16,7 +26,7 @@ export class UpdatingDicePositionState extends LightSpotCreationState {
 
     dice.updatePosition(position);
 
-    this.ctx.setState(new CreatingLightSpotState({ ctx: this.ctx }));
+    this.ctx.setState(CreatingLightSpotState.create({ ctx: this.ctx }));
 
     return dice;
   }
@@ -30,5 +40,10 @@ export class UpdatingDicePositionState extends LightSpotCreationState {
 }
 // ============================================================================
 export namespace UpdatingDicePositionState {
-  export type NewProps = LightSpotCreationState.NewProps;
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = LightSpotCreationState.CreateProps;
+
+  export type RecreateProps = LightSpotCreationState.RecreateProps &
+    Required<CreateProps>;
 }

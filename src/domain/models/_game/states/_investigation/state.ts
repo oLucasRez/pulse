@@ -24,18 +24,28 @@ export class InvestigationGameState
 {
   private state: InvestigationState;
 
-  public constructor(props: InvestigationGameState.NewProps) {
+  protected constructor(props: InvestigationGameState.NewProps) {
     const { state, ...stateProps } = props;
 
     super(stateProps);
 
-    this.state = state ?? new RollingDiceState({ ctx: this });
+    this.state = state ?? RollingDiceState.create({ ctx: this });
 
     const round = this.ctx.getRound();
 
     round.subscribeRoundFinishObserver(this);
 
     round.startRound(Round.Rotation.CLOCKWISE);
+  }
+  public static create(
+    props: InvestigationGameState.CreateProps,
+  ): InvestigationGameState {
+    return new InvestigationGameState(props);
+  }
+  public static recreate(
+    props: InvestigationGameState.RecreateProps,
+  ): InvestigationGameState {
+    return new InvestigationGameState(props);
   }
 
   public getState(): InvestigationGameState['state'] {
@@ -115,9 +125,14 @@ export class InvestigationGameState
 }
 // ============================================================================
 export namespace InvestigationGameState {
-  export type NewProps = GameState.NewProps & {
-    state?: InvestigationGameState['state'];
-  };
+  export type NewProps = CreateProps & Partial<RecreateProps>;
+
+  export type CreateProps = GameState.CreateProps;
+
+  export type RecreateProps = GameState.RecreateProps &
+    Required<CreateProps> & {
+      state: InvestigationGameState['state'];
+    };
 
   export type CreateQuestionProps = GameState.CreateQuestionProps;
 }
