@@ -6,14 +6,16 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "paths": {
+      "@data/*": ["./data/*"],
       "@domain/*": ["./domain/*"],
+      "@main/*": ["./main/*"],
       "@presentation/*": ["./presentation/*"],
+
       "@utils": ["./utils"],
       "@utils/*": ["./utils/*"],
+
       "@types": ["./types"],
-      "@types/*": ["./types/*"],
-      "@enums": ["./enums"],
-      "@enums/*": ["./enums/*"]
+      "@types/*": ["./types/*"]
     }
   },
   "exclude": ["bkp"]

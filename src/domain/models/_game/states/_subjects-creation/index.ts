@@ -1,1 +1,0 @@
-export { SubjectsCreationGameState } from './state';

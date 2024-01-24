@@ -1,1 +1,0 @@
-export { UpdatingCentralFactDescriptionState } from './state';

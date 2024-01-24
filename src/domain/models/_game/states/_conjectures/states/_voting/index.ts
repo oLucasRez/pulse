@@ -1,1 +1,0 @@
-export { VotingState } from './state';

@@ -1,1 +1,0 @@
-export { ConjecturesGameState } from './state';

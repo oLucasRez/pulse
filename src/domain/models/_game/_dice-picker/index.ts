@@ -1,1 +1,0 @@
-export { DicePicker } from './model';

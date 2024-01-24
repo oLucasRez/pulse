@@ -1,1 +1,0 @@
-export { InitialGameState } from './state';

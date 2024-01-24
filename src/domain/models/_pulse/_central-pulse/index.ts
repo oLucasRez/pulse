@@ -1,1 +1,0 @@
-export { CentralPulse } from './model';

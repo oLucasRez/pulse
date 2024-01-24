@@ -1,1 +1,0 @@
-export { CentralFact } from './model';

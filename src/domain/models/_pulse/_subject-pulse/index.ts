@@ -1,1 +1,0 @@
-export { SubjectPulse } from './model';

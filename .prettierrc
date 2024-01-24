@@ -14,7 +14,15 @@
     "(.*)enums$",
     "(.*)errors$",
 
+    "(.*)protocols",
+    "(.*)services",
+
+    "(.*)hooks",
+    "(.*)components",
     "(.*)app",
+
+    "(.*)adapters",
+    "(.*)factories",
 
     "(.*)utils",
 
