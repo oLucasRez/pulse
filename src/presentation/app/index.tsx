@@ -14,13 +14,7 @@ import { usePlayerUsecases } from '@presentation/contexts';
 
 import { uuid } from '@presentation/utils';
 
-import { makeFirebaseSocket } from '@main/factories';
-
 import { Container } from './styles';
-
-const socket = makeFirebaseSocket();
-
-const playersTable = 'players';
 
 /**
  * Ponto de partida da aplicação.
@@ -31,13 +25,14 @@ const App: FC = () => {
     editing: null as string | null,
   });
 
-  const { createPlayer, changePlayer, deletePlayer } = usePlayerUsecases();
+  const { getPlayers, createPlayer, changePlayer, deletePlayer } =
+    usePlayerUsecases();
 
   useEffect(() => {
-    socket.watch<PlayerModel[]>(
-      playersTable,
-      (snapshot) => (s.players = snapshot),
-    );
+    getPlayers
+      .execute()
+      .then((players) => (s.players = players))
+      .catch(() => {});
   }, []);
 
   const { register, handleSubmit } = useForm<ChangePlayerUsecase.Payload>({
