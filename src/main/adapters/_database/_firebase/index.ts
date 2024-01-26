@@ -14,6 +14,12 @@ import { DatabaseProtocol } from '@data/protocols';
 
 import { FirebaseService } from '@data/services';
 
+function clearGarbage(data: Record<any, any>): void {
+  Object.keys(data).map((key) => {
+    if ((data as any)[key] === undefined) delete (data as any)[key];
+  });
+}
+
 export class FirebaseDatabase implements DatabaseProtocol {
   public async select<M extends Model>(table: string): Promise<M[]> {
     try {
@@ -55,6 +61,8 @@ export class FirebaseDatabase implements DatabaseProtocol {
     try {
       const docRef = doc(FirebaseService.db, table, id);
 
+      clearGarbage(updatedData);
+
       await updateDoc(docRef, updatedData);
 
       const _doc = await getDoc(docRef);
@@ -63,7 +71,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
       if (!newData) throw 'the data is missing';
 
       return { ...newData, id: _doc.id } as M;
-    } catch {
+    } catch (e) {
       throw 'failed to update data';
     }
   }

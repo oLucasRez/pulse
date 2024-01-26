@@ -18,7 +18,7 @@ export function useStates<S extends object>(initial: S): S {
           const [, setState] = states[_prop];
           setState(value);
 
-          return value;
+          return true;
         },
       }),
     [],

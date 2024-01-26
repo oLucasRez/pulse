@@ -1,0 +1,1 @@
+export { makeDatabaseChangePlayerUsecase } from './database';

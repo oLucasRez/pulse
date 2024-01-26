@@ -1,3 +1,3 @@
-import { Usecase } from '@domain/usecases';
-
-export type DeletePlayerUsecase = Usecase<void, string>;
+export interface DeletePlayerUsecase {
+  execute(id: string): Promise<void>;
+}
