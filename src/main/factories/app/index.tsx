@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 
-import { makePlayersContextProvider } from '../contexts';
+import { makePlayerUsecasesContextProvider } from '../contexts';
 
 import { App } from '@presentation/app';
 
 export function makeApp(): ReactNode {
   const app = [
     // outer
-    makePlayersContextProvider,
+    makePlayerUsecasesContextProvider,
     // inner
   ].reduce<ReactNode>((children, wrapper) => wrapper({ children }), <App />);
 

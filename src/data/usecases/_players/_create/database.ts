@@ -10,8 +10,8 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     private readonly database: DatabaseProtocol,
   ) {}
 
-  public execute(params: CreatePlayerUsecase.Payload): Promise<PlayerModel> {
-    const { name, color, gameID, diceID } = params;
+  public execute(payload: CreatePlayerUsecase.Payload): Promise<PlayerModel> {
+    const { name, color, gameID, diceID } = payload;
 
     const player = this.database.insert<PlayerModel>(this.table, {
       name,

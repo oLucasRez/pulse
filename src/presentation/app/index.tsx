@@ -7,15 +7,14 @@ import { PlayerModel } from '@domain/models';
 
 import { useStates } from '@presentation/hooks';
 
-import { usePlayersContext } from '@presentation/contexts';
+import { usePlayerUsecases } from '@presentation/contexts';
 
 import { uuid } from '@presentation/utils';
 
-import { makeFirebaseDatabase, makeFirebaseSocket } from '@main/factories';
+import { makeFirebaseSocket } from '@main/factories';
 
 import { Container } from './styles';
 
-const db = makeFirebaseDatabase();
 const socket = makeFirebaseSocket();
 
 const playersTable = 'players';
@@ -28,7 +27,7 @@ const App: FC = () => {
     players: [] as PlayerModel[],
   });
 
-  const { create } = usePlayersContext();
+  const { createPlayer, deletePlayer } = usePlayerUsecases();
 
   useEffect(() => {
     socket.watch<PlayerModel[]>(
@@ -41,7 +40,7 @@ const App: FC = () => {
     <Container>
       <button
         onClick={(): void => {
-          create.execute({
+          createPlayer.execute({
             name: faker.person.firstName(),
             color: faker.helpers.enumValue(Color),
             diceID: uuid(),
@@ -57,7 +56,7 @@ const App: FC = () => {
           <li key={player.id}>
             <div>
               {player.name} ({player.color}){' '}
-              <button onClick={(): any => db.delete(playersTable, player.id)}>
+              <button onClick={(): any => deletePlayer.execute(player.id)}>
                 🗑️
               </button>
             </div>

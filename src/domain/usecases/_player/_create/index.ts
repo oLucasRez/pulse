@@ -5,8 +5,8 @@ import { PlayerModel } from '@domain/models';
 import { Usecase } from '@domain/usecases';
 
 export type CreatePlayerUsecase = Usecase<
-  CreatePlayerUsecase.Payload,
-  CreatePlayerUsecase.Response
+  PlayerModel,
+  CreatePlayerUsecase.Payload
 >;
 
 export namespace CreatePlayerUsecase {
@@ -16,6 +16,4 @@ export namespace CreatePlayerUsecase {
     gameID: string;
     diceID: string;
   };
-
-  export type Response = PlayerModel;
 }

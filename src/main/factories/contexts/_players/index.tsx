@@ -1,15 +1,25 @@
 import { ReactNode } from 'react';
 
-import { makeDatabaseCreatePlayerUsecase } from '@main/factories/usecases';
+import {
+  makeDatabaseCreatePlayerUsecase,
+  makeDatabaseDeletePlayerUsecase,
+} from '@main/factories/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
-import { PlayersContextProvider } from '@presentation/contexts';
+import { PlayerUsecasesContextProvider } from '@presentation/contexts';
 
-export function makePlayersContextProvider(
+export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const create = makeDatabaseCreatePlayerUsecase();
+  const createPlayer = makeDatabaseCreatePlayerUsecase();
+  const deletePlayer = makeDatabaseDeletePlayerUsecase();
 
-  return <PlayersContextProvider create={create} {...props} />;
+  return (
+    <PlayerUsecasesContextProvider
+      createPlayer={createPlayer}
+      deletePlayer={deletePlayer}
+      {...props}
+    />
+  );
 }
