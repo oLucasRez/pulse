@@ -13,12 +13,24 @@ export const usePlayerUsecases = (): PlayerUsecasesContextValue =>
 export const PlayerUsecasesContextProvider: FC<
   PlayerUsecasesContextProviderProps
 > = (props) => {
-  const { getPlayers, createPlayer, changePlayer, deletePlayer, children } =
-    props;
+  const {
+    getPlayers,
+    watchPlayers,
+    createPlayer,
+    changePlayer,
+    deletePlayer,
+    children,
+  } = props;
 
   return (
     <Context.Provider
-      value={{ getPlayers, createPlayer, changePlayer, deletePlayer }}
+      value={{
+        getPlayers,
+        watchPlayers,
+        createPlayer,
+        changePlayer,
+        deletePlayer,
+      }}
     >
       {children}
     </Context.Provider>

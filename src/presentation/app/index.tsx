@@ -25,17 +25,22 @@ const App: FC = () => {
     editing: null as string | null,
   });
 
-  const { getPlayers, createPlayer, changePlayer, deletePlayer } =
+  const { watchPlayers, createPlayer, changePlayer, deletePlayer } =
     usePlayerUsecases();
 
   useEffect(() => {
-    getPlayers
-      .execute()
-      .then((players) => (s.players = players))
-      .catch(() => {});
+    const unsubscribe = watchPlayers.execute(
+      (players) => (s.players = players),
+    );
+
+    return () => unsubscribe();
   }, []);
 
-  const { register, handleSubmit } = useForm<ChangePlayerUsecase.Payload>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<ChangePlayerUsecase.Payload>({
     mode: 'onChange',
   });
 
@@ -80,8 +85,13 @@ const App: FC = () => {
                 defaultValue={player.name}
                 disabled={!editing}
               />{' '}
-              ({player.color}){' '}
-              <button onClick={handleLeftButtonClick}>
+              <span style={{ background: player.color }}>
+                <span>({player.color})</span>{' '}
+              </span>
+              <button
+                disabled={editing && !isDirty}
+                onClick={handleLeftButtonClick}
+              >
                 {editing ? <>✔️</> : <>✏️</>}
               </button>
               <button onClick={handleRightButtonClick}>
