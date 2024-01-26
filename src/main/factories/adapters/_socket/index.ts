@@ -1,1 +1,1 @@
-export { makeFirebaseSocket } from './_firebase';
+export { makeFirebaseSocket } from './firebase';

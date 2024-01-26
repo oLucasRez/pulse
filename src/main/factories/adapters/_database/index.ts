@@ -1,1 +1,1 @@
-export { makeFirebaseDatabase } from './_firebase';
+export { makeFirebaseDatabase } from './firebase';

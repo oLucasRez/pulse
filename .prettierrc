@@ -10,21 +10,23 @@
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
 
-    "(.*)models$",
     "(.*)enums$",
+    "(.*)models$",
+    "(.*)usecases$",
+    "(.*)types$",
     "(.*)errors$",
 
     "(.*)protocols",
     "(.*)services",
 
     "(.*)hooks",
+    "(.*)contexts",
     "(.*)components",
     "(.*)app",
+    "(.*)utils",
 
     "(.*)adapters",
     "(.*)factories",
-
-    "(.*)utils",
 
     "(.*)types",
 

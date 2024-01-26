@@ -1,10 +1,15 @@
+import { faker } from '@faker-js/faker';
 import { FC, useEffect } from 'react';
-
-import { PlayerModel } from '@domain/models';
 
 import { Color } from '@domain/enums';
 
+import { PlayerModel } from '@domain/models';
+
 import { useStates } from '@presentation/hooks';
+
+import { usePlayersContext } from '@presentation/contexts';
+
+import { uuid } from '@presentation/utils';
 
 import { makeFirebaseDatabase, makeFirebaseSocket } from '@main/factories';
 
@@ -12,6 +17,8 @@ import { Container } from './styles';
 
 const db = makeFirebaseDatabase();
 const socket = makeFirebaseSocket();
+
+const playersTable = 'players';
 
 /**
  * Ponto de partida da aplicação.
@@ -21,9 +28,11 @@ const App: FC = () => {
     players: [] as PlayerModel[],
   });
 
+  const { create } = usePlayersContext();
+
   useEffect(() => {
     socket.watch<PlayerModel[]>(
-      'players',
+      playersTable,
       (snapshot) => (s.players = snapshot),
     );
   }, []);
@@ -32,9 +41,11 @@ const App: FC = () => {
     <Container>
       <button
         onClick={(): void => {
-          db.insert<PlayerModel>('players', {
-            name: 'Esther',
-            color: Color.RED,
+          create.execute({
+            name: faker.person.firstName(),
+            color: faker.helpers.enumValue(Color),
+            diceID: uuid(),
+            gameID: uuid(),
           });
         }}
       >
@@ -46,7 +57,7 @@ const App: FC = () => {
           <li key={player.id}>
             <div>
               {player.name} ({player.color}){' '}
-              <button onClick={(): any => db.delete('players', player.id)}>
+              <button onClick={(): any => db.delete(playersTable, player.id)}>
                 🗑️
               </button>
             </div>
