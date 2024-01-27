@@ -1,7 +1,10 @@
 import { Model } from '@domain/models';
 
 export interface DatabaseProtocol {
-  select<M extends Model>(table: string): Promise<M[]>;
+  select<M extends Model>(
+    table: string,
+    where?: (value: M) => boolean,
+  ): Promise<M[]>;
   insert<M extends Model>(table: string, data: Omit<M, 'id'>): Promise<M>;
   update<M extends Model>(
     table: string,

@@ -1,0 +1,1 @@
+export { makeSocketWatchDicesUsecase } from './socket';

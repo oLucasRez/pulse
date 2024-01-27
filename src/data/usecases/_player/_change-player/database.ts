@@ -7,10 +7,13 @@ import { ChangePlayerUsecase } from '@domain/usecases';
 import { DatabaseProtocol } from '@data/protocols';
 
 export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
-  public constructor(
-    private readonly table: string,
-    private readonly database: DatabaseProtocol,
-  ) {}
+  private readonly table: string;
+  private readonly database: DatabaseProtocol;
+
+  public constructor(deps: DatabaseChangePlayerUsecase.Deps) {
+    this.table = deps.table;
+    this.database = deps.database;
+  }
 
   public execute(
     id: string,
@@ -31,4 +34,11 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
       throw new FailedError(`Failed to change data of player ${id}`);
     }
   }
+}
+
+export namespace DatabaseChangePlayerUsecase {
+  export type Deps = {
+    table: string;
+    database: DatabaseProtocol;
+  };
 }

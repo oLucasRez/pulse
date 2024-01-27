@@ -18,12 +18,7 @@ export const Container = styled.div`
         display: inline-flex;
         width: max-content;
         padding: 0.125rem;
-
-        > span {
-          color: white;
-          mix-blend-mode: difference;
-          position: relative;
-        }
+        color: white;
       }
     }
   }

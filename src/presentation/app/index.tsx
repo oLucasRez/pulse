@@ -6,11 +6,15 @@ import { Color } from '@domain/enums';
 
 import { PlayerModel } from '@domain/models';
 
+import { DomainError, NotFoundError } from '@domain/errors';
+
 import { ChangePlayerUsecase } from '@domain/usecases';
 
 import { useStates } from '@presentation/hooks';
 
 import { usePlayerUsecases } from '@presentation/contexts';
+
+import { getColor } from '@presentation/styles/mixins';
 
 import { uuid } from '@presentation/utils';
 
@@ -56,12 +60,17 @@ const App: FC = () => {
     <Container>
       <button
         onClick={(): void => {
-          createPlayer.execute({
-            name: faker.person.firstName(),
-            color: faker.helpers.enumValue(Color),
-            diceID: uuid(),
-            gameID: uuid(),
-          });
+          createPlayer
+            .execute({
+              name: faker.person.firstName(),
+              color: faker.helpers.enumValue(Color),
+              diceID: uuid(),
+              gameID: uuid(),
+            })
+            .catch(
+              (e: DomainError) =>
+                e instanceof NotFoundError && alert(e.message),
+            );
         }}
       >
         create one
@@ -85,8 +94,8 @@ const App: FC = () => {
                 defaultValue={player.name}
                 disabled={!editing}
               />{' '}
-              <span style={{ background: player.color }}>
-                <span>({player.color})</span>{' '}
+              <span style={{ background: getColor(player.color) }}>
+                ({player.color})
               </span>
               <button
                 disabled={editing && !isDirty}

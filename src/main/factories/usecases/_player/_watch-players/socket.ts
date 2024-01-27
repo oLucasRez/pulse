@@ -9,5 +9,5 @@ export function makeSocketWatchPlayersUsecase(): WatchPlayersUsecase {
   const table = makePlayersTable();
   const socket = makeFirebaseSocket();
 
-  return new SocketWatchPlayersUsecase(table, socket);
+  return new SocketWatchPlayersUsecase({ table, socket });
 }

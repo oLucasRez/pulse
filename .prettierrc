@@ -23,6 +23,7 @@
     "(.*)contexts",
     "(.*)components",
     "(.*)app",
+    "(.*)mixins",
     "(.*)utils",
 
     "(.*)adapters",

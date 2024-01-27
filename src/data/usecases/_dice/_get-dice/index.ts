@@ -1,0 +1,1 @@
+export { DatabaseGetDiceUsecase } from './database';

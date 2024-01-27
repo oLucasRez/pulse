@@ -1,0 +1,1 @@
+export { makeDatabaseChangeDiceUsecase } from './database';

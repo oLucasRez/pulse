@@ -9,5 +9,5 @@ export function makeDatabaseDeletePlayerUsecase(): DeletePlayerUsecase {
   const table = makePlayersTable();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseDeletePlayerUsecase(table, database);
+  return new DatabaseDeletePlayerUsecase({ table, database });
 }

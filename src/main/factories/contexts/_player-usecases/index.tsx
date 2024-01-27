@@ -9,6 +9,7 @@ import {
   makeDatabaseCreatePlayerUsecase,
   makeDatabaseDeletePlayerUsecase,
   makeDatabaseGetPlayersUsecase,
+  makeDatabaseGetPlayerUsecase,
   makeSocketWatchPlayersUsecase,
 } from '@main/factories';
 
@@ -16,6 +17,7 @@ export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
   const getPlayers = makeDatabaseGetPlayersUsecase();
+  const getPlayer = makeDatabaseGetPlayerUsecase();
   const watchPlayers = makeSocketWatchPlayersUsecase();
   const createPlayer = makeDatabaseCreatePlayerUsecase();
   const changePlayer = makeDatabaseChangePlayerUsecase();
@@ -24,6 +26,7 @@ export function makePlayerUsecasesContextProvider(
   return (
     <PlayerUsecasesContextProvider
       getPlayers={getPlayers}
+      getPlayer={getPlayer}
       watchPlayers={watchPlayers}
       createPlayer={createPlayer}
       changePlayer={changePlayer}

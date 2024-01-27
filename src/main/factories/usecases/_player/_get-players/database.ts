@@ -9,5 +9,5 @@ export function makeDatabaseGetPlayersUsecase(): GetPlayersUsecase {
   const table = makePlayersTable();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseGetPlayersUsecase(table, database);
+  return new DatabaseGetPlayersUsecase({ table, database });
 }

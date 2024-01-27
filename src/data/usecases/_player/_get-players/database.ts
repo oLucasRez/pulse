@@ -7,10 +7,13 @@ import { GetPlayersUsecase } from '@domain/usecases';
 import { DatabaseProtocol } from '@data/protocols';
 
 export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
-  public constructor(
-    private readonly table: string,
-    private readonly database: DatabaseProtocol,
-  ) {}
+  private readonly table: string;
+  private readonly database: DatabaseProtocol;
+
+  public constructor(deps: DatabaseGetPlayersUsecase.Deps) {
+    this.table = deps.table;
+    this.database = deps.database;
+  }
 
   public async execute(): Promise<PlayerModel[]> {
     try {
@@ -21,4 +24,11 @@ export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
       throw new FailedError('Failed to get players');
     }
   }
+}
+
+export namespace DatabaseGetPlayersUsecase {
+  export type Deps = {
+    table: string;
+    database: DatabaseProtocol;
+  };
 }

@@ -9,5 +9,5 @@ export function makeDatabaseChangePlayerUsecase(): ChangePlayerUsecase {
   const table = makePlayersTable();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseChangePlayerUsecase(table, database);
+  return new DatabaseChangePlayerUsecase({ table, database });
 }
