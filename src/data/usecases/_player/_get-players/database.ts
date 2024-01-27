@@ -1,5 +1,7 @@
 import { PlayerModel } from '@domain/models';
 
+import { FailedError } from '@domain/errors';
+
 import { GetPlayersUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -11,8 +13,12 @@ export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
   ) {}
 
   public async execute(): Promise<PlayerModel[]> {
-    const players = await this.database.select<PlayerModel>(this.table);
+    try {
+      const players = await this.database.select<PlayerModel>(this.table);
 
-    return players;
+      return players;
+    } catch {
+      throw new FailedError('Failed to get players');
+    }
   }
 }

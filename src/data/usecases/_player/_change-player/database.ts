@@ -1,5 +1,7 @@
 import { PlayerModel } from '@domain/models';
 
+import { FailedError } from '@domain/errors';
+
 import { ChangePlayerUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -16,13 +18,17 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
   ): Promise<PlayerModel> {
     const { name, color } = payload;
 
-    const player = this.database.update<PlayerModel>(this.table, {
-      id,
+    try {
+      const player = this.database.update<PlayerModel>(this.table, {
+        id,
 
-      name,
-      color,
-    });
+        name,
+        color,
+      });
 
-    return player;
+      return player;
+    } catch {
+      throw new FailedError(`Failed to change data of player ${id}`);
+    }
   }
 }

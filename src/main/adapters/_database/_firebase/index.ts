@@ -10,6 +10,8 @@ import {
 
 import { Model } from '@domain/models';
 
+import { FailedError } from '@domain/errors';
+
 import { DatabaseProtocol } from '@data/protocols';
 
 import { FirebaseService } from '@data/services';
@@ -35,7 +37,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       return data;
     } catch {
-      throw 'failed to select data';
+      throw new FailedError(`Failed to select data from table [${table}]`);
     }
   }
 
@@ -48,7 +50,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       return { id: docRef.id, ...data } as M;
     } catch {
-      throw 'failed to insert data in table';
+      throw new FailedError(`Failed to insert data into table [${table}]`);
     }
   }
 
@@ -71,14 +73,18 @@ export class FirebaseDatabase implements DatabaseProtocol {
       if (!newData) throw 'the data is missing';
 
       return { ...newData, id: _doc.id } as M;
-    } catch (e) {
-      throw 'failed to update data';
+    } catch {
+      throw new FailedError(`Failed to update data in the table [${table}]`);
     }
   }
 
-  public delete(table: string, id: string): Promise<void> {
-    const docRef = doc(FirebaseService.db, table, id);
+  public async delete(table: string, id: string): Promise<void> {
+    try {
+      const docRef = doc(FirebaseService.db, table, id);
 
-    return deleteDoc(docRef);
+      await deleteDoc(docRef);
+    } catch {
+      throw new FailedError(`Failed to delete data from table [${table}]`);
+    }
   }
 }

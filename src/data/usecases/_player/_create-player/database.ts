@@ -1,5 +1,7 @@
 import { PlayerModel } from '@domain/models';
 
+import { FailedError } from '@domain/errors';
+
 import { CreatePlayerUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -13,14 +15,18 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   public execute(payload: CreatePlayerUsecase.Payload): Promise<PlayerModel> {
     const { name, color, gameID, diceID } = payload;
 
-    const player = this.database.insert<PlayerModel>(this.table, {
-      name,
-      color,
-      gameID,
-      diceID,
-      subjectID: null,
-    });
+    try {
+      const player = this.database.insert<PlayerModel>(this.table, {
+        name,
+        color,
+        gameID,
+        diceID,
+        subjectID: null,
+      });
 
-    return player;
+      return player;
+    } catch {
+      throw new FailedError('Failed to create player');
+    }
   }
 }

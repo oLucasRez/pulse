@@ -12,9 +12,9 @@
 
     "(.*)enums$",
     "(.*)models$",
+    "(.*)errors$",
     "(.*)usecases$",
     "(.*)types$",
-    "(.*)errors$",
 
     "(.*)protocols",
     "(.*)services",
