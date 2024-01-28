@@ -7,7 +7,6 @@ import { DiceUsecasesContextProvider } from '@presentation/contexts';
 import {
   makeDatabaseChangeDiceUsecase,
   makeDatabaseCreateDiceUsecase,
-  makeDatabaseDeleteDiceUsecase,
   makeDatabaseGetDicesUsecase,
   makeDatabaseGetDiceUsecase,
   makeSocketWatchDicesUsecase,
@@ -21,7 +20,6 @@ export function makeDiceUsecasesContextProvider(
   const watchDices = makeSocketWatchDicesUsecase();
   const createDice = makeDatabaseCreateDiceUsecase();
   const changeDice = makeDatabaseChangeDiceUsecase();
-  const deleteDice = makeDatabaseDeleteDiceUsecase();
 
   return (
     <DiceUsecasesContextProvider
@@ -30,7 +28,6 @@ export function makeDiceUsecasesContextProvider(
       watchDices={watchDices}
       createDice={createDice}
       changeDice={changeDice}
-      deleteDice={deleteDice}
       {...props}
     />
   );

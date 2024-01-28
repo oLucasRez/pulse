@@ -82,7 +82,7 @@ const App: FC = () => {
             .catch((e) => alert(e.message));
         }}
       >
-        create player
+        ➕ player
       </button>
 
       <ul>

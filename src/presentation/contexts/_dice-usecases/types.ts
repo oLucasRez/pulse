@@ -1,7 +1,6 @@
 import {
   ChangeDiceUsecase,
   CreateDiceUsecase,
-  DeleteDiceUsecase,
   GetDicesUsecase,
   GetDiceUsecase,
   WatchDicesUsecase,
@@ -15,7 +14,6 @@ export type DiceUsecasesContextValue = {
   watchDices: WatchDicesUsecase;
   createDice: CreateDiceUsecase;
   changeDice: ChangeDiceUsecase;
-  deleteDice: DeleteDiceUsecase;
 };
 
 export interface DiceUsecasesContextProviderProps extends ContextProviderProps {
@@ -24,5 +22,4 @@ export interface DiceUsecasesContextProviderProps extends ContextProviderProps {
   watchDices: WatchDicesUsecase;
   createDice: CreateDiceUsecase;
   changeDice: ChangeDiceUsecase;
-  deleteDice: DeleteDiceUsecase;
 }

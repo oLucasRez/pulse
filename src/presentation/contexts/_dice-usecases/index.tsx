@@ -19,7 +19,6 @@ export const DiceUsecasesContextProvider: FC<
     watchDices,
     createDice,
     changeDice,
-    deleteDice,
 
     children,
   } = props;
@@ -32,7 +31,6 @@ export const DiceUsecasesContextProvider: FC<
         watchDices,
         createDice,
         changeDice,
-        deleteDice,
       }}
     >
       {children}

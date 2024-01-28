@@ -7,6 +7,7 @@ import {
   makeDatabaseChangeDiceUsecase,
   makeDatabaseDeletePlayerUsecase,
   makeDatabaseGetDiceUsecase,
+  makeDatabaseGetPlayersUsecase,
   makePlayersTableGenerator,
 } from '../..';
 
@@ -14,6 +15,7 @@ export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
   const tableGenerator = makePlayersTableGenerator();
   const database = makeFirebaseDatabase();
   const getDice = makeDatabaseGetDiceUsecase();
+  const getPlayers = makeDatabaseGetPlayersUsecase();
   const changeDice = makeDatabaseChangeDiceUsecase();
   const deletePlayer = makeDatabaseDeletePlayerUsecase();
 
@@ -21,6 +23,7 @@ export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
     tableGenerator,
     database,
     getDice,
+    getPlayers,
     changeDice,
     deletePlayer,
   });

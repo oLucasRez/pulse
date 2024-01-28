@@ -1,1 +1,0 @@
-export { DatabaseDeleteDiceUsecase } from './database';
