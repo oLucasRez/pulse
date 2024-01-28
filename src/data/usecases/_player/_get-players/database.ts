@@ -4,31 +4,33 @@ import { FailedError } from '@domain/errors';
 
 import { GetPlayersUsecase } from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
 
   public constructor(deps: DatabaseGetPlayersUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
   }
 
   public async execute(): Promise<PlayerModel[]> {
     try {
-      const players = await this.database.select<PlayerModel>(this.table);
+      const table = await this.tableGenerator.getTable();
+
+      const players = await this.database.select<PlayerModel>(table);
 
       return players;
     } catch {
-      throw new FailedError('Failed to get players');
+      throw new FailedError({ metadata: { tried: 'get players' } });
     }
   }
 }
 
 export namespace DatabaseGetPlayersUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
   };
 }

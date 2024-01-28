@@ -1,13 +1,11 @@
 import { DatabaseDeleteDiceUsecase } from '@data/usecases';
 import { DeleteDiceUsecase } from '@domain/usecases';
 
-import { makeFirebaseDatabase } from '@main/factories/adapters';
-
-import { makeDicesTable } from '..';
+import { makeDicesTableGenerator, makeFirebaseDatabase } from '@main/factories';
 
 export function makeDatabaseDeleteDiceUsecase(): DeleteDiceUsecase {
-  const table = makeDicesTable();
+  const tableGenerator = makeDicesTableGenerator();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseDeleteDiceUsecase({ table, database });
+  return new DatabaseDeleteDiceUsecase({ tableGenerator, database });
 }

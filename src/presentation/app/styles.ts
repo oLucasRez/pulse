@@ -14,11 +14,16 @@ export const Container = styled.div`
       gap: 0.5rem;
 
       > span {
+        min-width: 1rem;
+        height: 1rem;
         border-radius: 50rem;
         display: inline-flex;
         width: max-content;
-        padding: 0.125rem;
         color: white;
+      }
+
+      > input {
+        border-radius: 0.25rem;
       }
     }
   }

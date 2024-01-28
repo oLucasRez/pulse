@@ -10,6 +10,6 @@ export namespace ChangeDiceUsecase {
   export type Payload = {
     value?: number | null;
     position?: vector | null;
-    ownerID?: string;
+    ownerID?: string | null;
   };
 }

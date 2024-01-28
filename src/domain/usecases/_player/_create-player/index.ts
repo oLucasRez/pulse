@@ -10,7 +10,7 @@ export namespace CreatePlayerUsecase {
   export type Payload = {
     name: string;
     color: Color;
-    gameID: string;
+    userID?: string;
     diceID: string;
   };
 }

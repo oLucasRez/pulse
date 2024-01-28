@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import {
   makeDiceUsecasesContextProvider,
+  makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
 } from '../contexts';
 
@@ -9,10 +10,11 @@ import { App } from '@presentation/app';
 
 export function makeApp(): ReactNode {
   const app = [
-    // outer
-    makeDiceUsecasesContextProvider,
-    makePlayerUsecasesContextProvider,
     // inner
+    makePlayerUsecasesContextProvider,
+    makeDiceUsecasesContextProvider,
+    makeGameUsecasesContextProvider,
+    // outer
   ].reduce<ReactNode>((children, wrapper) => wrapper({ children }), <App />);
 
   return app;

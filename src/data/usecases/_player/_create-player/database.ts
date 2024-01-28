@@ -1,42 +1,63 @@
 import { PlayerModel } from '@domain/models';
 
-import { FailedError } from '@domain/errors';
+import { FailedError, ForbiddenError } from '@domain/errors';
 
-import { CreatePlayerUsecase, GetDiceUsecase } from '@domain/usecases';
+import {
+  ChangeDiceUsecase,
+  CreatePlayerUsecase,
+  DeletePlayerUsecase,
+  GetDiceUsecase,
+} from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
   private readonly getDice: GetDiceUsecase;
+  private readonly changeDice: ChangeDiceUsecase;
+  private readonly deletePlayer: DeletePlayerUsecase;
 
   public constructor(deps: DatabaseCreatePlayerUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
     this.getDice = deps.getDice;
+    this.changeDice = deps.changeDice;
+    this.deletePlayer = deps.deletePlayer;
   }
 
   public async execute(
     payload: CreatePlayerUsecase.Payload,
   ): Promise<PlayerModel> {
-    const { name, color, gameID, diceID } = payload;
+    const { name, color, userID = null, diceID } = payload;
 
     await this.diceShouldExists(diceID);
 
+    const table = await this.tableGenerator.getTable();
+
+    let player: PlayerModel;
     try {
-      const player = await this.database.insert<PlayerModel>(this.table, {
+      player = await this.database.insert<PlayerModel>(table, {
         name,
         color,
-        gameID,
+        userID,
         diceID,
         subjectID: null,
       });
-
-      return player;
     } catch {
-      throw new FailedError('Failed to create player');
+      throw new FailedError({ metadata: { tried: 'create player' } });
     }
+
+    try {
+      await this.changeDice.execute(diceID, { ownerID: player.id });
+    } catch (e) {
+      if (e instanceof ForbiddenError)
+        await this.deletePlayer.execute(player.id);
+
+      throw e;
+    }
+
+    return player;
   }
 
   private async diceShouldExists(diceID: string): Promise<void> {
@@ -46,8 +67,10 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
 
 export namespace DatabaseCreatePlayerUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
     getDice: GetDiceUsecase;
+    changeDice: ChangeDiceUsecase;
+    deletePlayer: DeletePlayerUsecase;
   };
 }

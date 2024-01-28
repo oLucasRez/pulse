@@ -1,6 +1,11 @@
 import { DiceModel } from '@domain/models';
 
-import { FailedError, NotIntegerError, OutOfBoundError } from '@domain/errors';
+import {
+  FailedError,
+  ForbiddenError,
+  NotIntegerError,
+  OutOfBoundError,
+} from '@domain/errors';
 
 import {
   ChangeDiceUsecase,
@@ -8,18 +13,18 @@ import {
   GetPlayerUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 import { isInteger, isNonNullable } from '@domain/utils';
 
 export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
   private readonly getDice: GetDiceUsecase;
   private readonly getPlayer: GetPlayerUsecase;
 
   public constructor(deps: DatabaseChangeDiceUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
     this.getDice = deps.getDice;
     this.getPlayer = deps.getPlayer;
@@ -31,20 +36,23 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
   ): Promise<DiceModel> {
     const { value, position, ownerID } = payload;
 
-    if (isNonNullable(value)) {
-      const dice = await this.getDice.execute(id);
+    const dice = await this.getDice.execute(id);
 
+    if (isNonNullable(value)) {
       this.valueShouldBeAbove1(value);
       this.valueShouldBeBelowSides(value, dice);
       this.valueShouldBeInteger(value);
     }
 
     if (isNonNullable(ownerID)) {
+      this.ownerIDShouldBePreviouslyUnset(dice);
       await this.ownerShouldExists(ownerID);
     }
 
     try {
-      const updatedDice = await this.database.update<DiceModel>(this.table, {
+      const table = await this.tableGenerator.getTable();
+
+      const updatedDice = await this.database.update<DiceModel>(table, {
         id,
 
         value,
@@ -54,7 +62,7 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
 
       return updatedDice;
     } catch {
-      throw new FailedError(`Failed to change data of dice ${id}`);
+      throw new FailedError({ metadata: { tried: 'change data of dice' } });
     }
   }
 
@@ -77,14 +85,19 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
       throw new NotIntegerError({ metadata: { prop: 'value', value } });
   }
 
+  private ownerIDShouldBePreviouslyUnset(dice: DiceModel): void {
+    if (dice.ownerID)
+      throw new ForbiddenError({ metadata: { tried: 'change dice owner' } });
+  }
+
   private async ownerShouldExists(ownerID: string): Promise<void> {
-    this.getPlayer.execute(ownerID);
+    await this.getPlayer.execute(ownerID);
   }
 }
 
 export namespace DatabaseChangeDiceUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
     getDice: GetDiceUsecase;
     getPlayer: GetPlayerUsecase;

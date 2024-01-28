@@ -5,7 +5,7 @@ import { Model } from '..';
 export interface PlayerModel extends Model {
   name: string;
   color: Color;
-  gameID: string;
+  userID: string | null;
   diceID: string;
   subjectID: string | null;
 }

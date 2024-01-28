@@ -12,3 +12,7 @@ export interface DatabaseProtocol {
   ): Promise<M>;
   delete(table: string, id: string): Promise<void>;
 }
+
+export interface TableGenerator {
+  getTable(): Promise<string>;
+}

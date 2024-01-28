@@ -4,21 +4,23 @@ import { NotFoundError } from '@domain/errors';
 
 import { GetPlayerUsecase } from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseGetPlayerUsecase implements GetPlayerUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
 
   public constructor(deps: DatabaseGetPlayerUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
   }
 
   public async execute(id: string): Promise<PlayerModel> {
     try {
+      const table = await this.tableGenerator.getTable();
+
       const [player] = await this.database.select<PlayerModel>(
-        this.table,
+        table,
         (player) => player.id === id,
       );
 
@@ -35,7 +37,7 @@ export class DatabaseGetPlayerUsecase implements GetPlayerUsecase {
 
 export namespace DatabaseGetPlayerUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
   };
 }

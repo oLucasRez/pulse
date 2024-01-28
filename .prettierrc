@@ -26,6 +26,7 @@
     "(.*)mixins",
     "(.*)utils",
 
+    "(.*)decorators",
     "(.*)adapters",
     "(.*)factories",
 

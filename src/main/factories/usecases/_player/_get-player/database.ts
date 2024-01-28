@@ -1,13 +1,14 @@
 import { DatabaseGetPlayerUsecase } from '@data/usecases';
 import { GetPlayerUsecase } from '@domain/usecases';
 
-import { makeFirebaseDatabase } from '@main/factories/adapters';
-
-import { makePlayersTable } from '..';
+import {
+  makeFirebaseDatabase,
+  makePlayersTableGenerator,
+} from '@main/factories';
 
 export function makeDatabaseGetPlayerUsecase(): GetPlayerUsecase {
-  const table = makePlayersTable();
+  const tableGenerator = makePlayersTableGenerator();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseGetPlayerUsecase({ table, database });
+  return new DatabaseGetPlayerUsecase({ tableGenerator, database });
 }

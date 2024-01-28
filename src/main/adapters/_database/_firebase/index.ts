@@ -23,7 +23,10 @@ function clearGarbage(data: Record<any, any>): void {
 }
 
 export class FirebaseDatabase implements DatabaseProtocol {
-  public async select<M extends Model>(table: string): Promise<M[]> {
+  public async select<M extends Model>(
+    table: string,
+    where?: (value: M) => boolean,
+  ): Promise<M[]> {
     try {
       const querySnapshot = await getDocs(
         collection(FirebaseService.db, table),
@@ -35,9 +38,11 @@ export class FirebaseDatabase implements DatabaseProtocol {
         data.push({ id: doc.id, ...doc.data() } as M),
       );
 
-      return data;
+      return data.filter(where ?? ((): boolean => true));
     } catch {
-      throw new FailedError(`Failed to select data from table [${table}]`);
+      throw new FailedError({
+        metadata: { tried: `select data from table [${table}]` },
+      });
     }
   }
 
@@ -50,7 +55,9 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       return { id: docRef.id, ...data } as M;
     } catch {
-      throw new FailedError(`Failed to insert data into table [${table}]`);
+      throw new FailedError({
+        metadata: { tried: `insert data into table [${table}]` },
+      });
     }
   }
 
@@ -74,7 +81,9 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       return { ...newData, id: _doc.id } as M;
     } catch {
-      throw new FailedError(`Failed to update data in the table [${table}]`);
+      throw new FailedError({
+        metadata: { tried: `update data in the table [${table}]` },
+      });
     }
   }
 
@@ -84,7 +93,9 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       await deleteDoc(docRef);
     } catch {
-      throw new FailedError(`Failed to delete data from table [${table}]`);
+      throw new FailedError({
+        metadata: { tried: `delete data from table [${table}]` },
+      });
     }
   }
 }

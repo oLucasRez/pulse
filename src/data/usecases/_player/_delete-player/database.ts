@@ -1,30 +1,46 @@
 import { FailedError } from '@domain/errors';
 
-import { DeletePlayerUsecase } from '@domain/usecases';
+import {
+  ChangeDiceUsecase,
+  DeletePlayerUsecase,
+  GetPlayerUsecase,
+} from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseDeletePlayerUsecase implements DeletePlayerUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
+  private readonly getPlayer: GetPlayerUsecase;
+  private readonly changeDice: ChangeDiceUsecase;
 
   public constructor(deps: DatabaseDeletePlayerUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
+    this.getPlayer = deps.getPlayer;
+    this.changeDice = deps.changeDice;
   }
 
   public async execute(id: string): Promise<void> {
+    const player = await this.getPlayer.execute(id);
+
+    await this.changeDice.execute(player.diceID, { ownerID: null });
+
     try {
-      await this.database.delete(this.table, id);
+      const table = await this.tableGenerator.getTable();
+
+      await this.database.delete(table, id);
     } catch {
-      throw new FailedError(`Failed to delete player ${id}`);
+      throw new FailedError({ metadata: { tried: 'delete player' } });
     }
   }
 }
 
 export namespace DatabaseDeletePlayerUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
+    getPlayer: GetPlayerUsecase;
+    changeDice: ChangeDiceUsecase;
   };
 }

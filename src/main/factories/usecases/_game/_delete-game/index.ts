@@ -1,0 +1,1 @@
+export { makeDatabaseDeleteGameUsecase } from './database';

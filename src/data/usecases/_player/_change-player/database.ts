@@ -4,25 +4,27 @@ import { FailedError } from '@domain/errors';
 
 import { ChangePlayerUsecase } from '@domain/usecases';
 
-import { DatabaseProtocol } from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
 
   public constructor(deps: DatabaseChangePlayerUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
   }
 
-  public execute(
+  public async execute(
     id: string,
     payload: ChangePlayerUsecase.Payload,
   ): Promise<PlayerModel> {
     const { name, color } = payload;
 
     try {
-      const player = this.database.update<PlayerModel>(this.table, {
+      const table = await this.tableGenerator.getTable();
+
+      const player = await this.database.update<PlayerModel>(table, {
         id,
 
         name,
@@ -31,14 +33,14 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
 
       return player;
     } catch {
-      throw new FailedError(`Failed to change data of player ${id}`);
+      throw new FailedError({ metadata: { tried: 'change data of player' } });
     }
   }
 }
 
 export namespace DatabaseChangePlayerUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     database: DatabaseProtocol;
   };
 }

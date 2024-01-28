@@ -1,13 +1,14 @@
 import { DatabaseChangePlayerUsecase } from '@data/usecases';
 import { ChangePlayerUsecase } from '@domain/usecases';
 
-import { makeFirebaseDatabase } from '@main/factories/adapters';
-
-import { makePlayersTable } from '..';
+import {
+  makeFirebaseDatabase,
+  makePlayersTableGenerator,
+} from '@main/factories';
 
 export function makeDatabaseChangePlayerUsecase(): ChangePlayerUsecase {
-  const table = makePlayersTable();
+  const tableGenerator = makePlayersTableGenerator();
   const database = makeFirebaseDatabase();
 
-  return new DatabaseChangePlayerUsecase({ table, database });
+  return new DatabaseChangePlayerUsecase({ tableGenerator, database });
 }

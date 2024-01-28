@@ -4,19 +4,15 @@ import { useForm } from 'react-hook-form';
 
 import { Color } from '@domain/enums';
 
-import { PlayerModel } from '@domain/models';
-
-import { DomainError, NotFoundError } from '@domain/errors';
+import { DiceModel, PlayerModel } from '@domain/models';
 
 import { ChangePlayerUsecase } from '@domain/usecases';
 
 import { useStates } from '@presentation/hooks';
 
-import { usePlayerUsecases } from '@presentation/contexts';
+import { useDiceUsecases, usePlayerUsecases } from '@presentation/contexts';
 
 import { getColor } from '@presentation/styles/mixins';
-
-import { uuid } from '@presentation/utils';
 
 import { Container } from './styles';
 
@@ -27,17 +23,33 @@ const App: FC = () => {
   const s = useStates({
     players: [] as PlayerModel[],
     editing: null as string | null,
+    dices: [] as DiceModel[],
   });
 
   const { watchPlayers, createPlayer, changePlayer, deletePlayer } =
     usePlayerUsecases();
 
   useEffect(() => {
-    const unsubscribe = watchPlayers.execute(
-      (players) => (s.players = players),
+    const promise = watchPlayers.execute((players) => (s.players = players));
+
+    return () => {
+      promise
+        .then((unsubscribe) => unsubscribe())
+        .catch((e) => alert(e.message));
+    };
+  }, []);
+
+  const { watchDices } = useDiceUsecases();
+  useEffect(() => {
+    const promise = watchDices.execute(
+      (dices) => (s.dices = dices.filter((dice) => !dice.ownerID)),
     );
 
-    return () => unsubscribe();
+    return () => {
+      promise
+        .then((unsubscribe) => unsubscribe())
+        .catch((e) => alert(e.message));
+    };
   }, []);
 
   const {
@@ -51,7 +63,7 @@ const App: FC = () => {
   function onSubmit(data: ChangePlayerUsecase.Payload): void {
     if (!s.editing) return;
 
-    changePlayer.execute(s.editing, data);
+    changePlayer.execute(s.editing, data).catch((e) => alert(e.message));
 
     s.editing = null;
   }
@@ -59,21 +71,18 @@ const App: FC = () => {
   return (
     <Container>
       <button
+        disabled={!s.dices.length}
         onClick={(): void => {
           createPlayer
             .execute({
               name: faker.person.firstName(),
               color: faker.helpers.enumValue(Color),
-              diceID: uuid(),
-              gameID: uuid(),
+              diceID: faker.helpers.arrayElement(s.dices).id,
             })
-            .catch(
-              (e: DomainError) =>
-                e instanceof NotFoundError && alert(e.message),
-            );
+            .catch((e) => alert(e.message));
         }}
       >
-        create one
+        create player
       </button>
 
       <ul>
@@ -89,14 +98,13 @@ const App: FC = () => {
 
           return (
             <li key={player.id}>
+              <span style={{ background: getColor(player.color) }} />
               <input
                 {...(editing ? register('name', { required: true }) : {})}
                 defaultValue={player.name}
                 disabled={!editing}
-              />{' '}
-              <span style={{ background: getColor(player.color) }}>
-                ({player.color})
-              </span>
+                style={{ border: `1px solid ${getColor(player.color)}` }}
+              />
               <button
                 disabled={editing && !isDirty}
                 onClick={handleLeftButtonClick}

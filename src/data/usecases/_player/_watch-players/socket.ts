@@ -2,33 +2,35 @@ import { FailedError } from '@domain/errors';
 
 import { WatchPlayersUsecase } from '@domain/usecases';
 
-import { SocketProtocol } from '@data/protocols';
+import { SocketProtocol, TableGenerator } from '@data/protocols';
 
 export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
-  private readonly table: string;
+  private readonly tableGenerator: TableGenerator;
   private readonly socket: SocketProtocol;
 
   public constructor(deps: SocketWatchPlayersUsecase.Deps) {
-    this.table = deps.table;
+    this.tableGenerator = deps.tableGenerator;
     this.socket = deps.socket;
   }
 
-  public execute(
+  public async execute(
     callback: WatchPlayersUsecase.Callback,
-  ): WatchPlayersUsecase.Response {
+  ): Promise<WatchPlayersUsecase.Response> {
     try {
-      const unsubscribe = this.socket.watch(this.table, callback);
+      const table = await this.tableGenerator.getTable();
+
+      const unsubscribe = this.socket.watch(table, callback);
 
       return unsubscribe;
     } catch {
-      throw new FailedError('Failed to listen players changes');
+      throw new FailedError({ metadata: { tried: 'listen players changes' } });
     }
   }
 }
 
 export namespace SocketWatchPlayersUsecase {
   export type Deps = {
-    table: string;
+    tableGenerator: TableGenerator;
     socket: SocketProtocol;
   };
 }

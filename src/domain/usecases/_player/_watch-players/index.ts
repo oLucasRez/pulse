@@ -1,7 +1,9 @@
 import { PlayerModel } from '@domain/models';
 
 export interface WatchPlayersUsecase {
-  execute(callback: WatchPlayersUsecase.Callback): WatchPlayersUsecase.Response;
+  execute(
+    callback: WatchPlayersUsecase.Callback,
+  ): Promise<WatchPlayersUsecase.Response>;
 }
 
 export namespace WatchPlayersUsecase {

@@ -1,0 +1,1 @@
+export { makeDatabaseCreateGameUsecase } from './database';

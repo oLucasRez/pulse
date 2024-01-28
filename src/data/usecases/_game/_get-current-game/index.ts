@@ -1,0 +1,1 @@
+export { MockGetCurrentGameUsecase } from './mock';
