@@ -1,5 +1,5 @@
-import { Model } from '..';
+import { Model, UserModel } from '..';
 
 export interface GameModel extends Model {
-  hostID: string;
+  hostID: UserModel['id'];
 }

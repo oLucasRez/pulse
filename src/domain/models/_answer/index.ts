@@ -1,7 +1,7 @@
-import { Model } from '..';
+import { Model, PlayerModel, QuestionModel } from '..';
 
 export interface AnswerModel extends Model {
   description: string;
-  questionID: string;
-  authorID: string;
+  questionID: QuestionModel['id'];
+  authorID: PlayerModel['id'];
 }

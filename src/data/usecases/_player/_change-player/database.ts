@@ -24,9 +24,7 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const player = await this.database.update<PlayerModel>(table, {
-        id,
-
+      const player = await this.database.update<PlayerModel>(table, id, {
         name,
         color,
       });

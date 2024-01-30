@@ -8,7 +8,8 @@ export interface DatabaseProtocol {
   insert<M extends Model>(table: string, data: Omit<M, 'id'>): Promise<M>;
   update<M extends Model>(
     table: string,
-    data: Partial<Omit<M, 'id'>> & Pick<M, 'id'>,
+    id: string,
+    data: Partial<Omit<M, 'id'>>,
   ): Promise<M>;
   delete(table: string, id: string): Promise<void>;
 }

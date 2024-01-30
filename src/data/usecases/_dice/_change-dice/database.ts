@@ -52,9 +52,7 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const updatedDice = await this.database.update<DiceModel>(table, {
-        id,
-
+      const updatedDice = await this.database.update<DiceModel>(table, id, {
         value,
         position,
         ownerID,

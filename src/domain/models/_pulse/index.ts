@@ -1,12 +1,12 @@
 import { vector } from '@domain/types';
 
-import { Model } from '..';
+import { LandmarkModel, Model } from '..';
 
 export interface PulseModel extends Model {
   origin: vector;
   gap: number;
   amount: number;
-  landmarkID: string;
+  landmarkID: LandmarkModel['id'];
 }
 
 export * from './_central-pulse';

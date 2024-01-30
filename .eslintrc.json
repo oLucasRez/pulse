@@ -23,7 +23,7 @@
     "no-duplicate-imports": "error",
     "no-empty-pattern": "warn",
     "no-sparse-arrays": "off",
-    "@typescript-eslint/no-empty-interface": "warn",
+    "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/no-inferrable-types": "off",

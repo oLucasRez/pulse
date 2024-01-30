@@ -53,7 +53,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
     try {
       const docRef = await addDoc(collection(FirebaseService.db, table), data);
 
-      return { id: docRef.id, ...data } as M;
+      return { ...data, id: docRef.id } as M;
     } catch {
       throw new FailedError({
         metadata: { tried: `insert data into table [${table}]` },
@@ -63,16 +63,15 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
   public async update<M extends Model>(
     table: string,
-    data: Partial<Omit<M, 'id'>> & Pick<M, 'id'>,
+    id: string,
+    data: Partial<Omit<M, 'id'>>,
   ): Promise<M> {
-    const { id, ...updatedData } = data;
-
     try {
       const docRef = doc(FirebaseService.db, table, id);
 
-      clearGarbage(updatedData);
+      clearGarbage(data);
 
-      await updateDoc(docRef, updatedData);
+      await updateDoc(docRef, data);
 
       const _doc = await getDoc(docRef);
       const newData = _doc.data();
