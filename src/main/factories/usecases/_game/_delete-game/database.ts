@@ -1,13 +1,10 @@
 import { DatabaseDeleteGameUsecase } from '@data/usecases';
 import { DeleteGameUsecase } from '@domain/usecases';
 
-import {
-  makeFirebaseDatabase,
-  makeGamesTableGeneratorDecorator,
-} from '@main/factories';
+import { makeFirebaseDatabase, makeGamesTableGenerator } from '@main/factories';
 
 export function makeDatabaseDeleteGameUsecase(): DeleteGameUsecase {
-  const tableGenerator = makeGamesTableGeneratorDecorator();
+  const tableGenerator = makeGamesTableGenerator();
   const database = makeFirebaseDatabase();
 
   return new DatabaseDeleteGameUsecase({ tableGenerator, database });

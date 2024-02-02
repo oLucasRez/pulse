@@ -7,7 +7,12 @@ export class NotFoundError extends DomainError<NotFoundError.Metadata> {
     const { message, metadata } = props;
 
     const { entity, prop, value } = metadata;
-    const defaultMessage = [entity, 'with', prop, value, 'not found']
+    const defaultMessage = [
+      entity,
+      prop ? 'with ' + prop : null,
+      value,
+      'not found',
+    ]
       .filter(isNonNullable)
       .join(' ');
 
@@ -20,8 +25,8 @@ export class NotFoundError extends DomainError<NotFoundError.Metadata> {
 export namespace NotFoundError {
   export type Metadata = {
     entity: string;
-    prop: string;
-    value: any;
+    prop?: string;
+    value?: any;
   };
 
   export type Props = {

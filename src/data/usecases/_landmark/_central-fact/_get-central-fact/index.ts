@@ -1,0 +1,1 @@
+export { DatabaseGetCentralFactUsecase } from './database';
