@@ -5,21 +5,21 @@ import { ContextProviderProps } from '@presentation/types';
 import { DiceUsecasesContextProvider } from '@presentation/contexts';
 
 import {
-  makeDatabaseChangeDiceUsecase,
-  makeDatabaseCreateDiceUsecase,
-  makeDatabaseGetDicesUsecase,
-  makeDatabaseGetDiceUsecase,
-  makeSocketWatchDicesUsecase,
+  makeChangeDiceUsecase,
+  makeCreateDiceUsecase,
+  makeGetDicesUsecase,
+  makeGetDiceUsecase,
+  makeWatchDicesUsecase,
 } from '@main/factories';
 
 export function makeDiceUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const getDices = makeDatabaseGetDicesUsecase();
-  const getDice = makeDatabaseGetDiceUsecase();
-  const watchDices = makeSocketWatchDicesUsecase();
-  const createDice = makeDatabaseCreateDiceUsecase();
-  const changeDice = makeDatabaseChangeDiceUsecase();
+  const getDices = makeGetDicesUsecase();
+  const getDice = makeGetDiceUsecase();
+  const watchDices = makeWatchDicesUsecase();
+  const createDice = makeCreateDiceUsecase();
+  const changeDice = makeChangeDiceUsecase();
 
   return (
     <DiceUsecasesContextProvider

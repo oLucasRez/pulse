@@ -1,5 +1,3 @@
-import { isNonNullable } from '@domain/utils';
-
 import { DomainError } from '..';
 
 export class ForbiddenError extends DomainError<ForbiddenError.Metadata> {
@@ -11,7 +9,7 @@ export class ForbiddenError extends DomainError<ForbiddenError.Metadata> {
       metadata.tried && 'to',
       metadata.tried,
     ]
-      .filter(isNonNullable)
+      .filter((_) => _)
       .join(' ');
 
     super(message || defaultMessage, metadata);

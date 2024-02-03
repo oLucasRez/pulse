@@ -1,30 +1,29 @@
 import { DatabaseCreatePlayerUsecase } from '@data/usecases';
 import { CreatePlayerUsecase } from '@domain/usecases';
 
-import { makeFirebaseDatabase } from '@main/factories';
-
 import {
-  makeDatabaseChangeDiceUsecase,
-  makeDatabaseDeletePlayerUsecase,
-  makeDatabaseGetDiceUsecase,
-  makeDatabaseGetPlayersUsecase,
+  makeChangeDiceUsecase,
+  makeDeletePlayerUsecase,
+  makeFirebaseDatabase,
+  makeGetDiceUsecase,
+  makeGetPlayersUsecase,
   makePlayersTableGenerator,
-} from '../..';
+} from '@main/factories';
 
 export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
-  const tableGenerator = makePlayersTableGenerator();
+  const changeDice = makeChangeDiceUsecase();
+  const deletePlayer = makeDeletePlayerUsecase();
   const database = makeFirebaseDatabase();
-  const getDice = makeDatabaseGetDiceUsecase();
-  const getPlayers = makeDatabaseGetPlayersUsecase();
-  const changeDice = makeDatabaseChangeDiceUsecase();
-  const deletePlayer = makeDatabaseDeletePlayerUsecase();
+  const getDice = makeGetDiceUsecase();
+  const getPlayers = makeGetPlayersUsecase();
+  const tableGenerator = makePlayersTableGenerator();
 
   return new DatabaseCreatePlayerUsecase({
-    tableGenerator,
+    changeDice,
+    deletePlayer,
     database,
     getDice,
     getPlayers,
-    changeDice,
-    deletePlayer,
+    tableGenerator,
   });
 }

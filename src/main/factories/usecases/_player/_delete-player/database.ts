@@ -2,22 +2,22 @@ import { DatabaseDeletePlayerUsecase } from '@data/usecases';
 import { DeletePlayerUsecase } from '@domain/usecases';
 
 import {
-  makeDatabaseChangeDiceUsecase,
-  makeDatabaseGetPlayerUsecase,
+  makeChangeDiceUsecase,
   makeFirebaseDatabase,
+  makeGetPlayerUsecase,
   makePlayersTableGenerator,
 } from '@main/factories';
 
 export function makeDatabaseDeletePlayerUsecase(): DeletePlayerUsecase {
-  const tableGenerator = makePlayersTableGenerator();
+  const changeDice = makeChangeDiceUsecase();
   const database = makeFirebaseDatabase();
-  const getPlayer = makeDatabaseGetPlayerUsecase();
-  const changeDice = makeDatabaseChangeDiceUsecase();
+  const getPlayer = makeGetPlayerUsecase();
+  const tableGenerator = makePlayersTableGenerator();
 
   return new DatabaseDeletePlayerUsecase({
-    tableGenerator,
+    changeDice,
     database,
     getPlayer,
-    changeDice,
+    tableGenerator,
   });
 }

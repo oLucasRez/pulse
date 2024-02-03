@@ -4,8 +4,8 @@ import { DeleteGameUsecase } from '@domain/usecases';
 import { makeFirebaseDatabase, makeGamesTableGenerator } from '@main/factories';
 
 export function makeDatabaseDeleteGameUsecase(): DeleteGameUsecase {
-  const tableGenerator = makeGamesTableGenerator();
   const database = makeFirebaseDatabase();
+  const tableGenerator = makeGamesTableGenerator();
 
-  return new DatabaseDeleteGameUsecase({ tableGenerator, database });
+  return new DatabaseDeleteGameUsecase({ database, tableGenerator });
 }

@@ -5,17 +5,17 @@ import { ContextProviderProps } from '@presentation/types';
 import { CentralFactUsecasesContextProvider } from '@presentation/contexts';
 
 import {
-  makeDatabaseChangeCentralFactUsecase,
-  makeDatabaseGetCentralFactUsecase,
-  makeSocketWatchCentralFactUsecase,
+  makeChangeCentralFactUsecase,
+  makeGetCentralFactUsecase,
+  makeWatchCentralFactUsecase,
 } from '@main/factories';
 
 export function makeCentralFactUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const getCentralFact = makeDatabaseGetCentralFactUsecase();
-  const watchCentralFact = makeSocketWatchCentralFactUsecase();
-  const changeCentralFact = makeDatabaseChangeCentralFactUsecase();
+  const getCentralFact = makeGetCentralFactUsecase();
+  const watchCentralFact = makeWatchCentralFactUsecase();
+  const changeCentralFact = makeChangeCentralFactUsecase();
 
   return (
     <CentralFactUsecasesContextProvider

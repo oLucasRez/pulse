@@ -7,8 +7,8 @@ import {
 } from '@main/factories';
 
 export function makeDatabaseGetPlayersUsecase(): GetPlayersUsecase {
-  const tableGenerator = makePlayersTableGenerator();
   const database = makeFirebaseDatabase();
+  const tableGenerator = makePlayersTableGenerator();
 
-  return new DatabaseGetPlayersUsecase({ tableGenerator, database });
+  return new DatabaseGetPlayersUsecase({ database, tableGenerator });
 }

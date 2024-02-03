@@ -3,14 +3,14 @@ import { ChangeCentralPulseUsecase } from '@domain/usecases';
 
 import {
   makeCentralPulsesTableGenerator,
-  makeDatabaseGetCentralPulseUsecase,
   makeFirebaseDatabase,
+  makeGetCentralPulseUsecase,
 } from '@main/factories';
 
 export function makeDatabaseChangeCentralPulseUsecase(): ChangeCentralPulseUsecase {
   const tableGenerator = makeCentralPulsesTableGenerator();
   const database = makeFirebaseDatabase();
-  const getCentralPulse = makeDatabaseGetCentralPulseUsecase();
+  const getCentralPulse = makeGetCentralPulseUsecase();
 
   return new DatabaseChangeCentralPulseUsecase({
     tableGenerator,

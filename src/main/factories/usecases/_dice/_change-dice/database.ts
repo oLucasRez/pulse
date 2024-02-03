@@ -1,16 +1,18 @@
 import { DatabaseChangeDiceUsecase } from '@data/usecases';
 import { ChangeDiceUsecase } from '@domain/usecases';
 
-import { makeFirebaseDatabase } from '@main/factories';
-
-import { makeDatabaseGetDiceUsecase, makeDicesTableGenerator } from '..';
-import { makeDatabaseGetPlayerUsecase } from '../..';
+import {
+  makeDicesTableGenerator,
+  makeFirebaseDatabase,
+  makeGetDiceUsecase,
+  makeGetPlayerUsecase,
+} from '@main/factories';
 
 export function makeDatabaseChangeDiceUsecase(): ChangeDiceUsecase {
   const tableGenerator = makeDicesTableGenerator();
   const database = makeFirebaseDatabase();
-  const getDice = makeDatabaseGetDiceUsecase();
-  const getPlayer = makeDatabaseGetPlayerUsecase();
+  const getDice = makeGetDiceUsecase();
+  const getPlayer = makeGetPlayerUsecase();
 
   return new DatabaseChangeDiceUsecase({
     tableGenerator,

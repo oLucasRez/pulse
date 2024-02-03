@@ -5,23 +5,23 @@ import { ContextProviderProps } from '@presentation/types';
 import { PlayerUsecasesContextProvider } from '@presentation/contexts';
 
 import {
-  makeDatabaseChangePlayerUsecase,
-  makeDatabaseCreatePlayerUsecase,
-  makeDatabaseDeletePlayerUsecase,
-  makeDatabaseGetPlayersUsecase,
-  makeDatabaseGetPlayerUsecase,
-  makeSocketWatchPlayersUsecase,
+  makeChangePlayerUsecase,
+  makeCreatePlayerUsecase,
+  makeDeletePlayerUsecase,
+  makeGetPlayersUsecase,
+  makeGetPlayerUsecase,
+  makeWatchPlayersUsecase,
 } from '@main/factories';
 
 export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const getPlayers = makeDatabaseGetPlayersUsecase();
-  const getPlayer = makeDatabaseGetPlayerUsecase();
-  const watchPlayers = makeSocketWatchPlayersUsecase();
-  const createPlayer = makeDatabaseCreatePlayerUsecase();
-  const changePlayer = makeDatabaseChangePlayerUsecase();
-  const deletePlayer = makeDatabaseDeletePlayerUsecase();
+  const getPlayers = makeGetPlayersUsecase();
+  const getPlayer = makeGetPlayerUsecase();
+  const watchPlayers = makeWatchPlayersUsecase();
+  const createPlayer = makeCreatePlayerUsecase();
+  const changePlayer = makeChangePlayerUsecase();
+  const deletePlayer = makeDeletePlayerUsecase();
 
   return (
     <PlayerUsecasesContextProvider
