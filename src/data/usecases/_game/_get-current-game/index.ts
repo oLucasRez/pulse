@@ -1,1 +1,1 @@
-export { MockGetCurrentGameUsecase } from './mock';
+export { DatabaseGetCurrentGameUsecase } from './database';

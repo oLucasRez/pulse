@@ -3,8 +3,8 @@ import { CreatePlayerUsecase } from '@domain/usecases';
 
 import {
   makeChangeDiceUsecase,
+  makeDatabase,
   makeDeletePlayerUsecase,
-  makeFirebaseDatabase,
   makeGetDiceUsecase,
   makeGetPlayersUsecase,
   makePlayersTableGenerator,
@@ -12,16 +12,16 @@ import {
 
 export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
   const changeDice = makeChangeDiceUsecase();
+  const database = makeDatabase();
   const deletePlayer = makeDeletePlayerUsecase();
-  const database = makeFirebaseDatabase();
   const getDice = makeGetDiceUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const tableGenerator = makePlayersTableGenerator();
 
   return new DatabaseCreatePlayerUsecase({
     changeDice,
-    deletePlayer,
     database,
+    deletePlayer,
     getDice,
     getPlayers,
     tableGenerator,

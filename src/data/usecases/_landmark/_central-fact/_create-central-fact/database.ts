@@ -29,7 +29,7 @@ export class DatabaseCreateCentralFactUsecase
       });
 
       return centralFact;
-    } catch {
+    } catch (e) {
       throw new FailedError({ metadata: { tried: 'create central-fact' } });
     }
   }

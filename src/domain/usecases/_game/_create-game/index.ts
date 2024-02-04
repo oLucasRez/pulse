@@ -6,6 +6,6 @@ export interface CreateGameUsecase {
 
 export namespace CreateGameUsecase {
   export type Payload = {
-    hostID: string;
+    title?: string;
   };
 }

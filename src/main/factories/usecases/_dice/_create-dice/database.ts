@@ -1,11 +1,11 @@
 import { DatabaseCreateDiceUsecase } from '@data/usecases';
 import { CreateDiceUsecase } from '@domain/usecases';
 
-import { makeDicesTableGenerator, makeFirebaseDatabase } from '@main/factories';
+import { makeDatabase, makeDicesTableGenerator } from '@main/factories';
 
 export function makeDatabaseCreateDiceUsecase(): CreateDiceUsecase {
+  const database = makeDatabase();
   const tableGenerator = makeDicesTableGenerator();
-  const database = makeFirebaseDatabase();
 
-  return new DatabaseCreateDiceUsecase({ tableGenerator, database });
+  return new DatabaseCreateDiceUsecase({ database, tableGenerator });
 }

@@ -4,17 +4,17 @@ import { CreateCentralPulseUsecase } from '@domain/usecases';
 import {
   makeCentralPulsesTableGenerator,
   makeCreateCentralFactUsecase,
-  makeFirebaseDatabase,
+  makeDatabase,
 } from '@main/factories';
 
 export function makeDatabaseCreateCentralPulseUsecase(): CreateCentralPulseUsecase {
   const tableGenerator = makeCentralPulsesTableGenerator();
-  const database = makeFirebaseDatabase();
   const createCentralFact = makeCreateCentralFactUsecase();
+  const database = makeDatabase();
 
   return new DatabaseCreateCentralPulseUsecase({
     tableGenerator,
-    database,
     createCentralFact,
+    database,
   });
 }

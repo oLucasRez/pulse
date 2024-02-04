@@ -5,11 +5,14 @@ export interface DatabaseProtocol {
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]>;
-  insert<M extends Model>(table: string, data: Omit<M, 'id'>): Promise<M>;
+  insert<M extends Model>(
+    table: string,
+    data: Omit<M, keyof Model>,
+  ): Promise<M>;
   update<M extends Model>(
     table: string,
     id: string,
-    data: Partial<Omit<M, 'id'>>,
+    data: Partial<Omit<M, keyof Model>>,
   ): Promise<M>;
   delete(table: string, id: string): Promise<void>;
 }

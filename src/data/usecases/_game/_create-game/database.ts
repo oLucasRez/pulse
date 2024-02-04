@@ -1,45 +1,35 @@
 import { GameModel } from '@domain/models';
 
-import { FailedError } from '@domain/errors';
+import { FailedError, ForbiddenError } from '@domain/errors';
 
-import {
-  CreateCentralPulseUsecase,
-  CreateGameUsecase,
-  DeleteGameUsecase,
-} from '@domain/usecases';
+import { CreateGameUsecase, GetCurrentUserUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreateGameUsecase implements CreateGameUsecase {
-  private readonly tableGenerator: TableGenerator;
+  private readonly getCurrentUser: GetCurrentUserUsecase;
   private readonly database: DatabaseProtocol;
-  private readonly createCentralPulse: CreateCentralPulseUsecase;
-  private readonly deleteGame: DeleteGameUsecase;
+  private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseCreateGameUsecase.Deps) {
-    this.tableGenerator = deps.tableGenerator;
+    this.getCurrentUser = deps.getCurrentUser;
     this.database = deps.database;
-    this.createCentralPulse = deps.createCentralPulse;
-    this.deleteGame = deps.deleteGame;
+    this.tableGenerator = deps.tableGenerator;
   }
 
   public async execute(payload: CreateGameUsecase.Payload): Promise<GameModel> {
-    const { hostID } = payload;
+    const { title = null } = payload;
+
+    const user = await this.getCurrentUser.execute();
+    if (!user) throw new ForbiddenError({ metadata: { tried: 'create game' } });
 
     try {
       const table = await this.tableGenerator.getTable();
 
       const game = await this.database.insert<GameModel>(table, {
-        hostID,
+        hostID: user.id,
+        title,
       });
-
-      try {
-        await this.createCentralPulse.execute();
-      } catch (e) {
-        if (e instanceof FailedError) await this.deleteGame.execute(game.id);
-
-        throw e;
-      }
 
       return game;
     } catch {
@@ -50,9 +40,8 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
 
 export namespace DatabaseCreateGameUsecase {
   export type Deps = {
-    tableGenerator: TableGenerator;
+    getCurrentUser: GetCurrentUserUsecase;
     database: DatabaseProtocol;
-    createCentralPulse: CreateCentralPulseUsecase;
-    deleteGame: DeleteGameUsecase;
+    tableGenerator: TableGenerator;
   };
 }

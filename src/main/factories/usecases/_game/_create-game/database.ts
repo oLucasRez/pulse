@@ -2,22 +2,19 @@ import { DatabaseCreateGameUsecase } from '@data/usecases';
 import { CreateGameUsecase } from '@domain/usecases';
 
 import {
-  makeCreateCentralPulseUsecase,
-  makeDeleteGameUsecase,
-  makeFirebaseDatabase,
+  makeDatabase,
   makeGamesTableGenerator,
+  makeGetCurrentUserUsecase,
 } from '@main/factories';
 
 export function makeDatabaseCreateGameUsecase(): CreateGameUsecase {
-  const createCentralPulse = makeCreateCentralPulseUsecase();
-  const deleteGame = makeDeleteGameUsecase();
-  const database = makeFirebaseDatabase();
+  const database = makeDatabase();
   const tableGenerator = makeGamesTableGenerator();
+  const getCurrentUser = makeGetCurrentUserUsecase();
 
   return new DatabaseCreateGameUsecase({
-    createCentralPulse,
-    deleteGame,
     database,
     tableGenerator,
+    getCurrentUser,
   });
 }

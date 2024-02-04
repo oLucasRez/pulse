@@ -1,3 +1,4 @@
+export * from './_auth-usecases';
 export * from './_central-fact-usecases';
 export * from './_central-pulse-usecases';
 export * from './_dice-usecases';

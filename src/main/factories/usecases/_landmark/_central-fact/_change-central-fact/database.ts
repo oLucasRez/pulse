@@ -3,13 +3,13 @@ import { ChangeCentralFactUsecase } from '@domain/usecases';
 
 import {
   makeCentralFactsTableGeneratorDecorator,
-  makeFirebaseDatabase,
+  makeDatabase,
   makeGetCentralFactUsecase,
 } from '@main/factories';
 
 export function makeDatabaseChangeCentralFactUsecase(): ChangeCentralFactUsecase {
   const tableGenerator = makeCentralFactsTableGeneratorDecorator();
-  const database = makeFirebaseDatabase();
+  const database = makeDatabase();
   const getCentralFact = makeGetCentralFactUsecase();
 
   return new DatabaseChangeCentralFactUsecase({

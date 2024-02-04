@@ -1,7 +1,7 @@
 import { GetCurrentGameUsecase } from '@domain/usecases';
 
-import { makeMockGetCurrentGameUsecase } from './mock';
+import { makeDatabaseGetCurrentGameUsecase } from './database';
 
 export function makeGetCurrentGameUsecase(): GetCurrentGameUsecase {
-  return makeMockGetCurrentGameUsecase();
+  return makeDatabaseGetCurrentGameUsecase();
 }

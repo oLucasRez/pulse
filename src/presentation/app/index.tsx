@@ -1,18 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { FC, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, ReactNode, useEffect } from 'react';
 
-import { Color } from '@domain/enums';
+import { GameModel, UserModel } from '@domain/models';
 
-import { DiceModel, PlayerModel } from '@domain/models';
-
-import { ChangePlayerUsecase } from '@domain/usecases';
+import { DomainError } from '@domain/errors';
 
 import { useStates } from '@presentation/hooks';
 
-import { useDiceUsecases, usePlayerUsecases } from '@presentation/contexts';
-
-import { getColor } from '@presentation/styles/mixins';
+import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
 
 import { Container } from './styles';
 
@@ -21,103 +16,142 @@ import { Container } from './styles';
  */
 const App: FC = () => {
   const s = useStates({
-    players: [] as PlayerModel[],
-    editing: null as string | null,
-    dices: [] as DiceModel[],
+    user: null as UserModel | null,
+    games: [] as GameModel[],
+    fetchGames: Date.now(),
+    fetchingGames: false,
+    creatingGame: false,
+    deletingGame: null as string | null,
   });
 
-  const { watchPlayers, createPlayer, changePlayer, deletePlayer } =
-    usePlayerUsecases();
+  const setUser = (user: UserModel | null): any => (s.user = user);
+  const setGames = (games: GameModel[]): any => (s.games = games);
+
+  const fetchGames = (): any => (s.fetchGames = Date.now());
+
+  const fetchingGames = (): any => (s.fetchingGames = true);
+  const fetchedGames = (): any => (s.fetchingGames = false);
+
+  const creatingGame = (): any => (s.creatingGame = true);
+  const createdGame = (): any => (s.creatingGame = false);
+
+  const deletingGame = (game: GameModel): any => (s.deletingGame = game.id);
+  const deletedGame = (): any => (s.deletingGame = null);
+
+  const { getCurrentUser } = useAuthUsecases();
+  const { getGames, createGame, deleteGame } = useGameUsecases();
+
+  const logError = (e: DomainError): any => console.error(e.message);
+  const alertError = (e: DomainError): any => alert(e.message);
 
   useEffect(() => {
-    const promise = watchPlayers.execute((players) => (s.players = players));
-
-    return () => {
-      promise
-        .then((unsubscribe) => unsubscribe())
-        .catch((e) => alert(e.message));
-    };
+    getCurrentUser.execute().then(setUser).catch(logError);
   }, []);
 
-  const { watchDices } = useDiceUsecases();
   useEffect(() => {
-    const promise = watchDices.execute(
-      (dices) => (s.dices = dices.filter((dice) => !dice.ownerID)),
+    fetchingGames();
+
+    getGames.execute().then(setGames).then(fetchedGames).catch(logError);
+  }, [s.fetchGames]);
+
+  function handleCreateGameButtonClick(): any {
+    creatingGame();
+
+    createGame
+      .execute({
+        title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
+      })
+      .then(createdGame)
+      .then(fetchGames)
+      .catch(alertError);
+  }
+
+  function handleDeleteGameButtonClick(game: GameModel): any {
+    deletingGame(game);
+
+    deleteGame
+      .execute(game.id)
+      .then(deletedGame)
+      .then(fetchGames)
+      .catch(alertError);
+  }
+
+  function renderCreateGameButton(): ReactNode {
+    return (
+      <button
+        className='create'
+        onClick={handleCreateGameButtonClick}
+        disabled={s.creatingGame}
+      >
+        + New Game{s.creatingGame && <span className='emoji'> ⏳</span>}
+      </button>
     );
+  }
 
-    return () => {
-      promise
-        .then((unsubscribe) => unsubscribe())
-        .catch((e) => alert(e.message));
-    };
-  }, []);
+  function renderGamesList(): ReactNode {
+    if (s.fetchingGames && !s.games.length)
+      return (
+        <ul className='games'>
+          <span className='emoji'>⏳</span>
+        </ul>
+      );
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isDirty },
-  } = useForm<ChangePlayerUsecase.Payload>({
-    mode: 'onChange',
-  });
+    if (!s.games.length)
+      return (
+        <ul className='games'>
+          <li>
+            <p className='empty'>
+              You don&apos;t
+              <br />
+              have games yet :(
+            </p>
+          </li>
 
-  function onSubmit(data: ChangePlayerUsecase.Payload): void {
-    if (!s.editing) return;
+          <li>{renderCreateGameButton()}</li>
+        </ul>
+      );
 
-    changePlayer.execute(s.editing, data).catch((e) => alert(e.message));
+    return (
+      <ul className='games'>
+        {s.games.map((game) => (
+          <li key={game.id}>
+            <p>• {game.title}</p>
 
-    s.editing = null;
+            <button className='edit' disabled>
+              <span className='emoji'>✏️</span>
+            </button>
+            <button
+              className='delete'
+              disabled={s.deletingGame === game.id}
+              onClick={(): any => handleDeleteGameButtonClick(game)}
+            >
+              {s.deletingGame === game.id ? (
+                <span className='emoji'>⏳</span>
+              ) : (
+                <span className='emoji'>🗑️</span>
+              )}
+            </button>
+          </li>
+        ))}
+
+        <li>{renderCreateGameButton()}</li>
+      </ul>
+    );
   }
 
   return (
     <Container>
-      <button
-        disabled={!s.dices.length}
-        onClick={(): void => {
-          createPlayer
-            .execute({
-              name: faker.person.firstName(),
-              color: faker.helpers.enumValue(Color),
-              diceID: faker.helpers.arrayElement(s.dices).id,
-            })
-            .catch((e) => alert(e.message));
-        }}
-      >
-        ➕ player
-      </button>
+      <header>
+        Hello, <b>{s.user?.name}</b>!
+      </header>
 
-      <ul>
-        {s.players.map((player) => {
-          const editing = s.editing === player.id;
+      <aside>
+        <h3>
+          <span className='emoji'>🎮</span> My Games
+        </h3>
 
-          let handleLeftButtonClick = (): any => (s.editing = player.id);
-          if (editing) handleLeftButtonClick = handleSubmit(onSubmit);
-
-          let handleRightButtonClick = (): any =>
-            deletePlayer.execute(player.id);
-          if (editing) handleRightButtonClick = (): any => (s.editing = null);
-
-          return (
-            <li key={player.id}>
-              <span style={{ background: getColor(player.color) }} />
-              <input
-                {...(editing ? register('name', { required: true }) : {})}
-                defaultValue={player.name}
-                disabled={!editing}
-                style={{ border: `1px solid ${getColor(player.color)}` }}
-              />
-              <button
-                disabled={editing && !isDirty}
-                onClick={handleLeftButtonClick}
-              >
-                {editing ? <>✔️</> : <>✏️</>}
-              </button>
-              <button onClick={handleRightButtonClick}>
-                {editing ? <>✖️</> : <>🗑️</>}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+        {renderGamesList()}
+      </aside>
     </Container>
   );
 };

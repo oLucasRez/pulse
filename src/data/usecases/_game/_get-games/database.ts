@@ -19,7 +19,6 @@ export class DatabaseGetGamesUsecase implements GetGamesUsecase {
 
   public async execute(): Promise<GameModel[]> {
     const user = await this.getCurrentUser.execute();
-
     if (!user) throw new ForbiddenError({ metadata: { tried: 'get games' } });
 
     try {

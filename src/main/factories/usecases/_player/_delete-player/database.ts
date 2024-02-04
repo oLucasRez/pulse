@@ -3,14 +3,14 @@ import { DeletePlayerUsecase } from '@domain/usecases';
 
 import {
   makeChangeDiceUsecase,
-  makeFirebaseDatabase,
+  makeDatabase,
   makeGetPlayerUsecase,
   makePlayersTableGenerator,
 } from '@main/factories';
 
 export function makeDatabaseDeletePlayerUsecase(): DeletePlayerUsecase {
   const changeDice = makeChangeDiceUsecase();
-  const database = makeFirebaseDatabase();
+  const database = makeDatabase();
   const getPlayer = makeGetPlayerUsecase();
   const tableGenerator = makePlayersTableGenerator();
 

@@ -38,7 +38,11 @@ export class FirebaseDatabase implements DatabaseProtocol {
         data.push({ id: doc.id, ...doc.data() } as M),
       );
 
-      return data.filter(where ?? ((): boolean => true));
+      data.sort((a, b): number => a.createdAt - b.createdAt);
+
+      if (where) return data.filter(where);
+
+      return data;
     } catch {
       throw new FailedError({
         metadata: { tried: `select data from table [${table}]` },
@@ -48,10 +52,16 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
   public async insert<M extends Model>(
     table: string,
-    data: Omit<M, 'id'>,
+    data: Omit<M, keyof Model>,
   ): Promise<M> {
     try {
-      const docRef = await addDoc(collection(FirebaseService.db, table), data);
+      const createdAt = Date.now();
+
+      const docRef = await addDoc(collection(FirebaseService.db, table), {
+        ...data,
+        createdAt,
+        updatedAt: createdAt,
+      });
 
       return { ...data, id: docRef.id } as M;
     } catch {
@@ -64,14 +74,14 @@ export class FirebaseDatabase implements DatabaseProtocol {
   public async update<M extends Model>(
     table: string,
     id: string,
-    data: Partial<Omit<M, 'id'>>,
+    data: Partial<Omit<M, keyof Model>>,
   ): Promise<M> {
     try {
       const docRef = doc(FirebaseService.db, table, id);
 
       clearGarbage(data);
 
-      await updateDoc(docRef, data);
+      await updateDoc(docRef, { ...data, updatedAt: Date.now() });
 
       const _doc = await getDoc(docRef);
       const newData = _doc.data();
