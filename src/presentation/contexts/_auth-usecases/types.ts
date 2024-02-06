@@ -1,11 +1,13 @@
-import { GetCurrentUserUsecase } from '@domain/usecases';
+import { ChangeUserUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type AuthUsecasesContextValue = {
-  getCurrentUser: GetCurrentUserUsecase;
+  getMe: GetMeUsecase;
+  changeUser: ChangeUserUsecase;
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
-  getCurrentUser: GetCurrentUserUsecase;
+  getMe: GetMeUsecase;
+  changeUser: ChangeUserUsecase;
 }

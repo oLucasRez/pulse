@@ -2,17 +2,17 @@ import { GameModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
-import { CreateGameUsecase, GetCurrentUserUsecase } from '@domain/usecases';
+import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreateGameUsecase implements CreateGameUsecase {
-  private readonly getCurrentUser: GetCurrentUserUsecase;
+  private readonly getMe: GetMeUsecase;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseCreateGameUsecase.Deps) {
-    this.getCurrentUser = deps.getCurrentUser;
+    this.getMe = deps.getMe;
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
@@ -20,15 +20,18 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
   public async execute(payload: CreateGameUsecase.Payload): Promise<GameModel> {
     const { title = null } = payload;
 
-    const user = await this.getCurrentUser.execute();
-    if (!user) throw new ForbiddenError({ metadata: { tried: 'create game' } });
+    const me = await this.getMe.execute();
+    if (!me) throw new ForbiddenError({ metadata: { tried: 'create game' } });
 
     try {
       const table = await this.tableGenerator.getTable();
 
       const game = await this.database.insert<GameModel>(table, {
-        hostID: user.id,
+        hostID: me.id,
         title,
+        config: {
+          maxPlayers: 5,
+        },
       });
 
       return game;
@@ -40,7 +43,7 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
 
 export namespace DatabaseCreateGameUsecase {
   export type Deps = {
-    getCurrentUser: GetCurrentUserUsecase;
+    getMe: GetMeUsecase;
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
   };

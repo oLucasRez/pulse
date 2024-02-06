@@ -32,4 +32,42 @@ export const GlobalStyle = createGlobalStyle`
     list-style: none;
   }
 
+  // temporary
+  * {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #778;
+
+    button {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      border-bottom: 2px solid lightgray;
+      color: #667;
+      cursor: pointer;
+
+      :hover {
+        filter: brightness(0.95);
+        transition: 0.1s;
+      }
+
+      :disabled {
+        pointer-events: none;
+        cursor: default;
+        filter: grayscale(1);
+
+        .emoji {
+          opacity: 0.4;
+        }
+      }
+    }
+
+    input {
+      height: 1.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      border-top: 2px solid lightgray;
+      background: buttonface;
+      padding: 0 0.5rem;
+    }
+  }
 `;

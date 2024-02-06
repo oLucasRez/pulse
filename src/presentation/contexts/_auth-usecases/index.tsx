@@ -14,7 +14,8 @@ export const AuthUsecasesContextProvider: FC<
   AuthUsecasesContextProviderProps
 > = (props) => {
   const {
-    getCurrentUser,
+    getMe,
+    changeUser,
 
     children,
   } = props;
@@ -22,7 +23,8 @@ export const AuthUsecasesContextProvider: FC<
   return (
     <Context.Provider
       value={{
-        getCurrentUser,
+        getMe,
+        changeUser,
       }}
     >
       {children}

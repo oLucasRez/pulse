@@ -3,18 +3,18 @@ import { ChangeUserUsecase } from '@domain/usecases';
 
 import {
   makeDatabase,
-  makeGetCurrentUserUsecase,
+  makeGetMeUsecase,
   makeUsersTableGenerator,
 } from '@main/factories';
 
 export function makeDatabaseChangeUserUsecase(): ChangeUserUsecase {
   const database = makeDatabase();
-  const getCurrentUser = makeGetCurrentUserUsecase();
+  const getMe = makeGetMeUsecase();
   const tableGenerator = makeUsersTableGenerator();
 
   return new DatabaseChangeUserUsecase({
     database,
-    getCurrentUser,
+    getMe,
     tableGenerator,
   });
 }

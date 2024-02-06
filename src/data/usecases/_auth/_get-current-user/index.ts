@@ -1,1 +1,0 @@
-export { MockGetCurrentUserUsecase } from './mock';

@@ -14,6 +14,7 @@ export const GameUsecasesContextProvider: FC<
   GameUsecasesContextProviderProps
 > = (props) => {
   const {
+    getCurrentGame,
     getGame,
     getGames,
     createGame,
@@ -25,6 +26,7 @@ export const GameUsecasesContextProvider: FC<
   return (
     <Context.Provider
       value={{
+        getCurrentGame,
         getGame,
         getGames,
         createGame,

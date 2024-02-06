@@ -2,43 +2,44 @@ import { Color } from '@domain/enums';
 
 import { PlayerModel } from '@domain/models';
 
-import { FailedError, ForbiddenError } from '@domain/errors';
+import { FailedError, ForbiddenError, OutOfBoundError } from '@domain/errors';
 
 import {
-  ChangeDiceUsecase,
   CreatePlayerUsecase,
-  DeletePlayerUsecase,
-  GetDiceUsecase,
+  GetCurrentGameUsecase,
+  GetMeUsecase,
   GetPlayersUsecase,
 } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
-  private readonly tableGenerator: TableGenerator;
-  private readonly database: DatabaseProtocol;
-  private readonly getDice: GetDiceUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
+  private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly changeDice: ChangeDiceUsecase;
-  private readonly deletePlayer: DeletePlayerUsecase;
+  private readonly database: DatabaseProtocol;
+  private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseCreatePlayerUsecase.Deps) {
-    this.tableGenerator = deps.tableGenerator;
-    this.database = deps.database;
-    this.getDice = deps.getDice;
+    this.getCurrentGame = deps.getCurrentGame;
+    this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
-    this.changeDice = deps.changeDice;
-    this.deletePlayer = deps.deletePlayer;
+    this.database = deps.database;
+    this.tableGenerator = deps.tableGenerator;
   }
 
   public async execute(
     payload: CreatePlayerUsecase.Payload,
   ): Promise<PlayerModel> {
-    const { name, color, userID = null, diceID } = payload;
+    const { name, color } = payload;
 
-    await this.diceShouldExists(diceID);
+    const user = await this.getMe.execute();
 
-    await this.colorShouldBeUnchosen(color);
+    const players = await this.getPlayers.execute();
+
+    this.colorShouldBeUnchosen(color, players);
+
+    await this.shouldntPassMaxPlayers(players);
 
     const table = await this.tableGenerator.getTable();
 
@@ -47,33 +48,17 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
       player = await this.database.insert<PlayerModel>(table, {
         name,
         color,
-        userID,
-        diceID,
+        userID: user?.id ?? null,
         subjectID: null,
       });
     } catch {
       throw new FailedError({ metadata: { tried: 'create player' } });
     }
 
-    try {
-      await this.changeDice.execute(diceID, { ownerID: player.id });
-    } catch (e) {
-      if (e instanceof ForbiddenError)
-        await this.deletePlayer.execute(player.id);
-
-      throw e;
-    }
-
     return player;
   }
 
-  private async diceShouldExists(diceID: string): Promise<void> {
-    await this.getDice.execute(diceID);
-  }
-
-  private async colorShouldBeUnchosen(color: Color): Promise<void> {
-    const players = await this.getPlayers.execute();
-
+  private colorShouldBeUnchosen(color: Color, players: PlayerModel[]): void {
     if (players.some((player) => player.color === color))
       throw new ForbiddenError({
         metadata: {
@@ -83,15 +68,31 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
         },
       });
   }
+
+  private async shouldntPassMaxPlayers(players: PlayerModel[]): Promise<void> {
+    const game = await this.getCurrentGame.execute();
+
+    if (!game)
+      throw new ForbiddenError({ metadata: { tried: 'create player' } });
+
+    if (game.config.maxPlayers <= players.length)
+      throw new OutOfBoundError({
+        metadata: {
+          prop: 'players',
+          value: players.length,
+          bound: 'above',
+          limit: game.config.maxPlayers,
+        },
+      });
+  }
 }
 
 export namespace DatabaseCreatePlayerUsecase {
   export type Deps = {
-    tableGenerator: TableGenerator;
-    database: DatabaseProtocol;
-    getDice: GetDiceUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
+    getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
-    changeDice: ChangeDiceUsecase;
-    deletePlayer: DeletePlayerUsecase;
+    database: DatabaseProtocol;
+    tableGenerator: TableGenerator;
   };
 }

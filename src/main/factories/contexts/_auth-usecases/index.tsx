@@ -4,14 +4,19 @@ import { ContextProviderProps } from '@presentation/types';
 
 import { AuthUsecasesContextProvider } from '@presentation/contexts';
 
-import { makeGetCurrentUserUsecase } from '@main/factories';
+import { makeChangeUserUsecase, makeGetMeUsecase } from '@main/factories';
 
 export function makeAuthUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const getCurrentUser = makeGetCurrentUserUsecase();
+  const getMe = makeGetMeUsecase();
+  const changeUser = makeChangeUserUsecase();
 
   return (
-    <AuthUsecasesContextProvider getCurrentUser={getCurrentUser} {...props} />
+    <AuthUsecasesContextProvider
+      getMe={getMe}
+      changeUser={changeUser}
+      {...props}
+    />
   );
 }

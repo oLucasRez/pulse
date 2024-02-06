@@ -1,35 +1,40 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const headerHeight = '3.5rem';
 
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
 export const Container = styled.div`
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: #778;
   font-weight: 500;
   min-height: 100vh;
+  display: flex;
+
+  &.globalLoading {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  span {
+    display: inline-block;
+  }
+
+  .loading {
+    transform-origin: center;
+    animation: ${rotate} 2s linear infinite;
+  }
 
   b {
     font-weight: 600;
-  }
-
-  button {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    border-bottom: 2px solid lightgray;
-    color: #667;
-    cursor: pointer;
-
-    :hover {
-      filter: brightness(0.95);
-      transition: 0.1s;
-    }
-
-    :disabled {
-      pointer-events: none;
-      cursor: default;
-      filter: grayscale(1);
-    }
   }
 
   .emoji {
@@ -43,11 +48,20 @@ export const Container = styled.div`
     right: 0;
     min-height: ${headerHeight};
     display: flex;
+    gap: 1rem;
     align-items: center;
     padding: 0 1.5rem;
     position: fixed;
     border-bottom: 1px solid lightgray;
     background: white;
+
+    h2 {
+      font-size: 1.125rem;
+    }
+
+    .greetings {
+      margin-left: auto;
+    }
   }
 
   aside {
@@ -90,5 +104,10 @@ export const Container = styled.div`
         }
       }
     }
+  }
+
+  main {
+    padding-top: ${headerHeight};
+    flex: 1;
   }
 `;

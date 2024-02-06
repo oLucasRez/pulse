@@ -4,17 +4,17 @@ import { CreateGameUsecase } from '@domain/usecases';
 import {
   makeDatabase,
   makeGamesTableGenerator,
-  makeGetCurrentUserUsecase,
+  makeGetMeUsecase,
 } from '@main/factories';
 
 export function makeDatabaseCreateGameUsecase(): CreateGameUsecase {
   const database = makeDatabase();
   const tableGenerator = makeGamesTableGenerator();
-  const getCurrentUser = makeGetCurrentUserUsecase();
+  const getMe = makeGetMeUsecase();
 
   return new DatabaseCreateGameUsecase({
     database,
     tableGenerator,
-    getCurrentUser,
+    getMe,
   });
 }

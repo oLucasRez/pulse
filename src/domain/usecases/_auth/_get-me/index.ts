@@ -1,5 +1,5 @@
 import { UserModel } from '@domain/models';
 
-export interface GetCurrentUserUsecase {
+export interface GetMeUsecase {
   execute(): Promise<UserModel | null>;
 }

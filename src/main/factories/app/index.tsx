@@ -5,6 +5,7 @@ import {
   makeAuthUsecasesContextProvider,
   makeCentralFactUsecasesContextProvider,
   makeCentralPulseUsecasesContextProvider,
+  makeCreatePlayerModalContextProvider,
   makeDiceUsecasesContextProvider,
   makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
@@ -15,6 +16,8 @@ import { App } from '@presentation/app';
 export function makeApp(): ReactNode {
   const app = [
     // inner
+    makeCreatePlayerModalContextProvider,
+
     makeCentralFactUsecasesContextProvider,
     makeCentralPulseUsecasesContextProvider,
     makePlayerUsecasesContextProvider,

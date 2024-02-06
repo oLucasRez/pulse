@@ -1,14 +1,14 @@
 import { UserModel } from '@domain/models';
 
-import { GetCurrentUserUsecase } from '@domain/usecases';
+import { GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
-export class MockGetCurrentUserUsecase implements GetCurrentUserUsecase {
+export class MockGetMeUsecase implements GetMeUsecase {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: MockGetCurrentUserUsecase.Deps) {
+  public constructor(deps: MockGetMeUsecase.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
@@ -22,7 +22,7 @@ export class MockGetCurrentUserUsecase implements GetCurrentUserUsecase {
   }
 }
 
-export namespace MockGetCurrentUserUsecase {
+export namespace MockGetMeUsecase {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
