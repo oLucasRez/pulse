@@ -1,15 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { FC, ReactNode, useEffect } from 'react';
 
-import { GameModel, UserModel } from '@domain/models';
-
-import { DomainError } from '@domain/errors';
+import { GameModel } from '@domain/models';
 
 import { useStates } from '@presentation/hooks';
 
-import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
+import {
+  useAuthUsecases,
+  useGameUsecases,
+  useSession,
+} from '@presentation/contexts';
 
 import { GameScreen } from './components';
+
+import { alertError, logError } from '@presentation/utils';
 
 import { Container } from './styles';
 
@@ -18,7 +22,6 @@ import { Container } from './styles';
  */
 const App: FC = () => {
   const s = useStates({
-    me: null as UserModel | null,
     games: [] as GameModel[],
     currentGame: null as GameModel | null,
     fetchGames: Date.now(),
@@ -31,7 +34,6 @@ const App: FC = () => {
     deletingGame: null as string | null,
   });
 
-  const setMe = (me: UserModel | null): any => (s.me = me);
   const setGames = (games: GameModel[]): any => (s.games = games);
   const setCurrentGame = (game: GameModel | null): any =>
     (s.currentGame = game);
@@ -58,16 +60,11 @@ const App: FC = () => {
   const deletingGame = (game: GameModel): any => (s.deletingGame = game.id);
   const deletedGame = (): any => (s.deletingGame = null);
 
-  const { getMe, changeUser } = useAuthUsecases();
+  const { me } = useSession();
+
+  const { changeUser } = useAuthUsecases();
   const { getGames, getCurrentGame, createGame, deleteGame } =
     useGameUsecases();
-
-  const logError = (e: DomainError): any => console.error(e.message);
-  const alertError = (e: DomainError): any => alert(e.message);
-
-  useEffect(() => {
-    getMe.execute().then(setMe).catch(logError);
-  }, []);
 
   useEffect(() => {
     fetchingCurrentGame();
@@ -251,7 +248,7 @@ const App: FC = () => {
         )}
 
         <span className='greetings'>
-          🧔🏻‍♂️ Hello, <b>{s.me?.name}</b>!
+          🧔🏻‍♂️ Hello, <b>{me?.name}</b>!
         </span>
       </header>
 

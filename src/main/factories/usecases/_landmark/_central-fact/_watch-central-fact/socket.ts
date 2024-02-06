@@ -1,14 +1,11 @@
 import { SocketWatchCentralFactUsecase } from '@data/usecases';
 import { WatchCentralFactUsecase } from '@domain/usecases';
 
-import {
-  makeCentralFactsTableGenerator,
-  makeFirebaseSocket,
-} from '@main/factories';
+import { makeCentralFactsTableGenerator, makeSocket } from '@main/factories';
 
 export function makeSocketWatchCentralFactUsecase(): WatchCentralFactUsecase {
   const tableGenerator = makeCentralFactsTableGenerator();
-  const socket = makeFirebaseSocket();
+  const socket = makeSocket();
 
   return new SocketWatchCentralFactUsecase({ tableGenerator, socket });
 }

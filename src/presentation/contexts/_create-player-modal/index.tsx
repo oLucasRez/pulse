@@ -2,8 +2,6 @@ import { createContext, FC, useCallback, useContext, useEffect } from 'react';
 
 import { Color } from '@domain/enums';
 
-import { DomainError } from '@domain/errors';
-
 import {
   CreatePlayerModalContextProviderProps,
   CreatePlayerModalContextValue,
@@ -14,8 +12,9 @@ import { useStates } from '@presentation/hooks';
 import { darken, getColor } from '@presentation/styles/mixins';
 
 import { mapEnum } from '@domain/utils';
+import { alertError } from '@presentation/utils';
 
-import { useAuthUsecases, usePlayerUsecases } from '..';
+import { usePlayerUsecases, useSession } from '..';
 import { Container } from './styles';
 
 const Context = createContext({} as CreatePlayerModalContextValue);
@@ -27,8 +26,6 @@ export const CreatePlayerModalContextProvider: FC<
   CreatePlayerModalContextProviderProps
 > = (props) => {
   const { children } = props;
-
-  const { getMe } = useAuthUsecases();
 
   const s = useStates({
     open: false,
@@ -44,15 +41,11 @@ export const CreatePlayerModalContextProvider: FC<
 
   const closeModal = (): any => (s.open = false);
 
-  const logError = (e: DomainError): any => console.error(e.message);
-  const alertError = (e: DomainError): any => alert(e.message);
+  const { me } = useSession();
 
   useEffect(() => {
-    getMe
-      .execute()
-      .then((me) => me && (s.name = me.name))
-      .catch(logError);
-  }, []);
+    if (me) s.name = me.name;
+  }, [me]);
 
   const submitDisabled = !s.name || !s.color || s.creatingPlayer;
 
@@ -116,7 +109,7 @@ export const CreatePlayerModalContextProvider: FC<
             </main>
 
             <footer>
-              <button>Cancel</button>
+              <button onClick={closeModal}>Cancel</button>
               <button
                 disabled={submitDisabled}
                 onClick={handleSubmitButtonClick}

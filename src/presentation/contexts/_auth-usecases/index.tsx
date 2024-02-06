@@ -15,6 +15,7 @@ export const AuthUsecasesContextProvider: FC<
 > = (props) => {
   const {
     getMe,
+    watchMe,
     changeUser,
 
     children,
@@ -24,6 +25,7 @@ export const AuthUsecasesContextProvider: FC<
     <Context.Provider
       value={{
         getMe,
+        watchMe,
         changeUser,
       }}
     >

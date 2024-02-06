@@ -5,3 +5,4 @@ export * from './_create-player-modal';
 export * from './_dice-usecases';
 export * from './_game-usecases';
 export * from './_player-usecases';
+export * from './_session';

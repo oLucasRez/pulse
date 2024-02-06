@@ -1,6 +1,6 @@
 import { Color } from '@domain/enums';
 
-import { PlayerModel } from '@domain/models';
+import { PlayerModel, UserModel } from '@domain/models';
 
 import { FailedError, ForbiddenError, OutOfBoundError } from '@domain/errors';
 
@@ -33,9 +33,11 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   ): Promise<PlayerModel> {
     const { name, color } = payload;
 
-    const user = await this.getMe.execute();
+    const me = await this.getMe.execute();
 
     const players = await this.getPlayers.execute();
+
+    this.iShouldntHaveCreatedYet(me, players);
 
     this.colorShouldBeUnchosen(color, players);
 
@@ -48,7 +50,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
       player = await this.database.insert<PlayerModel>(table, {
         name,
         color,
-        userID: user?.id ?? null,
+        userID: me && me.id,
         subjectID: null,
       });
     } catch {
@@ -56,6 +58,22 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     }
 
     return player;
+  }
+
+  private iShouldntHaveCreatedYet(
+    me: UserModel | null,
+    players: PlayerModel[],
+  ): void {
+    if (!me) return;
+
+    if (players.some(({ userID }) => userID === me.id))
+      throw new ForbiddenError({
+        metadata: {
+          prop: 'userID',
+          value: me.id,
+          tried: 'create player again',
+        },
+      });
   }
 
   private colorShouldBeUnchosen(color: Color, players: PlayerModel[]): void {

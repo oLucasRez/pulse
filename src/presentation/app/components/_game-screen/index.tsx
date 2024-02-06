@@ -1,27 +1,26 @@
 import { faker } from '@faker-js/faker';
 import { FC, ReactNode, useEffect, useMemo } from 'react';
 
-import { PlayerModel, UserModel } from '@domain/models';
-
-import { DomainError } from '@domain/errors';
+import { PlayerModel } from '@domain/models';
 
 import { GameScreenProps } from './types';
 
 import { useStates } from '@presentation/hooks';
 
 import {
-  useAuthUsecases,
   useCreatePlayerModal,
   usePlayerUsecases,
+  useSession,
 } from '@presentation/contexts';
 
 import { getColor } from '@presentation/styles/mixins';
+
+import { logError } from '@presentation/utils';
 
 import { Container } from './styles';
 
 export const GameScreen: FC<GameScreenProps> = () => {
   const s = useStates({
-    me: null as UserModel | null,
     players: [] as PlayerModel[],
     watchingPlayers: false,
   });
@@ -30,8 +29,6 @@ export const GameScreen: FC<GameScreenProps> = () => {
   const watchedPlayers = (): any => (s.watchingPlayers = false);
 
   const { openCreatePlayerModal } = useCreatePlayerModal();
-
-  const logError = (e: DomainError): any => console.error(e.message);
 
   const { watchPlayers } = usePlayerUsecases();
   useEffect(() => {
@@ -43,13 +40,7 @@ export const GameScreen: FC<GameScreenProps> = () => {
       .catch(logError);
   }, []);
 
-  const { getMe } = useAuthUsecases();
-  useEffect(() => {
-    getMe
-      .execute()
-      .then((me) => (s.me = me))
-      .catch(logError);
-  }, []);
+  const { me } = useSession();
 
   const avatars = useMemo(() => {
     const value: Record<string, string> = {};
@@ -198,7 +189,7 @@ export const GameScreen: FC<GameScreenProps> = () => {
     return value;
   }, [s.players]);
 
-  const myPlayer = s.players.find((player) => player.userID === s.me?.id);
+  const myPlayer = s.players.find((player) => player.userID === me?.id);
 
   function renderPlayers(): ReactNode {
     if (s.watchingPlayers)

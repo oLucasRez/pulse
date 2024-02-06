@@ -1,11 +1,11 @@
 import { SocketWatchDicesUsecase } from '@data/usecases';
 import { WatchDicesUsecase } from '@domain/usecases';
 
-import { makeDicesTableGenerator, makeFirebaseSocket } from '@main/factories';
+import { makeDicesTableGenerator, makeSocket } from '@main/factories';
 
 export function makeSocketWatchDicesUsecase(): WatchDicesUsecase {
   const tableGenerator = makeDicesTableGenerator();
-  const socket = makeFirebaseSocket();
+  const socket = makeSocket();
 
   return new SocketWatchDicesUsecase({ tableGenerator, socket });
 }
