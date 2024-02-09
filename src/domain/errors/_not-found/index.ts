@@ -1,6 +1,6 @@
 import { isNonNullable } from '@domain/utils';
 
-import { DomainError } from '..';
+import { DomainError } from '../domain';
 
 export class NotFoundError extends DomainError<NotFoundError.Metadata> {
   public constructor(props: NotFoundError.Props) {

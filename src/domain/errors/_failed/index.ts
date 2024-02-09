@@ -1,6 +1,6 @@
 import { isNonNullable } from '@domain/utils';
 
-import { DomainError } from '..';
+import { DomainError } from '../domain';
 
 export class FailedError extends DomainError {
   public constructor(props: FailedError.Props) {

@@ -1,4 +1,4 @@
-import { DomainError } from '..';
+import { DomainError } from '../domain';
 
 export class OutOfBoundError extends DomainError<OutOfBoundError.Metadata> {
   public constructor(props: OutOfBoundError.Props) {

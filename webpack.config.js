@@ -5,7 +5,8 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     path: __dirname + '/dist',
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -39,4 +40,7 @@ module.exports = {
     }),
   ],
   bail: false,
+  devServer: {
+    historyApiFallback: true,
+  },
 };

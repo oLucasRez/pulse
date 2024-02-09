@@ -16,9 +16,12 @@ export class MockGetMeUsecase implements GetMeUsecase {
   public async execute(): Promise<UserModel | null> {
     const table = await this.tableGenerator.getTable();
 
-    const [user] = await this.database.select<UserModel>(table);
+    const [me] = await this.database.select<UserModel>(
+      table,
+      (user) => user.id === localStorage.getItem('session'),
+    );
 
-    return user;
+    return me || null;
   }
 }
 

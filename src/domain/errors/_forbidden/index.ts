@@ -1,4 +1,4 @@
-import { DomainError } from '..';
+import { DomainError } from '../domain';
 
 export class ForbiddenError extends DomainError<ForbiddenError.Metadata> {
   public constructor(props: ForbiddenError.Props) {

@@ -1,4 +1,4 @@
-import { DomainError } from '..';
+import { DomainError } from '../domain';
 
 export class NotIntegerError extends DomainError<NotIntegerError.Metadata> {
   public constructor(props: NotIntegerError.Props) {
