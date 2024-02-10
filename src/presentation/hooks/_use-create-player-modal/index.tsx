@@ -2,7 +2,10 @@ import { useCallback, useEffect } from 'react';
 
 import { Color } from '@domain/enums';
 
-import { CreatePlayerModalHookReturn } from './types';
+import {
+  CreatePlayerModalHookProps,
+  CreatePlayerModalHookReturn,
+} from './types';
 
 import { useStates } from '@presentation/hooks';
 
@@ -15,9 +18,13 @@ import { alertError, logError } from '@presentation/utils';
 
 import { Container } from './styles';
 
-export function useCreatePlayerModal(): CreatePlayerModalHookReturn {
+export function useCreatePlayerModal(
+  props: CreatePlayerModalHookProps = {},
+): CreatePlayerModalHookReturn {
+  const { unclosable, open = false, onSuccess } = props;
+
   const s = useStates({
-    open: false,
+    open,
     name: '',
     color: undefined as Color | undefined,
     creatingPlayer: false,
@@ -52,6 +59,7 @@ export function useCreatePlayerModal(): CreatePlayerModalHookReturn {
 
     createPlayer
       .execute({ name, color })
+      .then(onSuccess)
       .then(closeModal)
       .catch(alertError)
       .finally(createdPlayer);
@@ -69,7 +77,7 @@ export function useCreatePlayerModal(): CreatePlayerModalHookReturn {
             >
               <header>
                 <h2>Create player</h2>
-                <button onClick={(): any => (s.open = false)}>x</button>
+                {!unclosable && <button onClick={closeModal}>x</button>}
               </header>
 
               <main>
@@ -105,7 +113,7 @@ export function useCreatePlayerModal(): CreatePlayerModalHookReturn {
               </main>
 
               <footer>
-                <button onClick={closeModal}>Cancel</button>
+                {!unclosable && <button onClick={closeModal}>Cancel</button>}
                 <button
                   disabled={submitDisabled}
                   onClick={handleSubmitButtonClick}

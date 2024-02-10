@@ -22,6 +22,7 @@
     "(.*)hooks",
     "(.*)contexts",
     "(.*)components",
+    "(.*)proxies",
     "(.*)pages",
     "(.*)app",
     "(.*)mixins",

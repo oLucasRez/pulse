@@ -2,54 +2,52 @@ import { ReactElement } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromChildren,
-  redirect,
   Route,
   RouterProvider,
 } from 'react-router-dom';
 
-import { UserModel } from '@domain/models';
+import {
+  make404Page,
+  makeGamePage,
+  makeHomePage,
+  makeLoginPage,
+  makeLogoutPage,
+} from '../pages';
 
-import { DomainError } from '@domain/errors';
-
-import { alertError, logError } from '@presentation/utils';
-
-import { makeGetMeUsecase } from '..';
+import { makeGameLoader, makeHomeLoader } from './_loaders';
+import {
+  makeGamePath,
+  makeHomePath,
+  makeLoginPath,
+  makeLogoutPath,
+} from './_paths';
 
 export function makeRouter(): ReactElement {
-  const getMe = makeGetMeUsecase();
+  const homePath = makeHomePath();
+  const homeLoader = makeHomeLoader();
+  const homePage = makeHomePage();
+
+  const loginPath = makeLoginPath();
+  const loginPage = makeLoginPage();
+
+  const gamePath = makeGamePath();
+  const gameLoader = makeGameLoader();
+  const gamePage = makeGamePage();
+
+  const logoutPath = makeLogoutPath();
+  const logoutPage = makeLogoutPage();
+
+  const notFoundPage = make404Page();
 
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
-        <Route
-          path='/'
-          loader={async (): Promise<UserModel> => {
-            const me = await getMe.execute().catch(logError);
+        <Route path={homePath} loader={homeLoader} element={homePage} />
+        <Route path={loginPath} element={loginPage} />
+        <Route path={gamePath} loader={gameLoader} element={gamePage} />
+        <Route path={logoutPath} element={logoutPage} />
 
-            if (!me) throw redirect('/login');
-
-            return me;
-          }}
-          lazy={(): any => import('@presentation/pages/_home')}
-        />
-        <Route
-          path='/login'
-          lazy={(): any => import('@presentation/pages/_login')}
-        />
-        <Route
-          path='/game/:id'
-          loader={async (): Promise<UserModel | null> => {
-            try {
-              const me = await getMe.execute();
-
-              return me;
-            } catch (e) {
-              alertError(e as DomainError);
-              throw redirect('/login');
-            }
-          }}
-          lazy={(): any => import('@presentation/pages/_game')}
-        />
+        <Route path='*' element={notFoundPage} />
       </>,
     ),
   );

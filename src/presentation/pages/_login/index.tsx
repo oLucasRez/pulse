@@ -1,9 +1,8 @@
 import { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { UserModel } from '@domain/models';
 
-import { useStates } from '@presentation/hooks';
+import { useNavigate, useStates } from '@presentation/hooks';
 
 import { GlobalLoading } from '@presentation/components';
 
@@ -11,7 +10,7 @@ import { makeDatabase } from '@main/factories';
 
 const db = makeDatabase();
 
-export const Component: FC = () => {
+const LoginPage: FC = () => {
   const s = useStates({
     users: [] as UserModel[],
     fetchingUsers: false,
@@ -27,7 +26,7 @@ export const Component: FC = () => {
     })();
   }, []);
 
-  const navigate = useNavigate();
+  const { navigateToHome } = useNavigate();
 
   if (s.fetchingUsers) return <GlobalLoading />;
 
@@ -57,7 +56,7 @@ export const Component: FC = () => {
             <button
               onClick={(): any => {
                 localStorage.setItem('session', user.id);
-                navigate('/');
+                navigateToHome();
               }}
             >
               Login
@@ -69,4 +68,4 @@ export const Component: FC = () => {
   );
 };
 
-Component.displayName = 'LoginPage';
+export default LoginPage;

@@ -2,6 +2,7 @@ import {
   ChangePlayerUsecase,
   CreatePlayerUsecase,
   DeletePlayerUsecase,
+  GetMyPlayerUsecase,
   GetPlayersUsecase,
   GetPlayerUsecase,
   WatchPlayersUsecase,
@@ -12,6 +13,7 @@ import { ContextProviderProps } from '@presentation/types';
 export type PlayerUsecasesContextValue = {
   getPlayers: GetPlayersUsecase;
   getPlayer: GetPlayerUsecase;
+  getMyPlayer: GetMyPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
   createPlayer: CreatePlayerUsecase;
   changePlayer: ChangePlayerUsecase;
@@ -22,6 +24,7 @@ export interface PlayerUsecasesContextProviderProps
   extends ContextProviderProps {
   getPlayers: GetPlayersUsecase;
   getPlayer: GetPlayerUsecase;
+  getMyPlayer: GetMyPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
   createPlayer: CreatePlayerUsecase;
   changePlayer: ChangePlayerUsecase;

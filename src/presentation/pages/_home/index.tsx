@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { FC, ReactNode, useEffect } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
 
-import { GameModel, UserModel } from '@domain/models';
+import { GameModel } from '@domain/models';
 
-import { useStates } from '@presentation/hooks';
+import { useNavigate, useStates } from '@presentation/hooks';
 
 import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
 
@@ -12,9 +11,10 @@ import { GlobalLoading } from '@presentation/components';
 
 import { alertError, logError } from '@presentation/utils';
 
+import { useHomeLoaderData } from './loader';
 import { Container } from './styles';
 
-export const Component: FC = () => {
+const HomePage: FC = () => {
   const s = useStates({
     games: [] as GameModel[],
     currentGame: null as GameModel | null,
@@ -50,7 +50,7 @@ export const Component: FC = () => {
   const deletingGame = (game: GameModel): any => (s.deletingGame = game.id);
   const deletedGame = (): any => (s.deletingGame = null);
 
-  const me: UserModel = useLoaderData() as any;
+  const me = useHomeLoaderData();
 
   const { changeUser } = useAuthUsecases();
   const { getGames, getCurrentGame, createGame, deleteGame } =
@@ -72,7 +72,7 @@ export const Component: FC = () => {
     getGames.execute().then(setGames).then(fetchedGames).catch(logError);
   }, [s.fetchGames]);
 
-  const navigate = useNavigate();
+  const { navigateToGame, navigateToLogout } = useNavigate();
 
   function handleCreateGameButtonClick(): any {
     creatingGame();
@@ -93,7 +93,7 @@ export const Component: FC = () => {
       .execute({ currentGameID: game.id })
       .then(selectedGame)
       .then(fetchCurrentGame)
-      .then(() => navigate(`/game/${game.id}`))
+      .then(() => navigateToGame(game.id))
       .catch(alertError);
   }
 
@@ -202,14 +202,7 @@ export const Component: FC = () => {
         <span className='greetings'>
           🧔🏻‍♂️ Hello, <b>{me?.name}</b>!
         </span>
-        <button
-          onClick={(): any => {
-            localStorage.removeItem('session');
-            navigate('/login');
-          }}
-        >
-          🚪
-        </button>
+        <button onClick={navigateToLogout}>🚪</button>
       </header>
 
       <aside>
@@ -225,4 +218,6 @@ export const Component: FC = () => {
   );
 };
 
-Component.displayName = 'HomePage';
+export { homeLoader } from './loader';
+
+export default HomePage;

@@ -8,6 +8,7 @@ import {
   makeChangePlayerUsecase,
   makeCreatePlayerUsecase,
   makeDeletePlayerUsecase,
+  makeGetMyPlayerUsecase,
   makeGetPlayersUsecase,
   makeGetPlayerUsecase,
   makeWatchPlayersUsecase,
@@ -18,6 +19,7 @@ export function makePlayerUsecasesContextProvider(
 ): ReactNode {
   const getPlayers = makeGetPlayersUsecase();
   const getPlayer = makeGetPlayerUsecase();
+  const getMyPlayer = makeGetMyPlayerUsecase();
   const watchPlayers = makeWatchPlayersUsecase();
   const createPlayer = makeCreatePlayerUsecase();
   const changePlayer = makeChangePlayerUsecase();
@@ -27,6 +29,7 @@ export function makePlayerUsecasesContextProvider(
     <PlayerUsecasesContextProvider
       getPlayers={getPlayers}
       getPlayer={getPlayer}
+      getMyPlayer={getMyPlayer}
       watchPlayers={watchPlayers}
       createPlayer={createPlayer}
       changePlayer={changePlayer}

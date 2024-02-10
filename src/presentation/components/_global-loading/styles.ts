@@ -1,4 +1,13 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 export const Container = styled.div`
   width: 100%;
@@ -8,4 +17,9 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 3rem;
+
+  .loading {
+    transform-origin: center;
+    animation: ${rotate} 2s linear infinite;
+  }
 `;

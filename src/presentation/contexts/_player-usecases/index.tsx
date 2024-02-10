@@ -16,6 +16,7 @@ export const PlayerUsecasesContextProvider: FC<
   const {
     getPlayers,
     getPlayer,
+    getMyPlayer,
     watchPlayers,
     createPlayer,
     changePlayer,
@@ -29,6 +30,7 @@ export const PlayerUsecasesContextProvider: FC<
       value={{
         getPlayers,
         getPlayer,
+        getMyPlayer,
         watchPlayers,
         createPlayer,
         changePlayer,
