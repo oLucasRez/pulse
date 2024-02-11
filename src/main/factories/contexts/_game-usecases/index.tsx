@@ -10,12 +10,14 @@ import {
   makeGetCurrentGameUsecase,
   makeGetGamesUsecase,
   makeGetGameUsecase,
+  makeSetCurrentGameUsecase,
 } from '@main/factories';
 
 export function makeGameUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
   const getCurrentGame = makeGetCurrentGameUsecase();
+  const setCurrentGame = makeSetCurrentGameUsecase();
   const getGame = makeGetGameUsecase();
   const getGames = makeGetGamesUsecase();
   const createGame = makeCreateGameUsecase();
@@ -24,6 +26,7 @@ export function makeGameUsecasesContextProvider(
   return (
     <GameUsecasesContextProvider
       getCurrentGame={getCurrentGame}
+      setCurrentGame={setCurrentGame}
       getGame={getGame}
       getGames={getGames}
       createGame={createGame}

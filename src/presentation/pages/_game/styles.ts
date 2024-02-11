@@ -121,6 +121,18 @@ export const Main = styled.main`
     opacity: 0.75;
   }
 
+  div.link {
+    margin-top: -1rem;
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+
+    input {
+      height: auto;
+      width: 20rem;
+    }
+  }
+
   .players {
     display: flex;
     gap: 1.5rem;
@@ -142,6 +154,10 @@ export const Main = styled.main`
         height: 6rem;
         text-align: center;
         border-radius: 50rem;
+      }
+
+      .name {
+        text-align: center;
       }
 
       .me {

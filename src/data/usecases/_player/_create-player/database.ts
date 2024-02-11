@@ -11,12 +11,17 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import {
+  CacheProtocol,
+  DatabaseProtocol,
+  TableGenerator,
+} from '@data/protocols';
 
 export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
+  private readonly cache: CacheProtocol;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
@@ -24,6 +29,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
+    this.cache = deps.cache;
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
@@ -53,6 +59,8 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
         userID: me && me.id,
         subjectID: null,
       });
+
+      await this.cache.set<string>('myPlayerID', player.id);
     } catch {
       throw new FailedError({ metadata: { tried: 'create player' } });
     }
@@ -110,6 +118,7 @@ export namespace DatabaseCreatePlayerUsecase {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
+    cache: CacheProtocol;
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
   };

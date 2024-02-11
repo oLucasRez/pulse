@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { FC, ReactNode, useEffect, useMemo } from 'react';
+import { FC, FocusEvent, ReactNode, useEffect, useMemo, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
@@ -89,6 +89,19 @@ const GamePage: FC = () => {
       .catch(alertError);
   }
 
+  const linkInputRef = useRef<HTMLInputElement>(null);
+
+  function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>): any {
+    event.target.select();
+    event.target.setSelectionRange(0, 99999);
+
+    navigator.clipboard.writeText(event.target.value);
+  }
+
+  function handleCopyLinkButtonClick(): any {
+    linkInputRef.current?.focus();
+  }
+
   function renderPlayers(): ReactNode {
     if (s.watchingPlayers)
       return (
@@ -138,6 +151,17 @@ const GamePage: FC = () => {
 
       <Main>
         <p className='invite'>Invite your friends to join the game!</p>
+
+        <div className='link'>
+          <input
+            ref={linkInputRef}
+            value={location.href}
+            autoFocus
+            onFocus={handleLinkInputFocus}
+            readOnly
+          />
+          <button onClick={handleCopyLinkButtonClick}>📑</button>
+        </div>
 
         {renderPlayers()}
 

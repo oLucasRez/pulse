@@ -1,25 +1,46 @@
 import { PlayerModel } from '@domain/models';
 
-import { FailedError, NotFoundError } from '@domain/errors';
+import { FailedError } from '@domain/errors';
 
-import { GetMeUsecase, GetMyPlayerUsecase } from '@domain/usecases';
+import {
+  GetMeUsecase,
+  GetMyPlayerUsecase,
+  GetPlayerUsecase,
+} from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import {
+  CacheProtocol,
+  DatabaseProtocol,
+  TableGenerator,
+} from '@data/protocols';
 
 export class DatabaseGetMyPlayerUsecase implements GetMyPlayerUsecase {
   private readonly getMe: GetMeUsecase;
-  private readonly tableGenerator: TableGenerator;
+  private readonly getPlayer: GetPlayerUsecase;
+  private readonly cache: CacheProtocol;
   private readonly database: DatabaseProtocol;
+  private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseGetMyPlayerUsecase.Deps) {
     this.getMe = deps.getMe;
-    this.tableGenerator = deps.tableGenerator;
+    this.getPlayer = deps.getPlayer;
+    this.cache = deps.cache;
     this.database = deps.database;
+    this.tableGenerator = deps.tableGenerator;
   }
 
   public async execute(): Promise<PlayerModel | null> {
     const me = await this.getMe.execute();
-    if (!me) throw new NotFoundError({ metadata: { entity: 'User' } });
+
+    if (!me) {
+      const myPlayerID = await this.cache.get<string>('myPlayerID');
+
+      if (!myPlayerID) return null;
+
+      const myPlayer = await this.getPlayer.execute(myPlayerID);
+
+      return myPlayer;
+    }
 
     try {
       const table = await this.tableGenerator.getTable();
@@ -39,7 +60,9 @@ export class DatabaseGetMyPlayerUsecase implements GetMyPlayerUsecase {
 export namespace DatabaseGetMyPlayerUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
-    tableGenerator: TableGenerator;
+    getPlayer: GetPlayerUsecase;
+    cache: CacheProtocol;
     database: DatabaseProtocol;
+    tableGenerator: TableGenerator;
   };
 }

@@ -2,6 +2,7 @@ import { DatabaseCreatePlayerUsecase } from '@data/usecases';
 import { CreatePlayerUsecase } from '@domain/usecases';
 
 import {
+  makeCache,
   makeDatabase,
   makeGetCurrentGameUsecase,
   makeGetMeUsecase,
@@ -10,6 +11,7 @@ import {
 } from '@main/factories';
 
 export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
+  const cache = makeCache();
   const database = makeDatabase();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getMe = makeGetMeUsecase();
@@ -17,6 +19,7 @@ export function makeDatabaseCreatePlayerUsecase(): CreatePlayerUsecase {
   const tableGenerator = makePlayersTableGenerator();
 
   return new DatabaseCreatePlayerUsecase({
+    cache,
     database,
     getCurrentGame,
     getMe,

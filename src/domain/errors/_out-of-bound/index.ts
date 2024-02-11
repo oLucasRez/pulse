@@ -6,7 +6,7 @@ export class OutOfBoundError extends DomainError<OutOfBoundError.Metadata> {
 
     const { prop, bound, limit } = metadata;
     const unit = metadata.unit ? ' ' + metadata.unit : '';
-    const defaultMessage = `${prop} is ${bound} ${limit}${unit}`;
+    const defaultMessage = `${prop} can't be ${bound} ${limit}${unit}`;
 
     super(message ?? defaultMessage, metadata);
 

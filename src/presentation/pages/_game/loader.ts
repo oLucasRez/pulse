@@ -12,7 +12,7 @@ import { alertError } from '@presentation/utils';
 export async function gameLoader(
   args: GameLoaderArgs,
 ): Promise<GameLoaderData> {
-  const { getMe, getGame, params } = args;
+  const { getMe, getGame, setCurrentGame, params } = args;
 
   try {
     const me = await getMe.execute();
@@ -20,6 +20,8 @@ export async function gameLoader(
     if (!params.id) throw 'error';
 
     const currentGame = await getGame.execute(params.id);
+
+    await setCurrentGame.execute(currentGame.id);
 
     return {
       me,

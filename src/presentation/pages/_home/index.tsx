@@ -5,7 +5,7 @@ import { GameModel } from '@domain/models';
 
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
+import { useGameUsecases } from '@presentation/contexts';
 
 import { GlobalLoading } from '@presentation/components';
 
@@ -23,7 +23,6 @@ const HomePage: FC = () => {
     fetchingGames: false,
     fetchingCurrentGame: false,
     creatingGame: false,
-    selectingGame: null as string | null,
     deletingGame: null as string | null,
   });
 
@@ -32,7 +31,6 @@ const HomePage: FC = () => {
     (s.currentGame = game);
 
   const fetchGames = (): any => (s.fetchGames = Date.now());
-  const fetchCurrentGame = (): any => (s.fetchCurrentGame = Date.now());
 
   const fetchingGames = (): any => (s.fetchingGames = true);
   const fetchedGames = (): any => (s.fetchingGames = false);
@@ -43,16 +41,11 @@ const HomePage: FC = () => {
   const creatingGame = (): any => (s.creatingGame = true);
   const createdGame = (): any => (s.creatingGame = false);
 
-  const selectingGame = (game: GameModel | null): any =>
-    (s.selectingGame = game && game.id);
-  const selectedGame = (): any => (s.selectingGame = null);
-
   const deletingGame = (game: GameModel): any => (s.deletingGame = game.id);
   const deletedGame = (): any => (s.deletingGame = null);
 
   const me = useHomeLoaderData();
 
-  const { changeUser } = useAuthUsecases();
   const { getGames, getCurrentGame, createGame, deleteGame } =
     useGameUsecases();
 
@@ -83,17 +76,6 @@ const HomePage: FC = () => {
       })
       .then(createdGame)
       .then(fetchGames)
-      .catch(alertError);
-  }
-
-  function handleSelectGameButtonClick(game: GameModel): any {
-    selectingGame(game);
-
-    changeUser
-      .execute({ currentGameID: game.id })
-      .then(selectedGame)
-      .then(fetchCurrentGame)
-      .then(() => navigateToGame(game.id))
       .catch(alertError);
   }
 
@@ -151,7 +133,6 @@ const HomePage: FC = () => {
     return (
       <ul className='games'>
         {s.games.map((game) => {
-          const selectingGame = s.selectingGame === game.id;
           const deletingGame = s.deletingGame === game.id;
 
           return (
@@ -160,14 +141,9 @@ const HomePage: FC = () => {
 
               <button
                 className='select'
-                onClick={(): any => handleSelectGameButtonClick(game)}
-                disabled={selectingGame}
+                onClick={(): any => navigateToGame(game.id)}
               >
-                {selectingGame ? (
-                  <span className='emoji loading'>⏳</span>
-                ) : (
-                  <span className='emoji'>👁️</span>
-                )}
+                <span className='emoji'>👁️</span>
               </button>
 
               <button className='edit' disabled>

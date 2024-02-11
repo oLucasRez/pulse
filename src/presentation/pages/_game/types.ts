@@ -2,11 +2,16 @@ import { LoaderFunctionArgs } from 'react-router-dom';
 
 import { GameModel, UserModel } from '@domain/models';
 
-import { GetGameUsecase, GetMeUsecase } from '@domain/usecases';
+import {
+  GetGameUsecase,
+  GetMeUsecase,
+  SetCurrentGameUsecase,
+} from '@domain/usecases';
 
 export interface GameLoaderArgs extends LoaderFunctionArgs {
   getMe: GetMeUsecase;
   getGame: GetGameUsecase;
+  setCurrentGame: SetCurrentGameUsecase;
 }
 
 export type GameLoaderData = {
