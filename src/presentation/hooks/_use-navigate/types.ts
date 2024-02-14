@@ -12,4 +12,5 @@ export type NavigateHookReturn = {
 
   linkToHomeProps: LinkProps;
   linkToLoginProps: LinkProps;
+  linkToRegisterProps: LinkProps;
 };

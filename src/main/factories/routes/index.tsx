@@ -15,7 +15,12 @@ import {
   makeRegisterPage,
 } from '../pages';
 
-import { makeGameLoader, makeHomeLoader, makeRegisterLoader } from './_loaders';
+import {
+  makeGameLoader,
+  makeHomeLoader,
+  makeLoginLoader,
+  makeRegisterLoader,
+} from './_loaders';
 import {
   makeGamePath,
   makeHomePath,
@@ -26,6 +31,7 @@ import {
 
 export function makeRouter(): ReactElement {
   const loginPath = makeLoginPath();
+  const loginLoader = makeLoginLoader();
   const loginPage = makeLoginPage();
 
   const registerPath = makeRegisterPath();
@@ -48,7 +54,7 @@ export function makeRouter(): ReactElement {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
-        <Route path={loginPath} element={loginPage} />
+        <Route path={loginPath} loader={loginLoader} element={loginPage} />
         <Route
           path={registerPath}
           loader={registerLoader}

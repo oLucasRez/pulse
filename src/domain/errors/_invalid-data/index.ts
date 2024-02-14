@@ -2,10 +2,15 @@ import { DomainError } from '../domain';
 
 export class InvalidDataError extends DomainError<InvalidDataError.Metadata> {
   public constructor(props: InvalidDataError.Props) {
-    const { metadata, message } = props;
+    const { metadata = {}, message } = props;
+
+    let defaultMessage = '';
 
     const { prop, value } = metadata;
-    const defaultMessage = `${prop} ${value} is invalid`;
+
+    if (prop) {
+      defaultMessage = `${prop} ${value} is invalid`;
+    } else defaultMessage = 'Invalid data';
 
     super(message ?? defaultMessage, metadata);
 
@@ -15,12 +20,12 @@ export class InvalidDataError extends DomainError<InvalidDataError.Metadata> {
 
 export namespace InvalidDataError {
   export type Metadata = {
-    prop: string;
-    value: any;
+    prop?: string;
+    value?: any;
   };
 
   export type Props = {
     message?: string;
-    metadata: InvalidDataError.Metadata;
+    metadata?: InvalidDataError.Metadata;
   };
 }

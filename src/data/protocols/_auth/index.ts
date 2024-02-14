@@ -4,6 +4,7 @@ export interface SessionGetterProtocol {
 
 export interface AuthPasswordProtocol {
   signUpWithPassword(payload: AuthPasswordProtocol.Payload): Promise<string>;
+  signInWithPassword(payload: AuthPasswordProtocol.Payload): Promise<string>;
 }
 
 export namespace AuthPasswordProtocol {

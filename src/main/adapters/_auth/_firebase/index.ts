@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 import { FailedError, InvalidDataError, OutOfBoundError } from '@domain/errors';
@@ -67,6 +68,36 @@ export class FirebaseAuth
       }
 
       throw new FailedError({ metadata: { tried: 'sign up with password' } });
+    }
+  }
+
+  public async signInWithPassword(
+    payload: AuthPasswordProtocol.Payload,
+  ): Promise<string> {
+    const { email, password } = payload;
+
+    try {
+      const userCrendential = await signInWithEmailAndPassword(
+        FirebaseService.auth,
+        email,
+        password,
+      );
+
+      return userCrendential.user.uid;
+    } catch (e) {
+      const error = e as FirebaseError;
+      const errorCode = error.code as FirebaseErrorCode;
+
+      switch (errorCode) {
+        case 'auth/invalid-credential':
+          throw new InvalidDataError({
+            message: 'Invalid credentials',
+          });
+        default:
+          console.error(error);
+      }
+
+      throw new FailedError({ metadata: { tried: 'sign in with password' } });
     }
   }
 }
