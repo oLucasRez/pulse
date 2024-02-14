@@ -102,7 +102,9 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     if (!game)
       throw new ForbiddenError({ metadata: { tried: 'create player' } });
 
-    if (game.config.maxPlayers <= players.length)
+    const notBannedPlayers = players.filter((player) => !player.banned);
+
+    if (game.config.maxPlayers <= notBannedPlayers.length)
       throw new OutOfBoundError({
         metadata: {
           prop: 'players',

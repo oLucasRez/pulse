@@ -100,9 +100,16 @@ const GamePage: FC = () => {
     banPlayer.execute(playerID);
   }
 
+  const notBannedPlayers = s.players.filter((player) => !player.banned);
+
   function renderInvite(): ReactNode {
     if (!imHost)
       return <p className='invite'>Wait until the host starts the game!</p>;
+
+    const reachedMaxPlayers =
+      currentGame.config.maxPlayers === notBannedPlayers.length;
+
+    if (reachedMaxPlayers) return;
 
     return (
       <>
@@ -129,8 +136,6 @@ const GamePage: FC = () => {
           <span className='loading'>⏳</span>
         </div>
       );
-
-    const notBannedPlayers = s.players.filter((player) => !player.banned);
 
     return (
       <div className='players'>
