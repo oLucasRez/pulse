@@ -58,6 +58,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
         color,
         userID: me && me.id,
         subjectID: null,
+        banned: false,
       });
 
       await this.cache.set<string>('myPlayerID', player.id);

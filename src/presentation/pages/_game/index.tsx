@@ -3,18 +3,19 @@ import { FC, FocusEvent, ReactNode, useEffect, useMemo, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
+import { useMutatePlayerModal } from './hooks';
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { useAuthUsecases, usePlayerUsecases } from '@presentation/contexts';
+import { usePlayerUsecases } from '@presentation/contexts';
 
 import { useMyPlayer } from './proxies';
 
-import { getColor } from '@presentation/styles/mixins';
+import { Container, Main } from './styles';
+import { getClasses, getColor } from '@presentation/styles/mixins';
 
-import { alertError, logError } from '@presentation/utils';
+import { logError } from '@presentation/utils';
 
 import { useGameLoaderData } from './loader';
-import { Container, Main } from './styles';
 
 const GamePage: FC = () => {
   const { me, currentGame } = useGameLoaderData();
@@ -22,26 +23,26 @@ const GamePage: FC = () => {
   const s = useStates({
     players: [] as PlayerModel[],
     watchingPlayers: false,
-    deselectingGame: false,
-    fetchCurrentGame: Date.now(),
   });
 
-  const fetchCurrentGame = (): any => (s.fetchCurrentGame = Date.now());
-
-  const deselectingGame = (): any => (s.deselectingGame = true);
-  const deselectedGame = (): any => (s.deselectingGame = false);
+  const imHost = me?.id === currentGame.hostID;
 
   const watchingPlayers = (): any => (s.watchingPlayers = true);
   const watchedPlayers = (): any => (s.watchingPlayers = false);
 
-  const { watchPlayers } = usePlayerUsecases();
+  const { watchPlayers, banPlayer } = usePlayerUsecases();
   useEffect(() => {
     watchingPlayers();
 
+    // let unsubscribe: WatchPlayersUsecase.Response;
+
     watchPlayers
       .execute((players) => (s.players = players))
-      .then(watchedPlayers)
-      .catch(logError);
+      // .then((value) => (unsubscribe = value))
+      .catch(logError)
+      .finally(watchedPlayers);
+
+    // return () => unsubscribe?.();
   }, []);
 
   const avatars = useMemo(() => {
@@ -73,21 +74,7 @@ const GamePage: FC = () => {
 
   const myPlayer = useMyPlayer();
 
-  const { changeUser } = useAuthUsecases();
-
   const { navigateToHome, navigateToLogout } = useNavigate();
-
-  function handleBackButtonClick(): any {
-    deselectingGame();
-
-    navigateToHome();
-
-    changeUser
-      .execute({ currentGameID: null })
-      .then(deselectedGame)
-      .then(fetchCurrentGame)
-      .catch(alertError);
-  }
 
   const linkInputRef = useRef<HTMLInputElement>(null);
 
@@ -102,54 +89,23 @@ const GamePage: FC = () => {
     linkInputRef.current?.focus();
   }
 
-  function renderPlayers(): ReactNode {
-    if (s.watchingPlayers)
-      return (
-        <div className='players'>
-          <span className='loading'>⏳</span>
-        </div>
-      );
+  const { openMutatePlayerModal, renderMutatePlayerModal } =
+    useMutatePlayerModal();
 
-    return (
-      <div className='players'>
-        {s.players.map((player) => {
-          const styledColor = getColor(player.color);
-
-          return (
-            <div key={player.id} className='player'>
-              <div className='avatar' style={{ background: styledColor }}>
-                {avatars[player.id]}
-              </div>
-              <span
-                className={`name${player.id === myPlayer?.id ? ' me' : ''}`}
-              >
-                {player.name}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    );
+  function handleEditPlayerButtonClick(player: PlayerModel): void {
+    openMutatePlayerModal(player);
   }
 
-  return (
-    <Container>
-      <header>
-        <button onClick={handleBackButtonClick} disabled={s.deselectingGame}>
-          {s.deselectingGame ? <span className='loading'>⏳</span> : '🔙'}
-        </button>
+  function handleBanPlayerButtonClick(playerID: string): void {
+    banPlayer.execute(playerID);
+  }
 
-        <h2>
-          <b>{currentGame.title}</b>
-        </h2>
+  function renderInvite(): ReactNode {
+    if (!imHost)
+      return <p className='invite'>Wait until the host starts the game!</p>;
 
-        <span className='greetings'>
-          🧔🏻‍♂️ Hello, <b>{me?.name}</b>!
-        </span>
-        <button onClick={navigateToLogout}>🚪</button>
-      </header>
-
-      <Main>
+    return (
+      <>
         <p className='invite'>Invite your friends to join the game!</p>
 
         <div className='link'>
@@ -162,12 +118,107 @@ const GamePage: FC = () => {
           />
           <button onClick={handleCopyLinkButtonClick}>📑</button>
         </div>
+      </>
+    );
+  }
+
+  function renderPlayers(): ReactNode {
+    if (s.watchingPlayers)
+      return (
+        <div className='players'>
+          <span className='loading'>⏳</span>
+        </div>
+      );
+
+    const notBannedPlayers = s.players.filter((player) => !player.banned);
+
+    return (
+      <div className='players'>
+        {notBannedPlayers.map((player) => {
+          const isMyPlayer = player.id === myPlayer.id;
+          const bannable = imHost && !isMyPlayer;
+          const editable = isMyPlayer;
+          const styledColor = getColor(player.color);
+
+          return (
+            <div key={player.id} className='player'>
+              <div className='actions'>
+                {editable && (
+                  <button
+                    onClick={(): any => handleEditPlayerButtonClick(player)}
+                  >
+                    ✏️
+                  </button>
+                )}
+                {bannable && (
+                  <button
+                    onClick={(): any => handleBanPlayerButtonClick(player.id)}
+                  >
+                    🚫
+                  </button>
+                )}
+              </div>
+              <div className='avatar' style={{ background: styledColor }}>
+                {avatars[player.id]}
+              </div>
+              <span className={getClasses({ name: true, me: isMyPlayer })}>
+                {player.name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  function renderMain(): ReactNode {
+    if (myPlayer.banned)
+      return (
+        <Main>
+          <span className='icon block'>🚫</span>
+          you were banned by the host
+          <button onClick={navigateToHome}>Go back</button>
+        </Main>
+      );
+
+    return (
+      <Main>
+        {renderInvite()}
 
         {renderPlayers()}
 
-        <button className='start'>Start</button>
+        {imHost && <button className='start'>Start</button>}
       </Main>
-    </Container>
+    );
+  }
+
+  return (
+    <>
+      <Container>
+        <header>
+          <button onClick={navigateToHome}>🔙</button>
+
+          <h2>
+            <b>{currentGame.title}</b>
+          </h2>
+
+          {me ? (
+            <span className='greetings'>
+              🧔🏻‍♂️ Hello, <b>{me.name}</b>!
+            </span>
+          ) : (
+            <span className='greetings'>
+              <button>Login</button>
+            </span>
+          )}
+          <button onClick={navigateToLogout}>🚪</button>
+        </header>
+
+        {renderMain()}
+      </Container>
+
+      {renderMutatePlayerModal()}
+    </>
   );
 };
 

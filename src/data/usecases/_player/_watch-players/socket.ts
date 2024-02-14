@@ -1,3 +1,5 @@
+import { PlayerModel } from '@domain/models';
+
 import { FailedError } from '@domain/errors';
 
 import { WatchPlayersUsecase } from '@domain/usecases';
@@ -5,8 +7,8 @@ import { WatchPlayersUsecase } from '@domain/usecases';
 import { SocketProtocol, TableGenerator } from '@data/protocols';
 
 export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
-  private readonly tableGenerator: TableGenerator;
   private readonly socket: SocketProtocol;
+  private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: SocketWatchPlayersUsecase.Deps) {
     this.tableGenerator = deps.tableGenerator;
@@ -19,7 +21,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch(table, callback);
+      const unsubscribe = this.socket.watch<PlayerModel[]>(table, callback);
 
       return unsubscribe;
     } catch {

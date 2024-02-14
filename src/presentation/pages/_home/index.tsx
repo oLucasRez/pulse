@@ -9,10 +9,11 @@ import { useGameUsecases } from '@presentation/contexts';
 
 import { GlobalLoading } from '@presentation/components';
 
+import { Container } from './styles';
+
 import { alertError, logError } from '@presentation/utils';
 
 import { useHomeLoaderData } from './loader';
-import { Container } from './styles';
 
 const HomePage: FC = () => {
   const s = useStates({

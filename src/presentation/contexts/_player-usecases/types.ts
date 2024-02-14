@@ -1,10 +1,12 @@
 import {
+  BanPlayerUsecase,
   ChangePlayerUsecase,
   CreatePlayerUsecase,
   DeletePlayerUsecase,
   GetMyPlayerUsecase,
   GetPlayersUsecase,
   GetPlayerUsecase,
+  WatchMyPlayerUsecase,
   WatchPlayersUsecase,
 } from '@domain/usecases';
 
@@ -15,9 +17,11 @@ export type PlayerUsecasesContextValue = {
   getPlayer: GetPlayerUsecase;
   getMyPlayer: GetMyPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
+  watchMyPlayer: WatchMyPlayerUsecase;
   createPlayer: CreatePlayerUsecase;
   changePlayer: ChangePlayerUsecase;
   deletePlayer: DeletePlayerUsecase;
+  banPlayer: BanPlayerUsecase;
 };
 
 export interface PlayerUsecasesContextProviderProps
@@ -26,7 +30,9 @@ export interface PlayerUsecasesContextProviderProps
   getPlayer: GetPlayerUsecase;
   getMyPlayer: GetMyPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
+  watchMyPlayer: WatchMyPlayerUsecase;
   createPlayer: CreatePlayerUsecase;
   changePlayer: ChangePlayerUsecase;
   deletePlayer: DeletePlayerUsecase;
+  banPlayer: BanPlayerUsecase;
 }

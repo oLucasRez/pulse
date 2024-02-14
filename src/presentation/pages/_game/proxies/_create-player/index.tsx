@@ -4,20 +4,14 @@ import { PlayerModel } from '@domain/models';
 
 import { CreatePlayerProxyProps, MyPlayerContextValue } from './types';
 
-import {
-  useCreatePlayerModal,
-  useNavigate,
-  useStates,
-} from '@presentation/hooks';
+import { useMutatePlayerModal } from '../../hooks';
+import { useStates } from '@presentation/hooks';
 
 import { usePlayerUsecases } from '@presentation/contexts';
 
 import { GlobalLoading } from '@presentation/components';
 
 import { logError } from '@presentation/utils';
-
-import { useGameLoaderData } from '../../loader';
-import { Container } from './styles';
 
 const Context = createContext({} as MyPlayerContextValue);
 
@@ -41,11 +35,7 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   const fetchingMyPlayer = (): any => (s.fetchingMyPlayer = true);
   const fetchedMyPlayer = (): any => (s.fetchingMyPlayer = false);
 
-  const { me, currentGame } = useGameLoaderData();
-
-  const { navigateToHome, navigateToLogout } = useNavigate();
-
-  const { getMyPlayer } = usePlayerUsecases();
+  const { getMyPlayer, watchPlayers } = usePlayerUsecases();
   useEffect(() => {
     fetchingMyPlayer();
 
@@ -56,7 +46,19 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
       .finally(fetchedMyPlayer);
   }, []);
 
-  const { renderCreatePlayerModal } = useCreatePlayerModal({
+  useEffect(() => {
+    watchPlayers
+      .execute((players) => {
+        if (!s.myPlayer) return;
+
+        const myPlayer = players.find((player) => player.id === s.myPlayer?.id);
+
+        if (myPlayer) setMyPlayer(myPlayer);
+      })
+      .catch(logError);
+  }, []);
+
+  const { renderMutatePlayerModal } = useMutatePlayerModal({
     unclosable: true,
     open: true,
     onSuccess: setMyPlayer,
@@ -71,24 +73,5 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
       </Context.Provider>
     );
 
-  return (
-    <>
-      <Container>
-        <header>
-          <button onClick={navigateToHome}>🔙</button>
-
-          <h2>
-            <b>{currentGame.title}</b>
-          </h2>
-
-          <span className='greetings'>
-            🧔🏻‍♂️ Hello, <b>{me?.name}</b>!
-          </span>
-          <button onClick={navigateToLogout}>🚪</button>
-        </header>
-      </Container>
-
-      {renderCreatePlayerModal()}
-    </>
-  );
+  return <>{renderMutatePlayerModal()}</>;
 };

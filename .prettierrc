@@ -25,6 +25,7 @@
     "(.*)proxies",
     "(.*)pages",
     "(.*)app",
+    "(.*)styles",
     "(.*)mixins",
     "(.*)utils",
 

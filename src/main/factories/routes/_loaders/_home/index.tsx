@@ -1,6 +1,5 @@
-import { LoaderFunctionArgs } from 'react-router-dom';
-
 import { homeLoader } from '@presentation/pages/_home';
+import { LoaderFunctionArgs } from 'react-router-dom';
 
 import { makeGetMeUsecase } from '@main/factories';
 

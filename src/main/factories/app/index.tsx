@@ -1,4 +1,3 @@
-import { GlobalStyle } from '@presentation/styles';
 import { ReactNode } from 'react';
 
 import {
@@ -10,7 +9,9 @@ import {
   makePlayerUsecasesContextProvider,
 } from '../contexts';
 
-import { App } from '@presentation/app';
+import { GlobalStyle } from '@presentation/styles';
+
+import { makeRouter } from '..';
 
 export function makeApp(): ReactNode {
   const app = [
@@ -26,7 +27,7 @@ export function makeApp(): ReactNode {
     (children, wrapper) => wrapper({ children }),
     <>
       <GlobalStyle />
-      <App />
+      {makeRouter()}
     </>,
   );
 

@@ -1,6 +1,5 @@
-import { LoaderFunctionArgs } from 'react-router-dom';
-
 import { gameLoader } from '@presentation/pages/_game';
+import { LoaderFunctionArgs } from 'react-router-dom';
 
 import {
   makeGetGameUsecase,

@@ -5,12 +5,14 @@ import { ContextProviderProps } from '@presentation/types';
 import { PlayerUsecasesContextProvider } from '@presentation/contexts';
 
 import {
+  makeBanPlayerUsecase,
   makeChangePlayerUsecase,
   makeCreatePlayerUsecase,
   makeDeletePlayerUsecase,
   makeGetMyPlayerUsecase,
   makeGetPlayersUsecase,
   makeGetPlayerUsecase,
+  makeWatchMyPlayerUsecase,
   makeWatchPlayersUsecase,
 } from '@main/factories';
 
@@ -21,9 +23,11 @@ export function makePlayerUsecasesContextProvider(
   const getPlayer = makeGetPlayerUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const watchPlayers = makeWatchPlayersUsecase();
+  const watchMyPlayer = makeWatchMyPlayerUsecase();
   const createPlayer = makeCreatePlayerUsecase();
   const changePlayer = makeChangePlayerUsecase();
   const deletePlayer = makeDeletePlayerUsecase();
+  const banPlayer = makeBanPlayerUsecase();
 
   return (
     <PlayerUsecasesContextProvider
@@ -31,9 +35,11 @@ export function makePlayerUsecasesContextProvider(
       getPlayer={getPlayer}
       getMyPlayer={getMyPlayer}
       watchPlayers={watchPlayers}
+      watchMyPlayer={watchMyPlayer}
       createPlayer={createPlayer}
       changePlayer={changePlayer}
       deletePlayer={deletePlayer}
+      banPlayer={banPlayer}
       {...props}
     />
   );

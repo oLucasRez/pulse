@@ -18,9 +18,11 @@ export const PlayerUsecasesContextProvider: FC<
     getPlayer,
     getMyPlayer,
     watchPlayers,
+    watchMyPlayer,
     createPlayer,
     changePlayer,
     deletePlayer,
+    banPlayer,
 
     children,
   } = props;
@@ -32,9 +34,11 @@ export const PlayerUsecasesContextProvider: FC<
         getPlayer,
         getMyPlayer,
         watchPlayers,
+        watchMyPlayer,
         createPlayer,
         changePlayer,
         deletePlayer,
+        banPlayer,
       }}
     >
       {children}

@@ -2,15 +2,16 @@ import { ReactNode } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-export type CreatePlayerModalHookReturn = {
-  openCreatePlayerModal(): void;
-  renderCreatePlayerModal(): ReactNode;
+export type MutatePlayerModalHookReturn = {
+  openMutatePlayerModal(player?: PlayerModel): void;
+  renderMutatePlayerModal(): ReactNode;
 };
 
-export type CreatePlayerModalHookProps =
+export type MutatePlayerModalHookProps =
   | {
       unclosable?: boolean;
       open?: boolean;
+      player?: PlayerModel;
       onSuccess?(player: PlayerModel): void;
     }
   | undefined;

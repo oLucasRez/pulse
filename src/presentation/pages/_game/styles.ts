@@ -116,6 +116,10 @@ export const Main = styled.main`
   justify-content: center;
   gap: 2rem;
 
+  span.block {
+    font-size: xx-large;
+  }
+
   p.invite {
     font-size: 0.875rem;
     opacity: 0.75;
@@ -147,6 +151,12 @@ export const Main = styled.main`
       align-items: center;
       flex: 1;
       gap: 0.5rem;
+
+      .actions {
+        display: flex;
+        gap: 0.25rem;
+        min-height: 2rem;
+      }
 
       .avatar {
         font-size: 5rem;
