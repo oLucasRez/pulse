@@ -2,6 +2,8 @@ import { createContext, FC, useContext, useEffect } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
+import { WatchPlayersUsecase } from '@domain/usecases';
+
 import { CreatePlayerProxyProps, MyPlayerContextValue } from './types';
 
 import { useMutatePlayerModal } from '../../hooks';
@@ -47,6 +49,8 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   }, []);
 
   useEffect(() => {
+    let unsubscribe: WatchPlayersUsecase.Response;
+
     watchPlayers
       .execute((players) => {
         if (!s.myPlayer) return;
@@ -55,7 +59,10 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
 
         if (myPlayer) setMyPlayer(myPlayer);
       })
+      .then((value) => (unsubscribe = value))
       .catch(logError);
+
+    return () => unsubscribe?.();
   }, []);
 
   const { renderMutatePlayerModal } = useMutatePlayerModal({

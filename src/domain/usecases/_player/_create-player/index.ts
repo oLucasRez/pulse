@@ -10,5 +10,6 @@ export namespace CreatePlayerUsecase {
   export type Payload = {
     name: string;
     color: Color;
+    avatar: string;
   };
 }

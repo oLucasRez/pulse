@@ -1,6 +1,8 @@
-import { ReactNode, useCallback, useEffect } from 'react';
+import { MouseEvent, ReactNode, useCallback, useEffect } from 'react';
 
 import { PlayerModel } from '@domain/models';
+
+import { WatchPlayersUsecase } from '@domain/usecases';
 
 import {
   MutatePlayerModalHookProps,
@@ -19,6 +21,24 @@ import { alertError, logError } from '@presentation/utils';
 
 import { useGameLoaderData } from '../../loader';
 
+const avatars = [
+  ...['🧒🏻', '👧🏻', '👦🏻', '🧑🏻', '👩🏻', '👨🏻', '🧑🏻‍🦱', '👩🏻‍🦱', '👨🏻‍🦱'],
+  ...['🧑🏻‍🦰', '👩🏻‍🦰', '👨🏻‍🦰', '👱🏻', '👱🏻‍♀️', '👱🏻‍♂️', '🧑🏻‍🦳', '👩🏻‍🦳', '👨🏻‍🦳'],
+  ...['🧑🏻‍🦲', '👩🏻‍🦲', '👨🏻‍🦲', '🧔🏻', '🧔🏻‍♀️', '🧔🏻‍♂️', '🧓🏻', '👵🏻', '👴🏻'],
+  ...['🧒🏻', '👧🏻', '👦🏻', '🧑🏻', '👩🏻', '👨🏻', '🧑🏻‍🦱', '👩🏻‍🦱', '👨🏻‍🦱'],
+  ...['🧑🏻‍🦰', '👩🏻‍🦰', '👨🏻‍🦰', '👱🏻', '👱🏻‍♀️', '👱🏻‍♂️', '🧑🏻‍🦳', '👩🏻‍🦳', '👨🏻‍🦳'],
+  ...['🧑🏻‍🦲', '👩🏻‍🦲', '👨🏻‍🦲', '🧔🏻', '🧔🏻‍♀️', '🧔🏻‍♂️', '🧓🏻', '👵🏻', '👴🏻'],
+  ...['🧒🏽', '👧🏽', '👦🏽', '🧑🏽', '👩🏽', '👨🏽', '🧑🏽‍🦱', '👩🏽‍🦱', '👨🏽‍🦱'],
+  ...['🧑🏽‍🦰', '👩🏽‍🦰', '👨🏽‍🦰', '👱🏽', '👱🏽‍♀️', '👱🏽‍♂️', '🧑🏽‍🦳', '👩🏽‍🦳', '👨🏽‍🦳'],
+  ...['🧑🏽‍🦲', '👩🏽‍🦲', '👨🏽‍🦲', '🧔🏽', '🧔🏽‍♀️', '🧔🏽‍♂️', '🧓🏽', '👵🏽', '👴🏽'],
+  ...['🧒🏽', '👧🏽', '👦🏽', '🧑🏽', '👩🏽', '👨🏽', '🧑🏽‍🦱', '👩🏽‍🦱', '👨🏽‍🦱'],
+  ...['🧑🏽‍🦰', '👩🏽‍🦰', '👨🏽‍🦰', '👱🏽', '👱🏽‍♀️', '👱🏽‍♂️', '🧑🏽‍🦳', '👩🏽‍🦳', '👨🏽‍🦳'],
+  ...['🧑🏽‍🦲', '👩🏽‍🦲', '👨🏽‍🦲', '🧔🏽', '🧔🏽‍♀️', '🧔🏽‍♂️', '🧓🏽', '👵🏽', '👴🏽'],
+  ...['🧒🏿', '👧🏿', '👦🏿', '🧑🏿', '👩🏿', '👨🏿', '🧑🏿‍🦱', '👩🏿‍🦱', '👨🏿‍🦱'],
+  ...['🧑🏿‍🦰', '👩🏿‍🦰', '👨🏿‍🦰', '👱🏿', '👱🏿‍♀️', '👱🏿‍♂️', '🧑🏿‍🦳', '👩🏿‍🦳', '👨🏿‍🦳'],
+  ...['🧑🏿‍🦲', '👩🏿‍🦲', '👨🏿‍🦲', '🧔🏿', '🧔🏿‍♀️', '🧔🏿‍♂️', '🧓🏿', '👵🏿', '👴🏿'],
+];
+
 export function useMutatePlayerModal(
   props: MutatePlayerModalHookProps = {},
 ): MutatePlayerModalHookReturn {
@@ -32,8 +52,16 @@ export function useMutatePlayerModal(
     players: [] as PlayerModel[],
     name: player?.name || me?.name,
     color: player?.color,
+    avatarIndex: player
+      ? avatars.findIndex((avatar) => avatar === player.avatar)
+      : 0,
     mutatingPlayer: false,
   });
+  const nextAvatar = (): any =>
+    (s.avatarIndex = (s.avatarIndex + 1) % avatars.length);
+  const prevAvatar = (): any =>
+    (s.avatarIndex =
+      s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
 
   const mutatingPlayer = (): any => (s.mutatingPlayer = true);
   const mutatedPlayer = (): any => (s.mutatingPlayer = false);
@@ -41,7 +69,14 @@ export function useMutatePlayerModal(
   const { watchPlayers, createPlayer, changePlayer } = usePlayerUsecases();
 
   useEffect(() => {
-    watchPlayers.execute((players) => (s.players = players)).catch(logError);
+    let unsubscribe: WatchPlayersUsecase.Response;
+
+    watchPlayers
+      .execute((players) => (s.players = players))
+      .then((value) => (unsubscribe = value))
+      .catch(logError);
+
+    return () => unsubscribe?.();
   }, []);
 
   const openMutatePlayerModal = useCallback(
@@ -50,6 +85,9 @@ export function useMutatePlayerModal(
       s.player = player;
       s.name = player?.name;
       s.color = player?.color;
+      s.avatarIndex = player
+        ? avatars.findIndex((avatar) => avatar === player.avatar)
+        : 0;
     },
     [s.open],
   );
@@ -62,7 +100,18 @@ export function useMutatePlayerModal(
     s.mutatingPlayer = false;
   };
 
-  const submitDisabled = !s.name || !s.color || s.mutatingPlayer;
+  const avatar = avatars[s.avatarIndex];
+
+  function handleAvatarButtonClick(event: MouseEvent<HTMLDivElement>): any {
+    const clickX = event.nativeEvent.offsetX;
+    const divWidth = event.currentTarget.clientWidth;
+    const splitThreshold = divWidth / 2;
+
+    if (clickX < splitThreshold) prevAvatar();
+    else nextAvatar();
+  }
+
+  const submitDisabled = !s.name || !s.color || !avatar || s.mutatingPlayer;
 
   function handleSubmitButtonClick(): any {
     const { name, color } = s;
@@ -73,7 +122,7 @@ export function useMutatePlayerModal(
 
     const promise = s.player
       ? changePlayer.execute(s.player.id, { name, color })
-      : createPlayer.execute({ name, color });
+      : createPlayer.execute({ name, color, avatar });
 
     promise
       .then(onSuccess)
@@ -132,6 +181,16 @@ export function useMutatePlayerModal(
               </header>
 
               <main>
+                <div
+                  className='avatar'
+                  onClick={handleAvatarButtonClick}
+                  style={{
+                    background: s.color ? getColor(s.color) : 'lightgray',
+                  }}
+                >
+                  {avatar}
+                </div>
+
                 <input
                   autoFocus
                   className='name'

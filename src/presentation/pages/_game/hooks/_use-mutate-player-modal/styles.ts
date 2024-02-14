@@ -36,6 +36,20 @@ export const Container = styled.div`
       flex-direction: column;
       gap: 1rem;
 
+      .avatar {
+        font-size: 5rem;
+        width: 6rem;
+        height: 6rem;
+        text-align: center;
+        border-radius: 50rem;
+        margin: 0 auto;
+        cursor: pointer;
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        position: relative;
+      }
+
       input.name {
         height: 2rem;
       }

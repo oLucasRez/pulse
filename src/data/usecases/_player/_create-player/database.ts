@@ -37,7 +37,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   public async execute(
     payload: CreatePlayerUsecase.Payload,
   ): Promise<PlayerModel> {
-    const { name, color } = payload;
+    const { name, color, avatar } = payload;
 
     const me = await this.getMe.execute();
 
@@ -56,6 +56,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
       player = await this.database.insert<PlayerModel>(table, {
         name,
         color,
+        avatar,
         userID: me && me.id,
         subjectID: null,
         banned: false,
