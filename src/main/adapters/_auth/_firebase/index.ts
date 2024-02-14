@@ -10,7 +10,7 @@ import { FailedError, InvalidDataError, OutOfBoundError } from '@domain/errors';
 import { FirebaseErrorCode } from './types';
 
 import {
-  AuthPasswordProtocol,
+  AuthCredentialsProtocol,
   SessionDestroyerProtocol,
   SessionGetterProtocol,
 } from '@data/protocols';
@@ -21,7 +21,7 @@ import { FirebaseError } from 'firebase/app';
 
 export class FirebaseAuth
   implements
-    AuthPasswordProtocol,
+    AuthCredentialsProtocol,
     SessionGetterProtocol,
     SessionDestroyerProtocol
 {
@@ -33,8 +33,8 @@ export class FirebaseAuth
     });
   }
 
-  public async signUpWithPassword(
-    payload: AuthPasswordProtocol.Payload,
+  public async signUpWithCredentials(
+    payload: AuthCredentialsProtocol.Payload,
   ): Promise<string> {
     const { email, password } = payload;
 
@@ -79,8 +79,8 @@ export class FirebaseAuth
     }
   }
 
-  public async signInWithPassword(
-    payload: AuthPasswordProtocol.Payload,
+  public async signInWithCredentials(
+    payload: AuthCredentialsProtocol.Payload,
   ): Promise<string> {
     const { email, password } = payload;
 

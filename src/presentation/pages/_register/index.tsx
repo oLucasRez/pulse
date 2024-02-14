@@ -23,14 +23,14 @@ const RegisterPage: FC = () => {
     mode: 'onChange',
   });
 
-  const { signUpWithPassword } = useAuthUsecases();
+  const { signUpWithCredentials } = useAuthUsecases();
 
   const { navigateToHome, linkToLoginProps } = useNavigate();
 
   function onSubmit(data: SignUpFieldValues): any {
     signingUp();
 
-    signUpWithPassword
+    signUpWithCredentials
       .execute({
         name: data.name,
         email: data.email,
@@ -54,7 +54,7 @@ const RegisterPage: FC = () => {
         <label htmlFor='email'>E-mail</label>
         <input {...register('email', { required: true })} id='email' />
 
-        <label htmlFor='password'>Password</label>
+        <label htmlFor='password'>Credentials</label>
         <input
           {...register('password', { required: true })}
           id='password'

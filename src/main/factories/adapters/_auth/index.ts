@@ -1,17 +1,17 @@
 import {
-  AuthPasswordProtocol,
+  AuthCredentialsProtocol,
   SessionDestroyerProtocol,
   SessionGetterProtocol,
 } from '@data/protocols';
 
 import {
-  makeFirebaseAuthPassword,
+  makeFirebaseAuthCredentials,
   makeFirebaseSessionDestroyer,
   makeFirebaseSessionGetter,
 } from './firebase';
 
-export function makeAuthPassword(): AuthPasswordProtocol {
-  return makeFirebaseAuthPassword();
+export function makeAuthCredentials(): AuthCredentialsProtocol {
+  return makeFirebaseAuthCredentials();
 }
 
 export function makeSessionDestroyer(): SessionDestroyerProtocol {

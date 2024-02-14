@@ -1,17 +1,17 @@
 import {
   ChangeUserUsecase,
   GetMeUsecase,
-  SignInWithPasswordUsecase,
+  SignInWithCredentialsUsecase,
   SignOutUsecase,
-  SignUpWithPasswordUsecase,
+  SignUpWithCredentialsUsecase,
   WatchMeUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type AuthUsecasesContextValue = {
-  signUpWithPassword: SignUpWithPasswordUsecase;
-  signInWithPassword: SignInWithPasswordUsecase;
+  signUpWithCredentials: SignUpWithCredentialsUsecase;
+  signInWithCredentials: SignInWithCredentialsUsecase;
   signOut: SignOutUsecase;
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;
@@ -19,8 +19,8 @@ export type AuthUsecasesContextValue = {
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
-  signUpWithPassword: SignUpWithPasswordUsecase;
-  signInWithPassword: SignInWithPasswordUsecase;
+  signUpWithCredentials: SignUpWithCredentialsUsecase;
+  signInWithCredentials: SignInWithCredentialsUsecase;
   signOut: SignOutUsecase;
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;

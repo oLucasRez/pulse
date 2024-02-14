@@ -1,32 +1,32 @@
 import { UserModel } from '@domain/models';
 
-import { SignUpWithPasswordUsecase } from '@domain/usecases';
+import { SignUpWithCredentialsUsecase } from '@domain/usecases';
 
 import {
-  AuthPasswordProtocol,
+  AuthCredentialsProtocol,
   DatabaseProtocol,
   TableGenerator,
 } from '@data/protocols';
 
-export class AuthSignUpWithPasswordUsecase
-  implements SignUpWithPasswordUsecase
+export class AuthSignUpWithCredentialsUsecase
+  implements SignUpWithCredentialsUsecase
 {
-  private readonly authPassword: AuthPasswordProtocol;
+  private readonly authCredentials: AuthCredentialsProtocol;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: AuthSignUpWithPasswordUsecase.Deps) {
-    this.authPassword = deps.authPassword;
+  public constructor(deps: AuthSignUpWithCredentialsUsecase.Deps) {
+    this.authCredentials = deps.authCredentials;
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
   public async execute(
-    payload: SignUpWithPasswordUsecase.Payload,
+    payload: SignUpWithCredentialsUsecase.Payload,
   ): Promise<UserModel> {
     const { name, email, password } = payload;
 
-    const uid = await this.authPassword.signUpWithPassword({
+    const uid = await this.authCredentials.signUpWithCredentials({
       email,
       password,
     });
@@ -42,9 +42,9 @@ export class AuthSignUpWithPasswordUsecase
   }
 }
 
-export namespace AuthSignUpWithPasswordUsecase {
+export namespace AuthSignUpWithCredentialsUsecase {
   export type Deps = {
-    authPassword: AuthPasswordProtocol;
+    authCredentials: AuthCredentialsProtocol;
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
   };

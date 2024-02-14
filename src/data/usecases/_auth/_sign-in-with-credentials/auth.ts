@@ -2,33 +2,33 @@ import { UserModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
-import { SignInWithPasswordUsecase } from '@domain/usecases';
+import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
 import {
-  AuthPasswordProtocol,
+  AuthCredentialsProtocol,
   DatabaseProtocol,
   TableGenerator,
 } from '@data/protocols';
 
-export class AuthSignInWithPasswordUsecase
-  implements SignInWithPasswordUsecase
+export class AuthSignInWithCredentialsUsecase
+  implements SignInWithCredentialsUsecase
 {
-  private readonly authPassword: AuthPasswordProtocol;
+  private readonly authCredentials: AuthCredentialsProtocol;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: AuthSignInWithPasswordUsecase.Deps) {
-    this.authPassword = deps.authPassword;
+  public constructor(deps: AuthSignInWithCredentialsUsecase.Deps) {
+    this.authCredentials = deps.authCredentials;
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
   public async execute(
-    payload: SignInWithPasswordUsecase.Payload,
+    payload: SignInWithCredentialsUsecase.Payload,
   ): Promise<UserModel> {
     const { email, password } = payload;
 
-    const uid = await this.authPassword.signInWithPassword({
+    const uid = await this.authCredentials.signInWithCredentials({
       email,
       password,
     });
@@ -48,9 +48,9 @@ export class AuthSignInWithPasswordUsecase
   }
 }
 
-export namespace AuthSignInWithPasswordUsecase {
+export namespace AuthSignInWithCredentialsUsecase {
   export type Deps = {
-    authPassword: AuthPasswordProtocol;
+    authCredentials: AuthCredentialsProtocol;
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
   };

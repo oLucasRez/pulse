@@ -1,1 +1,0 @@
-export { AuthSignUpWithPasswordUsecase } from './auth';

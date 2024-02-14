@@ -7,17 +7,17 @@ import { AuthUsecasesContextProvider } from '@presentation/contexts';
 import {
   makeChangeUserUsecase,
   makeGetMeUsecase,
-  makeSignInWithPasswordUsecase,
+  makeSignInWithCredentialsUsecase,
   makeSignOutUsecase,
-  makeSignUpWithPasswordUsecase,
+  makeSignUpWithCredentialsUsecase,
   makeWatchMeUsecase,
 } from '@main/factories';
 
 export function makeAuthUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactNode {
-  const signUpWithPassword = makeSignUpWithPasswordUsecase();
-  const signInWithPassword = makeSignInWithPasswordUsecase();
+  const signUpWithCredentials = makeSignUpWithCredentialsUsecase();
+  const signInWithCredentials = makeSignInWithCredentialsUsecase();
   const signOut = makeSignOutUsecase();
   const getMe = makeGetMeUsecase();
   const watchMe = makeWatchMeUsecase();
@@ -25,8 +25,8 @@ export function makeAuthUsecasesContextProvider(
 
   return (
     <AuthUsecasesContextProvider
-      signUpWithPassword={signUpWithPassword}
-      signInWithPassword={signInWithPassword}
+      signUpWithCredentials={signUpWithCredentials}
+      signInWithCredentials={signInWithCredentials}
       signOut={signOut}
       getMe={getMe}
       watchMe={watchMe}

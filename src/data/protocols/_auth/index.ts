@@ -6,12 +6,16 @@ export interface SessionDestroyerProtocol {
   destroySession(): Promise<void>;
 }
 
-export interface AuthPasswordProtocol {
-  signUpWithPassword(payload: AuthPasswordProtocol.Payload): Promise<string>;
-  signInWithPassword(payload: AuthPasswordProtocol.Payload): Promise<string>;
+export interface AuthCredentialsProtocol {
+  signUpWithCredentials(
+    payload: AuthCredentialsProtocol.Payload,
+  ): Promise<string>;
+  signInWithCredentials(
+    payload: AuthCredentialsProtocol.Payload,
+  ): Promise<string>;
 }
 
-export namespace AuthPasswordProtocol {
+export namespace AuthCredentialsProtocol {
   export type Payload = {
     email: string;
     password: string;
