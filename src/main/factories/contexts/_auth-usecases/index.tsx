@@ -8,6 +8,7 @@ import {
   makeChangeUserUsecase,
   makeGetMeUsecase,
   makeSignInWithPasswordUsecase,
+  makeSignOutUsecase,
   makeSignUpWithPasswordUsecase,
   makeWatchMeUsecase,
 } from '@main/factories';
@@ -17,6 +18,7 @@ export function makeAuthUsecasesContextProvider(
 ): ReactNode {
   const signUpWithPassword = makeSignUpWithPasswordUsecase();
   const signInWithPassword = makeSignInWithPasswordUsecase();
+  const signOut = makeSignOutUsecase();
   const getMe = makeGetMeUsecase();
   const watchMe = makeWatchMeUsecase();
   const changeUser = makeChangeUserUsecase();
@@ -25,6 +27,7 @@ export function makeAuthUsecasesContextProvider(
     <AuthUsecasesContextProvider
       signUpWithPassword={signUpWithPassword}
       signInWithPassword={signInWithPassword}
+      signOut={signOut}
       getMe={getMe}
       watchMe={watchMe}
       changeUser={changeUser}

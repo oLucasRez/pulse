@@ -2,20 +2,28 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 
 import { FailedError, InvalidDataError, OutOfBoundError } from '@domain/errors';
 
 import { FirebaseErrorCode } from './types';
 
-import { AuthPasswordProtocol, SessionGetterProtocol } from '@data/protocols';
+import {
+  AuthPasswordProtocol,
+  SessionDestroyerProtocol,
+  SessionGetterProtocol,
+} from '@data/protocols';
 
 import { FirebaseService } from '@data/services';
 
 import { FirebaseError } from 'firebase/app';
 
 export class FirebaseAuth
-  implements AuthPasswordProtocol, SessionGetterProtocol
+  implements
+    AuthPasswordProtocol,
+    SessionGetterProtocol,
+    SessionDestroyerProtocol
 {
   public getSession(): Promise<string | null> {
     return new Promise<string | null>((resolve) => {
@@ -98,6 +106,22 @@ export class FirebaseAuth
       }
 
       throw new FailedError({ metadata: { tried: 'sign in with password' } });
+    }
+  }
+
+  public async destroySession(): Promise<void> {
+    try {
+      await signOut(FirebaseService.auth);
+    } catch (e) {
+      const error = e as FirebaseError;
+      const errorCode = error.code as FirebaseErrorCode;
+
+      switch (errorCode) {
+        default:
+          console.error(error);
+      }
+
+      throw new FailedError({ metadata: { tried: 'sign out' } });
     }
   }
 }
