@@ -10,6 +10,8 @@ import { useAuthUsecases } from '@presentation/contexts';
 
 import { Container } from './styles';
 
+import { githubIcon, googleIcon } from '@presentation/assets';
+
 import { alertError } from '@presentation/utils';
 
 const RegisterPage: FC = () => {
@@ -23,7 +25,7 @@ const RegisterPage: FC = () => {
     mode: 'onChange',
   });
 
-  const { signUpWithCredentials } = useAuthUsecases();
+  const { signUpWithCredentials, signInWithProvider } = useAuthUsecases();
 
   const { navigateToHome, linkToLoginProps } = useNavigate();
 
@@ -36,6 +38,26 @@ const RegisterPage: FC = () => {
         email: data.email,
         password: data.password,
       })
+      .then(navigateToHome)
+      .catch(alertError)
+      .finally(signedUp);
+  }
+
+  function handleGoogleButtonClick(): any {
+    signingUp();
+
+    signInWithProvider
+      .execute('google')
+      .then(navigateToHome)
+      .catch(alertError)
+      .finally(signedUp);
+  }
+
+  function handleGithubButtonClick(): any {
+    signingUp();
+
+    signInWithProvider
+      .execute('github')
       .then(navigateToHome)
       .catch(alertError)
       .finally(signedUp);
@@ -54,7 +76,7 @@ const RegisterPage: FC = () => {
         <label htmlFor='email'>E-mail</label>
         <input {...register('email', { required: true })} id='email' />
 
-        <label htmlFor='password'>Credentials</label>
+        <label htmlFor='password'>Password</label>
         <input
           {...register('password', { required: true })}
           id='password'
@@ -62,6 +84,16 @@ const RegisterPage: FC = () => {
         />
 
         <button disabled={!formState.isValid || s.signingUp}>Register</button>
+
+        <div className='providers'>
+          <span>Or sign in with:</span>
+          <button onClick={handleGoogleButtonClick} disabled={s.signingUp}>
+            <img src={googleIcon} />
+          </button>
+          <button onClick={handleGithubButtonClick} disabled={s.signingUp}>
+            <img src={githubIcon} />
+          </button>
+        </div>
 
         <span className='toLoginPage'>
           Already have an account? <Link {...linkToLoginProps}>login</Link>

@@ -19,6 +19,10 @@ module.exports = {
         test: /\.(ts|tsx)$/,
         loader: 'ts-loader',
       },
+      {
+        test: /\.(png|jpg|gif|svg|ico)$/,
+        loader: 'file-loader',
+      },
     ],
   },
   resolve: {

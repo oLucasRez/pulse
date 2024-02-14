@@ -10,6 +10,8 @@ import { useAuthUsecases } from '@presentation/contexts';
 
 import { Container } from './styles';
 
+import { githubIcon, googleIcon } from '@presentation/assets';
+
 import { alertError } from '@presentation/utils';
 
 const LoginPage: FC = () => {
@@ -23,7 +25,7 @@ const LoginPage: FC = () => {
     mode: 'onChange',
   });
 
-  const { signInWithCredentials } = useAuthUsecases();
+  const { signInWithCredentials, signInWithProvider } = useAuthUsecases();
 
   const { navigateToHome, linkToRegisterProps } = useNavigate();
 
@@ -40,6 +42,26 @@ const LoginPage: FC = () => {
       .finally(signedIn);
   }
 
+  function handleGoogleButtonClick(): any {
+    signingIn();
+
+    signInWithProvider
+      .execute('google')
+      .then(navigateToHome)
+      .catch(alertError)
+      .finally(signedIn);
+  }
+
+  function handleGithubButtonClick(): any {
+    signingIn();
+
+    signInWithProvider
+      .execute('github')
+      .then(navigateToHome)
+      .catch(alertError)
+      .finally(signedIn);
+  }
+
   return (
     <Container>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -48,7 +70,7 @@ const LoginPage: FC = () => {
         <label htmlFor='email'>E-mail</label>
         <input {...register('email', { required: true })} id='email' />
 
-        <label htmlFor='password'>Credentials</label>
+        <label htmlFor='password'>Password</label>
         <input
           {...register('password', { required: true })}
           id='password'
@@ -56,6 +78,16 @@ const LoginPage: FC = () => {
         />
 
         <button disabled={!formState.isValid || s.signingIn}>Login</button>
+
+        <div className='providers'>
+          <span>Or sign in with:</span>
+          <button onClick={handleGoogleButtonClick} disabled={s.signingIn}>
+            <img src={googleIcon} />
+          </button>
+          <button onClick={handleGithubButtonClick} disabled={s.signingIn}>
+            <img src={githubIcon} />
+          </button>
+        </div>
 
         <span className='toRegisterPage'>
           Do not have an account yet?{' '}

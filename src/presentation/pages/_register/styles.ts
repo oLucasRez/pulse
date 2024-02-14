@@ -16,6 +16,7 @@ export const Container = styled.div`
   justify-content: center;
 
   > form {
+    width: 20rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -24,7 +25,7 @@ export const Container = styled.div`
     padding: 1rem;
     border-radius: 0.5rem;
 
-    h2 {
+    > h2 {
       margin-bottom: 0.5rem;
       font-weight: 600;
       display: flex;
@@ -37,13 +38,36 @@ export const Container = styled.div`
       }
     }
 
-    button {
+    > button {
       margin-top: 0.5rem;
       width: 50%;
       margin-left: auto;
     }
 
-    span.toLoginPage {
+    > .providers {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+
+      > span {
+        opacity: 0.7;
+        font-size: small;
+        flex: 1;
+      }
+
+      > button {
+        padding: 0.25rem;
+        border-radius: 50rem;
+
+        > img {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+
+    > span.toLoginPage {
       opacity: 0.7;
       font-size: small;
       line-height: 2;

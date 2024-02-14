@@ -27,6 +27,7 @@
     "(.*)app",
     "(.*)styles",
     "(.*)mixins",
+    "(.*)assets",
     "(.*)utils",
 
     "(.*)decorators",

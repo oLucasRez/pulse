@@ -8,6 +8,7 @@ import {
   makeChangeUserUsecase,
   makeGetMeUsecase,
   makeSignInWithCredentialsUsecase,
+  makeSignInWithProviderUsecase,
   makeSignOutUsecase,
   makeSignUpWithCredentialsUsecase,
   makeWatchMeUsecase,
@@ -18,6 +19,7 @@ export function makeAuthUsecasesContextProvider(
 ): ReactNode {
   const signUpWithCredentials = makeSignUpWithCredentialsUsecase();
   const signInWithCredentials = makeSignInWithCredentialsUsecase();
+  const signInWithProvider = makeSignInWithProviderUsecase();
   const signOut = makeSignOutUsecase();
   const getMe = makeGetMeUsecase();
   const watchMe = makeWatchMeUsecase();
@@ -27,6 +29,7 @@ export function makeAuthUsecasesContextProvider(
     <AuthUsecasesContextProvider
       signUpWithCredentials={signUpWithCredentials}
       signInWithCredentials={signInWithCredentials}
+      signInWithProvider={signInWithProvider}
       signOut={signOut}
       getMe={getMe}
       watchMe={watchMe}

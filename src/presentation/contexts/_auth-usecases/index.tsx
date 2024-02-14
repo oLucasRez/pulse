@@ -16,6 +16,7 @@ export const AuthUsecasesContextProvider: FC<
   const {
     signUpWithCredentials,
     signInWithCredentials,
+    signInWithProvider,
     signOut,
     getMe,
     watchMe,
@@ -29,6 +30,7 @@ export const AuthUsecasesContextProvider: FC<
       value={{
         signUpWithCredentials,
         signInWithCredentials,
+        signInWithProvider,
         signOut,
         getMe,
         watchMe,

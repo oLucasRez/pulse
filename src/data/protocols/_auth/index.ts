@@ -21,3 +21,17 @@ export namespace AuthCredentialsProtocol {
     password: string;
   };
 }
+
+export interface AuthProviderProtocol {
+  signInWith(provider: AuthProvider): Promise<AuthProviderProtocol.Response>;
+}
+
+export type AuthProvider = 'google' | 'github';
+
+export namespace AuthProviderProtocol {
+  export type Response = {
+    uid: string;
+    name: string | null;
+    isNewUser: boolean;
+  };
+}

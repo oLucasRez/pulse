@@ -1,16 +1,29 @@
+import { DuplicatedError } from '@domain/errors/_duplicated';
 import {
+  AuthProvider as AuthProviderInstance,
   createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
+  GithubAuthProvider,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
 
-import { FailedError, InvalidDataError, OutOfBoundError } from '@domain/errors';
+import {
+  FailedError,
+  InvalidDataError,
+  OutOfBoundError,
+  UnknownError,
+} from '@domain/errors';
 
 import { FirebaseErrorCode } from './types';
 
 import {
   AuthCredentialsProtocol,
+  AuthProvider,
+  AuthProviderProtocol,
   SessionDestroyerProtocol,
   SessionGetterProtocol,
 } from '@data/protocols';
@@ -22,6 +35,7 @@ import { FirebaseError } from 'firebase/app';
 export class FirebaseAuth
   implements
     AuthCredentialsProtocol,
+    AuthProviderProtocol,
     SessionGetterProtocol,
     SessionDestroyerProtocol
 {
@@ -106,6 +120,57 @@ export class FirebaseAuth
       }
 
       throw new FailedError({ metadata: { tried: 'sign in with password' } });
+    }
+  }
+
+  // auth/account-exists-with-different-credential
+
+  public async signInWith(
+    provider: AuthProvider,
+  ): Promise<AuthProviderProtocol.Response> {
+    let authProvider: AuthProviderInstance | null = null;
+
+    switch (provider) {
+      case 'google':
+        authProvider = new GoogleAuthProvider();
+        break;
+      case 'github':
+        authProvider = new GithubAuthProvider();
+        break;
+      default:
+        break;
+    }
+
+    if (!authProvider)
+      throw new UnknownError(`Provider ${provider} is unknown`);
+
+    try {
+      const userCrendential = await signInWithPopup(
+        FirebaseService.auth,
+        authProvider,
+      );
+
+      const info = getAdditionalUserInfo(userCrendential);
+
+      return {
+        uid: userCrendential.user.uid,
+        name: userCrendential.user.displayName,
+        isNewUser: info?.isNewUser ?? false,
+      };
+    } catch (e) {
+      const error = e as FirebaseError;
+      const errorCode = error.code as FirebaseErrorCode;
+
+      switch (errorCode) {
+        case 'auth/account-exists-with-different-credential':
+          throw new DuplicatedError({ metadata: { entity: 'User' } });
+        default:
+          console.error(error);
+      }
+
+      throw new FailedError({
+        metadata: { tried: `sign in with ${provider}` },
+      });
     }
   }
 
