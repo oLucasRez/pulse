@@ -42,8 +42,9 @@ export const GlobalStyle = createGlobalStyle`
       border-radius: 0.5rem;
       border: none;
       border-bottom: 2px solid lightgray;
-      color: #667;
+      color: gray;
       cursor: pointer;
+
 
       :hover {
         filter: brightness(0.95);
@@ -54,11 +55,18 @@ export const GlobalStyle = createGlobalStyle`
         pointer-events: none;
         cursor: default;
         filter: grayscale(1);
+        color: darkgray;
 
         .emoji {
           opacity: 0.4;
         }
       }
+    }
+
+    label {
+      font-size: small;
+      transform: translateY(0.25rem);
+      color: darkgray;
     }
 
     input {

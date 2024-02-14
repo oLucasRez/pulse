@@ -12,23 +12,29 @@ import {
   makeHomePage,
   makeLoginPage,
   makeLogoutPage,
+  makeRegisterPage,
 } from '../pages';
 
-import { makeGameLoader, makeHomeLoader } from './_loaders';
+import { makeGameLoader, makeHomeLoader, makeRegisterLoader } from './_loaders';
 import {
   makeGamePath,
   makeHomePath,
   makeLoginPath,
   makeLogoutPath,
+  makeRegisterPath,
 } from './_paths';
 
 export function makeRouter(): ReactElement {
+  const loginPath = makeLoginPath();
+  const loginPage = makeLoginPage();
+
+  const registerPath = makeRegisterPath();
+  const registerLoader = makeRegisterLoader();
+  const registerPage = makeRegisterPage();
+
   const homePath = makeHomePath();
   const homeLoader = makeHomeLoader();
   const homePage = makeHomePage();
-
-  const loginPath = makeLoginPath();
-  const loginPage = makeLoginPage();
 
   const gamePath = makeGamePath();
   const gameLoader = makeGameLoader();
@@ -42,9 +48,16 @@ export function makeRouter(): ReactElement {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
-        <Route path={homePath} loader={homeLoader} element={homePage} />
         <Route path={loginPath} element={loginPage} />
+        <Route
+          path={registerPath}
+          loader={registerLoader}
+          element={registerPage}
+        />
+
+        <Route path={homePath} loader={homeLoader} element={homePage} />
         <Route path={gamePath} loader={gameLoader} element={gamePage} />
+
         <Route path={logoutPath} element={logoutPage} />
 
         <Route path='*' element={notFoundPage} />

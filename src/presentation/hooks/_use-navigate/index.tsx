@@ -33,14 +33,29 @@ export function useNavigate(): NavigateHookReturn {
     [navigate],
   );
 
+  const linkToLoginProps = useMemo<LinkProps>(
+    () => ({
+      to: '/login',
+      replace: replaceIfIsLogout(),
+    }),
+    [],
+  );
+
+  const navigateToRegister = useCallback(
+    () => navigate('/register', { replace: replaceIfIsLogout() }),
+    [navigate],
+  );
+
   const navigateToLogout = useCallback(() => navigate('/logout'), [navigate]);
 
   return {
     navigateToHome,
     navigateToGame,
     navigateToLogin,
+    navigateToRegister,
     navigateToLogout,
 
     linkToHomeProps,
+    linkToLoginProps,
   };
 }

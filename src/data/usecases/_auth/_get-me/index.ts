@@ -1,1 +1,1 @@
-export { MockGetMeUsecase } from './mock';
+export { AuthGetMeUsecase } from './auth';

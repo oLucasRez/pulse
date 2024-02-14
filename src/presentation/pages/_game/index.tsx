@@ -209,7 +209,15 @@ const GamePage: FC = () => {
 
           {me ? (
             <span className='greetings'>
-              🧔🏻‍♂️ Hello, <b>{me.name}</b>!
+              🧔🏻‍♂️ Hello
+              {me.name ? (
+                <>
+                  , <b>{me.name}</b>
+                </>
+              ) : (
+                ''
+              )}
+              !
             </span>
           ) : (
             <span className='greetings'>

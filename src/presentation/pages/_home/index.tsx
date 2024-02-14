@@ -177,7 +177,15 @@ const HomePage: FC = () => {
     <Container>
       <header>
         <span className='greetings'>
-          🧔🏻‍♂️ Hello, <b>{me?.name}</b>!
+          🧔🏻‍♂️ Hello
+          {me.name ? (
+            <>
+              , <b>{me?.name}</b>
+            </>
+          ) : (
+            ''
+          )}
+          !
         </span>
         <button onClick={navigateToLogout}>🚪</button>
       </header>

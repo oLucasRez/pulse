@@ -1,7 +1,7 @@
 import { GetMeUsecase } from '@domain/usecases';
 
-import { makeMockGetMeUsecase } from './mock';
+import { makeAuthGetMeUsecase } from './auth';
 
 export function makeGetMeUsecase(): GetMeUsecase {
-  return makeMockGetMeUsecase();
+  return makeAuthGetMeUsecase();
 }

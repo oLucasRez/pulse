@@ -2,12 +2,12 @@ import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
 
-const LoginPage = lazy(() => import('@presentation/pages/_login'));
+const RegisterPage = lazy(() => import('@presentation/pages/_register'));
 
-export function makeLoginPage(): ReactElement {
+export function makeRegisterPage(): ReactElement {
   return (
     <Suspense fallback={<GlobalLoading />}>
-      <LoginPage />
+      <RegisterPage />
     </Suspense>
   );
 }
