@@ -20,9 +20,8 @@ const HomePage: FC = () => {
     games: [] as GameModel[],
     currentGame: null as GameModel | null,
     fetchGames: Date.now(),
-    fetchCurrentGame: Date.now(),
     fetchingGames: false,
-    fetchingCurrentGame: false,
+    fetchingCurrentGame: true,
     creatingGame: false,
     deletingGame: null as string | null,
   });
@@ -56,14 +55,14 @@ const HomePage: FC = () => {
     getCurrentGame
       .execute()
       .then(setCurrentGame)
-      .then(fetchedCurrentGame)
-      .catch(alertError);
-  }, [s.fetchCurrentGame]);
+      .catch(alertError)
+      .finally(fetchedCurrentGame);
+  }, []);
 
   useEffect(() => {
     fetchingGames();
 
-    getGames.execute().then(setGames).then(fetchedGames).catch(logError);
+    getGames.execute().then(setGames).catch(logError).finally(fetchedGames);
   }, [s.fetchGames]);
 
   const { navigateToGame, navigateToLogout } = useNavigate();

@@ -16,10 +16,16 @@ import { DatabaseProtocol } from '@data/protocols';
 
 import { FirebaseService } from '@data/services';
 
+import { Asyncleton } from '@main/utils';
+
 function clearGarbage(data: Record<any, any>): void {
   Object.keys(data).map((key) => {
     if ((data as any)[key] === undefined) delete (data as any)[key];
   });
+}
+
+function asyncletonKey(table: string): string {
+  return `firebaseDatabase:${table}`;
 }
 
 export class FirebaseDatabase implements DatabaseProtocol {
@@ -28,8 +34,13 @@ export class FirebaseDatabase implements DatabaseProtocol {
     where?: (value: M) => boolean,
   ): Promise<M[]> {
     try {
-      const querySnapshot = await getDocs(
-        collection(FirebaseService.db, table),
+      const ms = 1;
+      const s = 1000 * ms;
+
+      const querySnapshot = await Asyncleton.run(
+        asyncletonKey(table),
+        () => getDocs(collection(FirebaseService.db, table)),
+        30 * s,
       );
 
       const data: M[] = [];
@@ -55,6 +66,8 @@ export class FirebaseDatabase implements DatabaseProtocol {
     data: Omit<M, keyof Model>,
   ): Promise<M> {
     try {
+      Asyncleton.clear(asyncletonKey(table));
+
       const createdAt = Date.now();
 
       const docRef = await addDoc(collection(FirebaseService.db, table), {
@@ -77,6 +90,8 @@ export class FirebaseDatabase implements DatabaseProtocol {
     data: Partial<Omit<M, keyof Model>>,
   ): Promise<M> {
     try {
+      Asyncleton.clear(asyncletonKey(table));
+
       const docRef = doc(FirebaseService.db, table, id);
 
       clearGarbage(data);
@@ -98,6 +113,8 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
   public async delete(table: string, id: string): Promise<void> {
     try {
+      Asyncleton.clear(asyncletonKey(table));
+
       const docRef = doc(FirebaseService.db, table, id);
 
       await deleteDoc(docRef);
