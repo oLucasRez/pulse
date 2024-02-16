@@ -1,7 +1,8 @@
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const DotenvWebpack = require('dotenv-webpack');
 const path = require('path');
 
-module.exports = {
+module.exports = (config) => ({
   entry: './src/index.tsx',
   output: {
     path: __dirname + '/dist',
@@ -42,9 +43,10 @@ module.exports = {
       template: 'public/index.html',
       favicon: 'public/favicon.ico',
     }),
+    new DotenvWebpack({ path: `./.env.${config.ENV}` }),
   ],
   bail: false,
   devServer: {
     historyApiFallback: true,
   },
-};
+});

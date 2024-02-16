@@ -4,3 +4,6 @@ bkp/
 
 .DS_Store
 regras.pdf
+
+.env*
+!.env.example

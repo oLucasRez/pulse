@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --hot --mode development",
-    "build": "webpack --mode production",
+    "start": "webpack serve --hot --env ENV=development --mode development",
+    "build": "webpack --env ENV=production --mode production",
     "test": "jest",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc"
@@ -29,6 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "babel-loader": "^9.1.2",
+    "dotenv-webpack": "^8.0.1",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.3",
