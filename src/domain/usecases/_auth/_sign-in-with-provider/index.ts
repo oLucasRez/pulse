@@ -1,9 +1,7 @@
 import { UserModel } from '@domain/models';
 
-import { AuthProvider } from '@data/protocols';
+import { Provider } from '@domain/types';
 
 export interface SignInWithProviderUsecase {
-  execute(provider: AuthProvider): Promise<UserModel>;
+  execute(provider: Provider): Promise<UserModel>;
 }
-
-export namespace SignInWithProviderUsecase {}

@@ -27,7 +27,7 @@ export class SocketWatchMeUsecase implements WatchMeUsecase {
 
       const unsubscribe = this.socket.watch<UserModel[]>(table, (users) => {
         if (!me) callback(null);
-        else callback(users.find((user) => user.id === me.id) ?? null);
+        else callback(users.find((user) => user.uid === me.uid) ?? null);
       });
 
       return unsubscribe;

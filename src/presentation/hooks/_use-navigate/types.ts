@@ -9,6 +9,7 @@ export type NavigateHookReturn = {
   navigateToLogin(): void;
   navigateToRegister(): void;
   navigateToLogout(): void;
+  reloadWindow(): void;
 
   linkToHomeProps: LinkProps;
   linkToLoginProps: LinkProps;

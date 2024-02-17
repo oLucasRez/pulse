@@ -2,20 +2,20 @@ import { DatabaseStartGameUsecase } from '@data/usecases';
 import { StartGameUsecase } from '@domain/usecases';
 
 import {
-  makeChangeUserUsecase,
+  makeChangeMeUsecase,
   makeCreateCentralPulseUsecase,
   makeCreateDiceUsecase,
   makeGetCurrentGameUsecase,
 } from '@main/factories';
 
 export function makeDatabaseStartGameUsecase(): StartGameUsecase {
-  const changeUser = makeChangeUserUsecase();
+  const changeMe = makeChangeMeUsecase();
   const createCentralPulse = makeCreateCentralPulseUsecase();
   const createDice = makeCreateDiceUsecase();
   const getCurrentGame = makeGetCurrentGameUsecase();
 
   return new DatabaseStartGameUsecase({
-    changeUser,
+    changeMe,
     createCentralPulse,
     createDice,
     getCurrentGame,

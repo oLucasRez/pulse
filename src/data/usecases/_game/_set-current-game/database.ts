@@ -1,44 +1,28 @@
-import { FailedError, NotFoundError } from '@domain/errors';
-
 import {
-  ChangeUserUsecase,
+  ChangeMeUsecase,
   GetGameUsecase,
   SetCurrentGameUsecase,
 } from '@domain/usecases';
 
-import { CacheProtocol } from '@data/protocols';
-
 export class CacheSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
-  private readonly changeUser: ChangeUserUsecase;
-  private readonly cache: CacheProtocol;
+  private readonly changeMe: ChangeMeUsecase;
 
   public constructor(deps: CacheSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
-    this.changeUser = deps.changeUser;
-    this.cache = deps.cache;
+    this.changeMe = deps.changeMe;
   }
 
   public async execute(id: string): Promise<void> {
     const game = await this.getGame.execute(id);
 
-    await this.cache.set<string>('currentGameID', game.id);
-
-    try {
-      await this.changeUser.execute({ currentGameID: game.id });
-    } catch (e) {
-      if (e instanceof FailedError) await this.cache.remove('currentGameID');
-      if (e instanceof NotFoundError) return;
-
-      throw e;
-    }
+    await this.changeMe.execute({ currentGameID: game.id });
   }
 }
 
 export namespace CacheSetCurrentGameUsecase {
   export type Deps = {
     getGame: GetGameUsecase;
-    changeUser: ChangeUserUsecase;
-    cache: CacheProtocol;
+    changeMe: ChangeMeUsecase;
   };
 }

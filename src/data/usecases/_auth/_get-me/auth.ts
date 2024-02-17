@@ -20,7 +20,8 @@ export class AuthGetMeUsecase implements GetMeUsecase {
   }
 
   public async execute(): Promise<UserModel | null> {
-    const uid = await this.sessionGetter.getSession();
+    const { uid, isAnonymous, providers } =
+      await this.sessionGetter.getSession();
 
     const table = await this.tableGenerator.getTable();
     const [user] = await this.database.select<UserModel>(
@@ -28,7 +29,12 @@ export class AuthGetMeUsecase implements GetMeUsecase {
       (user) => user.uid === uid,
     );
 
-    return user;
+    if (user) {
+      user.isAnonymous = isAnonymous;
+      user.providers = providers;
+    }
+
+    return user || null;
   }
 }
 

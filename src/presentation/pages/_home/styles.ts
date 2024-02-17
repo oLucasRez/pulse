@@ -47,6 +47,27 @@ export const Container = styled.div`
     border-bottom: 1px solid lightgray;
     background: white;
 
+    > .providers {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      > .linkWithProvider {
+        width: 1.5rem;
+        height: 1.5rem;
+        padding: 0;
+        border-radius: 50rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        > img {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+
     h2 {
       font-size: 1.125rem;
     }

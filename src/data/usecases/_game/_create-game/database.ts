@@ -1,10 +1,17 @@
 import { GameModel } from '@domain/models';
 
-import { FailedError, ForbiddenError } from '@domain/errors';
+import {
+  FailedError,
+  ForbiddenError,
+  NotIntegerError,
+  OutOfBoundError,
+} from '@domain/errors';
 
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+
+import { isInteger } from '@domain/utils';
 
 export class DatabaseCreateGameUsecase implements CreateGameUsecase {
   private readonly getMe: GetMeUsecase;
@@ -18,26 +25,44 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
   }
 
   public async execute(payload: CreateGameUsecase.Payload): Promise<GameModel> {
-    const { title = null } = payload;
+    const { title = null, config } = payload;
 
     const me = await this.getMe.execute();
     if (!me) throw new ForbiddenError({ metadata: { tried: 'create game' } });
+
+    this.maxPlayersShouldBeValid(config.maxPlayers);
 
     try {
       const table = await this.tableGenerator.getTable();
 
       const game = await this.database.insert<GameModel>(table, {
-        hostID: me.id,
+        uid: me.uid,
         title,
-        config: {
-          maxPlayers: 5,
-        },
+        config,
       });
 
       return game;
     } catch {
       throw new FailedError({ metadata: { tried: 'create game' } });
     }
+  }
+
+  private maxPlayersShouldBeValid(maxPlayers: number): void {
+    const prop = 'config.maxPlayers';
+    const value = maxPlayers;
+
+    if (maxPlayers < 3)
+      throw new OutOfBoundError({
+        metadata: { prop, value, bound: 'below', limit: 3 },
+      });
+
+    if (maxPlayers > 5)
+      throw new OutOfBoundError({
+        metadata: { prop, value, bound: 'above', limit: 5 },
+      });
+
+    if (!isInteger(maxPlayers))
+      throw new NotIntegerError({ metadata: { prop, value } });
   }
 }
 

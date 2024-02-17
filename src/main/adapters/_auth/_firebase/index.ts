@@ -1,28 +1,32 @@
-import { DuplicatedError } from '@domain/errors/_duplicated';
 import {
-  AuthProvider as AuthProviderInstance,
+  AuthProvider,
   createUserWithEmailAndPassword,
-  getAdditionalUserInfo,
   GithubAuthProvider,
   GoogleAuthProvider,
+  linkWithPopup,
   onAuthStateChanged,
+  signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  User,
 } from 'firebase/auth';
 
 import {
+  AlreadyExistsError,
   FailedError,
+  ForbiddenError,
   InvalidDataError,
   OutOfBoundError,
   UnknownError,
 } from '@domain/errors';
 
 import { FirebaseErrorCode } from './types';
+import { Provider } from '@domain/types';
 
 import {
+  AuthAnonymousProtocol,
   AuthCredentialsProtocol,
-  AuthProvider,
   AuthProviderProtocol,
   SessionDestroyerProtocol,
   SessionGetterProtocol,
@@ -36,15 +40,31 @@ export class FirebaseAuth
   implements
     AuthCredentialsProtocol,
     AuthProviderProtocol,
+    AuthAnonymousProtocol,
     SessionGetterProtocol,
     SessionDestroyerProtocol
 {
-  public getSession(): Promise<string | null> {
-    return new Promise<string | null>((resolve) => {
-      onAuthStateChanged(FirebaseService.auth, async (user) =>
-        resolve(user?.uid || null),
-      );
+  private getUser(): Promise<User | null> {
+    return new Promise<User | null>((resolve) =>
+      onAuthStateChanged(FirebaseService.auth, resolve),
+    );
+  }
+
+  public async getSession(): Promise<SessionGetterProtocol.Response> {
+    const user = await this.getUser();
+
+    const providers: Provider[] = [];
+
+    user?.providerData.map((userInfo) => {
+      if (userInfo.providerId === 'google.com') providers.push('google');
+      if (userInfo.providerId === 'github.com') providers.push('github');
     });
+
+    return {
+      uid: user?.uid || null,
+      isAnonymous: user?.isAnonymous ?? false,
+      providers,
+    };
   }
 
   public async signUpWithCredentials(
@@ -123,12 +143,63 @@ export class FirebaseAuth
     }
   }
 
-  // auth/account-exists-with-different-credential
-
   public async signInWith(
-    provider: AuthProvider,
+    provider: Provider,
   ): Promise<AuthProviderProtocol.Response> {
-    let authProvider: AuthProviderInstance | null = null;
+    let authProvider: AuthProvider | null = null;
+
+    switch (provider) {
+      case 'google':
+        authProvider = new GoogleAuthProvider();
+        break;
+      case 'github':
+        authProvider = new GithubAuthProvider();
+        break;
+      default:
+        break;
+    }
+
+    const unknownProviderError = new UnknownError(
+      `Provider ${provider} is unknown`,
+    );
+
+    if (!authProvider) throw unknownProviderError;
+
+    try {
+      const userCrendential = await signInWithPopup(
+        FirebaseService.auth,
+        authProvider,
+      );
+
+      return {
+        uid: userCrendential.user.uid,
+        name: userCrendential.user.displayName,
+      };
+    } catch (e) {
+      const error = e as FirebaseError;
+      const errorCode = error.code as FirebaseErrorCode;
+
+      switch (errorCode) {
+        case 'auth/account-exists-with-different-credential':
+          throw new AlreadyExistsError({ metadata: { entity: 'User' } });
+        default:
+          console.error(error);
+      }
+
+      throw new FailedError({
+        metadata: { tried: `sign in with ${provider}` },
+      });
+    }
+  }
+
+  public async linkWith(
+    provider: Provider,
+  ): Promise<AuthProviderProtocol.Response> {
+    const user = await this.getUser();
+    if (!user)
+      throw new ForbiddenError({ metadata: { tried: 'link without user' } });
+
+    let authProvider: AuthProvider | null = null;
 
     switch (provider) {
       case 'google':
@@ -145,32 +216,43 @@ export class FirebaseAuth
       throw new UnknownError(`Provider ${provider} is unknown`);
 
     try {
-      const userCrendential = await signInWithPopup(
-        FirebaseService.auth,
-        authProvider,
-      );
-
-      const info = getAdditionalUserInfo(userCrendential);
+      const userCrendential = await linkWithPopup(user, authProvider);
 
       return {
         uid: userCrendential.user.uid,
         name: userCrendential.user.displayName,
-        isNewUser: info?.isNewUser ?? false,
       };
     } catch (e) {
       const error = e as FirebaseError;
       const errorCode = error.code as FirebaseErrorCode;
 
       switch (errorCode) {
-        case 'auth/account-exists-with-different-credential':
-          throw new DuplicatedError({ metadata: { entity: 'User' } });
+        case 'auth/credential-already-in-use':
+        case 'auth/email-already-in-use':
+          throw new AlreadyExistsError({ metadata: { entity: 'User' } });
         default:
           console.error(error);
       }
 
-      throw new FailedError({
-        metadata: { tried: `sign in with ${provider}` },
-      });
+      throw new FailedError({ metadata: { tried: `link with ${provider}` } });
+    }
+  }
+
+  public async signInAnonymously(): Promise<string> {
+    try {
+      const userCrendential = await signInAnonymously(FirebaseService.auth);
+
+      return userCrendential.user.uid;
+    } catch (e) {
+      const error = e as FirebaseError;
+      const errorCode = error.code as FirebaseErrorCode;
+
+      switch (errorCode) {
+        default:
+          console.error(error);
+      }
+
+      throw new FailedError({ metadata: { tried: 'sign in anonymously' } });
     }
   }
 

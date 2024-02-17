@@ -3,7 +3,7 @@ import { GameModel } from '@domain/models';
 import { ForbiddenError } from '@domain/errors';
 
 import {
-  ChangeUserUsecase,
+  ChangeMeUsecase,
   CreateCentralPulseUsecase,
   CreateDiceUsecase,
   GetCurrentGameUsecase,
@@ -11,13 +11,13 @@ import {
 } from '@domain/usecases';
 
 export class DatabaseStartGameUsecase implements StartGameUsecase {
-  private readonly changeUser: ChangeUserUsecase;
+  private readonly changeMe: ChangeMeUsecase;
   private readonly createCentralPulse: CreateCentralPulseUsecase;
   private readonly createDice: CreateDiceUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
 
   public constructor(deps: DatabaseStartGameUsecase.Deps) {
-    this.changeUser = deps.changeUser;
+    this.changeMe = deps.changeMe;
     this.createCentralPulse = deps.createCentralPulse;
     this.createDice = deps.createDice;
     this.getCurrentGame = deps.getCurrentGame;
@@ -27,7 +27,7 @@ export class DatabaseStartGameUsecase implements StartGameUsecase {
     const game = await this.getCurrentGame.execute();
     if (!game) throw new ForbiddenError({ metadata: { tried: 'start game' } });
 
-    await this.changeUser.execute({ currentGameID: game.id });
+    await this.changeMe.execute({ currentGameID: game.id });
 
     await this.createCentralPulse.execute();
 
@@ -45,7 +45,7 @@ export class DatabaseStartGameUsecase implements StartGameUsecase {
 
 export namespace DatabaseStartGameUsecase {
   export type Deps = {
-    changeUser: ChangeUserUsecase;
+    changeMe: ChangeMeUsecase;
     createCentralPulse: CreateCentralPulseUsecase;
     createDice: CreateDiceUsecase;
     getCurrentGame: GetCurrentGameUsecase;

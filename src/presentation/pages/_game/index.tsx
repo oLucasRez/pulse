@@ -7,9 +7,9 @@ import { WatchPlayersUsecase } from '@domain/usecases';
 import { useMutatePlayerModal } from './hooks';
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { usePlayerUsecases } from '@presentation/contexts';
+import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
 
-import { useMyPlayer } from './proxies';
+import { useMe, useMyPlayer } from './proxies';
 
 import { Container, Main } from './styles';
 import { getClasses, getColor } from '@presentation/styles/mixins';
@@ -19,14 +19,15 @@ import { logError } from '@presentation/utils';
 import { useGameLoaderData } from './loader';
 
 const GamePage: FC = () => {
-  const { me, currentGame } = useGameLoaderData();
+  const me = useMe();
+  const currentGame = useGameLoaderData();
 
   const s = useStates({
     players: [] as PlayerModel[],
     watchingPlayers: false,
   });
 
-  const imHost = me?.id === currentGame.hostID;
+  const imHost = me.uid === currentGame.uid;
 
   const watchingPlayers = (): any => (s.watchingPlayers = true);
   const watchedPlayers = (): any => (s.watchingPlayers = false);
@@ -66,12 +67,18 @@ const GamePage: FC = () => {
   const { openMutatePlayerModal, renderMutatePlayerModal } =
     useMutatePlayerModal();
 
-  function handleEditPlayerButtonClick(player: PlayerModel): void {
+  function handleEditPlayerButtonClick(player: PlayerModel): any {
     openMutatePlayerModal(player);
   }
 
-  function handleBanPlayerButtonClick(playerID: string): void {
+  function handleBanPlayerButtonClick(playerID: string): any {
     banPlayer.execute(playerID);
+  }
+
+  const { startGame } = useGameUsecases();
+
+  function handleStartButtonClick(): any {
+    startGame.execute();
   }
 
   const notBannedPlayers = s.players.filter((player) => !player.banned);
@@ -166,8 +173,28 @@ const GamePage: FC = () => {
 
         {renderPlayers()}
 
-        {imHost && <button className='start'>Start</button>}
+        {imHost && (
+          <button className='start' onClick={handleStartButtonClick}>
+            Start
+          </button>
+        )}
       </Main>
+    );
+  }
+
+  function renderMyHeader(): ReactNode {
+    return (
+      <span className='greetings'>
+        {myPlayer.avatar} Hello
+        {me.name ? (
+          <>
+            , <b>{me.name}</b>
+          </>
+        ) : (
+          ''
+        )}
+        !
+      </span>
     );
   }
 
@@ -181,23 +208,7 @@ const GamePage: FC = () => {
             <b>{currentGame.title}</b>
           </h2>
 
-          {me ? (
-            <span className='greetings'>
-              🧔🏻‍♂️ Hello
-              {me.name ? (
-                <>
-                  , <b>{me.name}</b>
-                </>
-              ) : (
-                ''
-              )}
-              !
-            </span>
-          ) : (
-            <span className='greetings'>
-              <button>Login</button>
-            </span>
-          )}
+          {renderMyHeader()}
           <button onClick={navigateToLogout}>🚪</button>
         </header>
 

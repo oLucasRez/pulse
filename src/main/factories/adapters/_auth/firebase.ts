@@ -1,4 +1,5 @@
 import {
+  AuthAnonymousProtocol,
   AuthCredentialsProtocol,
   AuthProviderProtocol,
   SessionDestroyerProtocol,
@@ -12,6 +13,10 @@ export function makeFirebaseAuthCredentials(): AuthCredentialsProtocol {
 }
 
 export function makeFirebaseAuthProvider(): AuthProviderProtocol {
+  return new FirebaseAuth();
+}
+
+export function makeFirebaseAuthAnonymous(): AuthAnonymousProtocol {
   return new FirebaseAuth();
 }
 

@@ -1,6 +1,8 @@
 import {
-  ChangeUserUsecase,
+  ChangeMeUsecase,
   GetMeUsecase,
+  LinkWithProviderUsecase,
+  SignInAnonymouslyUsecase,
   SignInWithCredentialsUsecase,
   SignInWithProviderUsecase,
   SignOutUsecase,
@@ -14,18 +16,22 @@ export type AuthUsecasesContextValue = {
   signUpWithCredentials: SignUpWithCredentialsUsecase;
   signInWithCredentials: SignInWithCredentialsUsecase;
   signInWithProvider: SignInWithProviderUsecase;
+  linkWithProvider: LinkWithProviderUsecase;
+  signInAnonymously: SignInAnonymouslyUsecase;
   signOut: SignOutUsecase;
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;
-  changeUser: ChangeUserUsecase;
+  changeMe: ChangeMeUsecase;
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
   signUpWithCredentials: SignUpWithCredentialsUsecase;
   signInWithCredentials: SignInWithCredentialsUsecase;
   signInWithProvider: SignInWithProviderUsecase;
+  linkWithProvider: LinkWithProviderUsecase;
+  signInAnonymously: SignInAnonymouslyUsecase;
   signOut: SignOutUsecase;
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;
-  changeUser: ChangeUserUsecase;
+  changeMe: ChangeMeUsecase;
 }

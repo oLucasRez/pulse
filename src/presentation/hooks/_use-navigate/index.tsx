@@ -56,12 +56,15 @@ export function useNavigate(): NavigateHookReturn {
 
   const navigateToLogout = useCallback(() => navigate('/logout'), [navigate]);
 
+  const reloadWindow = useCallback(() => location.reload(), []);
+
   return {
     navigateToHome,
     navigateToGame,
     navigateToLogin,
     navigateToRegister,
     navigateToLogout,
+    reloadWindow,
 
     linkToHomeProps,
     linkToLoginProps,

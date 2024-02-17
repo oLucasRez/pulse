@@ -1,5 +1,15 @@
+import { Provider } from '@domain/types';
+
 export interface SessionGetterProtocol {
-  getSession(): Promise<string | null>;
+  getSession(): Promise<SessionGetterProtocol.Response>;
+}
+
+export namespace SessionGetterProtocol {
+  export type Response = {
+    uid: string | null;
+    isAnonymous: boolean;
+    providers: Provider[];
+  };
 }
 
 export interface SessionDestroyerProtocol {
@@ -23,15 +33,17 @@ export namespace AuthCredentialsProtocol {
 }
 
 export interface AuthProviderProtocol {
-  signInWith(provider: AuthProvider): Promise<AuthProviderProtocol.Response>;
+  signInWith(provider: Provider): Promise<AuthProviderProtocol.Response>;
+  linkWith(provider: Provider): Promise<AuthProviderProtocol.Response>;
 }
-
-export type AuthProvider = 'google' | 'github';
 
 export namespace AuthProviderProtocol {
   export type Response = {
     uid: string;
     name: string | null;
-    isNewUser: boolean;
   };
+}
+
+export interface AuthAnonymousProtocol {
+  signInAnonymously(): Promise<string>;
 }

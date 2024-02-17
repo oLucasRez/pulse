@@ -11,17 +11,12 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
-import {
-  CacheProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly cache: CacheProtocol;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
@@ -29,7 +24,6 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
-    this.cache = deps.cache;
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
@@ -40,6 +34,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     const { name, color, avatar } = payload;
 
     const me = await this.getMe.execute();
+    if (!me) throw new ForbiddenError({ metadata: { tried: 'create player' } });
 
     const players = await this.getPlayers.execute();
 
@@ -57,12 +52,10 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
         name,
         color,
         avatar,
-        userID: me && me.id,
+        uid: me.uid,
         subjectID: null,
         banned: false,
       });
-
-      await this.cache.set<string>('myPlayerID', player.id);
     } catch {
       throw new FailedError({ metadata: { tried: 'create player' } });
     }
@@ -76,18 +69,18 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   ): void {
     if (!me) return;
 
-    if (players.some(({ userID }) => userID === me.id))
+    if (players.some(({ uid }) => uid === me.uid))
       throw new ForbiddenError({
         metadata: {
-          prop: 'userID',
-          value: me.id,
+          prop: 'uid',
+          value: me.uid,
           tried: 'create player again',
         },
       });
   }
 
   private colorShouldBeUnchosen(color: Color, players: PlayerModel[]): void {
-    if (players.some((player) => player.color === color))
+    if (players.some((player) => !player.banned && player.color === color))
       throw new ForbiddenError({
         metadata: {
           tried: `create player with unavailable color ${color}`,
@@ -122,7 +115,6 @@ export namespace DatabaseCreatePlayerUsecase {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
-    cache: CacheProtocol;
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;
   };

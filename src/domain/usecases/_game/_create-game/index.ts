@@ -7,5 +7,10 @@ export interface CreateGameUsecase {
 export namespace CreateGameUsecase {
   export type Payload = {
     title?: string;
+    config: {
+      maxPlayers: number;
+      withLightspot: boolean;
+      dicesMode: 'equal' | 'growing';
+    };
   };
 }

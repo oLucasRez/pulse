@@ -1,9 +1,11 @@
 import { Model, UserModel } from '..';
 
 export interface GameModel extends Model {
-  hostID: UserModel['id'];
+  uid: UserModel['uid'];
   title: string | null;
   config: {
     maxPlayers: number;
+    withLightspot: boolean;
+    dicesMode: 'equal' | 'growing';
   };
 }

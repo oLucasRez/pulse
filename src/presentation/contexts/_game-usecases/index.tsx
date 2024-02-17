@@ -21,6 +21,8 @@ export const GameUsecasesContextProvider: FC<
     createGame,
     deleteGame,
 
+    startGame,
+
     children,
   } = props;
 
@@ -33,6 +35,8 @@ export const GameUsecasesContextProvider: FC<
         getGames,
         createGame,
         deleteGame,
+
+        startGame,
       }}
     >
       {children}

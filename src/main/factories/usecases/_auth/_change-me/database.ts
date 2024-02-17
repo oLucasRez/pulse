@@ -1,5 +1,5 @@
-import { DatabaseChangeUserUsecase } from '@data/usecases';
-import { ChangeUserUsecase } from '@domain/usecases';
+import { DatabaseChangeMeUsecase } from '@data/usecases';
+import { ChangeMeUsecase } from '@domain/usecases';
 
 import {
   makeDatabase,
@@ -7,12 +7,12 @@ import {
   makeUsersTableGenerator,
 } from '@main/factories';
 
-export function makeDatabaseChangeUserUsecase(): ChangeUserUsecase {
+export function makeDatabaseChangeMeUsecase(): ChangeMeUsecase {
   const database = makeDatabase();
   const getMe = makeGetMeUsecase();
   const tableGenerator = makeUsersTableGenerator();
 
-  return new DatabaseChangeUserUsecase({
+  return new DatabaseChangeMeUsecase({
     database,
     getMe,
     tableGenerator,

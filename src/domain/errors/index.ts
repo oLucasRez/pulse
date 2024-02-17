@@ -1,3 +1,4 @@
+export * from './_already-exists';
 export * from './_failed';
 export * from './_forbidden';
 export * from './_invalid-data';

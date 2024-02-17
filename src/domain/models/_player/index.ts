@@ -6,7 +6,7 @@ export interface PlayerModel extends Model {
   name: string;
   color: Color;
   avatar: string;
-  userID: UserModel['id'] | null;
+  uid: UserModel['id'];
   subjectID: SubjectModel['id'] | null;
   banned: boolean;
 }

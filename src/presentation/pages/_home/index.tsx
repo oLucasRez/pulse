@@ -5,11 +5,13 @@ import { GameModel } from '@domain/models';
 
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { useGameUsecases } from '@presentation/contexts';
+import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
 
 import { GlobalLoading } from '@presentation/components';
 
 import { Container } from './styles';
+
+import { githubIcon, googleIcon } from '@presentation/assets';
 
 import { alertError, logError } from '@presentation/utils';
 
@@ -24,6 +26,7 @@ const HomePage: FC = () => {
     fetchingCurrentGame: true,
     creatingGame: false,
     deletingGame: null as string | null,
+    linking: false,
   });
 
   const setGames = (games: GameModel[]): any => (s.games = games);
@@ -43,6 +46,9 @@ const HomePage: FC = () => {
 
   const deletingGame = (game: GameModel): any => (s.deletingGame = game.id);
   const deletedGame = (): any => (s.deletingGame = null);
+
+  const linking = (): any => (s.linking = true);
+  const linked = (): any => (s.linking = false);
 
   const me = useHomeLoaderData();
 
@@ -65,7 +71,7 @@ const HomePage: FC = () => {
     getGames.execute().then(setGames).catch(logError).finally(fetchedGames);
   }, [s.fetchGames]);
 
-  const { navigateToGame, navigateToLogout } = useNavigate();
+  const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
   function handleCreateGameButtonClick(): any {
     creatingGame();
@@ -73,6 +79,11 @@ const HomePage: FC = () => {
     createGame
       .execute({
         title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
+        config: {
+          maxPlayers: 5,
+          withLightspot: true,
+          dicesMode: 'growing',
+        },
       })
       .then(createdGame)
       .then(fetchGames)
@@ -87,6 +98,28 @@ const HomePage: FC = () => {
       .then(deletedGame)
       .then(fetchGames)
       .catch(alertError);
+  }
+
+  const { linkWithProvider } = useAuthUsecases();
+
+  function handleGoogleButtonClick(): any {
+    linking();
+
+    linkWithProvider
+      .execute('google')
+      .then(reloadWindow)
+      .catch(alertError)
+      .finally(linked);
+  }
+
+  function handleGithubButtonClick(): any {
+    linking();
+
+    linkWithProvider
+      .execute('github')
+      .then(reloadWindow)
+      .catch(alertError)
+      .finally(linked);
   }
 
   function renderCreateGameButton(): ReactNode {
@@ -172,11 +205,38 @@ const HomePage: FC = () => {
 
   if (s.fetchingCurrentGame) return <GlobalLoading />;
 
+  const notLinkedWithGoogle = !me.providers.includes('google');
+  const notLinkedWithGithub = !me.providers.includes('github');
+
   return (
     <Container>
       <header>
+        {(notLinkedWithGoogle || notLinkedWithGithub) && (
+          <div className='providers'>
+            Link with
+            {notLinkedWithGoogle && (
+              <button
+                className='linkWithProvider'
+                onClick={handleGoogleButtonClick}
+                disabled={s.linking}
+              >
+                <img src={googleIcon} />
+              </button>
+            )}
+            {notLinkedWithGithub && (
+              <button
+                className='linkWithProvider'
+                onClick={handleGithubButtonClick}
+                disabled={s.linking}
+              >
+                <img src={githubIcon} />
+              </button>
+            )}
+          </div>
+        )}
+
         <span className='greetings'>
-          🧔🏻‍♂️ Hello
+          👤 Hello
           {me.name ? (
             <>
               , <b>{me?.name}</b>

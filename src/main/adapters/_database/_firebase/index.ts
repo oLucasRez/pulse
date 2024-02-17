@@ -34,13 +34,8 @@ export class FirebaseDatabase implements DatabaseProtocol {
     where?: (value: M) => boolean,
   ): Promise<M[]> {
     try {
-      const ms = 1;
-      const s = 1000 * ms;
-
-      const querySnapshot = await Asyncleton.run(
-        asyncletonKey(table),
-        () => getDocs(collection(FirebaseService.db, table)),
-        30 * s,
+      const querySnapshot = await Asyncleton.run(asyncletonKey(table), () =>
+        getDocs(collection(FirebaseService.db, table)),
       );
 
       const data: M[] = [];

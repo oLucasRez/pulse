@@ -36,6 +36,9 @@ export class AuthSignUpWithCredentialsUsecase
       uid,
       name,
       currentGameID: null,
+      // useless
+      isAnonymous: false,
+      providers: [],
     });
 
     return user;

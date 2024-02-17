@@ -5,6 +5,7 @@ import {
   GetGamesUsecase,
   GetGameUsecase,
   SetCurrentGameUsecase,
+  StartGameUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -16,6 +17,8 @@ export type GameUsecasesContextValue = {
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;
   deleteGame: DeleteGameUsecase;
+
+  startGame: StartGameUsecase;
 };
 
 export interface GameUsecasesContextProviderProps extends ContextProviderProps {
@@ -25,4 +28,6 @@ export interface GameUsecasesContextProviderProps extends ContextProviderProps {
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;
   deleteGame: DeleteGameUsecase;
+
+  startGame: StartGameUsecase;
 }

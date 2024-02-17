@@ -12,21 +12,14 @@ import { alertError } from '@presentation/utils';
 export async function gameLoader(
   args: GameLoaderArgs,
 ): Promise<GameLoaderData> {
-  const { getMe, getGame, setCurrentGame, params } = args;
+  const { getGame, params } = args;
 
   try {
-    const me = await getMe.execute();
-
     if (!params.id) throw 'error';
 
     const currentGame = await getGame.execute(params.id);
 
-    await setCurrentGame.execute(currentGame.id);
-
-    return {
-      me,
-      currentGame,
-    };
+    return currentGame;
   } catch (e) {
     alertError(e as DomainError);
     throw redirect('/login');

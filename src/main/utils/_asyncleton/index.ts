@@ -14,7 +14,7 @@ export class Asyncleton {
   ): Promise<R> {
     if (!(key in Asyncleton.promises)) Asyncleton.promises[key] = callback();
 
-    const result = (await Asyncleton.promises[key]) as R;
+    const result = Asyncleton.promises[key] as R;
 
     setTimeout(() => this.clear(key), exp);
 

@@ -19,7 +19,7 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
     id: string,
     payload: ChangePlayerUsecase.Payload,
   ): Promise<PlayerModel> {
-    const { name, color } = payload;
+    const { name, color, avatar } = payload;
 
     try {
       const table = await this.tableGenerator.getTable();
@@ -27,6 +27,7 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
       const player = await this.database.update<PlayerModel>(table, id, {
         name,
         color,
+        avatar,
       });
 
       return player;

@@ -19,7 +19,7 @@ import { darken, getColor } from '@presentation/styles/mixins';
 import { getAvailableColors } from '@domain/utils';
 import { alertError, logError } from '@presentation/utils';
 
-import { useGameLoaderData } from '../../loader';
+import { useMe } from '../..';
 
 const avatars = [
   ...['🧒🏻', '👧🏻', '👦🏻', '🧑🏻', '👩🏻', '👨🏻', '🧑🏻‍🦱', '👩🏻‍🦱', '👨🏻‍🦱'],
@@ -44,13 +44,13 @@ export function useMutatePlayerModal(
 ): MutatePlayerModalHookReturn {
   const { unclosable, open = false, player, onSuccess } = props;
 
-  const { me } = useGameLoaderData();
+  const me = useMe();
 
   const s = useStates({
     open,
     player,
     players: [] as PlayerModel[],
-    name: player?.name || me?.name,
+    name: (player?.name || me.name) as string | undefined,
     color: player?.color,
     avatarIndex: player
       ? avatars.findIndex((avatar) => avatar === player.avatar)
@@ -121,7 +121,7 @@ export function useMutatePlayerModal(
     mutatingPlayer();
 
     const promise = s.player
-      ? changePlayer.execute(s.player.id, { name, color })
+      ? changePlayer.execute(s.player.id, { name, color, avatar })
       : createPlayer.execute({ name, color, avatar });
 
     promise

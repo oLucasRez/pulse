@@ -17,10 +17,12 @@ export const AuthUsecasesContextProvider: FC<
     signUpWithCredentials,
     signInWithCredentials,
     signInWithProvider,
+    linkWithProvider,
+    signInAnonymously,
     signOut,
     getMe,
     watchMe,
-    changeUser,
+    changeMe,
 
     children,
   } = props;
@@ -31,10 +33,12 @@ export const AuthUsecasesContextProvider: FC<
         signUpWithCredentials,
         signInWithCredentials,
         signInWithProvider,
+        linkWithProvider,
+        signInAnonymously,
         signOut,
         getMe,
         watchMe,
-        changeUser,
+        changeMe,
       }}
     >
       {children}

@@ -30,7 +30,7 @@ export class DatabaseBanPlayerUsecase implements BanPlayerUsecase {
     const currentGame = await this.getCurrentGame.execute();
     if (!currentGame) return;
 
-    if (me.id !== currentGame.hostID)
+    if (me.uid !== currentGame.uid)
       throw new ForbiddenError({ metadata: { tried: 'ban player' } });
 
     try {

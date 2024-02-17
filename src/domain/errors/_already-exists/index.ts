@@ -1,7 +1,7 @@
 import { DomainError } from '../domain';
 
-export class DuplicatedError extends DomainError<DuplicatedError.Metadata> {
-  public constructor(props: DuplicatedError.Props) {
+export class AlreadyExistsError extends DomainError<AlreadyExistsError.Metadata> {
+  public constructor(props: AlreadyExistsError.Props) {
     const { message, metadata = {} } = props;
 
     const { entity } = metadata;
@@ -9,11 +9,11 @@ export class DuplicatedError extends DomainError<DuplicatedError.Metadata> {
 
     super(message || defaultMessage, metadata);
 
-    Object.setPrototypeOf(this, DuplicatedError.prototype);
+    Object.setPrototypeOf(this, AlreadyExistsError.prototype);
   }
 }
 
-export namespace DuplicatedError {
+export namespace AlreadyExistsError {
   export type Metadata = {
     entity?: string;
   };
