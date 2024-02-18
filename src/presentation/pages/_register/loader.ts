@@ -1,13 +1,18 @@
 import { redirect } from 'react-router-dom';
 
-import { RegisterLoaderArgs } from './types';
+import { UserModel } from '@domain/models';
 
-import { logError } from '@presentation/utils';
+import { RegisterLoaderArgs } from './types';
 
 export async function registerLoader(args: RegisterLoaderArgs): Promise<null> {
   const { getMe } = args;
 
-  const me = await getMe.execute().catch(logError);
+  let me: UserModel | null = null;
+  try {
+    me = await getMe.execute();
+  } catch {
+    return null;
+  }
 
   if (me) throw redirect('/');
 

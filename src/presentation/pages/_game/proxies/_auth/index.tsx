@@ -44,15 +44,9 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
 
   const { getMe } = useAuthUsecases();
 
-  useEffect(() => {
-    gettingMe();
-
-    getMe.execute().then(setMe).catch(logError).finally(gotMe);
-  }, []);
-
   const { setCurrentGame } = useGameUsecases();
 
-  function handleAuth(me: UserModel): any {
+  function handleAuth(me: UserModel | null): any {
     gettingMe();
 
     setCurrentGame
@@ -61,6 +55,12 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
       .catch(logError)
       .finally(gotMe);
   }
+
+  useEffect(() => {
+    gettingMe();
+
+    getMe.execute().then(handleAuth).catch(logError);
+  }, []);
 
   if (s.gettingMe) return <GlobalLoading />;
 

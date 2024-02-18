@@ -7,16 +7,18 @@ import { UserModel } from '@domain/models';
 
 import { HomeLoaderArgs, HomeLoaderData } from './types';
 
-import { logError } from '@presentation/utils';
-
 export async function homeLoader(args: HomeLoaderArgs): Promise<UserModel> {
   const { getMe } = args;
 
-  const me = await getMe.execute().catch(logError);
+  try {
+    const me = await getMe.execute();
 
-  if (!me) throw redirect('/login');
+    if (!me) throw redirect('/login');
 
-  return me;
+    return me;
+  } catch {
+    throw redirect('/login');
+  }
 }
 
 export const useHomeLoaderData = (): HomeLoaderData =>
