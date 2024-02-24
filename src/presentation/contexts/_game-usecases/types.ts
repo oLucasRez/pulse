@@ -1,4 +1,5 @@
 import {
+  ChangeGameUsecase,
   CreateGameUsecase,
   DeleteGameUsecase,
   GetCurrentGameUsecase,
@@ -16,6 +17,7 @@ export type GameUsecasesContextValue = {
   getGame: GetGameUsecase;
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;
+  changeGame: ChangeGameUsecase;
   deleteGame: DeleteGameUsecase;
 
   startGame: StartGameUsecase;
@@ -27,6 +29,7 @@ export interface GameUsecasesContextProviderProps extends ContextProviderProps {
   getGame: GetGameUsecase;
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;
+  changeGame: ChangeGameUsecase;
   deleteGame: DeleteGameUsecase;
 
   startGame: StartGameUsecase;

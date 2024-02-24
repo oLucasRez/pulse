@@ -64,7 +64,7 @@ export const Container = styled.div`
     }
   }
 
-  aside {
+  > aside {
     width: 18rem;
     padding: 1rem;
     padding-top: calc(1rem + ${headerHeight});
@@ -117,6 +117,13 @@ export const Main = styled.main`
   align-items: center;
   justify-content: center;
   gap: 2rem;
+  position: relative;
+
+  > button.settings {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+  }
 
   span.block {
     font-size: xx-large;

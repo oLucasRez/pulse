@@ -5,6 +5,7 @@ import { ContextProviderProps } from '@presentation/types';
 import { GameUsecasesContextProvider } from '@presentation/contexts';
 
 import {
+  makeChangeGameUsecase,
   makeCreateGameUsecase,
   makeDeleteGameUsecase,
   makeGetCurrentGameUsecase,
@@ -22,6 +23,7 @@ export function makeGameUsecasesContextProvider(
   const getGame = makeGetGameUsecase();
   const getGames = makeGetGamesUsecase();
   const createGame = makeCreateGameUsecase();
+  const changeGame = makeChangeGameUsecase();
   const deleteGame = makeDeleteGameUsecase();
 
   const startGame = makeStartGameUsecase();
@@ -33,6 +35,7 @@ export function makeGameUsecasesContextProvider(
       getGame={getGame}
       getGames={getGames}
       createGame={createGame}
+      changeGame={changeGame}
       deleteGame={deleteGame}
       startGame={startGame}
       {...props}

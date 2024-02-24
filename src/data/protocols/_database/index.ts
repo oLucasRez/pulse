@@ -1,5 +1,7 @@
 import { Model } from '@domain/models';
 
+import { DeepPartial } from '@domain/types';
+
 export interface DatabaseProtocol {
   select<M extends Model.JSON>(
     table: string,
@@ -12,7 +14,7 @@ export interface DatabaseProtocol {
   update<M extends Model.JSON>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof Model.JSON>>,
+    data: DeepPartial<Omit<M, keyof Model.JSON>>,
   ): Promise<M>;
   delete(table: string, id: string): Promise<void>;
 }

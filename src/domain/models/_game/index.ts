@@ -6,19 +6,21 @@ export interface GameModel extends Model {
   config: {
     maxPlayers: number;
     withLightspot: boolean;
-    dicesMode: 'equal' | 'growing';
+    dicesMode: GameModel.DicesMode;
   };
   started: boolean;
 }
 
 export namespace GameModel {
+  export type DicesMode = 'equal' | 'growing';
+
   export type JSON = Model.JSON & {
     uid: UserModel['uid'];
     title: string | null;
     config: {
       maxPlayers: number;
       withLightspot: boolean;
-      dicesMode: 'equal' | 'growing';
+      dicesMode: DicesMode;
     };
     started: boolean;
   };

@@ -19,6 +19,7 @@ export const GameUsecasesContextProvider: FC<
     getGame,
     getGames,
     createGame,
+    changeGame,
     deleteGame,
 
     startGame,
@@ -34,6 +35,7 @@ export const GameUsecasesContextProvider: FC<
         getGame,
         getGames,
         createGame,
+        changeGame,
         deleteGame,
 
         startGame,

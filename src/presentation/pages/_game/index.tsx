@@ -9,7 +9,7 @@ import { useNavigate, useStates } from '@presentation/hooks';
 
 import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
 
-import { Map } from './components';
+import { Map, Settings } from './components';
 
 import { useMe, useMyPlayer } from './proxies';
 
@@ -27,6 +27,7 @@ const GamePage: FC = () => {
     currentGame: useGameLoaderData(),
     players: [] as PlayerModel[],
     watchingPlayers: false,
+    settingsIsOpen: false,
     banningPlayer: false,
     startingGame: false,
   });
@@ -38,6 +39,9 @@ const GamePage: FC = () => {
 
   const watchingPlayers = (): any => (s.watchingPlayers = true);
   const watchedPlayers = (): any => (s.watchingPlayers = false);
+
+  const openSettings = (): any => (s.settingsIsOpen = true);
+  const closeSettings = (): any => (s.settingsIsOpen = false);
 
   const banningPlayer = (): any => (s.banningPlayer = true);
   const bannedPlayer = (): any => (s.banningPlayer = false);
@@ -210,6 +214,13 @@ const GamePage: FC = () => {
 
     return (
       <Main>
+        {imHost && s.settingsIsOpen && <Settings onClose={closeSettings} />}
+        {imHost && !s.settingsIsOpen && (
+          <button className='settings' onClick={openSettings}>
+            <span className='emoji'>⚙️</span>
+          </button>
+        )}
+
         {renderInvite()}
 
         {renderPlayers()}

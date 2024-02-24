@@ -7,5 +7,10 @@ export interface ChangeGameUsecase {
 export namespace ChangeGameUsecase {
   export type Payload = {
     title?: string;
+    config?: {
+      maxPlayers?: number;
+      withLightspot?: boolean;
+      dicesMode?: GameModel.DicesMode;
+    };
   };
 }

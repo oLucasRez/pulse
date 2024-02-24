@@ -1,0 +1,1 @@
+export { DatabaseChangeGameUsecase } from './database';
