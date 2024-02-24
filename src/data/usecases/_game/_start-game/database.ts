@@ -2,6 +2,8 @@ import { GameModel } from '@domain/models';
 
 import { ForbiddenError } from '@domain/errors';
 
+import { GameHydrator } from '@domain/hydration';
+
 import {
   CreateCentralPulseUsecase,
   CreateDiceUsecase,
@@ -27,7 +29,7 @@ export class DatabaseStartGameUsecase implements StartGameUsecase {
   }
 
   public async execute(): Promise<GameModel> {
-    let game = await this.getCurrentGame.execute();
+    const game = await this.getCurrentGame.execute();
     if (!game) throw new ForbiddenError({ metadata: { tried: 'start game' } });
 
     await this.createCentralPulse.execute();
@@ -42,11 +44,11 @@ export class DatabaseStartGameUsecase implements StartGameUsecase {
 
     const table = await this.tableGenerator.getTable();
 
-    game = await this.database.update<GameModel>(table, game.id, {
+    const json = await this.database.update<GameModel.JSON>(table, game.id, {
       started: true,
     });
 
-    return game;
+    return GameHydrator.hydrate(json);
   }
 }
 

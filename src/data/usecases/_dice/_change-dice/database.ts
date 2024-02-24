@@ -7,6 +7,8 @@ import {
   OutOfBoundError,
 } from '@domain/errors';
 
+import { DiceHydrator } from '@domain/hydration';
+
 import {
   ChangeDiceUsecase,
   GetDiceUsecase,
@@ -45,20 +47,24 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
     }
 
     if (isNonNullable(ownerID)) {
-      this.ownerIDShouldBePreviouslyUnset(dice);
+      this.ownerShouldBePreviouslyUnset(dice);
       await this.ownerShouldExists(ownerID);
     }
 
     try {
       const table = await this.tableGenerator.getTable();
 
-      const updatedDice = await this.database.update<DiceModel>(table, id, {
-        value,
-        position,
-        ownerID,
-      });
+      const updatedDice = await this.database.update<DiceModel.JSON>(
+        table,
+        id,
+        {
+          value,
+          position,
+          ownerID,
+        },
+      );
 
-      return updatedDice;
+      return DiceHydrator.hydrate(updatedDice);
     } catch {
       throw new FailedError({ metadata: { tried: 'change data of dice' } });
     }
@@ -83,8 +89,8 @@ export class DatabaseChangeDiceUsecase implements ChangeDiceUsecase {
       throw new NotIntegerError({ metadata: { prop: 'value', value } });
   }
 
-  private ownerIDShouldBePreviouslyUnset(dice: DiceModel): void {
-    if (dice.ownerID)
+  private ownerShouldBePreviouslyUnset(dice: DiceModel): void {
+    if (dice.owner)
       throw new ForbiddenError({ metadata: { tried: 'change dice owner' } });
   }
 

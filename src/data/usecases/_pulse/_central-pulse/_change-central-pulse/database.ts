@@ -2,6 +2,8 @@ import { CentralPulseModel } from '@domain/models';
 
 import { FailedError, OutOfBoundError } from '@domain/errors';
 
+import { CentralPulseHydrator } from '@domain/hydration';
+
 import {
   ChangeCentralPulseUsecase,
   GetCentralPulseUsecase,
@@ -27,22 +29,20 @@ export class DatabaseChangeCentralPulseUsecase
   ): Promise<CentralPulseModel> {
     const { amount } = payload;
 
-    let centralPulse = await this.getCentralPulse.execute();
+    const centralPulse = await this.getCentralPulse.execute();
 
     this.amountShouldBeGreaterOrEqual(amount, centralPulse);
 
     try {
       const table = await this.tableGenerator.getTable();
 
-      centralPulse = await this.database.update<CentralPulseModel>(
+      const json = await this.database.update<CentralPulseModel.JSON>(
         table,
         centralPulse.id,
-        {
-          amount,
-        },
+        { amount },
       );
 
-      return centralPulse;
+      return CentralPulseHydrator.hydrate(json);
     } catch {
       throw new FailedError({
         metadata: { tried: 'change data of central-pulse' },

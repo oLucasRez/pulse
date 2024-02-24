@@ -2,6 +2,8 @@ import { CentralFactModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { CentralFactHydrator } from '@domain/hydration';
+
 import {
   ChangeCentralFactUsecase,
   GetCentralFactUsecase,
@@ -27,12 +29,12 @@ export class DatabaseChangeCentralFactUsecase
   ): Promise<CentralFactModel> {
     const { description } = payload;
 
-    let centralFact = await this.getCentralFact.execute();
+    const centralFact = await this.getCentralFact.execute();
 
     try {
       const table = await this.tableGenerator.getTable();
 
-      centralFact = await this.database.update<CentralFactModel>(
+      const json = await this.database.update<CentralFactModel.JSON>(
         table,
         centralFact.id,
         {
@@ -40,7 +42,7 @@ export class DatabaseChangeCentralFactUsecase
         },
       );
 
-      return centralFact;
+      return CentralFactHydrator.hydrate(json);
     } catch {
       throw new FailedError({
         metadata: { tried: 'change data of central-fact' },

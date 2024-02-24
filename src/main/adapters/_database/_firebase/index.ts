@@ -29,7 +29,7 @@ function asyncletonKey(table: string): string {
 }
 
 export class FirebaseDatabase implements DatabaseProtocol {
-  public async select<M extends Model>(
+  public async select<M extends Model.JSON>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -56,7 +56,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
     }
   }
 
-  public async insert<M extends Model>(
+  public async insert<M extends Model.JSON>(
     table: string,
     data: Omit<M, keyof Model>,
   ): Promise<M> {
@@ -79,7 +79,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
     }
   }
 
-  public async update<M extends Model>(
+  public async update<M extends Model.JSON>(
     table: string,
     id: string,
     data: Partial<Omit<M, keyof Model>>,

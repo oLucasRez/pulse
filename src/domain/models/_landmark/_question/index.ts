@@ -5,10 +5,21 @@ import { Vector } from '@domain/utils';
 import { LandmarkModel, SubjectModel } from '..';
 
 export interface QuestionModel extends LandmarkModel {
-  position: Vector.JSON;
+  position: Vector;
   description: string;
-  subjectIDs: SubjectModel['id'][];
-  authorID: PlayerModel['id'];
-  answerIDs: AnswerModel['id'][];
-  factID: AnswerModel['id'] | null;
+  subjects: SubjectModel[];
+  author: PlayerModel;
+  answers: AnswerModel[];
+  fact: AnswerModel | null;
+}
+
+export namespace QuestionModel {
+  export type JSON = LandmarkModel.JSON & {
+    position: Vector.JSON;
+    description: string;
+    subjectIDs: SubjectModel['id'][];
+    authorID: PlayerModel['id'];
+    answerIDs: AnswerModel['id'][];
+    factID: AnswerModel['id'] | null;
+  };
 }

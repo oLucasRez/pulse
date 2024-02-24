@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import { GetPlayersUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,9 +21,9 @@ export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const players = await this.database.select<PlayerModel>(table);
+      const players = await this.database.select<PlayerModel.JSON>(table);
 
-      return players;
+      return players.map(PlayerHydrator.hydrate);
     } catch {
       throw new FailedError({ metadata: { tried: 'get players' } });
     }

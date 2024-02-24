@@ -4,6 +4,8 @@ import { UserModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { SignInAnonymouslyUsecase } from '@domain/usecases';
 
 import {
@@ -28,13 +30,13 @@ export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
 
     const table = await this.tableGenerator.getTable();
 
-    let [user] = await this.database.select<UserModel>(
+    let [user] = await this.database.select<UserModel.JSON>(
       table,
       (user) => user.uid === uid,
     );
 
     if (!user) {
-      user = await this.database.insert<UserModel>(table, {
+      user = await this.database.insert<UserModel.JSON>(table, {
         uid,
         name: faker.person.fullName(),
         currentGameID: null,
@@ -49,7 +51,7 @@ export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    return user;
+    return UserHydrator.hydrate(user);
   }
 }
 

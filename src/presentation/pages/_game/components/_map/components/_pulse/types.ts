@@ -1,3 +1,3 @@
-import { PulseModel } from '@domain/models';
+import { LandmarkModel, PulseModel } from '@domain/models';
 
-export type PulseProps = PulseModel;
+export type PulseProps = PulseModel<LandmarkModel>;

@@ -2,6 +2,8 @@ import { CentralPulseModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { CentralPulseHydrator } from '@domain/hydration';
+
 import { GetCentralPulseUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,13 +21,11 @@ export class DatabaseGetCentralPulseUsecase implements GetCentralPulseUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const [centralPulse] = await this.database.select<CentralPulseModel>(
-        table,
-      );
+      const [json] = await this.database.select<CentralPulseModel.JSON>(table);
 
-      if (!centralPulse) throw 'error';
+      if (!json) throw 'error';
 
-      return centralPulse;
+      return CentralPulseHydrator.hydrate(json);
     } catch {
       throw new NotFoundError({
         metadata: { entity: 'CentralPulse' },

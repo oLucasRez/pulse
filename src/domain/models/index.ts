@@ -1,7 +1,15 @@
 export interface Model {
   id: string;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export namespace Model {
+  export type JSON = {
+    id: string;
+    createdAt: number;
+    updatedAt: number;
+  };
 }
 
 export * from './_answer';

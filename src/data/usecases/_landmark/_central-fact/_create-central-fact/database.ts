@@ -2,6 +2,8 @@ import { CentralFactModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { CentralFactHydrator } from '@domain/hydration';
+
 import { CreateCentralFactUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -21,12 +23,15 @@ export class DatabaseCreateCentralFactUsecase
     try {
       const table = await this.tableGenerator.getTable();
 
-      const centralFact = await this.database.insert<CentralFactModel>(table, {
-        position: { x: 0, y: 0 },
-        description: '',
-      });
+      const centralFact = await this.database.insert<CentralFactModel.JSON>(
+        table,
+        {
+          position: { x: 0, y: 0 },
+          description: '',
+        },
+      );
 
-      return centralFact;
+      return CentralFactHydrator.hydrate(centralFact);
     } catch (e) {
       throw new FailedError({ metadata: { tried: 'create central-fact' } });
     }

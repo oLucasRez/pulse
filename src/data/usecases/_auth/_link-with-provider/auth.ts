@@ -2,6 +2,8 @@ import { UserModel } from '@domain/models';
 
 import { AlreadyExistsError } from '@domain/errors';
 
+import { UserHydrator } from '@domain/hydration';
+
 import {
   ChangeMeUsecase,
   LinkWithProviderUsecase,
@@ -52,7 +54,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
 
     const table = await this.tableGenerator.getTable();
 
-    let [user] = await this.database.select<UserModel>(
+    let [user] = await this.database.select<UserModel.JSON>(
       table,
       (user) => user.uid === uid,
     );
@@ -62,7 +64,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
         if (name) await this.changeMe.execute({ name });
       });
     } else {
-      user = await this.database.insert<UserModel>(table, {
+      user = await this.database.insert<UserModel.JSON>(table, {
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -72,7 +74,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       });
     }
 
-    return user;
+    return UserHydrator.hydrate(user);
   }
 }
 

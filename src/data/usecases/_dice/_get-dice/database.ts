@@ -2,6 +2,8 @@ import { DiceModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { DiceHydrator } from '@domain/hydration';
+
 import { GetDiceUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,14 +21,14 @@ export class DatabaseGetDiceUsecase implements GetDiceUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const [dice] = await this.database.select<DiceModel>(
+      const [dice] = await this.database.select<DiceModel.JSON>(
         table,
         (dice) => dice.id === id,
       );
 
       if (!dice) throw 'error';
 
-      return dice;
+      return DiceHydrator.hydrate(dice);
     } catch {
       throw new NotFoundError({
         metadata: { entity: 'Dice', prop: 'id', value: id },

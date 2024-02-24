@@ -4,6 +4,8 @@ import { PlayerModel, UserModel } from '@domain/models';
 
 import { FailedError, ForbiddenError, OutOfBoundError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import {
   CreatePlayerUsecase,
   GetCurrentGameUsecase,
@@ -46,9 +48,9 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
 
     const table = await this.tableGenerator.getTable();
 
-    let player: PlayerModel;
+    let player: PlayerModel.JSON;
     try {
-      player = await this.database.insert<PlayerModel>(table, {
+      player = await this.database.insert<PlayerModel.JSON>(table, {
         name,
         color,
         avatar,
@@ -60,7 +62,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
       throw new FailedError({ metadata: { tried: 'create player' } });
     }
 
-    return player;
+    return PlayerHydrator.hydrate(player);
   }
 
   private iShouldntHaveCreatedYet(
@@ -69,7 +71,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   ): void {
     if (!me) return;
 
-    if (players.some(({ uid }) => uid === me.uid))
+    if (players.some(({ user }) => user.uid === me.uid))
       throw new ForbiddenError({
         metadata: {
           prop: 'uid',

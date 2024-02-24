@@ -2,6 +2,8 @@ import { UserModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
 import {
@@ -34,7 +36,7 @@ export class AuthSignInWithCredentialsUsecase
     });
 
     const table = await this.tableGenerator.getTable();
-    const [user] = await this.database.select<UserModel>(
+    const [user] = await this.database.select<UserModel.JSON>(
       table,
       (user) => user.uid === uid,
     );
@@ -44,7 +46,7 @@ export class AuthSignInWithCredentialsUsecase
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    return user;
+    return UserHydrator.hydrate(user);
   }
 }
 

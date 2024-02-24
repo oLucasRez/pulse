@@ -1,5 +1,7 @@
 import { UserModel } from '@domain/models';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { GetMeUsecase } from '@domain/usecases';
 
 import {
@@ -24,7 +26,7 @@ export class AuthGetMeUsecase implements GetMeUsecase {
       await this.sessionGetter.getSession();
 
     const table = await this.tableGenerator.getTable();
-    const [user] = await this.database.select<UserModel>(
+    const [user] = await this.database.select<UserModel.JSON>(
       table,
       (user) => user.uid === uid,
     );
@@ -34,7 +36,7 @@ export class AuthGetMeUsecase implements GetMeUsecase {
       user.providers = providers;
     }
 
-    return user || null;
+    return user ? UserHydrator.hydrate(user) : null;
   }
 }
 

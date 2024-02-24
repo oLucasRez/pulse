@@ -2,6 +2,8 @@ import { GameModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { GameHydrator } from '@domain/hydration';
+
 import { GetGameUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,14 +21,14 @@ export class DatabaseGetGameUsecase implements GetGameUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const [game] = await this.database.select<GameModel>(
+      const [game] = await this.database.select<GameModel.JSON>(
         table,
         (game) => game.id === id,
       );
 
       if (!game) throw 'error';
 
-      return game;
+      return GameHydrator.hydrate(game);
     } catch {
       throw new NotFoundError({
         metadata: { entity: 'Game', prop: 'id', value: id },

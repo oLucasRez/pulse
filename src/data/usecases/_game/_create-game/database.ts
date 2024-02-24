@@ -7,6 +7,8 @@ import {
   OutOfBoundError,
 } from '@domain/errors';
 
+import { GameHydrator } from '@domain/hydration';
+
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -35,14 +37,14 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const game = await this.database.insert<GameModel>(table, {
+      const game = await this.database.insert<GameModel.JSON>(table, {
         uid: me.uid,
         title,
         config,
         started: false,
       });
 
-      return game;
+      return GameHydrator.hydrate(game);
     } catch {
       throw new FailedError({ metadata: { tried: 'create game' } });
     }

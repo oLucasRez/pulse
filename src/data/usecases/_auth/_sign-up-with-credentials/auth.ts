@@ -1,5 +1,7 @@
 import { UserModel } from '@domain/models';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { SignUpWithCredentialsUsecase } from '@domain/usecases';
 
 import {
@@ -32,7 +34,7 @@ export class AuthSignUpWithCredentialsUsecase
     });
 
     const table = await this.tableGenerator.getTable();
-    const user = await this.database.insert<UserModel>(table, {
+    const user = await this.database.insert<UserModel.JSON>(table, {
       uid,
       name,
       currentGameID: null,
@@ -41,7 +43,7 @@ export class AuthSignUpWithCredentialsUsecase
       providers: [],
     });
 
-    return user;
+    return UserHydrator.hydrate(user);
   }
 }
 

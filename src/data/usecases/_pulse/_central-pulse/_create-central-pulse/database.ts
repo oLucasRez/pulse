@@ -2,6 +2,8 @@ import { CentralPulseModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { CentralPulseHydrator } from '@domain/hydration';
+
 import {
   CreateCentralFactUsecase,
   CreateCentralPulseUsecase,
@@ -28,17 +30,14 @@ export class DatabaseCreateCentralPulseUsecase
 
       const table = await this.tableGenerator.getTable();
 
-      const centralPulse = await this.database.insert<CentralPulseModel>(
-        table,
-        {
-          origin: { x: 0, y: 0 },
-          gap: 1,
-          amount: 0,
-          landmarkID: centralFact.id,
-        },
-      );
+      const json = await this.database.insert<CentralPulseModel.JSON>(table, {
+        origin: { x: 0, y: 0 },
+        gap: 1,
+        amount: 0,
+        landmarkID: centralFact.id,
+      });
 
-      return centralPulse;
+      return CentralPulseHydrator.hydrate(json);
     } catch {
       throw new FailedError({ metadata: { tried: 'create central-pulse' } });
     }

@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import {
   BanPlayerUsecase,
   GetCurrentGameUsecase,
@@ -30,15 +32,17 @@ export class DatabaseBanPlayerUsecase implements BanPlayerUsecase {
     const currentGame = await this.getCurrentGame.execute();
     if (!currentGame) return;
 
-    if (me.uid !== currentGame.uid)
+    if (me.uid !== currentGame.host.uid)
       throw new ForbiddenError({ metadata: { tried: 'ban player' } });
 
     try {
       const table = await this.tableGenerator.getTable();
 
-      await this.database.update<PlayerModel>(table, id, {
+      const player = await this.database.update<PlayerModel.JSON>(table, id, {
         banned: true,
       });
+
+      PlayerHydrator.hydrate(player);
     } catch {
       throw new FailedError({ metadata: { tried: 'ban player' } });
     }

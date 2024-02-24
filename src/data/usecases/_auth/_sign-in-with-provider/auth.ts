@@ -1,5 +1,7 @@
 import { UserModel } from '@domain/models';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
 import { Provider } from '@domain/types';
@@ -32,7 +34,7 @@ export class AuthSignInWithProviderUsecase
 
     const table = await this.tableGenerator.getTable();
 
-    let [user] = await this.database.select<UserModel>(
+    let [user] = await this.database.select<UserModel.JSON>(
       table,
       (user) => user.uid === uid,
     );
@@ -42,7 +44,7 @@ export class AuthSignInWithProviderUsecase
         if (name && name !== user.name) await this.changeMe.execute({ name });
       });
     } else {
-      user = await this.database.insert<UserModel>(table, {
+      user = await this.database.insert<UserModel.JSON>(table, {
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -52,7 +54,7 @@ export class AuthSignInWithProviderUsecase
       });
     }
 
-    return user;
+    return UserHydrator.hydrate(user);
   }
 }
 

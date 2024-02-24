@@ -2,6 +2,8 @@ import { DiceModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { DiceHydrator } from '@domain/hydration';
+
 import { GetDicesUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,9 +21,9 @@ export class DatabaseGetDicesUsecase implements GetDicesUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const dices = await this.database.select<DiceModel>(table);
+      const dices = await this.database.select<DiceModel.JSON>(table);
 
-      return dices;
+      return dices.map(DiceHydrator.hydrate);
     } catch {
       throw new FailedError({ metadata: { tried: 'get dices' } });
     }

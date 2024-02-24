@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import { GetPlayerUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -19,14 +21,14 @@ export class DatabaseGetPlayerUsecase implements GetPlayerUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const [player] = await this.database.select<PlayerModel>(
+      const [player] = await this.database.select<PlayerModel.JSON>(
         table,
         (player) => player.id === id,
       );
 
       if (!player) throw 'error';
 
-      return player;
+      return PlayerHydrator.hydrate(player);
     } catch {
       throw new NotFoundError({
         metadata: { entity: 'Player', prop: 'id', value: id },

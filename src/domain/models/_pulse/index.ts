@@ -2,12 +2,20 @@ import { Vector } from '@domain/utils';
 
 import { LandmarkModel, Model } from '..';
 
-export interface PulseModel<L extends LandmarkModel = LandmarkModel>
-  extends Model {
-  origin: Vector.JSON;
+export interface PulseModel<L extends LandmarkModel> extends Model {
+  origin: Vector;
   gap: number;
   amount: number;
-  landmarkID: L['id'];
+  landmark: L;
+}
+
+export namespace PulseModel {
+  export type JSON = Model.JSON & {
+    origin: Vector.JSON;
+    gap: number;
+    amount: number;
+    landmarkID: LandmarkModel['id'];
+  };
 }
 
 export * from './_central-pulse';

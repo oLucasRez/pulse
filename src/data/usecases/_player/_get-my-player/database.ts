@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import { GetMeUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -24,12 +26,12 @@ export class DatabaseGetMyPlayerUsecase implements GetMyPlayerUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const [player] = await this.database.select<PlayerModel>(
+      const [player] = await this.database.select<PlayerModel.JSON>(
         table,
         (player) => player.uid === me.uid,
       );
 
-      return player || null;
+      return player ? PlayerHydrator.hydrate(player) : null;
     } catch {
       throw new FailedError({ metadata: { tried: 'get my player' } });
     }

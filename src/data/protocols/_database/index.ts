@@ -1,18 +1,18 @@
 import { Model } from '@domain/models';
 
 export interface DatabaseProtocol {
-  select<M extends Model>(
+  select<M extends Model.JSON>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]>;
-  insert<M extends Model>(
+  insert<M extends Model.JSON>(
     table: string,
-    data: Omit<M, keyof Model>,
+    data: Omit<M, keyof Model.JSON>,
   ): Promise<M>;
-  update<M extends Model>(
+  update<M extends Model.JSON>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof Model>>,
+    data: Partial<Omit<M, keyof Model.JSON>>,
   ): Promise<M>;
   delete(table: string, id: string): Promise<void>;
 }

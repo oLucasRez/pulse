@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import { ChangePlayerUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -24,13 +26,13 @@ export class DatabaseChangePlayerUsecase implements ChangePlayerUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const player = await this.database.update<PlayerModel>(table, id, {
+      const player = await this.database.update<PlayerModel.JSON>(table, id, {
         name,
         color,
         avatar,
       });
 
-      return player;
+      return PlayerHydrator.hydrate(player);
     } catch {
       throw new FailedError({ metadata: { tried: 'change data of player' } });
     }

@@ -2,6 +2,8 @@ import { GameModel } from '@domain/models';
 
 import { ForbiddenError } from '@domain/errors';
 
+import { GameHydrator } from '@domain/hydration';
+
 import { GetCurrentGameUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -23,12 +25,12 @@ export class DatabaseGetCurrentGameUsecase implements GetCurrentGameUsecase {
       throw new ForbiddenError({ metadata: { tried: 'get current game' } });
 
     const table = await this.tableGenerator.getTable();
-    const [game] = await this.database.select<GameModel>(
+    const [game] = await this.database.select<GameModel.JSON>(
       table,
-      (value) => value.id === me.currentGameID,
+      (value) => value.id === me.currentGame?.id,
     );
 
-    return game || null;
+    return game ? GameHydrator.hydrate(game) : null;
   }
 }
 

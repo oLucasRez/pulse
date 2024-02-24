@@ -2,6 +2,8 @@ import { DiceModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
+import { DiceHydrator } from '@domain/hydration';
+
 import { CreateDiceUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -27,14 +29,14 @@ export class DatabaseCreateDiceUsecase implements CreateDiceUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const dice = await this.database.insert<DiceModel>(table, {
+      const dice = await this.database.insert<DiceModel.JSON>(table, {
         sides,
         value: null,
         position: null,
         ownerID: null,
       });
 
-      return dice;
+      return DiceHydrator.hydrate(dice);
     } catch {
       throw new FailedError({ metadata: { tried: 'create dice' } });
     }

@@ -2,6 +2,8 @@ import { GameModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
+import { GameHydrator } from '@domain/hydration';
+
 import { GetGamesUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -23,12 +25,12 @@ export class DatabaseGetGamesUsecase implements GetGamesUsecase {
 
     try {
       const table = await this.tableGenerator.getTable();
-      const games = await this.database.select<GameModel>(
+      const games = await this.database.select<GameModel.JSON>(
         table,
         (game) => game.uid === me.uid,
       );
 
-      return games;
+      return games.map(GameHydrator.hydrate);
     } catch {
       throw new FailedError({ metadata: { tried: 'get games' } });
     }

@@ -34,7 +34,7 @@ const GamePage: FC = () => {
   const setCurrentGame = (currentGame: GameModel): any =>
     (s.currentGame = currentGame);
 
-  const imHost = me.uid === s.currentGame.uid;
+  const imHost = me.uid === s.currentGame.host.uid;
 
   const watchingPlayers = (): any => (s.watchingPlayers = true);
   const watchedPlayers = (): any => (s.watchingPlayers = false);

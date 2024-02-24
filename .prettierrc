@@ -13,6 +13,8 @@
     "(.*)enums$",
     "(.*)models$",
     "(.*)errors$",
+    "(.*)collections$",
+    "(.*)hydration$",
     "(.*)usecases$",
     "(.*)types$",
 

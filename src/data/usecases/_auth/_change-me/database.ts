@@ -2,6 +2,8 @@ import { UserModel } from '@domain/models';
 
 import { FailedError, NotFoundError } from '@domain/errors';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { ChangeMeUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
@@ -20,18 +22,18 @@ export class DatabaseChangeMeUsecase implements ChangeMeUsecase {
   public async execute(payload: ChangeMeUsecase.Payload): Promise<UserModel> {
     const { name, currentGameID } = payload;
 
-    let user = await this.getMe.execute();
+    const user = await this.getMe.execute();
     if (!user) throw new NotFoundError({ metadata: { entity: 'User' } });
 
     try {
       const table = await this.tableGenerator.getTable();
 
-      user = await this.database.update<UserModel>(table, user.id, {
+      const json = await this.database.update<UserModel.JSON>(table, user.id, {
         name,
         currentGameID,
       });
 
-      return user;
+      return UserHydrator.hydrate(json);
     } catch {
       throw new FailedError({ metadata: { tried: 'change my data' } });
     }
