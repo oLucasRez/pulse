@@ -6,8 +6,6 @@ import { CreateCentralFactUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
-import { Vector } from '@domain/utils';
-
 export class DatabaseCreateCentralFactUsecase
   implements CreateCentralFactUsecase
 {
@@ -24,7 +22,7 @@ export class DatabaseCreateCentralFactUsecase
       const table = await this.tableGenerator.getTable();
 
       const centralFact = await this.database.insert<CentralFactModel>(table, {
-        position: Vector(0, 0),
+        position: { x: 0, y: 0 },
         description: '',
       });
 

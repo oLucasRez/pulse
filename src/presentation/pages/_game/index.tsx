@@ -1,6 +1,6 @@
 import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
 
-import { PlayerModel } from '@domain/models';
+import { GameModel, PlayerModel } from '@domain/models';
 
 import { WatchPlayersUsecase } from '@domain/usecases';
 
@@ -9,28 +9,52 @@ import { useNavigate, useStates } from '@presentation/hooks';
 
 import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
 
+import { Map } from './components';
+
 import { useMe, useMyPlayer } from './proxies';
 
 import { Container, Main } from './styles';
 import { getClasses, getColor } from '@presentation/styles/mixins';
 
-import { logError } from '@presentation/utils';
+import { alertError, logError } from '@presentation/utils';
 
 import { useGameLoaderData } from './loader';
 
 const GamePage: FC = () => {
   const me = useMe();
-  const currentGame = useGameLoaderData();
 
   const s = useStates({
+    currentGame: useGameLoaderData(),
     players: [] as PlayerModel[],
     watchingPlayers: false,
+    banningPlayer: false,
+    startingGame: false,
   });
 
-  const imHost = me.uid === currentGame.uid;
+  const setCurrentGame = (currentGame: GameModel): any =>
+    (s.currentGame = currentGame);
+
+  const imHost = me.uid === s.currentGame.uid;
 
   const watchingPlayers = (): any => (s.watchingPlayers = true);
   const watchedPlayers = (): any => (s.watchingPlayers = false);
+
+  const banningPlayer = (): any => (s.banningPlayer = true);
+  const bannedPlayer = (): any => (s.banningPlayer = false);
+
+  const startingGame = (): any => (s.startingGame = true);
+  const startedGame = (): any => (s.startingGame = false);
+
+  const { startGame, getCurrentGame } = useGameUsecases();
+
+  function fetchCurrentGame(): any {
+    getCurrentGame
+      .execute()
+      .then((currentGame) => {
+        if (currentGame) setCurrentGame(currentGame);
+      })
+      .catch(logError);
+  }
 
   const { watchPlayers, banPlayer } = usePlayerUsecases();
   useEffect(() => {
@@ -72,13 +96,19 @@ const GamePage: FC = () => {
   }
 
   function handleBanPlayerButtonClick(playerID: string): any {
-    banPlayer.execute(playerID);
+    banningPlayer();
+
+    banPlayer.execute(playerID).catch(alertError).finally(bannedPlayer);
   }
 
-  const { startGame } = useGameUsecases();
-
   function handleStartButtonClick(): any {
-    startGame.execute();
+    startingGame();
+
+    startGame
+      .execute()
+      .then(fetchCurrentGame)
+      .catch(alertError)
+      .finally(startedGame);
   }
 
   const notBannedPlayers = s.players.filter((player) => !player.banned);
@@ -88,7 +118,7 @@ const GamePage: FC = () => {
       return <p className='invite'>Wait until the host starts the game!</p>;
 
     const reachedMaxPlayers =
-      currentGame.config.maxPlayers === notBannedPlayers.length;
+      s.currentGame.config.maxPlayers === notBannedPlayers.length;
 
     if (reachedMaxPlayers) return;
 
@@ -140,7 +170,11 @@ const GamePage: FC = () => {
                   <button
                     onClick={(): any => handleBanPlayerButtonClick(player.id)}
                   >
-                    🚫
+                    {s.banningPlayer ? (
+                      <span className='emoji loading'>⏳</span>
+                    ) : (
+                      '🚫'
+                    )}
                   </button>
                 )}
               </div>
@@ -167,6 +201,13 @@ const GamePage: FC = () => {
         </Main>
       );
 
+    if (s.currentGame.started)
+      return (
+        <Main>
+          <Map />
+        </Main>
+      );
+
     return (
       <Main>
         {renderInvite()}
@@ -174,8 +215,16 @@ const GamePage: FC = () => {
         {renderPlayers()}
 
         {imHost && (
-          <button className='start' onClick={handleStartButtonClick}>
-            Start
+          <button
+            className='start'
+            disabled={s.startingGame}
+            onClick={handleStartButtonClick}
+          >
+            {s.startingGame ? (
+              <span className='emoji loading'>⏳</span>
+            ) : (
+              'Start'
+            )}
           </button>
         )}
       </Main>
@@ -205,7 +254,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{currentGame.title}</b>
+            <b>{s.currentGame.title}</b>
           </h2>
 
           {renderMyHeader()}

@@ -108,7 +108,9 @@ export const Container = styled.div`
 `;
 
 export const Main = styled.main`
-  padding-top: ${headerHeight};
+  width: 100vw;
+  height: calc(100vh - ${headerHeight});
+  margin-top: ${headerHeight};
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -156,6 +158,10 @@ export const Main = styled.main`
         display: flex;
         gap: 0.25rem;
         min-height: 2rem;
+
+        span.loading {
+          font-size: inherit;
+        }
       }
 
       .avatar {

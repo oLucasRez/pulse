@@ -1,11 +1,11 @@
 import { AnswerModel, PlayerModel } from '@domain/models';
 
-import { vector } from '@domain/types';
+import { Vector } from '@domain/utils';
 
 import { LandmarkModel, SubjectModel } from '..';
 
 export interface QuestionModel extends LandmarkModel {
-  position: vector;
+  position: Vector.JSON;
   description: string;
   subjectIDs: SubjectModel['id'][];
   authorID: PlayerModel['id'];

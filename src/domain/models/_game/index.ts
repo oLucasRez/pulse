@@ -8,4 +8,5 @@ export interface GameModel extends Model {
     withLightspot: boolean;
     dicesMode: 'equal' | 'growing';
   };
+  started: boolean;
 }

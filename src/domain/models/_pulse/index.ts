@@ -1,10 +1,10 @@
-import { vector } from '@domain/types';
+import { Vector } from '@domain/utils';
 
 import { LandmarkModel, Model } from '..';
 
 export interface PulseModel<L extends LandmarkModel = LandmarkModel>
   extends Model {
-  origin: vector;
+  origin: Vector.JSON;
   gap: number;
   amount: number;
   landmarkID: L['id'];

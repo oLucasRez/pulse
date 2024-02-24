@@ -39,6 +39,7 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
         uid: me.uid,
         title,
         config,
+        started: false,
       });
 
       return game;

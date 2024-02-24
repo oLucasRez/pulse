@@ -9,8 +9,6 @@ import {
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
-import { Vector } from '@domain/utils';
-
 export class DatabaseCreateCentralPulseUsecase
   implements CreateCentralPulseUsecase
 {
@@ -33,7 +31,7 @@ export class DatabaseCreateCentralPulseUsecase
       const centralPulse = await this.database.insert<CentralPulseModel>(
         table,
         {
-          origin: Vector(0, 0),
+          origin: { x: 0, y: 0 },
           gap: 1,
           amount: 0,
           landmarkID: centralFact.id,

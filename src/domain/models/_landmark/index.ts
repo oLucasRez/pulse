@@ -1,9 +1,9 @@
-import { vector } from '@domain/types';
+import { Vector } from '@domain/utils';
 
 import { Model } from '..';
 
 export interface LandmarkModel extends Model {
-  position: vector | null;
+  position: Vector.JSON | null;
 }
 
 export * from './_central-fact';

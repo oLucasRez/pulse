@@ -23,7 +23,6 @@ export class DatabaseGetGamesUsecase implements GetGamesUsecase {
 
     try {
       const table = await this.tableGenerator.getTable();
-
       const games = await this.database.select<GameModel>(
         table,
         (game) => game.uid === me.uid,

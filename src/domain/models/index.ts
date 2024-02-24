@@ -1,7 +1,7 @@
 export interface Model {
   id: string;
-  updatedAt: number;
   createdAt: number;
+  updatedAt: number;
 }
 
 export * from './_answer';
