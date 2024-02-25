@@ -18,7 +18,7 @@ export class ModelCollection {
     return ModelCollection.getInstance().collection;
   }
 
-  public static get(id: string): Model | undefined {
+  public static get(id: string): Model {
     return ModelCollection.getInstance().collection[id];
   }
 }

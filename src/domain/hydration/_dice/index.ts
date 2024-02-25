@@ -1,4 +1,4 @@
-import { DiceModel } from '@domain/models';
+import { DiceModel, Model } from '@domain/models';
 
 import { DiceCollection, PlayerCollection } from '@domain/collections';
 
@@ -8,14 +8,15 @@ import { ModelHydrator } from '..';
 
 export class DiceHydrator {
   public static hydrate(json: DiceModel.JSON): DiceModel {
-    const playerCollection = PlayerCollection.getCollection();
-
-    const dice: DiceModel = Object.assign(ModelHydrator.hydrate(json), {
-      sides: json.sides,
-      value: json.value,
-      position: json.position ? Vector.fromJSON(json.position) : null,
-      owner: json.ownerID ? playerCollection[json.ownerID] : null,
-    });
+    const dice: DiceModel = Object.assign<Model, Omit<DiceModel, keyof Model>>(
+      ModelHydrator.hydrate(json),
+      {
+        sides: json.sides,
+        value: json.value,
+        position: json.position ? Vector.fromJSON(json.position) : null,
+        owner: json.ownerID ? PlayerCollection.get(json.ownerID) : null,
+      },
+    );
 
     const collection = DiceCollection.getCollection();
 

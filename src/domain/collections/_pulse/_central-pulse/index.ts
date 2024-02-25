@@ -18,7 +18,7 @@ export class CentralPulseCollection {
     return CentralPulseCollection.getInstance().collection;
   }
 
-  public static get(id: string): CentralPulseModel | undefined {
+  public static get(id: string): CentralPulseModel {
     return CentralPulseCollection.getInstance().collection[id];
   }
 }

@@ -18,7 +18,7 @@ export class DiceCollection {
     return DiceCollection.getInstance().collection;
   }
 
-  public static get(id: string): DiceModel | undefined {
+  public static get(id: string): DiceModel {
     return DiceCollection.getInstance().collection[id];
   }
 }

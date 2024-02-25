@@ -9,10 +9,16 @@ export interface GameModel extends Model {
     dicesMode: GameModel.DicesMode;
   };
   started: boolean;
+  state: GameModel.State;
 }
 
 export namespace GameModel {
   export type DicesMode = 'equal' | 'growing';
+
+  export type State =
+    | 'initial:state'
+    | 'creating:subjects'
+    | 'creating:centralFact';
 
   export type JSON = Model.JSON & {
     uid: UserModel['uid'];
@@ -23,5 +29,6 @@ export namespace GameModel {
       dicesMode: DicesMode;
     };
     started: boolean;
+    state: GameModel.State;
   };
 }

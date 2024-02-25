@@ -2,6 +2,8 @@ import { UserModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { UserHydrator } from '@domain/hydration';
+
 import { GetMeUsecase, WatchMeUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
@@ -25,10 +27,17 @@ export class SocketWatchMeUsecase implements WatchMeUsecase {
 
       const me = await this.getMe.execute();
 
-      const unsubscribe = this.socket.watch<UserModel[]>(table, (users) => {
-        if (!me) callback(null);
-        else callback(users.find((user) => user.uid === me.uid) ?? null);
-      });
+      const unsubscribe = this.socket.watch<UserModel.JSON[]>(
+        table,
+        (users) => {
+          if (!me) callback(null);
+          else {
+            const user = users.find((user) => user.uid === me.uid);
+
+            callback(user ? UserHydrator.hydrate(user) : null);
+          }
+        },
+      );
 
       return unsubscribe;
     } catch {

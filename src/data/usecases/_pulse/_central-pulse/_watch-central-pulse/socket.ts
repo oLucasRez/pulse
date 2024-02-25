@@ -2,6 +2,8 @@ import { CentralPulseModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { CentralPulseHydrator } from '@domain/hydration';
+
 import { WatchCentralPulseUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
@@ -23,9 +25,10 @@ export class SocketWatchCentralPulseUsecase
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<CentralPulseModel[]>(
+      const unsubscribe = this.socket.watch<CentralPulseModel.JSON[]>(
         table,
-        ([snapshot]) => snapshot && callback(snapshot),
+        ([centralPulse]) =>
+          centralPulse && callback(CentralPulseHydrator.hydrate(centralPulse)),
       );
 
       return unsubscribe;

@@ -18,7 +18,7 @@ export class LandmarkCollection {
     return LandmarkCollection.getInstance().collection;
   }
 
-  public static get(id: string): LandmarkModel | undefined {
+  public static get(id: string): LandmarkModel {
     return LandmarkCollection.getInstance().collection[id];
   }
 }

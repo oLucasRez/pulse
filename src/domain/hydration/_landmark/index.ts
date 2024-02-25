@@ -1,4 +1,4 @@
-import { LandmarkModel } from '@domain/models';
+import { LandmarkModel, Model } from '@domain/models';
 
 import { LandmarkCollection } from '@domain/collections';
 
@@ -8,7 +8,10 @@ import { ModelHydrator } from '..';
 
 export class LandmarkHydrator {
   public static hydrate(json: LandmarkModel.JSON): LandmarkModel {
-    const landmark: LandmarkModel = Object.assign(ModelHydrator.hydrate(json), {
+    const landmark: LandmarkModel = Object.assign<
+      Model,
+      Omit<LandmarkModel, keyof Model>
+    >(ModelHydrator.hydrate(json), {
       position: json.position ? Vector.fromJSON(json.position) : null,
     });
 
@@ -22,3 +25,4 @@ export class LandmarkHydrator {
 }
 
 export * from './_central-fact';
+export * from './_subject';

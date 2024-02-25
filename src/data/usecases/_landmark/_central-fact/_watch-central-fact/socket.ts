@@ -2,6 +2,8 @@ import { CentralFactModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { CentralFactHydrator } from '@domain/hydration';
+
 import { WatchCentralFactUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
@@ -21,9 +23,10 @@ export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<CentralFactModel[]>(
+      const unsubscribe = this.socket.watch<CentralFactModel.JSON[]>(
         table,
-        ([snapshot]) => snapshot && callback(snapshot),
+        ([centralFact]) =>
+          centralFact && callback(CentralFactHydrator.hydrate(centralFact)),
       );
 
       return unsubscribe;

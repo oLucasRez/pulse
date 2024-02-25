@@ -1,4 +1,8 @@
+import { DiceModel } from '@domain/models';
+
 import { FailedError } from '@domain/errors';
+
+import { DiceHydrator } from '@domain/hydration';
 
 import { WatchDicesUsecase } from '@domain/usecases';
 
@@ -19,7 +23,9 @@ export class SocketWatchDicesUsecase implements WatchDicesUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch(table, callback);
+      const unsubscribe = this.socket.watch<DiceModel.JSON[]>(table, (dices) =>
+        callback(dices.map(DiceHydrator.hydrate)),
+      );
 
       return unsubscribe;
     } catch {

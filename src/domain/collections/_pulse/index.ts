@@ -18,9 +18,10 @@ export class PulseCollection {
     return PulseCollection.getInstance().collection;
   }
 
-  public static get(id: string): PulseModel<LandmarkModel> | undefined {
+  public static get(id: string): PulseModel<LandmarkModel> {
     return PulseCollection.getInstance().collection[id];
   }
 }
 
 export * from './_central-pulse';
+export * from './_subject-pulse';

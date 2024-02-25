@@ -1,4 +1,4 @@
-import { sec } from '@presentation/constants';
+import { ms } from '@presentation/constants';
 import {
   createContext,
   FC,
@@ -44,7 +44,7 @@ export const Map: FC = () => {
     s.height = div?.clientHeight ?? 0;
   }
 
-  useInterval(updateSize, 1 * sec, [div], { firstShot: true });
+  useInterval(updateSize, 300 * ms, [div], { firstShot: true });
 
   const mapSpace = useMemo(
     () =>

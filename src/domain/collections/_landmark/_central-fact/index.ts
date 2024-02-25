@@ -18,7 +18,7 @@ export class CentralFactCollection {
     return CentralFactCollection.getInstance().collection;
   }
 
-  public static get(id: string): CentralFactModel | undefined {
+  public static get(id: string): CentralFactModel {
     return CentralFactCollection.getInstance().collection[id];
   }
 }

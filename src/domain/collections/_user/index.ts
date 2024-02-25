@@ -18,7 +18,7 @@ export class UserCollection {
     return UserCollection.getInstance().collection;
   }
 
-  public static get(uid: string): UserModel | undefined {
+  public static get(uid: string): UserModel {
     return UserCollection.getInstance().collection[uid];
   }
 }

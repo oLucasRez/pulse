@@ -1,4 +1,4 @@
-import { GameModel } from '@domain/models';
+import { GameModel, Model } from '@domain/models';
 
 import { GameCollection, UserCollection } from '@domain/collections';
 
@@ -6,18 +6,20 @@ import { ModelHydrator } from '..';
 
 export class GameHydrator {
   public static hydrate(json: GameModel.JSON): GameModel {
-    const userCollection = UserCollection.getCollection();
-
-    const game: GameModel = Object.assign(ModelHydrator.hydrate(json), {
-      host: userCollection[json.uid],
-      title: json.title,
-      config: {
-        maxPlayers: json.config.maxPlayers,
-        withLightspot: json.config.withLightspot,
-        dicesMode: json.config.dicesMode,
+    const game: GameModel = Object.assign<Model, Omit<GameModel, keyof Model>>(
+      ModelHydrator.hydrate(json),
+      {
+        host: UserCollection.get(json.uid),
+        title: json.title,
+        config: {
+          maxPlayers: json.config.maxPlayers,
+          withLightspot: json.config.withLightspot,
+          dicesMode: json.config.dicesMode,
+        },
+        started: json.started,
+        state: json.state,
       },
-      started: json.started,
-    });
+    );
 
     const collection = GameCollection.getCollection();
 

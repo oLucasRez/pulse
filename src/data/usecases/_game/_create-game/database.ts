@@ -42,6 +42,7 @@ export class DatabaseCreateGameUsecase implements CreateGameUsecase {
         title,
         config,
         started: false,
+        state: 'initial:state',
       });
 
       return GameHydrator.hydrate(game);

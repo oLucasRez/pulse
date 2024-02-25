@@ -2,6 +2,8 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
+import { PlayerHydrator } from '@domain/hydration';
+
 import { WatchPlayersUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
@@ -21,7 +23,10 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<PlayerModel[]>(table, callback);
+      const unsubscribe = this.socket.watch<PlayerModel.JSON[]>(
+        table,
+        (players) => callback(players.map(PlayerHydrator.hydrate)),
+      );
 
       return unsubscribe;
     } catch {

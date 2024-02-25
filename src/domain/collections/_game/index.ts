@@ -18,7 +18,7 @@ export class GameCollection {
     return GameCollection.getInstance().collection;
   }
 
-  public static get(id: string): GameModel | undefined {
+  public static get(id: string): GameModel {
     return GameCollection.getInstance().collection[id];
   }
 }

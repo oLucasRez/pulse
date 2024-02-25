@@ -18,7 +18,7 @@ export class PlayerCollection {
     return PlayerCollection.getInstance().collection;
   }
 
-  public static get(id: string): PlayerModel | undefined {
+  public static get(id: string): PlayerModel {
     return PlayerCollection.getInstance().collection[id];
   }
 }

@@ -121,7 +121,7 @@ export function useMutatePlayerModal(
     mutatingPlayer();
 
     const promise = s.player
-      ? changePlayer.execute(s.player.id, { name, color, avatar })
+      ? changePlayer.execute({ name, color, avatar })
       : createPlayer.execute({ name, color, avatar });
 
     promise

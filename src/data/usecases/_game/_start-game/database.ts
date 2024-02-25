@@ -46,6 +46,7 @@ export class DatabaseStartGameUsecase implements StartGameUsecase {
 
     const json = await this.database.update<GameModel.JSON>(table, game.id, {
       started: true,
+      state: 'creating:subjects',
     });
 
     return GameHydrator.hydrate(json);

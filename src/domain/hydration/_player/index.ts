@@ -1,4 +1,4 @@
-import { PlayerModel } from '@domain/models';
+import { Model, PlayerModel } from '@domain/models';
 
 import {
   PlayerCollection,
@@ -10,15 +10,15 @@ import { ModelHydrator } from '..';
 
 export class PlayerHydrator {
   public static hydrate(json: PlayerModel.JSON): PlayerModel {
-    const userCollection = UserCollection.getCollection();
-    const subjectCollection = SubjectCollection.getCollection();
-
-    const player: PlayerModel = Object.assign(ModelHydrator.hydrate(json), {
+    const player: PlayerModel = Object.assign<
+      Model,
+      Omit<PlayerModel, keyof Model>
+    >(ModelHydrator.hydrate(json), {
       name: json.name,
       color: json.color,
       avatar: json.avatar,
-      user: userCollection[json.uid],
-      subject: json.subjectID ? subjectCollection[json.subjectID] : null,
+      user: UserCollection.get(json.uid),
+      subject: json.subjectID ? SubjectCollection.get(json.subjectID) : null,
       banned: json.banned,
     });
 

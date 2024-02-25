@@ -1,0 +1,1 @@
+export { DatabaseGetSubjectsUsecase } from './database';
