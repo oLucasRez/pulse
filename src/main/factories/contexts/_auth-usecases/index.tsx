@@ -8,6 +8,7 @@ import {
   makeChangeMeUsecase,
   makeGetMeUsecase,
   makeLinkWithProviderUsecase,
+  makeSetCurrentGameUsecase,
   makeSignInAnonymouslyUsecase,
   makeSignInWithCredentialsUsecase,
   makeSignInWithProviderUsecase,
@@ -28,6 +29,7 @@ export function makeAuthUsecasesContextProvider(
   const getMe = makeGetMeUsecase();
   const watchMe = makeWatchMeUsecase();
   const changeMe = makeChangeMeUsecase();
+  const setCurrentGame = makeSetCurrentGameUsecase();
 
   return (
     <AuthUsecasesContextProvider
@@ -40,6 +42,7 @@ export function makeAuthUsecasesContextProvider(
       getMe={getMe}
       watchMe={watchMe}
       changeMe={changeMe}
+      setCurrentGame={setCurrentGame}
       {...props}
     />
   );

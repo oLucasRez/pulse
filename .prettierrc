@@ -19,6 +19,7 @@
     "(.*)types$",
 
     "(.*)protocols",
+    "(.*)cruds",
     "(.*)services",
 
     "(.*)hooks",

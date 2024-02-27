@@ -1,7 +1,10 @@
+import { DeleteGame } from '@data/usecases';
 import { DeleteGameUsecase } from '@domain/usecases';
 
-import { makeDatabaseDeleteGameUsecase } from './database';
+import { makeGameCRUD } from '@main/factories';
 
 export function makeDeleteGameUsecase(): DeleteGameUsecase {
-  return makeDatabaseDeleteGameUsecase();
+  const gameCRUD = makeGameCRUD();
+
+  return new DeleteGame({ gameCRUD });
 }

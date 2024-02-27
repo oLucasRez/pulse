@@ -18,11 +18,9 @@ import { alertError } from '@presentation/utils';
 export const AuthForm: FC<AuthFormProps> = (props) => {
   const { mode, onAuth, onWantToLogin, onWantToRegister } = props;
 
-  const s = useStates({
+  const [s, set] = useStates({
     signing: false,
   });
-  const signing = (): any => (s.signing = true);
-  const signed = (): any => (s.signing = false);
 
   const { register, handleSubmit, formState } = useForm<AuthFieldValues>({
     mode: 'onChange',
@@ -38,7 +36,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   function onSubmit(data: AuthFieldValues): any {
     const { name, email, password } = data;
 
-    signing();
+    set('signing')(true);
 
     let promise: Promise<UserModel> | undefined = undefined;
     if (mode === 'login')
@@ -46,33 +44,37 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     if (mode === 'register')
       promise = signUpWithCredentials.execute({ name, email, password });
 
-    promise?.then(onAuth).catch(alertError).finally(signed);
+    promise?.then(onAuth).catch(alertError).finally(set('signing', false));
   }
 
   function handleAnonymousButtonClick(): any {
-    signing();
+    set('signing')(true);
 
-    signInAnonymously.execute().then(onAuth).catch(alertError).finally(signed);
+    signInAnonymously
+      .execute()
+      .then(onAuth)
+      .catch(alertError)
+      .finally(set('signing', false));
   }
 
   function handleGoogleButtonClick(): any {
-    signing();
+    set('signing')(true);
 
     signInWithProvider
       .execute('google')
       .then(onAuth)
       .catch(alertError)
-      .finally(signed);
+      .finally(set('signing', false));
   }
 
   function handleGithubButtonClick(): any {
-    signing();
+    set('signing')(true);
 
     signInWithProvider
       .execute('github')
       .then(onAuth)
       .catch(alertError)
-      .finally(signed);
+      .finally(set('signing', false));
   }
 
   const title = (

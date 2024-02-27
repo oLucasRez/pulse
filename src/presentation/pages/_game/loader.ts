@@ -3,7 +3,7 @@ import {
   useLoaderData as useDefaultLoaderData,
 } from 'react-router-dom';
 
-import { DomainError } from '@domain/errors';
+import { DomainError, NotFoundError } from '@domain/errors';
 
 import { GameLoaderArgs, GameLoaderData } from './types';
 
@@ -18,6 +18,11 @@ export async function gameLoader(
     if (!params.id) throw 'error';
 
     const currentGame = await getGame.execute(params.id);
+
+    if (!currentGame)
+      throw new NotFoundError({
+        metadata: { entity: 'Game', prop: 'id', value: params.id },
+      });
 
     return currentGame;
   } catch (e) {

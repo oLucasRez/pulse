@@ -4,11 +4,10 @@ import { PlayerModel, UserModel } from '@domain/models';
 
 import { FailedError, ForbiddenError, OutOfBoundError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
 import {
   CreatePlayerUsecase,
-  GetCurrentGameUsecase,
   GetMeUsecase,
   GetPlayersUsecase,
 } from '@domain/usecases';
@@ -16,14 +15,12 @@ import {
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
-  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseCreatePlayerUsecase.Deps) {
-    this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
     this.database = deps.database;
@@ -36,7 +33,10 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     const { name, color, avatar } = payload;
 
     const me = await this.getMe.execute();
-    if (!me) throw new ForbiddenError({ metadata: { tried: 'create player' } });
+    if (!me)
+      throw new ForbiddenError({
+        metadata: { tried: 'create player without session' },
+      });
 
     const players = await this.getPlayers.execute();
 
@@ -44,7 +44,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
 
     this.colorShouldBeUnchosen(color, players);
 
-    await this.shouldntPassMaxPlayers(players);
+    await this.shouldntPassMaxPlayers(me, players);
 
     const table = await this.tableGenerator.getTable();
 
@@ -55,6 +55,7 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
         color,
         avatar,
         uid: me.uid,
+        diceID: null,
         subjectID: null,
         banned: false,
       });
@@ -65,13 +66,8 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
     return PlayerHydrator.hydrate(player);
   }
 
-  private iShouldntHaveCreatedYet(
-    me: UserModel | null,
-    players: PlayerModel[],
-  ): void {
-    if (!me) return;
-
-    if (players.some(({ user }) => user.uid === me.uid))
+  private iShouldntHaveCreatedYet(me: UserModel, players: PlayerModel[]): void {
+    if (players.some(({ uid }) => uid === me.uid))
       throw new ForbiddenError({
         metadata: {
           prop: 'uid',
@@ -92,21 +88,22 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
       });
   }
 
-  private async shouldntPassMaxPlayers(players: PlayerModel[]): Promise<void> {
-    const game = await this.getCurrentGame.execute();
-
-    if (!game)
+  private async shouldntPassMaxPlayers(
+    me: UserModel,
+    players: PlayerModel[],
+  ): Promise<void> {
+    if (!me.currentGame)
       throw new ForbiddenError({ metadata: { tried: 'create player' } });
 
     const notBannedPlayers = players.filter((player) => !player.banned);
 
-    if (game.config.maxPlayers <= notBannedPlayers.length)
+    if (me.currentGame.config.maxPlayers <= notBannedPlayers.length)
       throw new OutOfBoundError({
         metadata: {
           prop: 'players',
           value: players.length,
           bound: 'above',
-          limit: game.config.maxPlayers,
+          limit: me.currentGame.config.maxPlayers,
         },
       });
   }
@@ -114,7 +111,6 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
 
 export namespace DatabaseCreatePlayerUsecase {
   export type Deps = {
-    getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
     database: DatabaseProtocol;

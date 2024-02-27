@@ -8,7 +8,7 @@ import {
   useRef,
 } from 'react';
 
-import { CentralPulseModel } from '@domain/models';
+import { CentralPulseModel, RoundModel } from '@domain/models';
 
 import { WatchCentralPulseUsecase } from '@domain/usecases';
 
@@ -25,15 +25,19 @@ import { Container, ViewBox } from './styles';
 import { Vector, VectorSpace } from '@domain/utils';
 import { logError } from '@presentation/utils';
 
+import { useGameLoaderData } from '../../loader';
+
 const Context = createContext({} as MapContextValue);
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map: FC = () => {
-  const s = useStates({
+  const [s, set] = useStates({
     centralPulse: null as CentralPulseModel | null,
     width: 0,
     height: 0,
+
+    round: null as RoundModel | null,
   });
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -60,16 +64,22 @@ export const Map: FC = () => {
     let unsubscribe: WatchCentralPulseUsecase.Response;
 
     watchCentralPulse
-      .execute((centralPulse) => (s.centralPulse = centralPulse))
+      .execute(set('centralPulse'))
       .then((value) => (unsubscribe = value))
       .catch(logError);
 
     return () => unsubscribe?.();
   }, []);
 
+  const currentGame = useGameLoaderData();
+
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
+        {currentGame.round && (
+          <div>{currentGame.round.players.map((player) => player.avatar)}</div>
+        )}
+
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}
         </ViewBox>

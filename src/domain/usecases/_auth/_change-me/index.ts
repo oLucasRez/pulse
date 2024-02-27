@@ -7,6 +7,5 @@ export interface ChangeMeUsecase {
 export namespace ChangeMeUsecase {
   export type Payload = {
     name?: string;
-    currentGameID?: string | null;
   };
 }

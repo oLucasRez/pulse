@@ -7,7 +7,6 @@ export type Matrix = number[][];
 export namespace Matrix {
   export function dot(m1: Matrix, m2: Matrix): Matrix {
     if (m1[0].length !== m2.length) {
-      console.log({ m1, m2 });
       throw new InvalidDataError({
         message: 'Matrices are not compatible for dot product',
       });

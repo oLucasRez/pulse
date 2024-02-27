@@ -1,13 +1,13 @@
-import { makeGetCurrentGameUsecase } from '@main/factories/usecases';
-
 import { TableGenerator } from '@data/protocols';
 
 import { PlayersTableGeneratorDecorator } from '@main/decorators';
 
+import { makeGetMeUsecase } from '@main/factories';
+
 export function makePlayersTableGeneratorDecorator(
   decorated?: TableGenerator,
 ): TableGenerator {
-  const getCurrentGame = makeGetCurrentGameUsecase();
+  const getMe = makeGetMeUsecase();
 
-  return new PlayersTableGeneratorDecorator({ getCurrentGame, decorated });
+  return new PlayersTableGeneratorDecorator({ getMe, decorated });
 }

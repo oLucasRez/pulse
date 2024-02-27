@@ -2,7 +2,7 @@ import { UserModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
-import { UserHydrator } from '@domain/hydration';
+import { UserHydrator } from '@data/hydration';
 
 import { GetMeUsecase, WatchMeUsecase } from '@domain/usecases';
 

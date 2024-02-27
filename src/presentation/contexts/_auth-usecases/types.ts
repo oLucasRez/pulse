@@ -2,6 +2,7 @@ import {
   ChangeMeUsecase,
   GetMeUsecase,
   LinkWithProviderUsecase,
+  SetCurrentGameUsecase,
   SignInAnonymouslyUsecase,
   SignInWithCredentialsUsecase,
   SignInWithProviderUsecase,
@@ -22,6 +23,7 @@ export type AuthUsecasesContextValue = {
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;
   changeMe: ChangeMeUsecase;
+  setCurrentGame: SetCurrentGameUsecase;
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
@@ -34,4 +36,5 @@ export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
   getMe: GetMeUsecase;
   watchMe: WatchMeUsecase;
   changeMe: ChangeMeUsecase;
+  setCurrentGame: SetCurrentGameUsecase;
 }

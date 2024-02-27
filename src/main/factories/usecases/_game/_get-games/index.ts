@@ -1,7 +1,11 @@
+import { GetGames } from '@data/usecases';
 import { GetGamesUsecase } from '@domain/usecases';
 
-import { makeDatabaseGetGamesUsecase } from './database';
+import { makeGameCRUD, makeGetMeUsecase } from '@main/factories';
 
 export function makeGetGamesUsecase(): GetGamesUsecase {
-  return makeDatabaseGetGamesUsecase();
+  const getMe = makeGetMeUsecase();
+  const gameCRUD = makeGameCRUD();
+
+  return new GetGames({ getMe, gameCRUD });
 }

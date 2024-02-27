@@ -7,6 +7,7 @@ import {
   makeDiceUsecasesContextProvider,
   makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
+  makeRoundUsecasesContextProvider,
 } from '../contexts';
 
 import { GlobalStyle } from '@presentation/styles';
@@ -18,6 +19,7 @@ export function makeApp(): ReactNode {
     // inner
     makeCentralFactUsecasesContextProvider,
     makeCentralPulseUsecasesContextProvider,
+    makeRoundUsecasesContextProvider,
     makePlayerUsecasesContextProvider,
     makeDiceUsecasesContextProvider,
     makeGameUsecasesContextProvider,

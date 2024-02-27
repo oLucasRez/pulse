@@ -1,6 +1,6 @@
 import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
 
-import { GameModel, PlayerModel } from '@domain/models';
+import { PlayerModel } from '@domain/models';
 
 import { WatchPlayersUsecase } from '@domain/usecases';
 
@@ -23,7 +23,7 @@ import { useGameLoaderData } from './loader';
 const GamePage: FC = () => {
   const me = useMe();
 
-  const s = useStates({
+  const [s, set] = useStates({
     currentGame: useGameLoaderData(),
     players: [] as PlayerModel[],
     watchingPlayers: false,
@@ -32,37 +32,13 @@ const GamePage: FC = () => {
     startingGame: false,
   });
 
-  const setCurrentGame = (currentGame: GameModel): any =>
-    (s.currentGame = currentGame);
+  const imHost = me.uid === s.currentGame.uid;
 
-  const imHost = me.uid === s.currentGame.host.uid;
-
-  const watchingPlayers = (): any => (s.watchingPlayers = true);
-  const watchedPlayers = (): any => (s.watchingPlayers = false);
-
-  const openSettings = (): any => (s.settingsIsOpen = true);
-  const closeSettings = (): any => (s.settingsIsOpen = false);
-
-  const banningPlayer = (): any => (s.banningPlayer = true);
-  const bannedPlayer = (): any => (s.banningPlayer = false);
-
-  const startingGame = (): any => (s.startingGame = true);
-  const startedGame = (): any => (s.startingGame = false);
-
-  const { startGame, getCurrentGame } = useGameUsecases();
-
-  function fetchCurrentGame(): any {
-    getCurrentGame
-      .execute()
-      .then((currentGame) => {
-        if (currentGame) setCurrentGame(currentGame);
-      })
-      .catch(logError);
-  }
+  const { startGame } = useGameUsecases();
 
   const { watchPlayers, banPlayer } = usePlayerUsecases();
   useEffect(() => {
-    watchingPlayers();
+    set('watchingPlayers')(true);
 
     let unsubscribe: WatchPlayersUsecase.Response;
 
@@ -70,7 +46,7 @@ const GamePage: FC = () => {
       .execute((players) => (s.players = players))
       .then((value) => (unsubscribe = value))
       .catch(logError)
-      .finally(watchedPlayers);
+      .finally(set('watchingPlayers', false));
 
     return () => unsubscribe?.();
   }, []);
@@ -100,19 +76,18 @@ const GamePage: FC = () => {
   }
 
   function handleBanPlayerButtonClick(playerID: string): any {
-    banningPlayer();
+    set('banningPlayer')(true);
 
-    banPlayer.execute(playerID).catch(alertError).finally(bannedPlayer);
+    banPlayer
+      .execute(playerID)
+      .catch(alertError)
+      .finally(set('banningPlayer', false));
   }
 
   function handleStartButtonClick(): any {
-    startingGame();
+    set('startingGame')(true);
 
-    startGame
-      .execute()
-      .then(fetchCurrentGame)
-      .catch(alertError)
-      .finally(startedGame);
+    startGame.execute().catch(alertError).finally(set('startingGame', false));
   }
 
   const notBannedPlayers = s.players.filter((player) => !player.banned);
@@ -214,9 +189,11 @@ const GamePage: FC = () => {
 
     return (
       <Main>
-        {imHost && s.settingsIsOpen && <Settings onClose={closeSettings} />}
+        {imHost && s.settingsIsOpen && (
+          <Settings onClose={set('settingsIsOpen', false)} />
+        )}
         {imHost && !s.settingsIsOpen && (
-          <button className='settings' onClick={openSettings}>
+          <button className='settings' onClick={set('settingsIsOpen', true)}>
             <span className='emoji'>⚙️</span>
           </button>
         )}

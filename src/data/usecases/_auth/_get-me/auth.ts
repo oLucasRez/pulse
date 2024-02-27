@@ -1,6 +1,6 @@
 import { UserModel } from '@domain/models';
 
-import { UserHydrator } from '@domain/hydration';
+import { UserHydrator } from '@data/hydration';
 
 import { GetMeUsecase } from '@domain/usecases';
 

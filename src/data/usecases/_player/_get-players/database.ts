@@ -2,7 +2,7 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
 import { GetPlayersUsecase } from '@domain/usecases';
 
@@ -23,7 +23,7 @@ export class DatabaseGetPlayersUsecase implements GetPlayersUsecase {
 
       const players = await this.database.select<PlayerModel.JSON>(table);
 
-      return players.map(PlayerHydrator.hydrate);
+      return Promise.all(players.map(PlayerHydrator.hydrate));
     } catch {
       throw new FailedError({ metadata: { tried: 'get players' } });
     }

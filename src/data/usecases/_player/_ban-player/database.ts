@@ -1,25 +1,19 @@
 import { PlayerModel } from '@domain/models';
 
-import { FailedError, ForbiddenError } from '@domain/errors';
+import { FailedError, ForbiddenError, NotFoundError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
-import {
-  BanPlayerUsecase,
-  GetCurrentGameUsecase,
-  GetMeUsecase,
-} from '@domain/usecases';
+import { BanPlayerUsecase, GetMeUsecase } from '@domain/usecases';
 
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
 
 export class DatabaseBanPlayerUsecase implements BanPlayerUsecase {
-  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly tableGenerator: TableGenerator;
   private readonly database: DatabaseProtocol;
 
   public constructor(deps: DatabaseBanPlayerUsecase.Deps) {
-    this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.tableGenerator = deps.tableGenerator;
     this.database = deps.database;
@@ -27,12 +21,15 @@ export class DatabaseBanPlayerUsecase implements BanPlayerUsecase {
 
   public async execute(id: string): Promise<void> {
     const me = await this.getMe.execute();
-    if (!me) throw new ForbiddenError({ metadata: { tried: 'ban player' } });
+    if (!me)
+      throw new ForbiddenError({
+        metadata: { tried: 'ban player without session' },
+      });
 
-    const currentGame = await this.getCurrentGame.execute();
-    if (!currentGame) return;
+    if (!me.currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    if (me.uid !== currentGame.host.uid)
+    if (me.uid !== me.currentGame.uid)
       throw new ForbiddenError({ metadata: { tried: 'ban player' } });
 
     try {
@@ -51,7 +48,6 @@ export class DatabaseBanPlayerUsecase implements BanPlayerUsecase {
 
 export namespace DatabaseBanPlayerUsecase {
   export type Deps = {
-    getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     tableGenerator: TableGenerator;
     database: DatabaseProtocol;

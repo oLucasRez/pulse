@@ -23,6 +23,7 @@ export const AuthUsecasesContextProvider: FC<
     getMe,
     watchMe,
     changeMe,
+    setCurrentGame,
 
     children,
   } = props;
@@ -39,6 +40,7 @@ export const AuthUsecasesContextProvider: FC<
         getMe,
         watchMe,
         changeMe,
+        setCurrentGame,
       }}
     >
       {children}

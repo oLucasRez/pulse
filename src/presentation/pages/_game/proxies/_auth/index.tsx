@@ -6,7 +6,7 @@ import { AuthProxyProps, MeContextValue } from './types';
 
 import { useStates } from '@presentation/hooks';
 
-import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
+import { useAuthUsecases } from '@presentation/contexts';
 
 import { AuthForm, GlobalLoading } from '@presentation/components';
 
@@ -29,35 +29,28 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
 
   const currentGame = useGameLoaderData();
 
-  const s = useStates({
+  const [s, set] = useStates({
     gettingMe: true,
     me: null as UserModel | null,
     authFormMode: 'login' as AuthForm.Mode,
   });
-  const gettingMe = (): any => (s.gettingMe = true);
-  const gotMe = (): any => (s.gettingMe = false);
-
-  const setMe = (me: UserModel | null): any => (s.me = me);
-
-  const changeToLoginMode = (): any => (s.authFormMode = 'login');
-  const changeToRegisterMode = (): any => (s.authFormMode = 'register');
 
   const { getMe } = useAuthUsecases();
 
-  const { setCurrentGame } = useGameUsecases();
+  const { setCurrentGame } = useAuthUsecases();
 
   function handleAuth(me: UserModel | null): any {
-    gettingMe();
+    set('gettingMe')(true);
 
     setCurrentGame
       .execute(currentGame.id)
-      .then(() => setMe(me))
+      .then(set('me', me))
       .catch(logError)
-      .finally(gotMe);
+      .finally(set('gettingMe', false));
   }
 
   useEffect(() => {
-    gettingMe();
+    set('gettingMe')(true);
 
     getMe.execute().then(handleAuth).catch(logError);
   }, []);
@@ -70,8 +63,8 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
         <AuthForm
           mode={s.authFormMode}
           onAuth={handleAuth}
-          onWantToLogin={changeToLoginMode}
-          onWantToRegister={changeToRegisterMode}
+          onWantToLogin={set('authFormMode', 'login')}
+          onWantToRegister={set('authFormMode', 'register')}
         />
       </Container>
     );

@@ -2,7 +2,7 @@ import { CentralPulseModel } from '@domain/models';
 
 import { FailedError, OutOfBoundError } from '@domain/errors';
 
-import { CentralPulseHydrator } from '@domain/hydration';
+import { CentralPulseHydrator } from '@data/hydration';
 
 import {
   ChangeCentralPulseUsecase,

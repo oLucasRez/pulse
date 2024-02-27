@@ -16,11 +16,9 @@ import { useGameLoaderData } from '../../loader';
 export const Settings: FC<SettingsProps> = (props) => {
   const { onClose } = props;
 
-  const s = useStates({
+  const [s, set] = useStates({
     changingGame: false,
   });
-  const changingGame = (): any => (s.changingGame = true);
-  const changedGame = (): any => (s.changingGame = false);
 
   const { changeGame } = useGameUsecases();
 
@@ -43,7 +41,7 @@ export const Settings: FC<SettingsProps> = (props) => {
   const maxPlayers = watch('maxPlayers');
 
   function onSubmit(data: SettingsFieldValues): any {
-    changingGame();
+    set('changingGame')(true);
 
     changeGame
       .execute({
@@ -56,7 +54,7 @@ export const Settings: FC<SettingsProps> = (props) => {
       })
       .then(onClose)
       .catch(alertError)
-      .finally(changedGame);
+      .finally(set('changingGame', false));
   }
 
   const registerDicesMode = register('dicesMode', { required: true });

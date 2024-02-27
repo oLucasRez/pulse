@@ -1,6 +1,6 @@
 import { SubjectModel } from '@domain/models';
 
-import { SubjectHydrator } from '@domain/hydration';
+import { SubjectHydrator } from '@data/hydration';
 
 import { GetSubjectUsecase } from '@domain/usecases';
 

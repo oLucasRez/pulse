@@ -1,6 +1,7 @@
 export * from './_change-me';
 export * from './_get-me';
 export * from './_link-with-provider';
+export * from './_set-current-game';
 export * from './_sign-in-anonymously';
 export * from './_sign-in-with-credentials';
 export * from './_sign-in-with-provider';

@@ -2,7 +2,7 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
 import { WatchPlayersUsecase } from '@domain/usecases';
 
@@ -25,7 +25,8 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
 
       const unsubscribe = this.socket.watch<PlayerModel.JSON[]>(
         table,
-        (players) => callback(players.map(PlayerHydrator.hydrate)),
+        async (players) =>
+          callback(await Promise.all(players.map(PlayerHydrator.hydrate))),
       );
 
       return unsubscribe;

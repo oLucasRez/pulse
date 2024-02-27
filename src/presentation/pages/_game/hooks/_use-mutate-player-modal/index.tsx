@@ -46,7 +46,7 @@ export function useMutatePlayerModal(
 
   const me = useMe();
 
-  const s = useStates({
+  const [s, set] = useStates({
     open,
     player,
     players: [] as PlayerModel[],
@@ -62,9 +62,6 @@ export function useMutatePlayerModal(
   const prevAvatar = (): any =>
     (s.avatarIndex =
       s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
-
-  const mutatingPlayer = (): any => (s.mutatingPlayer = true);
-  const mutatedPlayer = (): any => (s.mutatingPlayer = false);
 
   const { watchPlayers, createPlayer, changePlayer } = usePlayerUsecases();
 
@@ -118,7 +115,7 @@ export function useMutatePlayerModal(
 
     if (!name || !color) return;
 
-    mutatingPlayer();
+    set('mutatingPlayer')(true);
 
     const promise = s.player
       ? changePlayer.execute({ name, color, avatar })
@@ -128,7 +125,7 @@ export function useMutatePlayerModal(
       .then(onSuccess)
       .then(closeModal)
       .catch(alertError)
-      .finally(mutatedPlayer);
+      .finally(set('mutatingPlayer', false));
   }
 
   function renderColors(): ReactNode {

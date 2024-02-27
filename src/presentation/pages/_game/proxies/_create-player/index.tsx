@@ -26,26 +26,20 @@ export function useMyPlayer(): PlayerModel {
 export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   const { children } = props;
 
-  const s = useStates({
+  const [s, set] = useStates({
     myPlayer: null as PlayerModel | null,
     fetchingMyPlayer: true,
   });
 
-  const setMyPlayer = (myPlayer: PlayerModel | null): any =>
-    (s.myPlayer = myPlayer);
-
-  const fetchingMyPlayer = (): any => (s.fetchingMyPlayer = true);
-  const fetchedMyPlayer = (): any => (s.fetchingMyPlayer = false);
-
   const { getMyPlayer, watchPlayers } = usePlayerUsecases();
   useEffect(() => {
-    fetchingMyPlayer();
+    set('fetchingMyPlayer', true);
 
     getMyPlayer
       .execute()
-      .then(setMyPlayer)
+      .then(set('myPlayer'))
       .catch(logError)
-      .finally(fetchedMyPlayer);
+      .finally(set('fetchingMyPlayer', false));
   }, []);
 
   useEffect(() => {
@@ -57,7 +51,7 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
 
         const myPlayer = players.find((player) => player.id === s.myPlayer?.id);
 
-        if (myPlayer) setMyPlayer(myPlayer);
+        if (myPlayer) s.myPlayer = myPlayer;
       })
       .then((value) => (unsubscribe = value))
       .catch(logError);
@@ -68,7 +62,7 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   const { renderMutatePlayerModal } = useMutatePlayerModal({
     unclosable: true,
     open: true,
-    onSuccess: setMyPlayer,
+    onSuccess: set('myPlayer'),
   });
 
   if (s.fetchingMyPlayer) return <GlobalLoading />;

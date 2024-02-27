@@ -2,7 +2,7 @@ import { SubjectModel } from '@domain/models';
 
 import { FailedError } from '@domain/errors';
 
-import { SubjectHydrator } from '@domain/hydration';
+import { SubjectHydrator } from '@data/hydration';
 
 import { WatchSubjectsUsecase } from '@domain/usecases';
 

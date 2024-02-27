@@ -2,7 +2,7 @@ import { CentralFactModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
-import { CentralFactHydrator } from '@domain/hydration';
+import { CentralFactHydrator } from '@data/hydration';
 
 import { GetCentralFactUsecase } from '@domain/usecases';
 

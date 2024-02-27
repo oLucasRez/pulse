@@ -1,6 +1,7 @@
 node_modules/
 dist/
 bkp/
+web/
 
 .DS_Store
 regras.pdf

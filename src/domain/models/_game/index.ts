@@ -1,15 +1,13 @@
-import { Model, UserModel } from '..';
+import { Model, RoundModel, UserModel } from '..';
 
 export interface GameModel extends Model {
-  host: UserModel;
+  uid: UserModel['uid'];
   title: string | null;
-  config: {
-    maxPlayers: number;
-    withLightspot: boolean;
-    dicesMode: GameModel.DicesMode;
-  };
+  config: GameModel.Config;
   started: boolean;
   state: GameModel.State;
+  round: RoundModel | null;
+  lightspotRound: RoundModel | null;
 }
 
 export namespace GameModel {
@@ -19,6 +17,12 @@ export namespace GameModel {
     | 'initial:state'
     | 'creating:subjects'
     | 'creating:centralFact';
+
+  export type Config = {
+    maxPlayers: number;
+    withLightspot: boolean;
+    dicesMode: DicesMode;
+  };
 
   export type JSON = Model.JSON & {
     uid: UserModel['uid'];
@@ -30,5 +34,7 @@ export namespace GameModel {
     };
     started: boolean;
     state: GameModel.State;
+    roundID: RoundModel['id'] | null;
+    lightspotRoundID: RoundModel['id'] | null;
   };
 }

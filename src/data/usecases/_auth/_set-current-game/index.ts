@@ -1,0 +1,1 @@
+export { DatabaseSetCurrentGameUsecase } from './database';

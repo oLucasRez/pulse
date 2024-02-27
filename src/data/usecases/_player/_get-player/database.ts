@@ -2,7 +2,7 @@ import { PlayerModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
 import { GetPlayerUsecase } from '@domain/usecases';
 

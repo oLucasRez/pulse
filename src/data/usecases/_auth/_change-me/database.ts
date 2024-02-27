@@ -2,7 +2,7 @@ import { UserModel } from '@domain/models';
 
 import { FailedError, NotFoundError } from '@domain/errors';
 
-import { UserHydrator } from '@domain/hydration';
+import { UserHydrator } from '@data/hydration';
 
 import { ChangeMeUsecase, GetMeUsecase } from '@domain/usecases';
 
@@ -20,7 +20,7 @@ export class DatabaseChangeMeUsecase implements ChangeMeUsecase {
   }
 
   public async execute(payload: ChangeMeUsecase.Payload): Promise<UserModel> {
-    const { name, currentGameID } = payload;
+    const { name } = payload;
 
     const user = await this.getMe.execute();
     if (!user) throw new NotFoundError({ metadata: { entity: 'User' } });
@@ -30,7 +30,6 @@ export class DatabaseChangeMeUsecase implements ChangeMeUsecase {
 
       const json = await this.database.update<UserModel.JSON>(table, user.id, {
         name,
-        currentGameID,
       });
 
       return UserHydrator.hydrate(json);

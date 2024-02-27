@@ -1,7 +1,10 @@
+import { GetDice } from '@data/usecases';
 import { GetDiceUsecase } from '@domain/usecases';
 
-import { makeDatabaseGetDiceUsecase } from './database';
+import { makeDiceCRUD } from '@main/factories';
 
 export function makeGetDiceUsecase(): GetDiceUsecase {
-  return makeDatabaseGetDiceUsecase();
+  const diceCRUD = makeDiceCRUD();
+
+  return new GetDice({ diceCRUD });
 }

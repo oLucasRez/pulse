@@ -2,7 +2,7 @@ import { PlayerModel } from '@domain/models';
 
 import { FailedError, ForbiddenError } from '@domain/errors';
 
-import { PlayerHydrator } from '@domain/hydration';
+import { PlayerHydrator } from '@data/hydration';
 
 import { GetMyPlayerUsecase, SetPlayerSubjectUsecase } from '@domain/usecases';
 
