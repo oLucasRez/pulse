@@ -10,19 +10,17 @@ import {
   PassTurnUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import { RoundCRUD } from '@data/cruds';
 
-export class DatabasePassTurnUsecase implements PassTurnUsecase {
+export class CRUDPassTurnUsecase implements PassTurnUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly getRound: GetRoundUsecase;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly roundCRUD: RoundCRUD;
 
-  public constructor(deps: DatabasePassTurnUsecase.Deps) {
+  public constructor(deps: CRUDPassTurnUsecase.Deps) {
     this.getMe = deps.getMe;
     this.getRound = deps.getRound;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.roundCRUD = deps.roundCRUD;
   }
 
   public async execute(id: string): Promise<RoundModel> {
@@ -61,21 +59,18 @@ export class DatabasePassTurnUsecase implements PassTurnUsecase {
 
     const player = round.players[i];
 
-    const table = await this.tableGenerator.getTable();
-
-    const json = await this.database.update<RoundModel.JSON>(table, round.id, {
+    const roundDTO = await this.roundCRUD.update(round.id, {
       currentPlayerID: player ? player.id : null,
     });
 
-    return RoundHydrator.hydrate(json);
+    return RoundHydrator.hydrate(roundDTO);
   }
 }
 
-export namespace DatabasePassTurnUsecase {
+export namespace CRUDPassTurnUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     getRound: GetRoundUsecase;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    roundCRUD: RoundCRUD;
   };
 }

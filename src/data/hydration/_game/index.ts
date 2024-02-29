@@ -20,9 +20,9 @@ export class GameHydrator {
         },
         started: dto.started,
         state: dto.state,
-        round: dto.roundID ? RoundCollection.get(dto.roundID) : null,
+        round: dto.roundID ? await RoundCollection.get(dto.roundID) : null,
         lightspotRound: dto.lightspotRoundID
-          ? RoundCollection.get(dto.lightspotRoundID)
+          ? await RoundCollection.get(dto.lightspotRoundID)
           : null,
       },
     );

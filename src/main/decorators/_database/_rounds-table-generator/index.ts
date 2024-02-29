@@ -20,7 +20,7 @@ export class RoundsTableGeneratorDecorator implements TableGenerator {
 
     if (!me)
       throw new ForbiddenError({
-        metadata: { tried: 'access subjects table without session' },
+        metadata: { tried: 'access rounds table without session' },
       });
 
     if (!me.currentGame)

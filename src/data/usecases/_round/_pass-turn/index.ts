@@ -1,1 +1,1 @@
-export { DatabasePassTurnUsecase } from './database';
+export { CRUDPassTurnUsecase } from './crud';

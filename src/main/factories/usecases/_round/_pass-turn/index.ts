@@ -1,7 +1,7 @@
 import { PassTurnUsecase } from '@domain/usecases';
 
-import { makeDatabasePassTurnUsecase } from './database';
+import { makeCRUDPassTurnUsecase } from './crud';
 
 export function makePassTurnUsecase(): PassTurnUsecase {
-  return makeDatabasePassTurnUsecase();
+  return makeCRUDPassTurnUsecase();
 }

@@ -1,7 +1,7 @@
 import { CreateRoundUsecase } from '@domain/usecases';
 
-import { makeDatabaseCreateRoundUsecase } from './database';
+import { makeCRUDCreateRoundUsecase } from './crud';
 
 export function makeCreateRoundUsecase(): CreateRoundUsecase {
-  return makeDatabaseCreateRoundUsecase();
+  return makeCRUDCreateRoundUsecase();
 }

@@ -1,11 +1,21 @@
 import { RoundModel } from '@domain/models';
 
+import { NotFoundError } from '@domain/errors';
+
+import { GetRoundUsecase } from '@domain/usecases';
+
+import { makeGetRoundUsecase } from '@main/factories';
+
 export class RoundCollection {
   private static instance: RoundCollection;
 
   private readonly collection: Record<string, RoundModel> = {};
 
-  private constructor() {}
+  private readonly getRound: GetRoundUsecase;
+  private constructor() {
+    // @todo: injeção de dependência
+    this.getRound = makeGetRoundUsecase();
+  }
 
   private static getInstance(): RoundCollection {
     if (!RoundCollection.instance)
@@ -18,8 +28,21 @@ export class RoundCollection {
     return RoundCollection.getInstance().collection;
   }
 
-  public static get(id: string): RoundModel {
-    return RoundCollection.getInstance().collection[id];
+  public static async get(id: string): Promise<RoundModel> {
+    const instance = RoundCollection.getInstance();
+
+    let round: RoundModel | null = instance.collection[id];
+
+    if (!round) round = await instance.getRound.execute(id);
+
+    if (!round)
+      throw new NotFoundError({
+        metadata: { entity: 'Round', prop: 'id', value: id },
+      });
+
+    RoundCollection.append(id, round);
+
+    return round;
   }
 
   public static append(id: string, value: RoundModel): void {
