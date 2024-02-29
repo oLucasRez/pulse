@@ -9,11 +9,13 @@ import { Vector } from '@domain/utils';
 import { ModelHydrator } from '..';
 
 export class PulseHydrator {
-  public static hydrate(dto: PulseCRUD.DTO): PulseModel<LandmarkModel> {
+  public static async hydrate(
+    dto: PulseCRUD.DTO,
+  ): Promise<PulseModel<LandmarkModel>> {
     const pulse: PulseModel<LandmarkModel> = Object.assign<
       Model,
       Omit<PulseModel<LandmarkModel>, keyof Model>
-    >(ModelHydrator.hydrate(dto), {
+    >(await ModelHydrator.hydrate(dto), {
       origin: Vector.fromJSON(dto.origin),
       gap: dto.gap,
       amount: dto.amount,

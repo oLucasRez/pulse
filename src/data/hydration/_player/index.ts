@@ -15,7 +15,7 @@ export class PlayerHydrator {
     const player: PlayerModel = Object.assign<
       Model,
       Omit<PlayerModel, keyof Model>
-    >(ModelHydrator.hydrate(dto), {
+    >(await ModelHydrator.hydrate(dto), {
       name: dto.name,
       color: dto.color,
       avatar: dto.avatar,

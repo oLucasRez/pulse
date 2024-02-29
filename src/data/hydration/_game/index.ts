@@ -9,7 +9,7 @@ import { ModelHydrator } from '..';
 export class GameHydrator {
   public static async hydrate(dto: GameCRUD.DTO): Promise<GameModel> {
     const game: GameModel = Object.assign<Model, Omit<GameModel, keyof Model>>(
-      ModelHydrator.hydrate(dto),
+      await ModelHydrator.hydrate(dto),
       {
         uid: dto.uid,
         title: dto.title,

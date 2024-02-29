@@ -1,1 +1,1 @@
-export { DatabaseChangeCentralFactUsecase } from './database';
+export { CRUDChangeCentralFactUsecase } from './crud';

@@ -13,7 +13,7 @@ export class SubjectHydrator {
     const subject: SubjectModel = Object.assign<
       LandmarkModel,
       Omit<SubjectModel, keyof LandmarkModel>
-    >(LandmarkHydrator.hydrate(json), {
+    >(await LandmarkHydrator.hydrate(json), {
       description: json.description,
       color: json.color,
       author: await PlayerCollection.get(json.authorID),

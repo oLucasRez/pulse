@@ -9,7 +9,7 @@ export class RoundHydrator {
     const round: RoundModel = Object.assign<
       Model,
       Omit<RoundModel, keyof Model>
-    >(ModelHydrator.hydrate(json), {
+    >(await ModelHydrator.hydrate(json), {
       players: await Promise.all(json.playerIDs.map(PlayerCollection.get)),
       currentPlayer: json.currentPlayerID
         ? await PlayerCollection.get(json.currentPlayerID)

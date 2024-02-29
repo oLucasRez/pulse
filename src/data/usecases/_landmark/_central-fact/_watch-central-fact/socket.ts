@@ -1,12 +1,10 @@
-import { CentralFactModel } from '@domain/models';
-
-import { FailedError } from '@domain/errors';
-
 import { CentralFactHydrator } from '@data/hydration';
 
 import { WatchCentralFactUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
+
+import { CentralFactCRUD } from '@data/cruds';
 
 export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
   private readonly tableGenerator: TableGenerator;
@@ -20,21 +18,15 @@ export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
   public async execute(
     callback: WatchCentralFactUsecase.Callback,
   ): Promise<WatchCentralFactUsecase.Response> {
-    try {
-      const table = await this.tableGenerator.getTable();
+    const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<CentralFactModel.JSON[]>(
-        table,
-        ([centralFact]) =>
-          centralFact && callback(CentralFactHydrator.hydrate(centralFact)),
-      );
+    const unsubscribe = this.socket.watch<CentralFactCRUD.DTO[]>(
+      table,
+      async ([centralFact]) =>
+        centralFact && callback(await CentralFactHydrator.hydrate(centralFact)),
+    );
 
-      return unsubscribe;
-    } catch {
-      throw new FailedError({
-        metadata: { tried: 'listen central-fact changes' },
-      });
-    }
+    return unsubscribe;
   }
 }
 

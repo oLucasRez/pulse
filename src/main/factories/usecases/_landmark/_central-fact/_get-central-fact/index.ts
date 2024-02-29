@@ -1,7 +1,7 @@
 import { GetCentralFactUsecase } from '@domain/usecases';
 
-import { makeDatabaseGetCentralFactUsecase } from './database';
+import { makeCRUDGetCentralFactUsecase } from './crud';
 
 export function makeGetCentralFactUsecase(): GetCentralFactUsecase {
-  return makeDatabaseGetCentralFactUsecase();
+  return makeCRUDGetCentralFactUsecase();
 }

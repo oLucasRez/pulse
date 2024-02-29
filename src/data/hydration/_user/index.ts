@@ -9,7 +9,7 @@ import { ModelHydrator } from '..';
 export class UserHydrator {
   public static async hydrate(dto: UserCRUD.DTO): Promise<UserModel> {
     const user: UserModel = Object.assign<Model, Omit<UserModel, keyof Model>>(
-      ModelHydrator.hydrate(dto),
+      await ModelHydrator.hydrate(dto),
       {
         uid: dto.uid,
         name: dto.name,

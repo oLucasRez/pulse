@@ -11,7 +11,7 @@ import { ModelHydrator } from '..';
 export class DiceHydrator {
   public static async hydrate(dto: DiceCRUD.DTO): Promise<DiceModel> {
     const dice: DiceModel = Object.assign<Model, Omit<DiceModel, keyof Model>>(
-      ModelHydrator.hydrate(dto),
+      await ModelHydrator.hydrate(dto),
       {
         sides: dto.sides,
         value: dto.value,

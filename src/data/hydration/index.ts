@@ -3,7 +3,7 @@ import { Model } from '@domain/models';
 import { ModelCollection } from '@data/collections';
 
 export class ModelHydrator {
-  public static hydrate(json: Model.JSON): Model {
+  public static async hydrate(json: Model.JSON): Promise<Model> {
     const model: Model = {
       id: json.id,
       createdAt: new Date(json.createdAt),
