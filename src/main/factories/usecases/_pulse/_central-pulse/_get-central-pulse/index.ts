@@ -1,7 +1,7 @@
 import { GetCentralPulseUsecase } from '@domain/usecases';
 
-import { makeDatabaseGetCentralPulseUsecase } from './database';
+import { makeCRUDGetCentralPulseUsecase } from './crud';
 
 export function makeGetCentralPulseUsecase(): GetCentralPulseUsecase {
-  return makeDatabaseGetCentralPulseUsecase();
+  return makeCRUDGetCentralPulseUsecase();
 }

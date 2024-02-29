@@ -2,23 +2,25 @@ import { LandmarkModel, Model, PulseModel } from '@domain/models';
 
 import { LandmarkCollection, PulseCollection } from '@data/collections';
 
+import { PulseCRUD } from '@data/cruds';
+
 import { Vector } from '@domain/utils';
 
 import { ModelHydrator } from '..';
 
 export class PulseHydrator {
-  public static hydrate(json: PulseModel.JSON): PulseModel<LandmarkModel> {
+  public static hydrate(dto: PulseCRUD.DTO): PulseModel<LandmarkModel> {
     const pulse: PulseModel<LandmarkModel> = Object.assign<
       Model,
       Omit<PulseModel<LandmarkModel>, keyof Model>
-    >(ModelHydrator.hydrate(json), {
-      origin: Vector.fromJSON(json.origin),
-      gap: json.gap,
-      amount: json.amount,
-      landmark: LandmarkCollection.get(json.landmarkID),
+    >(ModelHydrator.hydrate(dto), {
+      origin: Vector.fromJSON(dto.origin),
+      gap: dto.gap,
+      amount: dto.amount,
+      landmark: LandmarkCollection.get(dto.landmarkID),
     });
 
-    PulseCollection.append(json.id, pulse);
+    PulseCollection.append(dto.id, pulse);
 
     return pulse;
   }

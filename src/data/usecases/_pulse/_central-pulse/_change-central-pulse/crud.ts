@@ -1,6 +1,6 @@
 import { CentralPulseModel } from '@domain/models';
 
-import { FailedError, OutOfBoundError } from '@domain/errors';
+import { NotFoundError, OutOfBoundError } from '@domain/errors';
 
 import { CentralPulseHydrator } from '@data/hydration';
 
@@ -9,19 +9,17 @@ import {
   GetCentralPulseUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import { CentralPulseCRUD } from '@data/cruds';
 
-export class DatabaseChangeCentralPulseUsecase
+export class CRUDChangeCentralPulseUsecase
   implements ChangeCentralPulseUsecase
 {
-  private readonly tableGenerator: TableGenerator;
   private readonly getCentralPulse: GetCentralPulseUsecase;
-  private readonly database: DatabaseProtocol;
+  private readonly centralPulseCRUD: CentralPulseCRUD;
 
-  public constructor(deps: DatabaseChangeCentralPulseUsecase.Deps) {
-    this.tableGenerator = deps.tableGenerator;
+  public constructor(deps: CRUDChangeCentralPulseUsecase.Deps) {
     this.getCentralPulse = deps.getCentralPulse;
-    this.database = deps.database;
+    this.centralPulseCRUD = deps.centralPulseCRUD;
   }
 
   public async execute(
@@ -31,23 +29,19 @@ export class DatabaseChangeCentralPulseUsecase
 
     const centralPulse = await this.getCentralPulse.execute();
 
+    if (!centralPulse)
+      throw new NotFoundError({ metadata: { entity: 'CentralPulse' } });
+
     this.amountShouldBeGreaterOrEqual(amount, centralPulse);
 
-    try {
-      const table = await this.tableGenerator.getTable();
+    const centralPulseDTO = await this.centralPulseCRUD.update(
+      centralPulse.id,
+      {
+        amount,
+      },
+    );
 
-      const json = await this.database.update<CentralPulseModel.JSON>(
-        table,
-        centralPulse.id,
-        { amount },
-      );
-
-      return CentralPulseHydrator.hydrate(json);
-    } catch {
-      throw new FailedError({
-        metadata: { tried: 'change data of central-pulse' },
-      });
-    }
+    return CentralPulseHydrator.hydrate(centralPulseDTO);
   }
 
   private amountShouldBeGreaterOrEqual(
@@ -66,10 +60,9 @@ export class DatabaseChangeCentralPulseUsecase
   }
 }
 
-export namespace DatabaseChangeCentralPulseUsecase {
+export namespace CRUDChangeCentralPulseUsecase {
   export type Deps = {
-    tableGenerator: TableGenerator;
     getCentralPulse: GetCentralPulseUsecase;
-    database: DatabaseProtocol;
+    centralPulseCRUD: CentralPulseCRUD;
   };
 }

@@ -1,1 +1,1 @@
-export { DatabaseChangeCentralPulseUsecase } from './database';
+export { CRUDChangeCentralPulseUsecase } from './crud';
