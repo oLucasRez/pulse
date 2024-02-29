@@ -1,10 +1,7 @@
-import { CreateDice } from '@data/usecases';
 import { CreateDiceUsecase } from '@domain/usecases';
 
-import { makeDiceCRUD } from '@main/factories';
+import { makeCRUDCreateDiceUsecase } from './crud';
 
 export function makeCreateDiceUsecase(): CreateDiceUsecase {
-  const diceCRUD = makeDiceCRUD();
-
-  return new CreateDice({ diceCRUD });
+  return makeCRUDCreateDiceUsecase();
 }
