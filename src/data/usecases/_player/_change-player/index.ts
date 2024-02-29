@@ -1,1 +1,1 @@
-export { DatabaseChangePlayerUsecase } from './database';
+export { CRUDChangePlayerUsecase } from './crud';

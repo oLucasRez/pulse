@@ -1,7 +1,7 @@
 import { GetMyPlayerUsecase } from '@domain/usecases';
 
-import { makeDatabaseGetMyPlayerUsecase } from './database';
+import { makeCRUDGetMyPlayerUsecase } from './crud';
 
 export function makeGetMyPlayerUsecase(): GetMyPlayerUsecase {
-  return makeDatabaseGetMyPlayerUsecase();
+  return makeCRUDGetMyPlayerUsecase();
 }

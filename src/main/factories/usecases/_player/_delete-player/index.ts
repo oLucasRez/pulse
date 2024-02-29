@@ -1,7 +1,7 @@
 import { DeletePlayerUsecase } from '@domain/usecases';
 
-import { makeDatabaseDeletePlayerUsecase } from './database';
+import { makeCRUDDeletePlayerUsecase } from './crud';
 
 export function makeDeletePlayerUsecase(): DeletePlayerUsecase {
-  return makeDatabaseDeletePlayerUsecase();
+  return makeCRUDDeletePlayerUsecase();
 }

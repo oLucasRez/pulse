@@ -1,7 +1,7 @@
 import { BanPlayerUsecase } from '@domain/usecases';
 
-import { makeDatabaseBanPlayerUsecase } from './database';
+import { makeCRUDBanPlayerUsecase } from './crud';
 
 export function makeBanPlayerUsecase(): BanPlayerUsecase {
-  return makeDatabaseBanPlayerUsecase();
+  return makeCRUDBanPlayerUsecase();
 }

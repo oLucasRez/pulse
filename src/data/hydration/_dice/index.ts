@@ -16,7 +16,7 @@ export class DiceHydrator {
         sides: dto.sides,
         value: dto.value,
         position: dto.position ? Vector.fromJSON(dto.position) : null,
-        owner: dto.ownerID ? PlayerCollection.get(dto.ownerID) : null,
+        owner: dto.ownerID ? await PlayerCollection.get(dto.ownerID) : null,
       },
     );
 

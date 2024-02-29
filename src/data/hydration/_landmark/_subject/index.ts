@@ -9,14 +9,14 @@ import {
 import { LandmarkHydrator } from '..';
 
 export class SubjectHydrator {
-  public static hydrate(json: SubjectModel.JSON): SubjectModel {
+  public static async hydrate(json: SubjectModel.JSON): Promise<SubjectModel> {
     const subject: SubjectModel = Object.assign<
       LandmarkModel,
       Omit<SubjectModel, keyof LandmarkModel>
     >(LandmarkHydrator.hydrate(json), {
       description: json.description,
       color: json.color,
-      author: PlayerCollection.get(json.authorID),
+      author: await PlayerCollection.get(json.authorID),
       path: json.pathIDs.map(SubjectPulseCollection.get),
     });
 

@@ -1,7 +1,7 @@
 import { ChangePlayerUsecase } from '@domain/usecases';
 
-import { makeDatabaseChangePlayerUsecase } from './database';
+import { makeCRUDChangePlayerUsecase } from './crud';
 
 export function makeChangePlayerUsecase(): ChangePlayerUsecase {
-  return makeDatabaseChangePlayerUsecase();
+  return makeCRUDChangePlayerUsecase();
 }

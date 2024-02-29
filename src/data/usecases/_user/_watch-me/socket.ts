@@ -1,5 +1,3 @@
-import { UserModel } from '@domain/models';
-
 import { FailedError } from '@domain/errors';
 
 import { UserHydrator } from '@data/hydration';
@@ -7,6 +5,8 @@ import { UserHydrator } from '@data/hydration';
 import { GetMeUsecase, WatchMeUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 export class SocketWatchMeUsecase implements WatchMeUsecase {
   private readonly getMe: GetMeUsecase;
@@ -27,7 +27,7 @@ export class SocketWatchMeUsecase implements WatchMeUsecase {
 
       const me = await this.getMe.execute();
 
-      const unsubscribe = this.socket.watch<UserModel.JSON[]>(
+      const unsubscribe = this.socket.watch<UserCRUD.DTO[]>(
         table,
         async (users) => {
           if (!me) callback(null);

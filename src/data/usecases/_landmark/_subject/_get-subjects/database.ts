@@ -20,7 +20,7 @@ export class DatabaseGetSubjectsUsecase implements GetSubjectsUsecase {
 
     const subjects = await this.database.select<SubjectModel.JSON>(table);
 
-    return subjects.map(SubjectHydrator.hydrate);
+    return Promise.all(subjects.map(SubjectHydrator.hydrate));
   }
 }
 

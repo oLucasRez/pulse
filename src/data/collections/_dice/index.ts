@@ -13,6 +13,7 @@ export class DiceCollection {
 
   private readonly getDice: GetDiceUsecase;
   private constructor() {
+    // @todo: injeção de dependência
     this.getDice = makeGetDiceUsecase();
   }
 
@@ -38,6 +39,8 @@ export class DiceCollection {
       throw new NotFoundError({
         metadata: { entity: 'Dice', prop: 'id', value: id },
       });
+
+    DiceCollection.append(id, dice);
 
     return dice;
   }

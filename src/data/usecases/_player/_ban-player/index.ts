@@ -1,1 +1,1 @@
-export { DatabaseBanPlayerUsecase } from './database';
+export { CRUDBanPlayerUsecase } from './crud';

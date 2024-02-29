@@ -2,30 +2,32 @@ import { GameModel, Model } from '@domain/models';
 
 import { GameCollection, RoundCollection } from '@data/collections';
 
+import { GameCRUD } from '@data/cruds';
+
 import { ModelHydrator } from '..';
 
 export class GameHydrator {
-  public static async hydrate(json: GameModel.JSON): Promise<GameModel> {
+  public static async hydrate(dto: GameCRUD.DTO): Promise<GameModel> {
     const game: GameModel = Object.assign<Model, Omit<GameModel, keyof Model>>(
-      ModelHydrator.hydrate(json),
+      ModelHydrator.hydrate(dto),
       {
-        uid: json.uid,
-        title: json.title,
+        uid: dto.uid,
+        title: dto.title,
         config: {
-          maxPlayers: json.config.maxPlayers,
-          withLightspot: json.config.withLightspot,
-          dicesMode: json.config.dicesMode,
+          maxPlayers: dto.config.maxPlayers,
+          withLightspot: dto.config.withLightspot,
+          dicesMode: dto.config.dicesMode,
         },
-        started: json.started,
-        state: json.state,
-        round: json.roundID ? RoundCollection.get(json.roundID) : null,
-        lightspotRound: json.lightspotRoundID
-          ? RoundCollection.get(json.lightspotRoundID)
+        started: dto.started,
+        state: dto.state,
+        round: dto.roundID ? RoundCollection.get(dto.roundID) : null,
+        lightspotRound: dto.lightspotRoundID
+          ? RoundCollection.get(dto.lightspotRoundID)
           : null,
       },
     );
 
-    GameCollection.append(json.id, game);
+    GameCollection.append(dto.id, game);
 
     return game;
   }

@@ -2,7 +2,7 @@ import { Color } from '@domain/enums';
 
 import { PlayerModel, UserModel } from '@domain/models';
 
-import { FailedError, ForbiddenError, OutOfBoundError } from '@domain/errors';
+import { ForbiddenError, OutOfBoundError } from '@domain/errors';
 
 import { PlayerHydrator } from '@data/hydration';
 
@@ -12,19 +12,17 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import { PlayerCRUD } from '@data/cruds';
 
-export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
+export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly playerCRUD: PlayerCRUD;
 
-  public constructor(deps: DatabaseCreatePlayerUsecase.Deps) {
+  public constructor(deps: CRUDCreatePlayerUsecase.Deps) {
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.playerCRUD = deps.playerCRUD;
   }
 
   public async execute(
@@ -46,24 +44,17 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
 
     await this.shouldntPassMaxPlayers(me, players);
 
-    const table = await this.tableGenerator.getTable();
+    const playerDTO = await this.playerCRUD.create({
+      name,
+      color,
+      avatar,
+      uid: me.uid,
+      diceID: null,
+      subjectID: null,
+      banned: false,
+    });
 
-    let player: PlayerModel.JSON;
-    try {
-      player = await this.database.insert<PlayerModel.JSON>(table, {
-        name,
-        color,
-        avatar,
-        uid: me.uid,
-        diceID: null,
-        subjectID: null,
-        banned: false,
-      });
-    } catch {
-      throw new FailedError({ metadata: { tried: 'create player' } });
-    }
-
-    return PlayerHydrator.hydrate(player);
+    return PlayerHydrator.hydrate(playerDTO);
   }
 
   private iShouldntHaveCreatedYet(me: UserModel, players: PlayerModel[]): void {
@@ -109,11 +100,10 @@ export class DatabaseCreatePlayerUsecase implements CreatePlayerUsecase {
   }
 }
 
-export namespace DatabaseCreatePlayerUsecase {
+export namespace CRUDCreatePlayerUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    playerCRUD: PlayerCRUD;
   };
 }

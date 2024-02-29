@@ -1,1 +1,1 @@
-export { DatabaseCreatePlayerUsecase } from './database';
+export { CRUDCreatePlayerUsecase } from './crud';
