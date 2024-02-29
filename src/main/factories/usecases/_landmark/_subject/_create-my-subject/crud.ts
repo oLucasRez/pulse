@@ -1,4 +1,4 @@
-import { DatabaseCreateMySubjectUsecase } from '@data/usecases';
+import { CRUDCreateMySubjectUsecase } from '@data/usecases';
 import { CreateMySubjectUsecase } from '@domain/usecases';
 
 import {
@@ -8,13 +8,13 @@ import {
   makeSetPlayerSubjectUsecase,
 } from '@main/factories';
 
-export function makeDatabaseCreateMySubjectUsecase(): CreateMySubjectUsecase {
+export function makeCRUDCreateMySubjectUsecase(): CreateMySubjectUsecase {
   const createSubject = makeCreateSubjectUsecase();
   const getMe = makeGetMeUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const setPlayerSubject = makeSetPlayerSubjectUsecase();
 
-  return new DatabaseCreateMySubjectUsecase({
+  return new CRUDCreateMySubjectUsecase({
     createSubject,
     getMe,
     getMyPlayer,

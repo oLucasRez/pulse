@@ -10,13 +10,13 @@ import {
   SetPlayerSubjectUsecase,
 } from '@domain/usecases';
 
-export class DatabaseCreateMySubjectUsecase implements CreateMySubjectUsecase {
+export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
   private readonly createSubject: CreateSubjectUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly setPlayerSubject: SetPlayerSubjectUsecase;
 
-  public constructor(deps: DatabaseCreateMySubjectUsecase.Deps) {
+  public constructor(deps: CRUDCreateMySubjectUsecase.Deps) {
     this.createSubject = deps.createSubject;
     this.getMe = deps.getMe;
     this.getMyPlayer = deps.getMyPlayer;
@@ -62,7 +62,7 @@ export class DatabaseCreateMySubjectUsecase implements CreateMySubjectUsecase {
   }
 }
 
-export namespace DatabaseCreateMySubjectUsecase {
+export namespace CRUDCreateMySubjectUsecase {
   export type Deps = {
     createSubject: CreateSubjectUsecase;
     getMe: GetMeUsecase;

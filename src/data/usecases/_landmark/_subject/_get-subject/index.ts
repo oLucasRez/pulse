@@ -1,1 +1,1 @@
-export { DatabaseGetSubjectUsecase } from './database';
+export { CRUDGetSubjectUsecase } from './crud';

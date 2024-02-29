@@ -1,5 +1,3 @@
-import { SubjectModel } from '@domain/models';
-
 import { FailedError } from '@domain/errors';
 
 import { SubjectHydrator } from '@data/hydration';
@@ -7,6 +5,8 @@ import { SubjectHydrator } from '@data/hydration';
 import { WatchSubjectsUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
+
+import { SubjectCRUD } from '@data/cruds';
 
 export class SocketWatchSubjectsUsecase implements WatchSubjectsUsecase {
   private readonly tableGenerator: TableGenerator;
@@ -23,7 +23,7 @@ export class SocketWatchSubjectsUsecase implements WatchSubjectsUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<SubjectModel.JSON[]>(
+      const unsubscribe = this.socket.watch<SubjectCRUD.DTO[]>(
         table,
         async (subjects) =>
           callback(await Promise.all(subjects.map(SubjectHydrator.hydrate))),

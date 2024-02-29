@@ -21,7 +21,9 @@ export class PlayerHydrator {
       avatar: dto.avatar,
       uid: dto.uid,
       dice: dto.diceID ? await DiceCollection.get(dto.diceID) : null,
-      subject: dto.subjectID ? SubjectCollection.get(dto.subjectID) : null,
+      subject: dto.subjectID
+        ? await SubjectCollection.get(dto.subjectID)
+        : null,
       banned: dto.banned,
     });
 

@@ -37,7 +37,7 @@ export class GameCollection {
 
     if (!game)
       throw new NotFoundError({
-        metadata: { entity: 'Dice', prop: 'id', value: id },
+        metadata: { entity: 'Game', prop: 'id', value: id },
       });
 
     GameCollection.append(id, game);

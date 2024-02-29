@@ -1,6 +1,6 @@
 import { SubjectModel } from '@domain/models';
 
-import { FailedError, ForbiddenError, NotFoundError } from '@domain/errors';
+import { ForbiddenError, NotFoundError } from '@domain/errors';
 
 import { SubjectHydrator } from '@data/hydration';
 
@@ -10,19 +10,17 @@ import {
   GetSubjectUsecase,
 } from '@domain/usecases';
 
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import { SubjectCRUD } from '@data/cruds';
 
-export class DatabaseChangeSubjectUsecase implements ChangeSubjectUsecase {
+export class CRUDChangeSubjectUsecase implements ChangeSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly getSubject: GetSubjectUsecase;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly subjectCRUD: SubjectCRUD;
 
-  public constructor(deps: DatabaseChangeSubjectUsecase.Deps) {
+  public constructor(deps: CRUDChangeSubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
     this.getSubject = deps.getSubject;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.subjectCRUD = deps.subjectCRUD;
   }
 
   public async execute(
@@ -48,28 +46,19 @@ export class DatabaseChangeSubjectUsecase implements ChangeSubjectUsecase {
         metadata: { tried: 'change subject that is not mine' },
       });
 
-    try {
-      const table = await this.tableGenerator.getTable();
+    const subjectDTO = await this.subjectCRUD.update(id, {
+      position: position.toJSON(),
+      description,
+    });
 
-      const json = await this.database.update<SubjectModel.JSON>(table, id, {
-        position: position.toJSON(),
-        description,
-      });
-
-      return SubjectHydrator.hydrate(json);
-    } catch {
-      throw new FailedError({
-        metadata: { tried: 'change data of subject' },
-      });
-    }
+    return SubjectHydrator.hydrate(subjectDTO);
   }
 }
 
-export namespace DatabaseChangeSubjectUsecase {
+export namespace CRUDChangeSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     getSubject: GetSubjectUsecase;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    subjectCRUD: SubjectCRUD;
   };
 }

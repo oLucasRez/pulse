@@ -37,7 +37,7 @@ export class CentralFactCollection {
 
     if (!centralFact)
       throw new NotFoundError({
-        metadata: { entity: 'Dice', prop: 'id', value: id },
+        metadata: { entity: 'Subject', prop: 'id', value: id },
       });
 
     CentralFactCollection.append(id, centralFact);

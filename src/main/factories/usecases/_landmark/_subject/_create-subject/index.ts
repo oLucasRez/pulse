@@ -1,7 +1,7 @@
 import { CreateSubjectUsecase } from '@domain/usecases';
 
-import { makeDatabaseCreateSubjectUsecase } from './database';
+import { makeCRUDCreateSubjectUsecase } from './crud';
 
 export function makeCreateSubjectUsecase(): CreateSubjectUsecase {
-  return makeDatabaseCreateSubjectUsecase();
+  return makeCRUDCreateSubjectUsecase();
 }

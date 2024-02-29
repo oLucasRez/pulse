@@ -10,12 +10,3 @@ export interface SubjectModel extends LandmarkModel {
   author: PlayerModel;
   path: SubjectPulseModel[];
 }
-
-export namespace SubjectModel {
-  export type JSON = LandmarkModel.JSON & {
-    description: string;
-    color: Color;
-    authorID: PlayerModel['id'];
-    pathIDs: SubjectPulseModel['id'][];
-  };
-}

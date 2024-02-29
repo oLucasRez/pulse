@@ -6,21 +6,23 @@ import {
   SubjectPulseCollection,
 } from '@data/collections';
 
+import { SubjectCRUD } from '@data/cruds';
+
 import { LandmarkHydrator } from '..';
 
 export class SubjectHydrator {
-  public static async hydrate(json: SubjectModel.JSON): Promise<SubjectModel> {
+  public static async hydrate(dto: SubjectCRUD.DTO): Promise<SubjectModel> {
     const subject: SubjectModel = Object.assign<
       LandmarkModel,
       Omit<SubjectModel, keyof LandmarkModel>
-    >(await LandmarkHydrator.hydrate(json), {
-      description: json.description,
-      color: json.color,
-      author: await PlayerCollection.get(json.authorID),
-      path: json.pathIDs.map(SubjectPulseCollection.get),
+    >(await LandmarkHydrator.hydrate(dto), {
+      description: dto.description,
+      color: dto.color,
+      author: await PlayerCollection.get(dto.authorID),
+      path: dto.pathIDs.map(SubjectPulseCollection.get),
     });
 
-    SubjectCollection.append(json.id, subject);
+    SubjectCollection.append(dto.id, subject);
 
     return subject;
   }

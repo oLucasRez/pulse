@@ -1,1 +1,1 @@
-export { DatabaseCreateSubjectUsecase } from './database';
+export { CRUDCreateSubjectUsecase } from './crud';
