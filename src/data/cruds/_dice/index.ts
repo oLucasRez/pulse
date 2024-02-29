@@ -1,3 +1,5 @@
+import { DeepPartial } from '@domain/types';
+
 import { Vector } from '@domain/utils';
 
 import { ModelCRUD } from '..';
@@ -11,24 +13,14 @@ export interface DiceCRUD {
 }
 
 export namespace DiceCRUD {
-  export type DTO = ModelCRUD.DTO & {
+  type BaseDTO = {
     sides: number;
     value: number | null;
     position: Vector.JSON | null;
     ownerID: string | null;
   };
 
-  export type CreatePayload = {
-    sides: number;
-    value: number | null;
-    position: Vector.JSON | null;
-    ownerID: string | null;
-  };
-
-  export type UpdatePayload = {
-    sides?: number;
-    value?: number | null;
-    position?: Vector.JSON | null;
-    ownerID?: string | null;
-  };
+  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type CreatePayload = BaseDTO;
+  export type UpdatePayload = DeepPartial<BaseDTO>;
 }

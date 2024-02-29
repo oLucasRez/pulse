@@ -8,6 +8,7 @@ import {
   makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
   makeRoundUsecasesContextProvider,
+  makeUserUsecasesContextProvider,
 } from '../contexts';
 
 import { GlobalStyle } from '@presentation/styles';
@@ -23,6 +24,7 @@ export function makeApp(): ReactNode {
     makePlayerUsecasesContextProvider,
     makeDiceUsecasesContextProvider,
     makeGameUsecasesContextProvider,
+    makeUserUsecasesContextProvider,
     makeAuthUsecasesContextProvider,
     // outer
   ].reduce<ReactNode>(

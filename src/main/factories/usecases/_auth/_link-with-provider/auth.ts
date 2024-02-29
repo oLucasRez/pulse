@@ -4,23 +4,20 @@ import { LinkWithProviderUsecase } from '@domain/usecases';
 import {
   makeAuthProvider,
   makeChangeMeUsecase,
-  makeDatabase,
   makeSignInWithProviderUsecase,
-  makeUsersTableGenerator,
+  makeUserCRUD,
 } from '@main/factories';
 
 export function makeAuthLinkWithProviderUsecase(): LinkWithProviderUsecase {
   const authProvider = makeAuthProvider();
   const changeMe = makeChangeMeUsecase();
-  const database = makeDatabase();
   const signInWithProvider = makeSignInWithProviderUsecase();
-  const tableGenerator = makeUsersTableGenerator();
+  const userCRUD = makeUserCRUD();
 
   return new AuthLinkWithProviderUsecase({
     authProvider,
     changeMe,
-    database,
     signInWithProvider,
-    tableGenerator,
+    userCRUD,
   });
 }

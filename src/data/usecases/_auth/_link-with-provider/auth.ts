@@ -12,11 +12,9 @@ import {
 
 import { Provider } from '@domain/types';
 
-import {
-  AuthProviderProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { AuthProviderProtocol } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 import { dontThrow } from '@data/utils';
 
@@ -24,15 +22,13 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly changeMe: ChangeMeUsecase;
   private readonly signInWithProvider: SignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthLinkWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.signInWithProvider = deps.signInWithProvider;
     this.authProvider = deps.authProvider;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.userCRUD = deps.userCRUD;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
@@ -52,19 +48,14 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       } else throw e;
     }
 
-    const table = await this.tableGenerator.getTable();
+    let userDTO = await this.userCRUD.read(uid);
 
-    let [user] = await this.database.select<UserModel.JSON>(
-      table,
-      (user) => user.uid === uid,
-    );
-
-    if (user) {
+    if (userDTO) {
       await dontThrow(async () => {
         if (name) await this.changeMe.execute({ name });
       });
     } else {
-      user = await this.database.insert<UserModel.JSON>(table, {
+      userDTO = await this.userCRUD.update(uid, {
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -74,7 +65,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       });
     }
 
-    return UserHydrator.hydrate(user);
+    return UserHydrator.hydrate(userDTO);
   }
 }
 
@@ -83,7 +74,6 @@ export namespace AuthLinkWithProviderUsecase {
     changeMe: ChangeMeUsecase;
     signInWithProvider: SignInWithProviderUsecase;
     authProvider: AuthProviderProtocol;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    userCRUD: UserCRUD;
   };
 }

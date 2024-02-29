@@ -1,20 +1,14 @@
 import { AuthSignInAnonymouslyUsecase } from '@data/usecases';
 import { SignInAnonymouslyUsecase } from '@domain/usecases';
 
-import {
-  makeAuthAnonymous,
-  makeDatabase,
-  makeUsersTableGenerator,
-} from '@main/factories';
+import { makeAuthAnonymous, makeUserCRUD } from '@main/factories';
 
 export function makeAuthSignInAnonymouslyUsecase(): SignInAnonymouslyUsecase {
   const authAnonymous = makeAuthAnonymous();
-  const database = makeDatabase();
-  const tableGenerator = makeUsersTableGenerator();
+  const userCRUD = makeUserCRUD();
 
   return new AuthSignInAnonymouslyUsecase({
     authAnonymous,
-    database,
-    tableGenerator,
+    userCRUD,
   });
 }

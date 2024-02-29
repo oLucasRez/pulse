@@ -6,11 +6,9 @@ import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
 import { Provider } from '@domain/types';
 
-import {
-  AuthProviderProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { AuthProviderProtocol } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 import { dontThrow } from '@data/utils';
 
@@ -19,32 +17,26 @@ export class AuthSignInWithProviderUsecase
 {
   private readonly changeMe: ChangeMeUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.authProvider = deps.authProvider;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.userCRUD = deps.userCRUD;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
     const { uid, name } = await this.authProvider.signInWith(provider);
 
-    const table = await this.tableGenerator.getTable();
+    let userCRUD = await this.userCRUD.read(uid);
 
-    let [user] = await this.database.select<UserModel.JSON>(
-      table,
-      (user) => user.uid === uid,
-    );
-
-    if (user) {
+    if (userCRUD) {
       await dontThrow(async () => {
-        if (name && name !== user.name) await this.changeMe.execute({ name });
+        if (userCRUD && name && name !== userCRUD.name)
+          await this.changeMe.execute({ name });
       });
     } else {
-      user = await this.database.insert<UserModel.JSON>(table, {
+      userCRUD = await this.userCRUD.create({
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -54,7 +46,7 @@ export class AuthSignInWithProviderUsecase
       });
     }
 
-    return UserHydrator.hydrate(user);
+    return UserHydrator.hydrate(userCRUD);
   }
 }
 
@@ -62,7 +54,6 @@ export namespace AuthSignInWithProviderUsecase {
   export type Deps = {
     changeMe: ChangeMeUsecase;
     authProvider: AuthProviderProtocol;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    userCRUD: UserCRUD;
   };
 }

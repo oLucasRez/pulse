@@ -1,5 +1,7 @@
 import { GameModel } from '@domain/models';
 
+import { DeepPartial } from '@domain/types';
+
 import { ModelCRUD } from '..';
 
 export interface GameCRUD {
@@ -11,7 +13,7 @@ export interface GameCRUD {
 }
 
 export namespace GameCRUD {
-  export type DTO = ModelCRUD.DTO & {
+  type BaseDTO = {
     uid: string;
     title: string | null;
     config: {
@@ -25,31 +27,7 @@ export namespace GameCRUD {
     lightspotRoundID: string | null;
   };
 
-  export type CreatePayload = {
-    uid: string;
-    title: string | null;
-    config: {
-      maxPlayers: number;
-      withLightspot: boolean;
-      dicesMode: GameModel.DicesMode;
-    };
-    started: boolean;
-    state: GameModel.State;
-    roundID: string | null;
-    lightspotRoundID: string | null;
-  };
-
-  export type UpdatePayload = {
-    uid?: string;
-    title?: string | null;
-    config?: {
-      maxPlayers?: number;
-      withLightspot?: boolean;
-      dicesMode?: GameModel.DicesMode;
-    };
-    started?: boolean;
-    state?: GameModel.State;
-    roundID?: string | null;
-    lightspotRoundID?: string | null;
-  };
+  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type CreatePayload = BaseDTO;
+  export type UpdatePayload = DeepPartial<BaseDTO>;
 }

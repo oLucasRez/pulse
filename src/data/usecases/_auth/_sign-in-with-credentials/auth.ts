@@ -6,23 +6,19 @@ import { UserHydrator } from '@data/hydration';
 
 import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
-import {
-  AuthCredentialsProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { AuthCredentialsProtocol } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 export class AuthSignInWithCredentialsUsecase
   implements SignInWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.userCRUD = deps.userCRUD;
   }
 
   public async execute(
@@ -35,25 +31,20 @@ export class AuthSignInWithCredentialsUsecase
       password,
     });
 
-    const table = await this.tableGenerator.getTable();
-    const [user] = await this.database.select<UserModel.JSON>(
-      table,
-      (user) => user.uid === uid,
-    );
+    const userDTO = await this.userCRUD.read(uid);
 
-    if (!user)
+    if (!userDTO)
       throw new NotFoundError({
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    return UserHydrator.hydrate(user);
+    return UserHydrator.hydrate(userDTO);
   }
 }
 
 export namespace AuthSignInWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    userCRUD: UserCRUD;
   };
 }

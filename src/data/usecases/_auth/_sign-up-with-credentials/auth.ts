@@ -4,23 +4,19 @@ import { UserHydrator } from '@data/hydration';
 
 import { SignUpWithCredentialsUsecase } from '@domain/usecases';
 
-import {
-  AuthCredentialsProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { AuthCredentialsProtocol } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 export class AuthSignUpWithCredentialsUsecase
   implements SignUpWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignUpWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.userCRUD = deps.userCRUD;
   }
 
   public async execute(
@@ -33,8 +29,7 @@ export class AuthSignUpWithCredentialsUsecase
       password,
     });
 
-    const table = await this.tableGenerator.getTable();
-    const user = await this.database.insert<UserModel.JSON>(table, {
+    const userDTO = await this.userCRUD.create({
       uid,
       name,
       currentGameID: null,
@@ -43,14 +38,13 @@ export class AuthSignUpWithCredentialsUsecase
       providers: [],
     });
 
-    return UserHydrator.hydrate(user);
+    return UserHydrator.hydrate(userDTO);
   }
 }
 
 export namespace AuthSignUpWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    userCRUD: UserCRUD;
   };
 }

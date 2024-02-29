@@ -5,16 +5,12 @@ import { ContextProviderProps } from '@presentation/types';
 import { AuthUsecasesContextProvider } from '@presentation/contexts';
 
 import {
-  makeChangeMeUsecase,
-  makeGetMeUsecase,
   makeLinkWithProviderUsecase,
-  makeSetCurrentGameUsecase,
   makeSignInAnonymouslyUsecase,
   makeSignInWithCredentialsUsecase,
   makeSignInWithProviderUsecase,
   makeSignOutUsecase,
   makeSignUpWithCredentialsUsecase,
-  makeWatchMeUsecase,
 } from '@main/factories';
 
 export function makeAuthUsecasesContextProvider(
@@ -26,10 +22,6 @@ export function makeAuthUsecasesContextProvider(
   const linkWithProvider = makeLinkWithProviderUsecase();
   const signInAnonymously = makeSignInAnonymouslyUsecase();
   const signOut = makeSignOutUsecase();
-  const getMe = makeGetMeUsecase();
-  const watchMe = makeWatchMeUsecase();
-  const changeMe = makeChangeMeUsecase();
-  const setCurrentGame = makeSetCurrentGameUsecase();
 
   return (
     <AuthUsecasesContextProvider
@@ -39,10 +31,6 @@ export function makeAuthUsecasesContextProvider(
       linkWithProvider={linkWithProvider}
       signInAnonymously={signInAnonymously}
       signOut={signOut}
-      getMe={getMe}
-      watchMe={watchMe}
-      changeMe={changeMe}
-      setCurrentGame={setCurrentGame}
       {...props}
     />
   );

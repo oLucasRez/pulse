@@ -9,13 +9,3 @@ export interface UserModel extends Model {
   isAnonymous: boolean;
   providers: Provider[];
 }
-
-export namespace UserModel {
-  export type JSON = Model.JSON & {
-    uid: string;
-    name: string | null;
-    currentGameID: GameModel['id'] | null;
-    isAnonymous: boolean;
-    providers: Provider[];
-  };
-}

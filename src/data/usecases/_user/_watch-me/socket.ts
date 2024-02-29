@@ -29,12 +29,12 @@ export class SocketWatchMeUsecase implements WatchMeUsecase {
 
       const unsubscribe = this.socket.watch<UserModel.JSON[]>(
         table,
-        (users) => {
+        async (users) => {
           if (!me) callback(null);
           else {
             const user = users.find((user) => user.uid === me.uid);
 
-            callback(user ? UserHydrator.hydrate(user) : null);
+            callback(user ? await UserHydrator.hydrate(user) : null);
           }
         },
       );

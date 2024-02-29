@@ -8,35 +8,26 @@ import { UserHydrator } from '@data/hydration';
 
 import { SignInAnonymouslyUsecase } from '@domain/usecases';
 
-import {
-  AuthAnonymousProtocol,
-  DatabaseProtocol,
-  TableGenerator,
-} from '@data/protocols';
+import { AuthAnonymousProtocol } from '@data/protocols';
+
+import { UserCRUD } from '@data/cruds';
 
 export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
   private readonly authAnonymous: AuthAnonymousProtocol;
-  private readonly database: DatabaseProtocol;
-  private readonly tableGenerator: TableGenerator;
+  private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInAnonymouslyUsecase.Deps) {
     this.authAnonymous = deps.authAnonymous;
-    this.database = deps.database;
-    this.tableGenerator = deps.tableGenerator;
+    this.userCRUD = deps.userCRUD;
   }
 
   public async execute(): Promise<UserModel> {
     const uid = await this.authAnonymous.signInAnonymously();
 
-    const table = await this.tableGenerator.getTable();
+    let userDTO = await this.userCRUD.read(uid);
 
-    let [user] = await this.database.select<UserModel.JSON>(
-      table,
-      (user) => user.uid === uid,
-    );
-
-    if (!user) {
-      user = await this.database.insert<UserModel.JSON>(table, {
+    if (!userDTO) {
+      userDTO = await this.userCRUD.create({
         uid,
         name: faker.person.fullName(),
         currentGameID: null,
@@ -46,19 +37,18 @@ export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
       });
     }
 
-    if (!user)
+    if (!userDTO)
       throw new NotFoundError({
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    return UserHydrator.hydrate(user);
+    return UserHydrator.hydrate(userDTO);
   }
 }
 
 export namespace AuthSignInAnonymouslyUsecase {
   export type Deps = {
     authAnonymous: AuthAnonymousProtocol;
-    database: DatabaseProtocol;
-    tableGenerator: TableGenerator;
+    userCRUD: UserCRUD;
   };
 }

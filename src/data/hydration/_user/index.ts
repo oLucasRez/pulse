@@ -5,17 +5,17 @@ import { GameCollection } from '@data/collections';
 import { ModelHydrator } from '..';
 
 export class UserHydrator {
-  public static hydrate(json: UserModel.JSON): UserModel {
+  public static async hydrate(dto: UserModel.JSON): Promise<UserModel> {
     const user: UserModel = Object.assign<Model, Omit<UserModel, keyof Model>>(
-      ModelHydrator.hydrate(json),
+      ModelHydrator.hydrate(dto),
       {
-        uid: json.uid,
-        name: json.name,
-        currentGame: json.currentGameID
-          ? GameCollection.get(json.currentGameID)
+        uid: dto.uid,
+        name: dto.name,
+        currentGame: dto.currentGameID
+          ? GameCollection.get(dto.currentGameID)
           : null,
-        isAnonymous: json.isAnonymous,
-        providers: json.providers,
+        isAnonymous: dto.isAnonymous,
+        providers: dto.providers,
       },
     );
 

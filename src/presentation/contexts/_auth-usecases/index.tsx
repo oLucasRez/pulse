@@ -20,10 +20,6 @@ export const AuthUsecasesContextProvider: FC<
     linkWithProvider,
     signInAnonymously,
     signOut,
-    getMe,
-    watchMe,
-    changeMe,
-    setCurrentGame,
 
     children,
   } = props;
@@ -37,10 +33,6 @@ export const AuthUsecasesContextProvider: FC<
         linkWithProvider,
         signInAnonymously,
         signOut,
-        getMe,
-        watchMe,
-        changeMe,
-        setCurrentGame,
       }}
     >
       {children}

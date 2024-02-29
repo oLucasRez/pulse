@@ -23,18 +23,4 @@ export namespace GameModel {
     withLightspot: boolean;
     dicesMode: DicesMode;
   };
-
-  export type JSON = Model.JSON & {
-    uid: UserModel['uid'];
-    title: string | null;
-    config: {
-      maxPlayers: number;
-      withLightspot: boolean;
-      dicesMode: DicesMode;
-    };
-    started: boolean;
-    state: GameModel.State;
-    roundID: RoundModel['id'] | null;
-    lightspotRoundID: RoundModel['id'] | null;
-  };
 }

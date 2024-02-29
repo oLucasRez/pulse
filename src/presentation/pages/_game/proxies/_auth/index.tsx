@@ -6,7 +6,7 @@ import { AuthProxyProps, MeContextValue } from './types';
 
 import { useStates } from '@presentation/hooks';
 
-import { useAuthUsecases } from '@presentation/contexts';
+import { useUserUsecases } from '@presentation/contexts';
 
 import { AuthForm, GlobalLoading } from '@presentation/components';
 
@@ -35,9 +35,7 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
     authFormMode: 'login' as AuthForm.Mode,
   });
 
-  const { getMe } = useAuthUsecases();
-
-  const { setCurrentGame } = useAuthUsecases();
+  const { getMe, setCurrentGame } = useUserUsecases();
 
   function handleAuth(me: UserModel | null): any {
     set('gettingMe')(true);
