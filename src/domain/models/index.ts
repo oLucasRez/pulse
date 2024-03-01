@@ -4,14 +4,6 @@ export interface Model {
   updatedAt: Date;
 }
 
-export namespace Model {
-  export type JSON = {
-    id: string;
-    createdAt: number;
-    updatedAt: number;
-  };
-}
-
 export * from './_answer';
 export * from './_dice';
 export * from './_game';

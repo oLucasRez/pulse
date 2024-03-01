@@ -23,8 +23,9 @@ import { useGameLoaderData } from './loader';
 const GamePage: FC = () => {
   const me = useMe();
 
+  const currentGame = useGameLoaderData();
+
   const [s, set] = useStates({
-    currentGame: useGameLoaderData(),
     players: [] as PlayerModel[],
     watchingPlayers: false,
     settingsIsOpen: false,
@@ -32,7 +33,7 @@ const GamePage: FC = () => {
     startingGame: false,
   });
 
-  const imHost = me.uid === s.currentGame.uid;
+  const imHost = me.uid === currentGame.uid;
 
   const { startGame } = useGameUsecases();
 
@@ -97,7 +98,7 @@ const GamePage: FC = () => {
       return <p className='invite'>Wait until the host starts the game!</p>;
 
     const reachedMaxPlayers =
-      s.currentGame.config.maxPlayers === notBannedPlayers.length;
+      currentGame.config.maxPlayers === notBannedPlayers.length;
 
     if (reachedMaxPlayers) return;
 
@@ -180,7 +181,7 @@ const GamePage: FC = () => {
         </Main>
       );
 
-    if (s.currentGame.started)
+    if (currentGame.started)
       return (
         <Main>
           <Map />
@@ -242,7 +243,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{s.currentGame.title}</b>
+            <b>{currentGame.title}</b>
           </h2>
 
           {renderMyHeader()}

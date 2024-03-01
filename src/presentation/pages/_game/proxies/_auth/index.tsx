@@ -37,10 +37,10 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
 
   const { getMe, setCurrentGame } = useUserUsecases();
 
-  function handleAuth(me: UserModel | null): any {
+  async function handleAuth(me: UserModel | null): Promise<any> {
     set('gettingMe')(true);
 
-    setCurrentGame
+    await setCurrentGame
       .execute(currentGame.id)
       .then(set('me', me))
       .catch(logError)

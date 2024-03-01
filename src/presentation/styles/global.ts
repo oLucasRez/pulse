@@ -34,7 +34,7 @@ export const GlobalStyle = createGlobalStyle`
 
   // temporary
   * {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: #778;
 
     button {

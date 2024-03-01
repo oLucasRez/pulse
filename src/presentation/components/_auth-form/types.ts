@@ -4,7 +4,7 @@ export type AuthFormMode = 'login' | 'register';
 
 export interface AuthFormProps {
   mode: AuthFormMode;
-  onAuth?(me: UserModel): void;
+  onAuth?(me: UserModel): void | Promise<void>;
   onWantToRegister?(): void;
   onWantToLogin?(): void;
 }

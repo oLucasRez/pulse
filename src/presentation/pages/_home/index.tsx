@@ -45,7 +45,7 @@ const HomePage: FC = () => {
   const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
   function handleCreateGameButtonClick(): any {
-    set('creatingGame', true);
+    set('creatingGame')(true);
 
     createGame
       .execute({

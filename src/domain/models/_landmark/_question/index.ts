@@ -12,14 +12,3 @@ export interface QuestionModel extends LandmarkModel {
   answers: AnswerModel[];
   fact: AnswerModel | null;
 }
-
-export namespace QuestionModel {
-  export type JSON = LandmarkModel.JSON & {
-    position: Vector.JSON;
-    description: string;
-    subjectIDs: SubjectModel['id'][];
-    authorID: PlayerModel['id'];
-    answerIDs: AnswerModel['id'][];
-    factID: AnswerModel['id'] | null;
-  };
-}
