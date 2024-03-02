@@ -6,7 +6,7 @@ export interface PulseModel<L extends LandmarkModel> extends Model {
   origin: Vector;
   gap: number;
   amount: number;
-  landmark: L;
+  landmarkID: L['id'];
 }
 
 export * from './_central-pulse';

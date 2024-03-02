@@ -5,20 +5,20 @@ import { FailedError, ForbiddenError, NotFoundError } from '@domain/errors';
 import {
   CreateMySubjectUsecase,
   CreateSubjectUsecase,
-  GetMeUsecase,
+  GetCurrentGameUsecase,
   GetMyPlayerUsecase,
   SetPlayerSubjectUsecase,
 } from '@domain/usecases';
 
 export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
   private readonly createSubject: CreateSubjectUsecase;
-  private readonly getMe: GetMeUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly setPlayerSubject: SetPlayerSubjectUsecase;
 
   public constructor(deps: CRUDCreateMySubjectUsecase.Deps) {
     this.createSubject = deps.createSubject;
-    this.getMe = deps.getMe;
+    this.getCurrentGame = deps.getCurrentGame;
     this.getMyPlayer = deps.getMyPlayer;
     this.setPlayerSubject = deps.setPlayerSubject;
   }
@@ -28,17 +28,12 @@ export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
   ): Promise<SubjectModel> {
     const { description } = payload;
 
-    const me = await this.getMe.execute();
+    const currentGame = await this.getCurrentGame.execute();
 
-    if (!me)
-      throw new ForbiddenError({
-        metadata: { tried: 'create my subject without session' },
-      });
-
-    if (!me.currentGame)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    if (me.currentGame.state !== 'creating:subjects')
+    if (currentGame.state !== 'creating:subjects')
       throw new ForbiddenError({ metadata: { tried: 'create my subject' } });
 
     const myPlayer = await this.getMyPlayer.execute();
@@ -65,7 +60,7 @@ export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
 export namespace CRUDCreateMySubjectUsecase {
   export type Deps = {
     createSubject: CreateSubjectUsecase;
-    getMe: GetMeUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
     getMyPlayer: GetMyPlayerUsecase;
     setPlayerSubject: SetPlayerSubjectUsecase;
   };

@@ -41,7 +41,7 @@ export class CRUDChangeSubjectUsecase implements ChangeSubjectUsecase {
         metadata: { entity: 'Subject', prop: 'id', value: id },
       });
 
-    if (subject.author.id !== myPlayer.id)
+    if (subject.authorID !== myPlayer.id)
       throw new ForbiddenError({
         metadata: { tried: 'change subject that is not mine' },
       });

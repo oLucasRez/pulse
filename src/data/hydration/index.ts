@@ -1,18 +1,14 @@
 import { Model } from '@domain/models';
 
-import { ModelCollection } from '@data/collections';
-
 import { ModelCRUD } from '@data/cruds';
 
 export class ModelHydrator {
-  public static async hydrate(dto: ModelCRUD.DTO): Promise<Model> {
+  public static hydrate(dto: ModelCRUD.DTO): Model {
     const model: Model = {
       id: dto.id,
       createdAt: new Date(dto.createdAt),
       updatedAt: new Date(dto.updatedAt),
     };
-
-    ModelCollection.append(dto.id, model);
 
     return model;
   }

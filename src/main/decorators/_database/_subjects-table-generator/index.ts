@@ -1,39 +1,36 @@
-import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { NotFoundError } from '@domain/errors';
 
-import { GetMeUsecase } from '@domain/usecases';
+import { GetCurrentGameUsecase } from '@domain/usecases';
 
 import { TableGenerator } from '@data/protocols';
 
 export class SubjectsTableGeneratorDecorator implements TableGenerator {
-  private readonly getMe: GetMeUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly decorated?: TableGenerator;
 
   public constructor(deps: SubjectsTableGeneratorDecorator.Deps) {
-    this.getMe = deps.getMe;
+    this.getCurrentGame = deps.getCurrentGame;
     this.decorated = deps.decorated;
   }
 
   public async getTable(): Promise<string> {
     const table = await this.decorated?.getTable();
 
-    const me = await this.getMe.execute();
+    const currentGame = await this.getCurrentGame.execute();
 
-    if (!me)
-      throw new ForbiddenError({
-        metadata: { tried: 'access subjects table without session' },
+    if (!currentGame)
+      throw new NotFoundError({
+        metadata: { entity: 'CurrentGame' },
       });
 
-    if (!me.currentGame)
-      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-
-    if (table) return `${me.currentGame.id}/subjects/${table}`;
-    return `${me.currentGame.id}/subjects`;
+    if (table) return `${currentGame.id}/subjects/${table}`;
+    return `${currentGame.id}/subjects`;
   }
 }
 
 export namespace SubjectsTableGeneratorDecorator {
   export type Deps = {
-    getMe: GetMeUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
     decorated?: TableGenerator;
   };
 }

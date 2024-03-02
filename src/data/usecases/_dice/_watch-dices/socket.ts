@@ -23,10 +23,8 @@ export class SocketWatchDicesUsecase implements WatchDicesUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<DiceCRUD.DTO[]>(
-        table,
-        async (dices) =>
-          callback(await Promise.all(dices.map(DiceHydrator.hydrate))),
+      const unsubscribe = this.socket.watch<DiceCRUD.DTO[]>(table, (dices) =>
+        callback(dices.map(DiceHydrator.hydrate)),
       );
 
       return unsubscribe;

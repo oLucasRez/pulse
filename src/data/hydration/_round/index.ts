@@ -1,24 +1,18 @@
 import { Model, RoundModel } from '@domain/models';
 
-import { PlayerCollection, RoundCollection } from '@data/collections';
-
 import { RoundCRUD } from '@data/cruds';
 
 import { ModelHydrator } from '..';
 
 export class RoundHydrator {
-  public static async hydrate(dto: RoundCRUD.DTO): Promise<RoundModel> {
+  public static hydrate(dto: RoundCRUD.DTO): RoundModel {
     const round: RoundModel = Object.assign<
       Model,
       Omit<RoundModel, keyof Model>
-    >(await ModelHydrator.hydrate(dto), {
-      players: await Promise.all(dto.playerIDs.map(PlayerCollection.get)),
-      currentPlayer: dto.currentPlayerID
-        ? await PlayerCollection.get(dto.currentPlayerID)
-        : null,
+    >(ModelHydrator.hydrate(dto), {
+      playerIDs: dto.playerIDs,
+      currentPlayerID: dto.currentPlayerID,
     });
-
-    RoundCollection.append(dto.id, round);
 
     return round;
   }

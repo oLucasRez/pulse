@@ -6,8 +6,8 @@ export interface GameModel extends Model {
   config: GameModel.Config;
   started: boolean;
   state: GameModel.State;
-  round: RoundModel | null;
-  lightspotRound: RoundModel | null;
+  roundID: RoundModel['id'] | null;
+  lightspotRoundID: RoundModel['id'] | null;
 }
 
 export namespace GameModel {

@@ -7,6 +7,6 @@ import { LandmarkModel } from '..';
 export interface SubjectModel extends LandmarkModel {
   description: string;
   color: Color;
-  author: PlayerModel;
-  path: SubjectPulseModel[];
+  authorID: PlayerModel['id'];
+  pathIDs: SubjectPulseModel['id'][];
 }

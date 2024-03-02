@@ -23,9 +23,8 @@ import { useGameLoaderData } from './loader';
 const GamePage: FC = () => {
   const me = useMe();
 
-  const currentGame = useGameLoaderData();
-
   const [s, set] = useStates({
+    currentGame: useGameLoaderData(),
     players: [] as PlayerModel[],
     watchingPlayers: false,
     settingsIsOpen: false,
@@ -33,7 +32,7 @@ const GamePage: FC = () => {
     startingGame: false,
   });
 
-  const imHost = me.uid === currentGame.uid;
+  const imHost = me.uid === s.currentGame.uid;
 
   const { startGame } = useGameUsecases();
 
@@ -88,7 +87,11 @@ const GamePage: FC = () => {
   function handleStartButtonClick(): any {
     set('startingGame')(true);
 
-    startGame.execute().catch(alertError).finally(set('startingGame', false));
+    startGame
+      .execute()
+      .then(set('currentGame'))
+      .catch(alertError)
+      .finally(set('startingGame', false));
   }
 
   const notBannedPlayers = s.players.filter((player) => !player.banned);
@@ -98,7 +101,7 @@ const GamePage: FC = () => {
       return <p className='invite'>Wait until the host starts the game!</p>;
 
     const reachedMaxPlayers =
-      currentGame.config.maxPlayers === notBannedPlayers.length;
+      s.currentGame.config.maxPlayers === notBannedPlayers.length;
 
     if (reachedMaxPlayers) return;
 
@@ -181,7 +184,7 @@ const GamePage: FC = () => {
         </Main>
       );
 
-    if (currentGame.started)
+    if (s.currentGame.started)
       return (
         <Main>
           <Map />
@@ -243,7 +246,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{currentGame.title}</b>
+            <b>{s.currentGame.title}</b>
           </h2>
 
           {renderMyHeader()}

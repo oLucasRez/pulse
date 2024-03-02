@@ -6,7 +6,7 @@ import {
   makeCreateDiceUsecase,
   makeCreateRoundUsecase,
   makeGameCRUD,
-  makeGetMeUsecase,
+  makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
   makeSetPlayerDiceUsecase,
 } from '@main/factories';
@@ -16,7 +16,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
   const createDice = makeCreateDiceUsecase();
   const createRound = makeCreateRoundUsecase();
   const gameCRUD = makeGameCRUD();
-  const getMe = makeGetMeUsecase();
+  const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const setPlayerDice = makeSetPlayerDiceUsecase();
 
@@ -25,7 +25,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
     createDice,
     createRound,
     gameCRUD,
-    getMe,
+    getCurrentGame,
     getPlayers,
     setPlayerDice,
   });

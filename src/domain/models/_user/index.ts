@@ -5,7 +5,7 @@ import { GameModel, Model } from '..';
 export interface UserModel extends Model {
   uid: string;
   name: string | null;
-  currentGame: GameModel | null;
+  currentGameID: GameModel['id'] | null;
   isAnonymous: boolean;
   providers: Provider[];
 }

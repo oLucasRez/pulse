@@ -1,36 +1,31 @@
 import { GameModel } from '@domain/models';
 
-import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { NotFoundError } from '@domain/errors';
 
 import { GameHydrator } from '@data/hydration';
 
-import { ChangeGameUsecase, GetMeUsecase } from '@domain/usecases';
+import { ChangeGameUsecase, GetCurrentGameUsecase } from '@domain/usecases';
 
 import { GameCRUD } from '@data/cruds';
 
 export class CRUDChangeGameUsecase implements ChangeGameUsecase {
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly gameCRUD: GameCRUD;
-  private readonly getMe: GetMeUsecase;
 
   public constructor(deps: CRUDChangeGameUsecase.Deps) {
+    this.getCurrentGame = deps.getCurrentGame;
     this.gameCRUD = deps.gameCRUD;
-    this.getMe = deps.getMe;
   }
 
   public async execute(payload: ChangeGameUsecase.Payload): Promise<GameModel> {
     const { title, config } = payload;
 
-    const me = await this.getMe.execute();
+    const currentGame = await this.getCurrentGame.execute();
 
-    if (!me)
-      throw new ForbiddenError({
-        metadata: { tried: 'change game without session' },
-      });
-
-    if (!me.currentGame)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    const gameDTO = await this.gameCRUD.update(me.currentGame.id, {
+    const gameDTO = await this.gameCRUD.update(currentGame.id, {
       title,
       config,
     });
@@ -41,7 +36,7 @@ export class CRUDChangeGameUsecase implements ChangeGameUsecase {
 
 export namespace CRUDChangeGameUsecase {
   export type Deps = {
+    getCurrentGame: GetCurrentGameUsecase;
     gameCRUD: GameCRUD;
-    getMe: GetMeUsecase;
   };
 }

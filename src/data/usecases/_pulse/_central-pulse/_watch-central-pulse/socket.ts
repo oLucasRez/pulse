@@ -27,9 +27,8 @@ export class SocketWatchCentralPulseUsecase
 
       const unsubscribe = this.socket.watch<CentralPulseCRUD.DTO[]>(
         table,
-        async ([centralPulse]) =>
-          centralPulse &&
-          callback(await CentralPulseHydrator.hydrate(centralPulse)),
+        ([centralPulse]) =>
+          centralPulse && callback(CentralPulseHydrator.hydrate(centralPulse)),
       );
 
       return unsubscribe;

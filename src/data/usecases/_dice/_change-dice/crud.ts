@@ -82,7 +82,7 @@ export class CRUDChangeDiceUsecase implements ChangeDiceUsecase {
   }
 
   private ownerShouldBePreviouslyUnset(dice: DiceModel): void {
-    if (dice.owner)
+    if (dice.ownerID)
       throw new ForbiddenError({ metadata: { tried: 'change dice owner' } });
   }
 

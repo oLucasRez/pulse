@@ -47,7 +47,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     if (mode === 'register')
       promise = signUpWithCredentials.execute({ name, email, password });
 
-    promise?.then(handleAuth).catch(alertError).catch(set('signing', false));
+    promise?.then(handleAuth).catch(alertError).finally(set('signing', false));
   }
 
   function handleAnonymousButtonClick(): any {
@@ -57,7 +57,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       .execute()
       .then(handleAuth)
       .catch(alertError)
-      .catch(set('signing', false));
+      .finally(set('signing', false));
   }
 
   function handleGoogleButtonClick(): any {
@@ -67,7 +67,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       .execute('google')
       .then(handleAuth)
       .catch(alertError)
-      .catch(set('signing', false));
+      .finally(set('signing', false));
   }
 
   function handleGithubButtonClick(): any {
@@ -77,7 +77,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       .execute('github')
       .then(handleAuth)
       .catch(alertError)
-      .catch(set('signing', false));
+      .finally(set('signing', false));
   }
 
   const title = (

@@ -6,5 +6,5 @@ export interface DiceModel extends Model {
   sides: number;
   value: number | null;
   position: Vector | null;
-  owner: PlayerModel | null;
+  ownerID: PlayerModel['id'] | null;
 }

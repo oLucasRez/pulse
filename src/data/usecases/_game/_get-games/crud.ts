@@ -26,7 +26,7 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
 
     const gameDTOs = await this.gameCRUD.read();
 
-    return Promise.all(gameDTOs.map(GameHydrator.hydrate));
+    return gameDTOs.map(GameHydrator.hydrate);
   }
 }
 

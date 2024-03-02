@@ -73,12 +73,14 @@ export const Map: FC = () => {
 
   const currentGame = useGameLoaderData();
 
+  console.log('currentGame', currentGame);
+
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
-        {currentGame.round && (
+        {/* {currentGame.roundID && (
           <div>{currentGame.round.players.map((player) => player.avatar)}</div>
-        )}
+        )} */}
 
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}

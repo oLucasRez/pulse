@@ -15,12 +15,12 @@ import { GameCRUD } from '@data/cruds';
 import { isInteger } from '@domain/utils';
 
 export class CRUDCreateGameUsecase implements CreateGameUsecase {
-  private readonly gameCRUD: GameCRUD;
   private readonly getMe: GetMeUsecase;
+  private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDCreateGameUsecase.Deps) {
-    this.gameCRUD = deps.gameCRUD;
     this.getMe = deps.getMe;
+    this.gameCRUD = deps.gameCRUD;
   }
 
   public async execute(payload: CreateGameUsecase.Payload): Promise<GameModel> {
@@ -68,7 +68,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 
 export namespace CRUDCreateGameUsecase {
   export type Deps = {
-    gameCRUD: GameCRUD;
     getMe: GetMeUsecase;
+    gameCRUD: GameCRUD;
   };
 }

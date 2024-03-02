@@ -3,20 +3,20 @@ import { CreateMySubjectUsecase } from '@domain/usecases';
 
 import {
   makeCreateSubjectUsecase,
-  makeGetMeUsecase,
+  makeGetCurrentGameUsecase,
   makeGetMyPlayerUsecase,
   makeSetPlayerSubjectUsecase,
 } from '@main/factories';
 
 export function makeCRUDCreateMySubjectUsecase(): CreateMySubjectUsecase {
   const createSubject = makeCreateSubjectUsecase();
-  const getMe = makeGetMeUsecase();
+  const getCurrentGame = makeGetCurrentGameUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const setPlayerSubject = makeSetPlayerSubjectUsecase();
 
   return new CRUDCreateMySubjectUsecase({
     createSubject,
-    getMe,
+    getCurrentGame,
     getMyPlayer,
     setPlayerSubject,
   });

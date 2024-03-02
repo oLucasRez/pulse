@@ -1,13 +1,14 @@
 import { Color } from '@domain/enums';
 
-import { PlayerModel, UserModel } from '@domain/models';
+import { GameModel, PlayerModel, UserModel } from '@domain/models';
 
-import { ForbiddenError, OutOfBoundError } from '@domain/errors';
+import { ForbiddenError, NotFoundError, OutOfBoundError } from '@domain/errors';
 
 import { PlayerHydrator } from '@data/hydration';
 
 import {
   CreatePlayerUsecase,
+  GetCurrentGameUsecase,
   GetMeUsecase,
   GetPlayersUsecase,
 } from '@domain/usecases';
@@ -15,11 +16,13 @@ import {
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDCreatePlayerUsecase.Deps) {
+    this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
     this.playerCRUD = deps.playerCRUD;
@@ -42,7 +45,12 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
 
     this.colorShouldBeUnchosen(color, players);
 
-    await this.shouldntPassMaxPlayers(me, players);
+    const currentGame = await this.getCurrentGame.execute();
+
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
+
+    await this.shouldntPassMaxPlayers(currentGame, players);
 
     const playerDTO = await this.playerCRUD.create({
       name,
@@ -80,21 +88,21 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
   }
 
   private async shouldntPassMaxPlayers(
-    me: UserModel,
+    currentGame: GameModel,
     players: PlayerModel[],
   ): Promise<void> {
-    if (!me.currentGame)
+    if (!currentGame)
       throw new ForbiddenError({ metadata: { tried: 'create player' } });
 
     const notBannedPlayers = players.filter((player) => !player.banned);
 
-    if (me.currentGame.config.maxPlayers <= notBannedPlayers.length)
+    if (currentGame.config.maxPlayers <= notBannedPlayers.length)
       throw new OutOfBoundError({
         metadata: {
           prop: 'players',
           value: players.length,
           bound: 'above',
-          limit: me.currentGame.config.maxPlayers,
+          limit: currentGame.config.maxPlayers,
         },
       });
   }
@@ -102,6 +110,7 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
 
 export namespace CRUDCreatePlayerUsecase {
   export type Deps = {
+    getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
     playerCRUD: PlayerCRUD;

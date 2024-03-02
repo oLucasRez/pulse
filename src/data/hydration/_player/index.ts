@@ -1,33 +1,23 @@
 import { Model, PlayerModel } from '@domain/models';
 
-import {
-  DiceCollection,
-  PlayerCollection,
-  SubjectCollection,
-} from '@data/collections';
-
 import { PlayerCRUD } from '@data/cruds';
 
 import { ModelHydrator } from '..';
 
 export class PlayerHydrator {
-  public static async hydrate(dto: PlayerCRUD.DTO): Promise<PlayerModel> {
+  public static hydrate(dto: PlayerCRUD.DTO): PlayerModel {
     const player: PlayerModel = Object.assign<
       Model,
       Omit<PlayerModel, keyof Model>
-    >(await ModelHydrator.hydrate(dto), {
+    >(ModelHydrator.hydrate(dto), {
       name: dto.name,
       color: dto.color,
       avatar: dto.avatar,
       uid: dto.uid,
-      dice: dto.diceID ? await DiceCollection.get(dto.diceID) : null,
-      subject: dto.subjectID
-        ? await SubjectCollection.get(dto.subjectID)
-        : null,
+      diceID: dto.diceID,
+      subjectID: dto.subjectID,
       banned: dto.banned,
     });
-
-    PlayerCollection.append(dto.id, player);
 
     return player;
   }

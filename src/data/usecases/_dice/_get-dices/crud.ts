@@ -16,7 +16,7 @@ export class CRUDGetDicesUsecase implements GetDicesUsecase {
   public async execute(): Promise<DiceModel[]> {
     const diceDTOs = await this.diceCRUD.read();
 
-    return Promise.all(diceDTOs.map(DiceHydrator.hydrate));
+    return diceDTOs.map(DiceHydrator.hydrate);
   }
 }
 

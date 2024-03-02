@@ -1,6 +1,6 @@
 import { GameModel } from '@domain/models';
 
-import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { NotFoundError } from '@domain/errors';
 
 import { GameHydrator } from '@data/hydration';
 
@@ -8,7 +8,7 @@ import {
   CreateCentralPulseUsecase,
   CreateDiceUsecase,
   CreateRoundUsecase,
-  GetMeUsecase,
+  GetCurrentGameUsecase,
   GetPlayersUsecase,
   SetPlayerDiceUsecase,
   StartGameUsecase,
@@ -20,7 +20,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
   private readonly createCentralPulse: CreateCentralPulseUsecase;
   private readonly createDice: CreateDiceUsecase;
   private readonly createRound: CreateRoundUsecase;
-  private readonly getMe: GetMeUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getPlayers: GetPlayersUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly gameCRUD: GameCRUD;
@@ -29,21 +29,16 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
     this.createCentralPulse = deps.createCentralPulse;
     this.createDice = deps.createDice;
     this.createRound = deps.createRound;
-    this.getMe = deps.getMe;
+    this.getCurrentGame = deps.getCurrentGame;
     this.getPlayers = deps.getPlayers;
     this.setPlayerDice = deps.setPlayerDice;
     this.gameCRUD = deps.gameCRUD;
   }
 
   public async execute(): Promise<GameModel> {
-    const me = await this.getMe.execute();
+    const currentGame = await this.getCurrentGame.execute();
 
-    if (!me)
-      throw new ForbiddenError({
-        metadata: { tried: 'start game without session' },
-      });
-
-    if (!me.currentGame)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
     await this.createCentralPulse.execute();
@@ -72,7 +67,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
       this.createRound.execute({ playerIDs: notBannedPlayerIDs }),
     ]);
 
-    const gameDTO = await this.gameCRUD.update(me.currentGame.id, {
+    const gameDTO = await this.gameCRUD.update(currentGame.id, {
       started: true,
       state: 'creating:subjects',
       roundID: round.id,
@@ -88,7 +83,7 @@ export namespace CRUDStartGameUsecase {
     createCentralPulse: CreateCentralPulseUsecase;
     createDice: CreateDiceUsecase;
     createRound: CreateRoundUsecase;
-    getMe: GetMeUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
     getPlayers: GetPlayersUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     gameCRUD: GameCRUD;

@@ -1,21 +1,17 @@
 import { Model, UserModel } from '@domain/models';
 
-import { GameCollection } from '@data/collections';
-
 import { UserCRUD } from '@data/cruds';
 
 import { ModelHydrator } from '..';
 
 export class UserHydrator {
-  public static async hydrate(dto: UserCRUD.DTO): Promise<UserModel> {
+  public static hydrate(dto: UserCRUD.DTO): UserModel {
     const user: UserModel = Object.assign<Model, Omit<UserModel, keyof Model>>(
-      await ModelHydrator.hydrate(dto),
+      ModelHydrator.hydrate(dto),
       {
         uid: dto.uid,
         name: dto.name,
-        currentGame: dto.currentGameID
-          ? await GameCollection.get(dto.currentGameID)
-          : null,
+        currentGameID: dto.currentGameID,
         isAnonymous: dto.isAnonymous,
         providers: dto.providers,
       },

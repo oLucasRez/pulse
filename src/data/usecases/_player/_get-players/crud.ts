@@ -16,7 +16,7 @@ export class CRUDGetPlayersUsecase implements GetPlayersUsecase {
   public async execute(): Promise<PlayerModel[]> {
     const playerDTOs = await this.playerCRUD.read();
 
-    return Promise.all(playerDTOs.map(PlayerHydrator.hydrate));
+    return playerDTOs.map(PlayerHydrator.hydrate);
   }
 }
 

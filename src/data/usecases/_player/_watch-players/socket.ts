@@ -25,8 +25,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
 
       const unsubscribe = this.socket.watch<PlayerCRUD.DTO[]>(
         table,
-        async (players) =>
-          callback(await Promise.all(players.map(PlayerHydrator.hydrate))),
+        (players) => callback(players.map(PlayerHydrator.hydrate)),
       );
 
       return unsubscribe;

@@ -18,10 +18,10 @@ export class CRUDGetMySubjectUsecase implements GetMySubjectUsecase {
   public async execute(): Promise<SubjectModel | null> {
     const myPlayer = await this.getMyPlayer.execute();
 
-    if (!myPlayer?.subject) return null;
+    if (!myPlayer?.subjectID) return null;
 
     const subjectDTO = (await this.subjectCRUD.read()).find(
-      (subject) => subject.id === myPlayer.subject?.id,
+      (subject) => subject.id === myPlayer.subjectID,
     );
 
     return subjectDTO ? SubjectHydrator.hydrate(subjectDTO) : null;

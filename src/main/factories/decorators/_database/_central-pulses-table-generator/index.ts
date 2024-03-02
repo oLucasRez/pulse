@@ -2,15 +2,15 @@ import { TableGenerator } from '@data/protocols';
 
 import { CentralPulsesTableGeneratorDecorator } from '@main/decorators';
 
-import { makeGetMeUsecase } from '@main/factories';
+import { makeGetCurrentGameUsecase } from '@main/factories';
 
 export function makeCentralPulsesTableGeneratorDecorator(
   decorated?: TableGenerator,
 ): TableGenerator {
-  const getMe = makeGetMeUsecase();
+  const getCurrentGame = makeGetCurrentGameUsecase();
 
   return new CentralPulsesTableGeneratorDecorator({
-    getMe,
+    getCurrentGame,
     decorated,
   });
 }

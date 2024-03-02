@@ -1,15 +1,13 @@
 import { GameModel, Model } from '@domain/models';
 
-import { GameCollection, RoundCollection } from '@data/collections';
-
 import { GameCRUD } from '@data/cruds';
 
 import { ModelHydrator } from '..';
 
 export class GameHydrator {
-  public static async hydrate(dto: GameCRUD.DTO): Promise<GameModel> {
+  public static hydrate(dto: GameCRUD.DTO): GameModel {
     const game: GameModel = Object.assign<Model, Omit<GameModel, keyof Model>>(
-      await ModelHydrator.hydrate(dto),
+      ModelHydrator.hydrate(dto),
       {
         uid: dto.uid,
         title: dto.title,
@@ -20,14 +18,10 @@ export class GameHydrator {
         },
         started: dto.started,
         state: dto.state,
-        round: dto.roundID ? await RoundCollection.get(dto.roundID) : null,
-        lightspotRound: dto.lightspotRoundID
-          ? await RoundCollection.get(dto.lightspotRoundID)
-          : null,
+        roundID: dto.roundID,
+        lightspotRoundID: dto.lightspotRoundID,
       },
     );
-
-    GameCollection.append(dto.id, game);
 
     return game;
   }

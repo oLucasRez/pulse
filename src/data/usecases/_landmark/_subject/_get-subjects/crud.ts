@@ -16,7 +16,7 @@ export class CRUDGetSubjectsUsecase implements GetSubjectsUsecase {
   public async execute(): Promise<SubjectModel[]> {
     const subjectDTOs = await this.subjectCRUD.read();
 
-    return Promise.all(subjectDTOs.map(SubjectHydrator.hydrate));
+    return subjectDTOs.map(SubjectHydrator.hydrate);
   }
 }
 

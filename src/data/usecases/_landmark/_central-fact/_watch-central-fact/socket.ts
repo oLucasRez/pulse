@@ -22,8 +22,8 @@ export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
 
     const unsubscribe = this.socket.watch<CentralFactCRUD.DTO[]>(
       table,
-      async ([centralFact]) =>
-        centralFact && callback(await CentralFactHydrator.hydrate(centralFact)),
+      ([centralFact]) =>
+        centralFact && callback(CentralFactHydrator.hydrate(centralFact)),
     );
 
     return unsubscribe;

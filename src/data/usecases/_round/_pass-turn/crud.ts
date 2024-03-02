@@ -2,10 +2,10 @@ import { RoundHydrator } from '@data/hydration/_round';
 
 import { RoundModel } from '@domain/models';
 
-import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { NotFoundError } from '@domain/errors';
 
 import {
-  GetMeUsecase,
+  GetCurrentGameUsecase,
   GetRoundUsecase,
   PassTurnUsecase,
 } from '@domain/usecases';
@@ -13,25 +13,20 @@ import {
 import { RoundCRUD } from '@data/cruds';
 
 export class CRUDPassTurnUsecase implements PassTurnUsecase {
-  private readonly getMe: GetMeUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getRound: GetRoundUsecase;
   private readonly roundCRUD: RoundCRUD;
 
   public constructor(deps: CRUDPassTurnUsecase.Deps) {
-    this.getMe = deps.getMe;
+    this.getCurrentGame = deps.getCurrentGame;
     this.getRound = deps.getRound;
     this.roundCRUD = deps.roundCRUD;
   }
 
   public async execute(id: string): Promise<RoundModel> {
-    const me = await this.getMe.execute();
+    const currentGame = await this.getCurrentGame.execute();
 
-    if (!me)
-      throw new ForbiddenError({
-        metadata: { tried: 'pass turn without session' },
-      });
-
-    if (!me.currentGame)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
     const round = await this.getRound.execute(id);
@@ -40,13 +35,13 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
         metadata: { entity: 'Round', prop: 'id', value: id },
       });
 
-    if (!round.currentPlayer) return round;
+    if (!round.currentPlayerID) return round;
 
-    let i = round.players.findIndex(
-      (player) => player.id === round.currentPlayer?.id,
+    let i = round.playerIDs.findIndex(
+      (playerID) => playerID === round.currentPlayerID,
     );
 
-    switch (me.currentGame.state) {
+    switch (currentGame.state) {
       case 'creating:subjects':
         i++;
         break;
@@ -57,10 +52,10 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
         break;
     }
 
-    const player = round.players[i];
+    const playerID = round.playerIDs[i];
 
     const roundDTO = await this.roundCRUD.update(round.id, {
-      currentPlayerID: player ? player.id : null,
+      currentPlayerID: playerID || null,
     });
 
     return RoundHydrator.hydrate(roundDTO);
@@ -69,7 +64,7 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
 
 export namespace CRUDPassTurnUsecase {
   export type Deps = {
-    getMe: GetMeUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
     getRound: GetRoundUsecase;
     roundCRUD: RoundCRUD;
   };
