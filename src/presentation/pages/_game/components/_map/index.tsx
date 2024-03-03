@@ -8,15 +8,28 @@ import {
   useRef,
 } from 'react';
 
-import { CentralPulseModel, RoundModel } from '@domain/models';
+import {
+  CentralPulseModel,
+  GameModel,
+  PlayerModel,
+  RoundModel,
+} from '@domain/models';
 
-import { WatchCentralPulseUsecase } from '@domain/usecases';
+import {
+  WatchCentralPulseUsecase,
+  WatchCurrentGameUsecase,
+} from '@domain/usecases';
 
 import { MapContextValue } from './types';
 
 import { useInterval, useStates } from '@presentation/hooks';
 
-import { useCentralPulseUsecases } from '@presentation/contexts';
+import {
+  useCentralPulseUsecases,
+  useGameUsecases,
+  usePlayerUsecases,
+  useRoundUsecases,
+} from '@presentation/contexts';
 
 import { Pulse } from './components';
 
@@ -25,14 +38,14 @@ import { Container, ViewBox } from './styles';
 import { Vector, VectorSpace } from '@domain/utils';
 import { logError } from '@presentation/utils';
 
-import { useGameLoaderData } from '../../loader';
-
 const Context = createContext({} as MapContextValue);
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map: FC = () => {
   const [s, set] = useStates({
+    currentPlayer: null as PlayerModel | null,
+    currentGame: null as GameModel | null,
     centralPulse: null as CentralPulseModel | null,
     width: 0,
     height: 0,
@@ -71,16 +84,39 @@ export const Map: FC = () => {
     return () => unsubscribe?.();
   }, []);
 
-  const currentGame = useGameLoaderData();
+  const { watchCurrentGame } = useGameUsecases();
+  useEffect(() => {
+    let unsubscribe: WatchCurrentGameUsecase.Response;
 
-  console.log('currentGame', currentGame);
+    watchCurrentGame
+      .execute(set('currentGame'))
+      .then((value) => (unsubscribe = value))
+      .catch(logError);
+
+    return () => unsubscribe?.();
+  }, []);
+
+  const { getRound } = useRoundUsecases();
+  useEffect(() => {
+    if (!s.currentGame?.roundID) return;
+
+    getRound.execute(s.currentGame.roundID).then(set('round')).catch(logError);
+  }, [s.currentGame?.roundID]);
+
+  const { getCurrentPlayer } = usePlayerUsecases();
+  useEffect(() => {
+    if (!s.round) return;
+
+    getCurrentPlayer
+      .execute(s.round.id)
+      .then(set('currentPlayer'))
+      .catch(logError);
+  }, [s.round]);
 
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
-        {/* {currentGame.roundID && (
-          <div>{currentGame.round.players.map((player) => player.avatar)}</div>
-        )} */}
+        {s.round && <div>{s.round.playerIDs.map((player) => player)}</div>}
 
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}

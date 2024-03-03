@@ -9,6 +9,7 @@ import {
   makeChangePlayerUsecase,
   makeCreatePlayerUsecase,
   makeDeletePlayerUsecase,
+  makeGetCurrentPlayerUsecase,
   makeGetMyPlayerUsecase,
   makeGetPlayersUsecase,
   makeGetPlayerUsecase,
@@ -22,6 +23,7 @@ export function makePlayerUsecasesContextProvider(
   const getPlayers = makeGetPlayersUsecase();
   const getPlayer = makeGetPlayerUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
+  const getCurrentPlayer = makeGetCurrentPlayerUsecase();
   const watchPlayers = makeWatchPlayersUsecase();
   const watchMyPlayer = makeWatchMyPlayerUsecase();
   const createPlayer = makeCreatePlayerUsecase();
@@ -34,6 +36,7 @@ export function makePlayerUsecasesContextProvider(
       getPlayers={getPlayers}
       getPlayer={getPlayer}
       getMyPlayer={getMyPlayer}
+      getCurrentPlayer={getCurrentPlayer}
       watchPlayers={watchPlayers}
       watchMyPlayer={watchMyPlayer}
       createPlayer={createPlayer}

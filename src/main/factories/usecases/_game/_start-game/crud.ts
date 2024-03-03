@@ -8,6 +8,7 @@ import {
   makeGameCRUD,
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
+  makePassTurnUsecase,
   makeSetPlayerDiceUsecase,
 } from '@main/factories';
 
@@ -18,6 +19,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
   const gameCRUD = makeGameCRUD();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
+  const passTurn = makePassTurnUsecase();
   const setPlayerDice = makeSetPlayerDiceUsecase();
 
   return new CRUDStartGameUsecase({
@@ -27,6 +29,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
     gameCRUD,
     getCurrentGame,
     getPlayers,
+    passTurn,
     setPlayerDice,
   });
 }

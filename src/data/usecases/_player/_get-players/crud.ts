@@ -13,10 +13,20 @@ export class CRUDGetPlayersUsecase implements GetPlayersUsecase {
     this.playerCRUD = deps.playerCRUD;
   }
 
-  public async execute(): Promise<PlayerModel[]> {
+  public async execute(
+    options: GetPlayersUsecase.Options = {},
+  ): Promise<PlayerModel[]> {
+    const { includeBanned = false } = options;
+
     const playerDTOs = await this.playerCRUD.read();
 
-    return playerDTOs.map(PlayerHydrator.hydrate);
+    if (includeBanned) return playerDTOs.map(PlayerHydrator.hydrate);
+
+    const notBannedPlayerDTOs = playerDTOs.filter(
+      (playerDTO) => !playerDTO.banned,
+    );
+
+    return notBannedPlayerDTOs.map(PlayerHydrator.hydrate);
   }
 }
 

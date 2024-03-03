@@ -10,6 +10,7 @@ import {
   CreateRoundUsecase,
   GetCurrentGameUsecase,
   GetPlayersUsecase,
+  PassTurnUsecase,
   SetPlayerDiceUsecase,
   StartGameUsecase,
 } from '@domain/usecases';
@@ -22,6 +23,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
   private readonly createRound: CreateRoundUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getPlayers: GetPlayersUsecase;
+  private readonly passTurn: PassTurnUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly gameCRUD: GameCRUD;
 
@@ -31,6 +33,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
     this.createRound = deps.createRound;
     this.getCurrentGame = deps.getCurrentGame;
     this.getPlayers = deps.getPlayers;
+    this.passTurn = deps.passTurn;
     this.setPlayerDice = deps.setPlayerDice;
     this.gameCRUD = deps.gameCRUD;
   }
@@ -51,20 +54,19 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
       this.createDice.execute({ sides: 12 }),
     ]);
 
-    const players = await this.getPlayers.execute();
-    const notBannedPlayerIDs = players
-      .filter(({ banned }) => !banned)
-      .map(({ id }) => id);
+    const playerIDs = (await this.getPlayers.execute()).map(
+      (player) => player.id,
+    );
 
     await Promise.all(
-      notBannedPlayerIDs.map((playerID, i) =>
+      playerIDs.map((playerID, i) =>
         this.setPlayerDice.execute(playerID, dices[i].id),
       ),
     );
 
     const [round, lightspotRound] = await Promise.all([
-      this.createRound.execute({ playerIDs: notBannedPlayerIDs }),
-      this.createRound.execute({ playerIDs: notBannedPlayerIDs }),
+      this.createRound.execute({ playerIDs }),
+      this.createRound.execute({ playerIDs }),
     ]);
 
     const gameDTO = await this.gameCRUD.update(currentGame.id, {
@@ -73,6 +75,11 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
       roundID: round.id,
       lightspotRoundID: lightspotRound.id,
     });
+
+    await Promise.all([
+      this.passTurn.execute(round.id),
+      this.passTurn.execute(lightspotRound.id),
+    ]);
 
     return GameHydrator.hydrate(gameDTO);
   }
@@ -85,6 +92,7 @@ export namespace CRUDStartGameUsecase {
     createRound: CreateRoundUsecase;
     getCurrentGame: GetCurrentGameUsecase;
     getPlayers: GetPlayersUsecase;
+    passTurn: PassTurnUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     gameCRUD: GameCRUD;
   };

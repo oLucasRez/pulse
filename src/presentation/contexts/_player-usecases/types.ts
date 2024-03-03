@@ -3,6 +3,7 @@ import {
   ChangePlayerUsecase,
   CreatePlayerUsecase,
   DeletePlayerUsecase,
+  GetCurrentPlayerUsecase,
   GetMyPlayerUsecase,
   GetPlayersUsecase,
   GetPlayerUsecase,
@@ -16,6 +17,7 @@ export type PlayerUsecasesContextValue = {
   getPlayers: GetPlayersUsecase;
   getPlayer: GetPlayerUsecase;
   getMyPlayer: GetMyPlayerUsecase;
+  getCurrentPlayer: GetCurrentPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
   watchMyPlayer: WatchMyPlayerUsecase;
   createPlayer: CreatePlayerUsecase;
@@ -29,6 +31,7 @@ export interface PlayerUsecasesContextProviderProps
   getPlayers: GetPlayersUsecase;
   getPlayer: GetPlayerUsecase;
   getMyPlayer: GetMyPlayerUsecase;
+  getCurrentPlayer: GetCurrentPlayerUsecase;
   watchPlayers: WatchPlayersUsecase;
   watchMyPlayer: WatchMyPlayerUsecase;
   createPlayer: CreatePlayerUsecase;

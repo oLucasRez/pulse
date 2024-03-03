@@ -2,6 +2,7 @@ export * from './_ban-player';
 export * from './_change-player';
 export * from './_create-player';
 export * from './_delete-player';
+export * from './_get-current-player';
 export * from './_get-my-player';
 export * from './_get-player';
 export * from './_get-players';

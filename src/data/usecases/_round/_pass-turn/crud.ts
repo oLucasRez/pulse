@@ -35,24 +35,24 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
         metadata: { entity: 'Round', prop: 'id', value: id },
       });
 
-    if (!round.currentPlayerID) return round;
-
-    let i = round.playerIDs.findIndex(
-      (playerID) => playerID === round.currentPlayerID,
-    );
+    let i = round.currentPlayerID
+      ? round.playerIDs.indexOf(round.currentPlayerID)
+      : null;
 
     switch (currentGame.state) {
       case 'creating:subjects':
-        i++;
+        if (i === null) i = 0;
+        else i++;
         break;
       case 'creating:centralFact':
-        i--;
+        if (i === null) i = round.playerIDs.length - 1;
+        else i--;
         break;
       default:
         break;
     }
 
-    const playerID = round.playerIDs[i];
+    const playerID = round.playerIDs[i ?? -1];
 
     const roundDTO = await this.roundCRUD.update(round.id, {
       currentPlayerID: playerID || null,

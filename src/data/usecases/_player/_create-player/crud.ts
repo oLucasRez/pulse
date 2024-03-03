@@ -39,7 +39,7 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
         metadata: { tried: 'create player without session' },
       });
 
-    const players = await this.getPlayers.execute();
+    const players = await this.getPlayers.execute({ includeBanned: true });
 
     this.iShouldntHaveCreatedYet(me, players);
 
