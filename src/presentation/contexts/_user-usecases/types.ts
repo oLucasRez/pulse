@@ -1,3 +1,5 @@
+import { UserModel } from '@domain/models';
+
 import {
   ChangeMeUsecase,
   GetMeUsecase,
@@ -8,10 +10,11 @@ import {
 import { ContextProviderProps } from '@presentation/types';
 
 export type UserUsecasesContextValue = {
-  getMe: GetMeUsecase;
-  watchMe: WatchMeUsecase;
-  changeMe: ChangeMeUsecase;
-  setCurrentGame: SetCurrentGameUsecase;
+  changeMe: ChangeMeUsecase['execute'];
+  setCurrentGame: SetCurrentGameUsecase['execute'];
+
+  me: UserModel | null;
+  fetchingMe: boolean;
 };
 
 export interface UserUsecasesContextProviderProps extends ContextProviderProps {

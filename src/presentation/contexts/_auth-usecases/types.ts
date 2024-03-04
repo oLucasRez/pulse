@@ -10,12 +10,13 @@ import {
 import { ContextProviderProps } from '@presentation/types';
 
 export type AuthUsecasesContextValue = {
-  signUpWithCredentials: SignUpWithCredentialsUsecase;
-  signInWithCredentials: SignInWithCredentialsUsecase;
-  signInWithProvider: SignInWithProviderUsecase;
-  linkWithProvider: LinkWithProviderUsecase;
-  signInAnonymously: SignInAnonymouslyUsecase;
-  signOut: SignOutUsecase;
+  signUpWithCredentials: SignUpWithCredentialsUsecase['execute'];
+  signInWithCredentials: SignInWithCredentialsUsecase['execute'];
+  signInWithProvider: SignInWithProviderUsecase['execute'];
+  linkWithProvider: LinkWithProviderUsecase['execute'];
+  signInAnonymously: SignInAnonymouslyUsecase['execute'];
+  signOut: SignOutUsecase['execute'];
+  meVersion: number;
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {

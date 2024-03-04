@@ -1,8 +1,6 @@
-import { MouseEvent, ReactNode, useCallback, useEffect } from 'react';
+import { MouseEvent, ReactNode, useCallback } from 'react';
 
 import { PlayerModel } from '@domain/models';
-
-import { WatchPlayersUsecase } from '@domain/usecases';
 
 import {
   MutatePlayerModalHookProps,
@@ -17,7 +15,7 @@ import { Container } from './styles';
 import { darken, getColor } from '@presentation/styles/mixins';
 
 import { getAvailableColors } from '@domain/utils';
-import { alertError, logError } from '@presentation/utils';
+import { alertError } from '@presentation/utils';
 
 import { useMe } from '../..';
 
@@ -49,7 +47,6 @@ export function useMutatePlayerModal(
   const [s, set] = useStates({
     open,
     player,
-    players: [] as PlayerModel[],
     name: (player?.name || me.name) as string | undefined,
     color: player?.color,
     avatarIndex: player
@@ -63,18 +60,7 @@ export function useMutatePlayerModal(
     (s.avatarIndex =
       s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
 
-  const { watchPlayers, createPlayer, changePlayer } = usePlayerUsecases();
-
-  useEffect(() => {
-    let unsubscribe: WatchPlayersUsecase.Response;
-
-    watchPlayers
-      .execute((players) => (s.players = players))
-      .then((value) => (unsubscribe = value))
-      .catch(logError);
-
-    return () => unsubscribe?.();
-  }, []);
+  const { players, createPlayer, changePlayer } = usePlayerUsecases();
 
   const openMutatePlayerModal = useCallback(
     (player?: PlayerModel) => {
@@ -118,8 +104,8 @@ export function useMutatePlayerModal(
     set('mutatingPlayer')(true);
 
     const promise = s.player
-      ? changePlayer.execute({ name, color, avatar })
-      : createPlayer.execute({ name, color, avatar });
+      ? changePlayer({ name, color, avatar })
+      : createPlayer({ name, color, avatar });
 
     promise
       .then(onSuccess)
@@ -129,9 +115,7 @@ export function useMutatePlayerModal(
   }
 
   function renderColors(): ReactNode {
-    const otherPlayers = s.players.filter(
-      (player) => player.id !== s.player?.id,
-    );
+    const otherPlayers = players.filter((player) => player.id !== s.player?.id);
     const availableColors = getAvailableColors(otherPlayers);
 
     return (

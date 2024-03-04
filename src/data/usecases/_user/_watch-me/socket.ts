@@ -27,17 +27,14 @@ export class SocketWatchMeUsecase implements WatchMeUsecase {
 
       const me = await this.getMe.execute();
 
-      const unsubscribe = this.socket.watch<UserCRUD.DTO[]>(
-        table,
-        async (users) => {
-          if (!me) callback(null);
-          else {
-            const user = users.find((user) => user.uid === me.uid);
+      const unsubscribe = this.socket.watch<UserCRUD.DTO[]>(table, (users) => {
+        if (!me) callback(null);
+        else {
+          const user = users.find((user) => user.uid === me.uid);
 
-            callback(user ? await UserHydrator.hydrate(user) : null);
-          }
-        },
-      );
+          callback(user ? UserHydrator.hydrate(user) : null);
+        }
+      });
 
       return unsubscribe;
     } catch {

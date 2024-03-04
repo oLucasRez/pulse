@@ -1,10 +1,10 @@
+import { GameModel } from '@domain/models';
+
 import {
   ChangeGameUsecase,
   CreateGameUsecase,
   DeleteGameUsecase,
-  GetCurrentGameUsecase,
   GetGamesUsecase,
-  GetGameUsecase,
   StartGameUsecase,
   WatchCurrentGameUsecase,
 } from '@domain/usecases';
@@ -12,21 +12,18 @@ import {
 import { ContextProviderProps } from '@presentation/types';
 
 export type GameUsecasesContextValue = {
-  getCurrentGame: GetCurrentGameUsecase;
-  watchCurrentGame: WatchCurrentGameUsecase;
-  getGame: GetGameUsecase;
-  getGames: GetGamesUsecase;
-  createGame: CreateGameUsecase;
-  changeGame: ChangeGameUsecase;
-  deleteGame: DeleteGameUsecase;
+  games: GameModel[];
+  fetchingGames: boolean;
+  currentGame: GameModel | null;
+  createGame: CreateGameUsecase['execute'];
+  changeGame: ChangeGameUsecase['execute'];
+  deleteGame: DeleteGameUsecase['execute'];
 
-  startGame: StartGameUsecase;
+  startGame: StartGameUsecase['execute'];
 };
 
 export interface GameUsecasesContextProviderProps extends ContextProviderProps {
-  getCurrentGame: GetCurrentGameUsecase;
   watchCurrentGame: WatchCurrentGameUsecase;
-  getGame: GetGameUsecase;
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;
   changeGame: ChangeGameUsecase;

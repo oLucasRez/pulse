@@ -24,7 +24,7 @@ export class SocketWatchMyPlayerUsecase implements WatchMyPlayerUsecase {
             (player) => player.id === myPlayer?.id,
           );
 
-          if (myPlayerSnapshot) callback(myPlayerSnapshot);
+          callback(myPlayerSnapshot ?? null);
         })
         .catch(() => {}),
     );

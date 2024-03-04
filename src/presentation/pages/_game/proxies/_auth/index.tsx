@@ -35,22 +35,19 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
     authFormMode: 'login' as AuthForm.Mode,
   });
 
-  const { getMe, setCurrentGame } = useUserUsecases();
+  const { me, setCurrentGame } = useUserUsecases();
 
   async function handleAuth(me: UserModel | null): Promise<any> {
     set('gettingMe')(true);
 
-    await setCurrentGame
-      .execute(currentGame.id)
+    await setCurrentGame(currentGame.id)
       .then(set('me', me))
       .catch(logError)
       .finally(set('gettingMe', false));
   }
 
   useEffect(() => {
-    set('gettingMe')(true);
-
-    getMe.execute().then(handleAuth).catch(logError);
+    handleAuth(me);
   }, []);
 
   if (s.gettingMe) return <GlobalLoading />;

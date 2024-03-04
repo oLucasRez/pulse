@@ -1,8 +1,6 @@
-import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
+import { FC, FocusEvent, ReactNode, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
-
-import { WatchPlayersUsecase } from '@domain/usecases';
 
 import { useMutatePlayerModal } from './hooks';
 import { useNavigate, useStates } from '@presentation/hooks';
@@ -10,46 +8,30 @@ import { useNavigate, useStates } from '@presentation/hooks';
 import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
 
 import { Map, Settings } from './components';
+import { GlobalLoading } from '@presentation/components';
 
 import { useMe, useMyPlayer } from './proxies';
 
 import { Container, Main } from './styles';
 import { getClasses, getColor } from '@presentation/styles/mixins';
 
-import { alertError, logError } from '@presentation/utils';
-
-import { useGameLoaderData } from './loader';
+import { alertError } from '@presentation/utils';
 
 const GamePage: FC = () => {
   const me = useMe();
 
   const [s, set] = useStates({
-    currentGame: useGameLoaderData(),
-    players: [] as PlayerModel[],
     watchingPlayers: false,
     settingsIsOpen: false,
     banningPlayer: false,
     startingGame: false,
   });
 
-  const imHost = me.uid === s.currentGame.uid;
+  const { currentGame, startGame } = useGameUsecases();
 
-  const { startGame } = useGameUsecases();
+  const imHost = me.uid === currentGame?.uid;
 
-  const { watchPlayers, banPlayer } = usePlayerUsecases();
-  useEffect(() => {
-    set('watchingPlayers')(true);
-
-    let unsubscribe: WatchPlayersUsecase.Response;
-
-    watchPlayers
-      .execute((players) => (s.players = players))
-      .then((value) => (unsubscribe = value))
-      .catch(logError)
-      .finally(set('watchingPlayers', false));
-
-    return () => unsubscribe?.();
-  }, []);
+  const { players, banPlayer } = usePlayerUsecases();
 
   const myPlayer = useMyPlayer();
 
@@ -78,28 +60,20 @@ const GamePage: FC = () => {
   function handleBanPlayerButtonClick(playerID: string): any {
     set('banningPlayer')(true);
 
-    banPlayer
-      .execute(playerID)
-      .catch(alertError)
-      .finally(set('banningPlayer', false));
+    banPlayer(playerID).catch(alertError).finally(set('banningPlayer', false));
   }
 
   function handleStartButtonClick(): any {
     set('startingGame')(true);
 
-    startGame
-      .execute()
-      .then(set('currentGame'))
-      .catch(alertError)
-      .finally(set('startingGame', false));
+    startGame().catch(alertError).finally(set('startingGame', false));
   }
 
   function renderInvite(): ReactNode {
     if (!imHost)
       return <p className='invite'>Wait until the host starts the game!</p>;
 
-    const reachedMaxPlayers =
-      s.currentGame.config.maxPlayers === s.players.length;
+    const reachedMaxPlayers = currentGame.config.maxPlayers === players.length;
 
     if (reachedMaxPlayers) return;
 
@@ -131,7 +105,7 @@ const GamePage: FC = () => {
 
     return (
       <div className='players'>
-        {s.players.map((player) => {
+        {players.map((player) => {
           const isMyPlayer = player.id === myPlayer.id;
           const bannable = imHost && !isMyPlayer;
           const editable = isMyPlayer;
@@ -182,7 +156,9 @@ const GamePage: FC = () => {
         </Main>
       );
 
-    if (s.currentGame.started)
+    if (!currentGame) return null;
+
+    if (currentGame.started)
       return (
         <Main>
           <Map />
@@ -237,6 +213,8 @@ const GamePage: FC = () => {
     );
   }
 
+  if (!currentGame) return <GlobalLoading />;
+
   return (
     <>
       <Container>
@@ -244,7 +222,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{s.currentGame.title}</b>
+            <b>{currentGame.title}</b>
           </h2>
 
           {renderMyHeader()}

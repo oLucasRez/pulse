@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { GameModel } from '@domain/models';
 
@@ -11,64 +11,42 @@ import { Container } from './styles';
 
 import { githubIcon, googleIcon } from '@presentation/assets';
 
-import { alertError, logError } from '@presentation/utils';
+import { alertError } from '@presentation/utils';
 
 import { useHomeLoaderData } from './loader';
 
 const HomePage: FC = () => {
   const [s, set] = useStates({
-    games: [] as GameModel[],
-    currentGame: null as GameModel | null,
-    fetchGames: Date.now(),
-    fetchingGames: false,
     creatingGame: false,
     deletingGame: null as string | null,
     linking: false,
   });
 
-  const fetchGames = set('fetchGames', Date.now());
-
   const me = useHomeLoaderData();
 
-  const { getGames, createGame, deleteGame } = useGameUsecases();
-
-  useEffect(() => {
-    set('fetchingGames')(true);
-
-    getGames
-      .execute()
-      .then(set('games'))
-      .catch(logError)
-      .finally(set('fetchingGames', false));
-  }, [s.fetchGames]);
+  const { games, fetchingGames, createGame, deleteGame } = useGameUsecases();
 
   const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
   function handleCreateGameButtonClick(): any {
     set('creatingGame')(true);
 
-    createGame
-      .execute({
-        title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
-        config: {
-          maxPlayers: 5,
-          withLightspot: true,
-          dicesMode: 'growing',
-        },
-      })
+    createGame({
+      title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
+      config: {
+        maxPlayers: 5,
+        withLightspot: true,
+        dicesMode: 'growing',
+      },
+    })
       .then(set('creatingGame', false))
-      .then(fetchGames)
       .catch(alertError);
   }
 
   function handleDeleteGameButtonClick(game: GameModel): any {
     set('deletingGame')(game.id);
 
-    deleteGame
-      .execute(game.id)
-      .then(set('deletingGame', null))
-      .then(fetchGames)
-      .catch(alertError);
+    deleteGame(game.id).catch(alertError).finally(set('deletingGame', null));
   }
 
   const { linkWithProvider } = useAuthUsecases();
@@ -76,8 +54,7 @@ const HomePage: FC = () => {
   function handleGoogleButtonClick(): any {
     set('linking')(true);
 
-    linkWithProvider
-      .execute('google')
+    linkWithProvider('google')
       .then(reloadWindow)
       .catch(alertError)
       .finally(set('linking', false));
@@ -86,8 +63,7 @@ const HomePage: FC = () => {
   function handleGithubButtonClick(): any {
     set('linking')(true);
 
-    linkWithProvider
-      .execute('github')
+    linkWithProvider('github')
       .then(reloadWindow)
       .catch(alertError)
       .finally(set('linking', false));
@@ -112,14 +88,14 @@ const HomePage: FC = () => {
   }
 
   function renderGamesList(): ReactNode {
-    if (s.fetchingGames && !s.games.length)
+    if (fetchingGames && !games.length)
       return (
         <ul className='games'>
           <span className='emoji loading'>⏳</span>
         </ul>
       );
 
-    if (!s.games.length)
+    if (!games.length)
       return (
         <ul className='games'>
           <li>
@@ -136,7 +112,7 @@ const HomePage: FC = () => {
 
     return (
       <ul className='games'>
-        {s.games.map((game) => {
+        {games.map((game) => {
           const deletingGame = s.deletingGame === game.id;
 
           return (

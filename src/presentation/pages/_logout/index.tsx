@@ -14,7 +14,7 @@ const LogoutPage: FC = () => {
   const { signOut } = useAuthUsecases();
 
   useEffect(() => {
-    signOut.execute().catch(logError).finally(navigateToLogin);
+    signOut().catch(logError).finally(navigateToLogin);
   }, []);
 
   return <GlobalLoading />;

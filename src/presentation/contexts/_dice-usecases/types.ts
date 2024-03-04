@@ -1,25 +1,13 @@
-import {
-  ChangeDiceUsecase,
-  CreateDiceUsecase,
-  GetDicesUsecase,
-  GetDiceUsecase,
-  WatchDicesUsecase,
-} from '@domain/usecases';
+import { DiceModel } from '@domain/models';
+
+import { WatchDicesUsecase } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type DiceUsecasesContextValue = {
-  getDices: GetDicesUsecase;
-  getDice: GetDiceUsecase;
-  watchDices: WatchDicesUsecase;
-  createDice: CreateDiceUsecase;
-  changeDice: ChangeDiceUsecase;
+  dices: DiceModel[];
 };
 
 export interface DiceUsecasesContextProviderProps extends ContextProviderProps {
-  getDices: GetDicesUsecase;
-  getDice: GetDiceUsecase;
   watchDices: WatchDicesUsecase;
-  createDice: CreateDiceUsecase;
-  changeDice: ChangeDiceUsecase;
 }

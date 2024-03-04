@@ -43,15 +43,14 @@ export const Settings: FC<SettingsProps> = (props) => {
   function onSubmit(data: SettingsFieldValues): any {
     set('changingGame')(true);
 
-    changeGame
-      .execute({
-        title: data.title,
-        config: {
-          maxPlayers: data.maxPlayers,
-          withLightspot: data.withLightspot,
-          dicesMode: data.dicesMode,
-        },
-      })
+    changeGame({
+      title: data.title,
+      config: {
+        maxPlayers: data.maxPlayers,
+        withLightspot: data.withLightspot,
+        dicesMode: data.dicesMode,
+      },
+    })
       .then(onClose)
       .catch(alertError)
       .finally(set('changingGame', false));
