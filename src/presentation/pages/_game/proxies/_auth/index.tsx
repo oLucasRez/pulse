@@ -1,8 +1,6 @@
-import { createContext, FC, useContext, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 
-import { UserModel } from '@domain/models';
-
-import { AuthProxyProps, MeContextValue } from './types';
+import { authSignals } from '@presentation/signals';
 
 import { useStates } from '@presentation/hooks';
 
@@ -14,15 +12,11 @@ import { Container } from './styles';
 
 import { logError } from '@presentation/utils';
 
+import { AuthProxyProps } from './types';
+
 import { useGameLoaderData } from '../../loader';
 
-const Context = createContext({} as MeContextValue);
-
-export function useMe(): UserModel {
-  const { me } = useContext(Context);
-
-  return me;
-}
+const { me, initialized } = authSignals;
 
 export const AuthProxy: FC<AuthProxyProps> = (props) => {
   const { children } = props;
@@ -30,29 +24,22 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   const currentGame = useGameLoaderData();
 
   const [s, set] = useStates({
-    gettingMe: true,
-    me: null as UserModel | null,
     authFormMode: 'login' as AuthForm.Mode,
   });
 
-  const { me, setCurrentGame } = useUserUsecases();
+  const { setCurrentGame } = useUserUsecases();
 
-  async function handleAuth(me: UserModel | null): Promise<any> {
-    set('gettingMe')(true);
-
-    await setCurrentGame(currentGame.id)
-      .then(set('me', me))
-      .catch(logError)
-      .finally(set('gettingMe', false));
+  async function handleAuth(): Promise<any> {
+    await setCurrentGame(currentGame.id).catch(logError);
   }
 
   useEffect(() => {
-    handleAuth(me);
+    handleAuth();
   }, []);
 
-  if (s.gettingMe) return <GlobalLoading />;
+  if (!initialized.value) return <GlobalLoading />;
 
-  if (!s.me)
+  if (!me.value)
     return (
       <Container>
         <AuthForm
@@ -64,5 +51,5 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
       </Container>
     );
 
-  return <Context.Provider value={{ me: s.me }}>{children}</Context.Provider>;
+  return children;
 };

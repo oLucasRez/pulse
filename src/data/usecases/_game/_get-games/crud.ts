@@ -6,14 +6,18 @@ import { GameHydrator } from '@data/hydration';
 
 import { GetGamesUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { GameObserver } from '@data/observers';
+
 import { GameCRUD } from '@data/cruds';
 
 export class CRUDGetGamesUsecase implements GetGamesUsecase {
   private readonly getMe: GetMeUsecase;
+  private readonly gamePublisher: GameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDGetGamesUsecase.Deps) {
     this.getMe = deps.getMe;
+    this.gamePublisher = deps.gamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -24,15 +28,20 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
         metadata: { tried: 'get games without session' },
       });
 
-    const gameDTOs = await this.gameCRUD.read();
+    const dto = await this.gameCRUD.read();
 
-    return gameDTOs.map(GameHydrator.hydrate);
+    const games = dto.map(GameHydrator.hydrate);
+
+    this.gamePublisher.notifyFetchGames(games);
+
+    return games;
   }
 }
 
 export namespace CRUDGetGamesUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
+    gamePublisher: GameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

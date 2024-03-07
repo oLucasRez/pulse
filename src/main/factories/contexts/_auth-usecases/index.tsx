@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import { ContextProviderProps } from '@presentation/types';
 
@@ -15,7 +15,7 @@ import {
 
 export function makeAuthUsecasesContextProvider(
   props: ContextProviderProps,
-): ReactNode {
+): ReactElement {
   const signUpWithCredentials = makeSignUpWithCredentialsUsecase();
   const signInWithCredentials = makeSignInWithCredentialsUsecase();
   const signInWithProvider = makeSignInWithProviderUsecase();

@@ -10,16 +10,20 @@ import { GameHydrator } from '@data/hydration';
 
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { GameObserver } from '@data/observers';
+
 import { GameCRUD } from '@data/cruds';
 
 import { isInteger } from '@domain/utils';
 
 export class CRUDCreateGameUsecase implements CreateGameUsecase {
   private readonly getMe: GetMeUsecase;
+  private readonly gamePublisher: GameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDCreateGameUsecase.Deps) {
     this.getMe = deps.getMe;
+    this.gamePublisher = deps.gamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -34,7 +38,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 
     this.maxPlayersShouldBeValid(config.maxPlayers);
 
-    const game = await this.gameCRUD.create({
+    const dto = await this.gameCRUD.create({
       uid: me.uid,
       title,
       config,
@@ -44,7 +48,11 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
       lightspotRoundID: null,
     });
 
-    return GameHydrator.hydrate(game);
+    const game = GameHydrator.hydrate(dto);
+
+    this.gamePublisher.notifyCreateGame(game);
+
+    return game;
   }
 
   private maxPlayersShouldBeValid(maxPlayers: number): void {
@@ -69,6 +77,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 export namespace CRUDCreateGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
+    gamePublisher: GameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

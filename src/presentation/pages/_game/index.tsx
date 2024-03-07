@@ -2,6 +2,8 @@ import { FC, FocusEvent, ReactNode, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
+import { authSignals, gameSignals, playerSignals } from '@presentation/signals';
+
 import { useMutatePlayerModal } from './hooks';
 import { useNavigate, useStates } from '@presentation/hooks';
 
@@ -10,16 +12,17 @@ import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
 import { Map, Settings } from './components';
 import { GlobalLoading } from '@presentation/components';
 
-import { useMe, useMyPlayer } from './proxies';
-
 import { Container, Main } from './styles';
+
 import { getClasses, getColor } from '@presentation/styles/mixins';
 
 import { alertError } from '@presentation/utils';
 
-const GamePage: FC = () => {
-  const me = useMe();
+const { me } = authSignals;
+const { currentGame } = gameSignals;
+const { players, myPlayer } = playerSignals;
 
+const GamePage: FC = () => {
   const [s, set] = useStates({
     watchingPlayers: false,
     settingsIsOpen: false,
@@ -27,17 +30,17 @@ const GamePage: FC = () => {
     startingGame: false,
   });
 
-  const { currentGame, startGame } = useGameUsecases();
+  const { startGame } = useGameUsecases();
 
-  const imHost = me.uid === currentGame?.uid;
-
-  const { players, banPlayer } = usePlayerUsecases();
-
-  const myPlayer = useMyPlayer();
+  const { banPlayer } = usePlayerUsecases();
 
   const { navigateToHome, navigateToLogout } = useNavigate();
 
   const linkInputRef = useRef<HTMLInputElement>(null);
+
+  if (!me.value) return null;
+
+  const imHost = me.value?.uid === currentGame.value?.uid;
 
   function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>): any {
     event.target.select();
@@ -73,7 +76,8 @@ const GamePage: FC = () => {
     if (!imHost)
       return <p className='invite'>Wait until the host starts the game!</p>;
 
-    const reachedMaxPlayers = currentGame.config.maxPlayers === players.length;
+    const reachedMaxPlayers =
+      currentGame.value?.config.maxPlayers === players.value.length;
 
     if (reachedMaxPlayers) return;
 
@@ -105,8 +109,8 @@ const GamePage: FC = () => {
 
     return (
       <div className='players'>
-        {players.map((player) => {
-          const isMyPlayer = player.id === myPlayer.id;
+        {players.value.map((player) => {
+          const isMyPlayer = player.id === myPlayer.value?.id;
           const bannable = imHost && !isMyPlayer;
           const editable = isMyPlayer;
           const styledColor = getColor(player.color);
@@ -147,7 +151,7 @@ const GamePage: FC = () => {
   }
 
   function renderMain(): ReactNode {
-    if (myPlayer.banned)
+    if (myPlayer.value?.banned)
       return (
         <Main>
           <span className='icon block'>🚫</span>
@@ -156,9 +160,9 @@ const GamePage: FC = () => {
         </Main>
       );
 
-    if (!currentGame) return null;
+    if (!currentGame.value) return null;
 
-    if (currentGame.started)
+    if (currentGame.value.started)
       return (
         <Main>
           <Map />
@@ -200,10 +204,10 @@ const GamePage: FC = () => {
   function renderMyHeader(): ReactNode {
     return (
       <span className='greetings'>
-        {myPlayer.avatar} Hello
-        {me.name ? (
+        {myPlayer.value?.avatar} Hello
+        {me.value?.name ? (
           <>
-            , <b>{me.name}</b>
+            , <b>{me.value.name}</b>
           </>
         ) : (
           ''
@@ -213,7 +217,7 @@ const GamePage: FC = () => {
     );
   }
 
-  if (!currentGame) return <GlobalLoading />;
+  if (!currentGame.value) return <GlobalLoading />;
 
   return (
     <>
@@ -222,7 +226,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{currentGame.title}</b>
+            <b>{currentGame.value.title}</b>
           </h2>
 
           {renderMyHeader()}

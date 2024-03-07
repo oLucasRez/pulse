@@ -2,22 +2,23 @@ import { MouseEvent, ReactNode, useCallback } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-import {
-  MutatePlayerModalHookProps,
-  MutatePlayerModalHookReturn,
-} from './types';
+import { authSignals, playerSignals } from '@presentation/signals';
 
 import { useStates } from '@presentation/hooks';
 
 import { usePlayerUsecases } from '@presentation/contexts';
 
 import { Container } from './styles';
+
 import { darken, getColor } from '@presentation/styles/mixins';
 
 import { getAvailableColors } from '@domain/utils';
 import { alertError } from '@presentation/utils';
 
-import { useMe } from '../..';
+import {
+  MutatePlayerModalHookProps,
+  MutatePlayerModalHookReturn,
+} from './types';
 
 const avatars = [
   ...['🧒🏻', '👧🏻', '👦🏻', '🧑🏻', '👩🏻', '👨🏻', '🧑🏻‍🦱', '👩🏻‍🦱', '👨🏻‍🦱'],
@@ -37,17 +38,18 @@ const avatars = [
   ...['🧑🏿‍🦲', '👩🏿‍🦲', '👨🏿‍🦲', '🧔🏿', '🧔🏿‍♀️', '🧔🏿‍♂️', '🧓🏿', '👵🏿', '👴🏿'],
 ];
 
+const { me } = authSignals;
+const { players } = playerSignals;
+
 export function useMutatePlayerModal(
   props: MutatePlayerModalHookProps = {},
 ): MutatePlayerModalHookReturn {
   const { unclosable, open = false, player, onSuccess } = props;
 
-  const me = useMe();
-
   const [s, set] = useStates({
     open,
     player,
-    name: (player?.name || me.name) as string | undefined,
+    name: (player?.name || me.value?.name) as string | undefined,
     color: player?.color,
     avatarIndex: player
       ? avatars.findIndex((avatar) => avatar === player.avatar)
@@ -60,7 +62,7 @@ export function useMutatePlayerModal(
     (s.avatarIndex =
       s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
 
-  const { players, createPlayer, changePlayer } = usePlayerUsecases();
+  const { createPlayer, changePlayer } = usePlayerUsecases();
 
   const openMutatePlayerModal = useCallback(
     (player?: PlayerModel) => {
@@ -115,7 +117,9 @@ export function useMutatePlayerModal(
   }
 
   function renderColors(): ReactNode {
-    const otherPlayers = players.filter((player) => player.id !== s.player?.id);
+    const otherPlayers = players.value.filter(
+      (player) => player.id !== s.player?.id,
+    );
     const availableColors = getAvailableColors(otherPlayers);
 
     return (

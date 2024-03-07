@@ -6,6 +6,7 @@ import {
   makeGetMeUsecase,
   makeGetPlayersUsecase,
   makePlayerCRUD,
+  makePlayerPublisher,
 } from '@main/factories';
 
 export function makeCRUDCreatePlayerUsecase(): CreatePlayerUsecase {
@@ -13,11 +14,13 @@ export function makeCRUDCreatePlayerUsecase(): CreatePlayerUsecase {
   const getMe = makeGetMeUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const playerCRUD = makePlayerCRUD();
+  const playerPublisher = makePlayerPublisher();
 
   return new CRUDCreatePlayerUsecase({
     getCurrentGame,
     getMe,
     getPlayers,
     playerCRUD,
+    playerPublisher,
   });
 }

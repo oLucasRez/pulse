@@ -1,7 +1,8 @@
 import { ComponentProps } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 export type LinkProps = ComponentProps<typeof Link>;
+export type NavigateProps = ComponentProps<typeof Navigate>;
 
 export type NavigateHookReturn = {
   navigateToHome(): void;
@@ -14,4 +15,6 @@ export type NavigateHookReturn = {
   linkToHomeProps: LinkProps;
   linkToLoginProps: LinkProps;
   linkToRegisterProps: LinkProps;
+
+  navigateToLoginProps: NavigateProps;
 };

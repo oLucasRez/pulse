@@ -4,21 +4,23 @@ import { DiceModel } from '@domain/models';
 
 import { WatchDicesUsecase } from '@domain/usecases';
 
-import {
-  DiceUsecasesContextProviderProps,
-  DiceUsecasesContextValue,
-} from './types';
+import { gameSignals } from '@presentation/signals';
 
 import { useStates } from '@presentation/hooks';
 
 import { logError } from '@presentation/utils';
 
-import { useGameUsecases } from '..';
+import {
+  DiceUsecasesContextProviderProps,
+  DiceUsecasesContextValue,
+} from './types';
 
 const Context = createContext({} as DiceUsecasesContextValue);
 
 export const useDiceUsecases = (): DiceUsecasesContextValue =>
   useContext(Context);
+
+const { currentGame } = gameSignals;
 
 export const DiceUsecasesContextProvider: FC<
   DiceUsecasesContextProviderProps
@@ -31,10 +33,8 @@ export const DiceUsecasesContextProvider: FC<
 
   const [s, set] = useStates({ dices: [] as DiceModel[] });
 
-  const { currentGame } = useGameUsecases();
-
   useEffect(() => {
-    if (!currentGame?.started) return;
+    if (!currentGame.value?.started) return;
 
     let unsubscribe: WatchDicesUsecase.Response;
 
@@ -44,7 +44,7 @@ export const DiceUsecasesContextProvider: FC<
       .catch(logError);
 
     return () => unsubscribe?.();
-  }, [currentGame?.started]);
+  }, [currentGame.value?.started]);
 
   return (
     <Context.Provider value={{ dices: s.dices }}>{children}</Context.Provider>

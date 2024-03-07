@@ -6,14 +6,18 @@ import { GameHydrator } from '@data/hydration';
 
 import { ChangeGameUsecase, GetCurrentGameUsecase } from '@domain/usecases';
 
+import { GameObserver } from '@data/observers';
+
 import { GameCRUD } from '@data/cruds';
 
 export class CRUDChangeGameUsecase implements ChangeGameUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
+  private readonly gamePublisher: GameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDChangeGameUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
+    this.gamePublisher = deps.gamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -25,18 +29,23 @@ export class CRUDChangeGameUsecase implements ChangeGameUsecase {
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    const gameDTO = await this.gameCRUD.update(currentGame.id, {
+    const dto = await this.gameCRUD.update(currentGame.id, {
       title,
       config,
     });
 
-    return GameHydrator.hydrate(gameDTO);
+    const game = GameHydrator.hydrate(dto);
+
+    this.gamePublisher.notifyChangeGame(game);
+
+    return game;
   }
 }
 
 export namespace CRUDChangeGameUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
+    gamePublisher: GameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

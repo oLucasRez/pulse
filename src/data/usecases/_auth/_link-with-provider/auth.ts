@@ -14,6 +14,8 @@ import { Provider } from '@domain/types';
 
 import { AuthProviderProtocol } from '@data/protocols';
 
+import { AuthObserver } from '@data/observers';
+
 import { UserCRUD } from '@data/cruds';
 
 import { dontThrow } from '@data/utils';
@@ -22,12 +24,14 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly changeMe: ChangeMeUsecase;
   private readonly signInWithProvider: SignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
+  private readonly authPublisher: AuthObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthLinkWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.signInWithProvider = deps.signInWithProvider;
     this.authProvider = deps.authProvider;
+    this.authPublisher = deps.authPublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -65,7 +69,11 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       });
     }
 
-    return UserHydrator.hydrate(userDTO);
+    const user = UserHydrator.hydrate(userDTO);
+
+    this.authPublisher.notifyMeChange(user);
+
+    return user;
   }
 }
 
@@ -74,6 +82,7 @@ export namespace AuthLinkWithProviderUsecase {
     changeMe: ChangeMeUsecase;
     signInWithProvider: SignInWithProviderUsecase;
     authProvider: AuthProviderProtocol;
+    authPublisher: AuthObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

@@ -1,39 +1,34 @@
 import { ReactNode } from 'react';
 
-import {
-  makeAuthUsecasesContextProvider,
-  makeCentralFactUsecasesContextProvider,
-  makeCentralPulseUsecasesContextProvider,
-  makeDiceUsecasesContextProvider,
-  makeGameUsecasesContextProvider,
-  makePlayerUsecasesContextProvider,
-  makeRoundUsecasesContextProvider,
-  makeUserUsecasesContextProvider,
-} from '../contexts';
-
 import { GlobalStyle } from '@presentation/styles';
 
-import { makeRouter } from '..';
+import {
+  makeAuthPublisher,
+  makeGamePublisher,
+  makePlayerPublisher,
+  makeRouter,
+  makeSignalAuthSubscriber,
+  makeSignalGameSubscriber,
+  makeSignalPlayerSubscriber,
+} from '..';
 
 export function makeApp(): ReactNode {
-  const app = [
-    // inner
-    makeCentralFactUsecasesContextProvider,
-    makeCentralPulseUsecasesContextProvider,
-    makeRoundUsecasesContextProvider,
-    makePlayerUsecasesContextProvider,
-    makeDiceUsecasesContextProvider,
-    makeGameUsecasesContextProvider,
-    makeUserUsecasesContextProvider,
-    makeAuthUsecasesContextProvider,
-    // outer
-  ].reduce<ReactNode>(
-    (children, wrapper) => wrapper({ children }),
+  const signalAuthSubscriber = makeSignalAuthSubscriber();
+  const authPublisher = makeAuthPublisher();
+  authPublisher.subscribe(signalAuthSubscriber);
+
+  const signalGameSubscriber = makeSignalGameSubscriber();
+  const gamePublisher = makeGamePublisher();
+  gamePublisher.subscribe(signalGameSubscriber);
+
+  const signalPlayerSubscriber = makeSignalPlayerSubscriber();
+  const playerPublisher = makePlayerPublisher();
+  playerPublisher.subscribe(signalPlayerSubscriber);
+
+  return (
     <>
       <GlobalStyle />
       {makeRouter()}
-    </>,
+    </>
   );
-
-  return app;
 }

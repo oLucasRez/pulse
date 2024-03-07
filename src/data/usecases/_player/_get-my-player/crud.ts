@@ -6,14 +6,18 @@ import { PlayerHydrator } from '@data/hydration';
 
 import { GetMeUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
+import { PlayerObserver } from '@data/observers';
+
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDGetMyPlayerUsecase implements GetMyPlayerUsecase {
   private readonly getMe: GetMeUsecase;
+  private readonly playerPublisher: PlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDGetMyPlayerUsecase.Deps) {
     this.getMe = deps.getMe;
+    this.playerPublisher = deps.playerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -21,17 +25,22 @@ export class CRUDGetMyPlayerUsecase implements GetMyPlayerUsecase {
     const me = await this.getMe.execute();
     if (!me) throw new ForbiddenError({ metadata: { tried: 'get my player' } });
 
-    const playerDTOs = (await this.playerCRUD.read()).find(
+    const dto = (await this.playerCRUD.read()).find(
       (playerDTO) => playerDTO.uid === me.uid,
     );
 
-    return playerDTOs ? PlayerHydrator.hydrate(playerDTOs) : null;
+    const player = dto ? PlayerHydrator.hydrate(dto) : null;
+
+    this.playerPublisher.notifyFetchMyPlayer(player);
+
+    return player;
   }
 }
 
 export namespace CRUDGetMyPlayerUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
+    playerPublisher: PlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

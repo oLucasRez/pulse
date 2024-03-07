@@ -6,14 +6,18 @@ import { PlayerHydrator } from '@data/hydration';
 
 import { ChangePlayerUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
+import { PlayerObserver } from '@data/observers';
+
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDChangePlayerUsecase implements ChangePlayerUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
+  private readonly playerPublisher: PlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDChangePlayerUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
+    this.playerPublisher = deps.playerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -27,19 +31,24 @@ export class CRUDChangePlayerUsecase implements ChangePlayerUsecase {
     if (!myPlayer)
       throw new NotFoundError({ metadata: { entity: 'MyPlayer' } });
 
-    const playerDTO = await this.playerCRUD.update(myPlayer.id, {
+    const dto = await this.playerCRUD.update(myPlayer.id, {
       name,
       color,
       avatar,
     });
 
-    return PlayerHydrator.hydrate(playerDTO);
+    const player = PlayerHydrator.hydrate(dto);
+
+    this.playerPublisher.notifyChangePlayer(player);
+
+    return player;
   }
 }
 
 export namespace CRUDChangePlayerUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
+    playerPublisher: PlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

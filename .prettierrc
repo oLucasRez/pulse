@@ -16,28 +16,29 @@
     "(.*)collections$",
     "(.*)hydration$",
     "(.*)usecases$",
+
+    "(.*)protocols$",
+    "(.*)observers$",
+    "(.*)cruds$",
+    "(.*)services$",
+
+    "(.*)signals$",
+    "(.*)hooks$",
+    "(.*)contexts$",
+    "(.*)components$",
+    "(.*)proxies$",
+    "(.*)pages$",
+    "(.*)app$",
+    "(.*)styles$",
+    "(.*)mixins$",
+    "(.*)assets$",
+    "(.*)utils$",
+
+    "(.*)decorators$",
+    "(.*)adapters$",
+    "(.*)factories$",
+
     "(.*)types$",
-
-    "(.*)protocols",
-    "(.*)cruds",
-    "(.*)services",
-
-    "(.*)hooks",
-    "(.*)contexts",
-    "(.*)components",
-    "(.*)proxies",
-    "(.*)pages",
-    "(.*)app",
-    "(.*)styles",
-    "(.*)mixins",
-    "(.*)assets",
-    "(.*)utils",
-
-    "(.*)decorators",
-    "(.*)adapters",
-    "(.*)factories",
-
-    "(.*)types",
 
     "^[./]"
   ],

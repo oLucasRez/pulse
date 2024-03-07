@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import { ContextProviderProps } from '@presentation/types';
 
@@ -8,7 +8,7 @@ import { makeWatchDicesUsecase } from '@main/factories';
 
 export function makeDiceUsecasesContextProvider(
   props: ContextProviderProps,
-): ReactNode {
+): ReactElement {
   const watchDices = makeWatchDicesUsecase();
 
   return <DiceUsecasesContextProvider watchDices={watchDices} {...props} />;

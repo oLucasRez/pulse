@@ -4,14 +4,18 @@ import { GameHydrator } from '@data/hydration';
 
 import { GetCurrentGameUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { GameObserver } from '@data/observers';
+
 import { GameCRUD } from '@data/cruds';
 
 export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
   private readonly getMe: GetMeUsecase;
+  private readonly gamePublisher: GameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDGetCurrentGameUsecase.Deps) {
     this.getMe = deps.getMe;
+    this.gamePublisher = deps.gamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -20,15 +24,20 @@ export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
 
     if (!me?.currentGameID) return null;
 
-    const gameDTO = await this.gameCRUD.read(me.currentGameID);
+    const dto = await this.gameCRUD.read(me.currentGameID);
 
-    return gameDTO ? GameHydrator.hydrate(gameDTO) : null;
+    const game = dto ? GameHydrator.hydrate(dto) : null;
+
+    this.gamePublisher.notifyFetchCurrentGame(game);
+
+    return game;
   }
 }
 
 export namespace CRUDGetCurrentGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
+    gamePublisher: GameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

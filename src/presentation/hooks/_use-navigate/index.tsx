@@ -41,6 +41,14 @@ export function useNavigate(): NavigateHookReturn {
     [],
   );
 
+  const navigateToLoginProps = useMemo<LinkProps>(
+    () => ({
+      to: '/login',
+      replace: replaceIfIsLogout(),
+    }),
+    [],
+  );
+
   const navigateToRegister = useCallback(
     () => navigate('/register', { replace: replaceIfIsLogout() }),
     [navigate],
@@ -69,5 +77,7 @@ export function useNavigate(): NavigateHookReturn {
     linkToHomeProps,
     linkToLoginProps,
     linkToRegisterProps,
+
+    navigateToLoginProps,
   };
 }

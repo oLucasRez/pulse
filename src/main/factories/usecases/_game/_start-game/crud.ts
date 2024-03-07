@@ -6,6 +6,7 @@ import {
   makeCreateDiceUsecase,
   makeCreateRoundUsecase,
   makeGameCRUD,
+  makeGamePublisher,
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
   makePassTurnUsecase,
@@ -17,6 +18,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
   const createDice = makeCreateDiceUsecase();
   const createRound = makeCreateRoundUsecase();
   const gameCRUD = makeGameCRUD();
+  const gamePublisher = makeGamePublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const passTurn = makePassTurnUsecase();
@@ -27,6 +29,7 @@ export function makeCRUDStartGameUsecase(): StartGameUsecase {
     createDice,
     createRound,
     gameCRUD,
+    gamePublisher,
     getCurrentGame,
     getPlayers,
     passTurn,

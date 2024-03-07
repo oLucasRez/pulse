@@ -61,8 +61,11 @@ export function makeRouter(): ReactElement {
           element={registerPage}
         />
 
-        <Route path={homePath} loader={homeLoader} element={homePage} />
-        <Route path={gamePath} loader={gameLoader} element={gamePage} />
+        <Route path={homePath} loader={homeLoader}>
+          <Route index element={homePage} />
+
+          <Route path={gamePath} loader={gameLoader} element={gamePage} />
+        </Route>
 
         <Route path={logoutPath} element={logoutPage} />
 

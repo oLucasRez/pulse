@@ -1,11 +1,10 @@
 import { DatabaseProtocol } from '@data/protocols';
 
-import { makeMemoryDatabase } from './memory';
-
-// import { makeFirebaseDatabase } from './firebase';
+// import { makeMemoryDatabase } from './memory';
+import { makeFirebaseDatabase } from './firebase';
 
 export function makeDatabase(): DatabaseProtocol {
-  return makeMemoryDatabase();
+  return makeFirebaseDatabase();
 }
 
 export * from './_table-generator';

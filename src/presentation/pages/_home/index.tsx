@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 
 import { GameModel } from '@domain/models';
+
+import { authSignals, gameSignals } from '@presentation/signals';
 
 import { useNavigate, useStates } from '@presentation/hooks';
 
@@ -13,18 +15,22 @@ import { githubIcon, googleIcon } from '@presentation/assets';
 
 import { alertError } from '@presentation/utils';
 
-import { useHomeLoaderData } from './loader';
+const { me } = authSignals;
+const { games } = gameSignals;
 
 const HomePage: FC = () => {
   const [s, set] = useStates({
+    fetchingGames: true,
     creatingGame: false,
     deletingGame: null as string | null,
     linking: false,
   });
 
-  const me = useHomeLoaderData();
+  const { fetchGames, createGame, deleteGame } = useGameUsecases();
 
-  const { games, fetchingGames, createGame, deleteGame } = useGameUsecases();
+  useEffect(() => {
+    fetchGames().finally(set('fetchingGames', false));
+  }, []);
 
   const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
@@ -88,14 +94,14 @@ const HomePage: FC = () => {
   }
 
   function renderGamesList(): ReactNode {
-    if (fetchingGames && !games.length)
+    if (s.fetchingGames && !games.value.length)
       return (
         <ul className='games'>
           <span className='emoji loading'>⏳</span>
         </ul>
       );
 
-    if (!games.length)
+    if (!games.value.length)
       return (
         <ul className='games'>
           <li>
@@ -112,7 +118,7 @@ const HomePage: FC = () => {
 
     return (
       <ul className='games'>
-        {games.map((game) => {
+        {games.value.map((game) => {
           const deletingGame = s.deletingGame === game.id;
 
           return (
@@ -150,8 +156,8 @@ const HomePage: FC = () => {
     );
   }
 
-  const notLinkedWithGoogle = !me.providers.includes('google');
-  const notLinkedWithGithub = !me.providers.includes('github');
+  const notLinkedWithGoogle = !me.value?.providers.includes('google');
+  const notLinkedWithGithub = !me.value?.providers.includes('github');
 
   return (
     <Container>
@@ -182,9 +188,9 @@ const HomePage: FC = () => {
 
         <span className='greetings'>
           👤 Hello
-          {me.name ? (
+          {me.value?.name ? (
             <>
-              , <b>{me?.name}</b>
+              , <b>{me.value?.name}</b>
             </>
           ) : (
             ''

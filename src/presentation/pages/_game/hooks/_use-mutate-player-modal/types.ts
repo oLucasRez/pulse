@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
 export type MutatePlayerModalHookReturn = {
   openMutatePlayerModal(player?: PlayerModel): void;
-  renderMutatePlayerModal(): ReactNode;
+  renderMutatePlayerModal(): ReactElement;
 };
 
 export type MutatePlayerModalHookProps =

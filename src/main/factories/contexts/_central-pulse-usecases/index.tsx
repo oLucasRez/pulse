@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import { ContextProviderProps } from '@presentation/types';
 
@@ -12,7 +12,7 @@ import {
 
 export function makeCentralPulseUsecasesContextProvider(
   props: ContextProviderProps,
-): ReactNode {
+): ReactElement {
   const getCentralPulse = makeGetCentralPulseUsecase();
   const watchCentralPulse = makeWatchCentralPulseUsecase();
   const changeCentralPulse = makeChangeCentralPulseUsecase();

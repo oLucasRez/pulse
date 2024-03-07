@@ -1,20 +1,14 @@
-import { PlayerModel } from '@domain/models';
-
 import {
   BanPlayerUsecase,
   ChangePlayerUsecase,
   CreatePlayerUsecase,
-  WatchMyPlayerUsecase,
-  WatchPlayersUsecase,
+  GetMyPlayerUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type PlayerUsecasesContextValue = {
-  players: PlayerModel[];
-  myPlayer: PlayerModel | null;
-  fetchingMyPlayer: boolean;
-  currentPlayer: PlayerModel | null;
+  fetchMyPlayer: GetMyPlayerUsecase['execute'];
   createPlayer: CreatePlayerUsecase['execute'];
   changePlayer: ChangePlayerUsecase['execute'];
   banPlayer: BanPlayerUsecase['execute'];
@@ -22,8 +16,7 @@ export type PlayerUsecasesContextValue = {
 
 export interface PlayerUsecasesContextProviderProps
   extends ContextProviderProps {
-  watchPlayers: WatchPlayersUsecase;
-  watchMyPlayer: WatchMyPlayerUsecase;
+  getMyPlayer: GetMyPlayerUsecase;
   createPlayer: CreatePlayerUsecase;
   changePlayer: ChangePlayerUsecase;
   banPlayer: BanPlayerUsecase;

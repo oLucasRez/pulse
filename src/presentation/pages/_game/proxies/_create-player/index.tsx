@@ -1,37 +1,37 @@
-import { createContext, FC, useContext } from 'react';
+import { FC, useEffect } from 'react';
 
-import { PlayerModel } from '@domain/models';
-
-import { CreatePlayerProxyProps, MyPlayerContextValue } from './types';
+import { playerSignals } from '@presentation/signals';
 
 import { useMutatePlayerModal } from '../../hooks';
+import { useStates } from '@presentation/hooks';
 
 import { usePlayerUsecases } from '@presentation/contexts';
 
 import { GlobalLoading } from '@presentation/components';
 
-const Context = createContext({} as MyPlayerContextValue);
+import { CreatePlayerProxyProps } from './types';
 
-export function useMyPlayer(): PlayerModel {
-  const { myPlayer } = useContext(Context);
-
-  return myPlayer;
-}
+const { myPlayer } = playerSignals;
 
 export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   const { children } = props;
 
-  const { myPlayer, fetchingMyPlayer } = usePlayerUsecases();
+  const [s, set] = useStates({ fetchingMyPlayer: true });
+
+  const { fetchMyPlayer } = usePlayerUsecases();
+
+  useEffect(() => {
+    fetchMyPlayer().finally(set('fetchingMyPlayer', false));
+  }, []);
 
   const { renderMutatePlayerModal } = useMutatePlayerModal({
     unclosable: true,
     open: true,
   });
 
-  if (fetchingMyPlayer) return <GlobalLoading />;
+  if (s.fetchingMyPlayer) return <GlobalLoading />;
 
-  if (myPlayer)
-    return <Context.Provider value={{ myPlayer }}>{children}</Context.Provider>;
+  if (myPlayer) return children;
 
-  return <>{renderMutatePlayerModal()}</>;
+  return renderMutatePlayerModal();
 };

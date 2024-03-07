@@ -1,25 +1,15 @@
-import {
-  redirect,
-  useLoaderData as useDefaultLoaderData,
-} from 'react-router-dom';
+import { redirect } from 'react-router-dom';
 
-import { UserModel } from '@domain/models';
+import { HomeLoaderArgs } from './types';
 
-import { HomeLoaderArgs, HomeLoaderData } from './types';
-
-export async function homeLoader(args: HomeLoaderArgs): Promise<UserModel> {
+export async function homeLoader(args: HomeLoaderArgs): Promise<null> {
   const { getMe } = args;
 
   try {
-    const me = await getMe.execute();
-
-    if (!me) throw redirect('/login');
-
-    return me;
+    await getMe.execute();
   } catch {
     throw redirect('/login');
   }
-}
 
-export const useHomeLoaderData = (): HomeLoaderData =>
-  useDefaultLoaderData() as any;
+  return null;
+}

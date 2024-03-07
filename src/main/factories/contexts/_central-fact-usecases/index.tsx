@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 
 import { ContextProviderProps } from '@presentation/types';
 
@@ -12,7 +12,7 @@ import {
 
 export function makeCentralFactUsecasesContextProvider(
   props: ContextProviderProps,
-): ReactNode {
+): ReactElement {
   const getCentralFact = makeGetCentralFactUsecase();
   const watchCentralFact = makeWatchCentralFactUsecase();
   const changeCentralFact = makeChangeCentralFactUsecase();

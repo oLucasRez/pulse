@@ -3,6 +3,7 @@ import { LinkWithProviderUsecase } from '@domain/usecases';
 
 import {
   makeAuthProvider,
+  makeAuthPublisher,
   makeChangeMeUsecase,
   makeSignInWithProviderUsecase,
   makeUserCRUD,
@@ -10,12 +11,14 @@ import {
 
 export function makeAuthLinkWithProviderUsecase(): LinkWithProviderUsecase {
   const authProvider = makeAuthProvider();
+  const authPublisher = makeAuthPublisher();
   const changeMe = makeChangeMeUsecase();
   const signInWithProvider = makeSignInWithProviderUsecase();
   const userCRUD = makeUserCRUD();
 
   return new AuthLinkWithProviderUsecase({
     authProvider,
+    authPublisher,
     changeMe,
     signInWithProvider,
     userCRUD,

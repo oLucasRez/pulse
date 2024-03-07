@@ -1,6 +1,4 @@
-import { ReactNode } from 'react';
-
-import { ContextProviderProps } from '@presentation/types';
+import { ReactElement } from 'react';
 
 import { PlayerUsecasesContextProvider } from '@presentation/contexts';
 
@@ -8,23 +6,22 @@ import {
   makeBanPlayerUsecase,
   makeChangePlayerUsecase,
   makeCreatePlayerUsecase,
-  makeWatchMyPlayerUsecase,
-  makeWatchPlayersUsecase,
+  makeGetMyPlayerUsecase,
 } from '@main/factories';
+
+import { ContextProviderProps } from '@presentation/types';
 
 export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,
-): ReactNode {
-  const watchPlayers = makeWatchPlayersUsecase();
-  const watchMyPlayer = makeWatchMyPlayerUsecase();
+): ReactElement {
+  const getMyPlayer = makeGetMyPlayerUsecase();
   const createPlayer = makeCreatePlayerUsecase();
   const changePlayer = makeChangePlayerUsecase();
   const banPlayer = makeBanPlayerUsecase();
 
   return (
     <PlayerUsecasesContextProvider
-      watchPlayers={watchPlayers}
-      watchMyPlayer={watchMyPlayer}
+      getMyPlayer={getMyPlayer}
       createPlayer={createPlayer}
       changePlayer={changePlayer}
       banPlayer={banPlayer}

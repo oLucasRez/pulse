@@ -13,18 +13,22 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
+import { PlayerObserver } from '@data/observers';
+
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
+  private readonly playerPublisher: PlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDCreatePlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
+    this.playerPublisher = deps.playerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -52,7 +56,7 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
 
     await this.shouldntPassMaxPlayers(currentGame, players);
 
-    const playerDTO = await this.playerCRUD.create({
+    const dto = await this.playerCRUD.create({
       name,
       color,
       avatar,
@@ -62,7 +66,11 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
       banned: false,
     });
 
-    return PlayerHydrator.hydrate(playerDTO);
+    const player = PlayerHydrator.hydrate(dto);
+
+    this.playerPublisher.notifyCreatePlayer(player);
+
+    return player;
   }
 
   private iShouldntHaveCreatedYet(me: UserModel, players: PlayerModel[]): void {
@@ -113,6 +121,7 @@ export namespace CRUDCreatePlayerUsecase {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
+    playerPublisher: PlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }
