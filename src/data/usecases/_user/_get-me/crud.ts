@@ -36,7 +36,7 @@ export class CRUDGetMeUsecase implements GetMeUsecase {
 
     const user = dto ? UserHydrator.hydrate(dto) : null;
 
-    this.authPublisher.notifyMeChange(user);
+    this.authPublisher.notifyFetchMe(user);
 
     return user;
   }

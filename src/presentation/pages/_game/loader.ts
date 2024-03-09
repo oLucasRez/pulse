@@ -1,35 +1,22 @@
-import {
-  redirect,
-  useLoaderData as useDefaultLoaderData,
-} from 'react-router-dom';
+import { redirect } from 'react-router-dom';
 
-import { DomainError, NotFoundError } from '@domain/errors';
-
-import { GameLoaderArgs, GameLoaderData } from './types';
+import { DomainError } from '@domain/errors';
 
 import { alertError } from '@presentation/utils';
 
-export async function gameLoader(
-  args: GameLoaderArgs,
-): Promise<GameLoaderData> {
+import { GameLoaderArgs } from './types';
+
+export async function gameLoader(args: GameLoaderArgs): Promise<null> {
   const { getGame, params } = args;
 
   try {
     if (!params.id) throw 'error';
 
-    const currentGame = await getGame.execute(params.id);
+    await getGame.execute(params.id);
 
-    if (!currentGame)
-      throw new NotFoundError({
-        metadata: { entity: 'Game', prop: 'id', value: params.id },
-      });
-
-    return currentGame;
+    return null;
   } catch (e) {
     alertError(e as DomainError);
     throw redirect('/login');
   }
 }
-
-export const useGameLoaderData = (): GameLoaderData =>
-  useDefaultLoaderData() as any;

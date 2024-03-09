@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate as useDefaultNavigate } from 'react-router-dom';
 
-import { LinkProps, NavigateHookReturn } from './types';
+import { LinkProps, NavigateHookReturn, NavigateProps } from './types';
 
 function replaceIfIsLogout(): boolean {
   return location.pathname === '/logout';
@@ -16,6 +16,14 @@ export function useNavigate(): NavigateHookReturn {
   );
 
   const linkToHomeProps = useMemo<LinkProps>(
+    () => ({
+      to: '/',
+      replace: replaceIfIsLogout(),
+    }),
+    [],
+  );
+
+  const navigateToHomeProps = useMemo<NavigateProps>(
     () => ({
       to: '/',
       replace: replaceIfIsLogout(),
@@ -41,7 +49,7 @@ export function useNavigate(): NavigateHookReturn {
     [],
   );
 
-  const navigateToLoginProps = useMemo<LinkProps>(
+  const navigateToLoginProps = useMemo<NavigateProps>(
     () => ({
       to: '/login',
       replace: replaceIfIsLogout(),
@@ -78,6 +86,7 @@ export function useNavigate(): NavigateHookReturn {
     linkToLoginProps,
     linkToRegisterProps,
 
+    navigateToHomeProps,
     navigateToLoginProps,
   };
 }

@@ -33,7 +33,7 @@ export class CRUDChangeMeUsecase implements ChangeMeUsecase {
 
     user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifyMeChange(user);
+    this.authPublisher.notifyChangeMe(user);
 
     return user;
   }

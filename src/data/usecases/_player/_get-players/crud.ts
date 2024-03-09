@@ -22,17 +22,15 @@ export class CRUDGetPlayersUsecase implements GetPlayersUsecase {
   ): Promise<PlayerModel[]> {
     const { includeBanned = false } = options;
 
-    const playerDTOs = await this.playerCRUD.read();
-
-    if (includeBanned) return playerDTOs.map(PlayerHydrator.hydrate);
-
-    const dto = playerDTOs.filter((playerDTO) => !playerDTO.banned);
+    const dto = await this.playerCRUD.read();
 
     const players = dto.map(PlayerHydrator.hydrate);
 
     this.playerPublisher.notifyFetchPlayers(players);
 
-    return players;
+    if (includeBanned) return players;
+
+    return players.filter((value) => !value.banned);
   }
 }
 

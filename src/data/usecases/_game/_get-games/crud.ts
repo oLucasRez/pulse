@@ -28,7 +28,9 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
         metadata: { tried: 'get games without session' },
       });
 
-    const dto = await this.gameCRUD.read();
+    const dto = (await this.gameCRUD.read()).filter(
+      (value) => value.uid === me.uid,
+    );
 
     const games = dto.map(GameHydrator.hydrate);
 

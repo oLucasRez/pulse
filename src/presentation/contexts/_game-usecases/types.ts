@@ -1,3 +1,5 @@
+import { GameModel } from '@domain/models';
+
 import {
   ChangeGameUsecase,
   CreateGameUsecase,
@@ -9,6 +11,8 @@ import {
 import { ContextProviderProps } from '@presentation/types';
 
 export type GameUsecasesContextValue = {
+  games: GameModel[];
+  currentGame: GameModel | null;
   fetchGames: GetGamesUsecase['execute'];
   createGame: CreateGameUsecase['execute'];
   changeGame: ChangeGameUsecase['execute'];

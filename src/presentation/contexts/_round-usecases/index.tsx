@@ -4,9 +4,7 @@ import { RoundModel } from '@domain/models';
 
 import { NotFoundError } from '@domain/errors';
 
-import { gameSignals } from '@presentation/signals';
-
-import { useStates } from '@presentation/hooks';
+import { useSelector, useStates } from '@presentation/hooks';
 
 import { logError } from '@presentation/utils';
 
@@ -20,8 +18,6 @@ const Context = createContext({} as RoundUsecasesContextValue);
 export const useRoundUsecases = (): RoundUsecasesContextValue =>
   useContext(Context);
 
-const { currentGame } = gameSignals;
-
 export const RoundUsecasesContextProvider: FC<
   RoundUsecasesContextProviderProps
 > = (props) => {
@@ -33,32 +29,34 @@ export const RoundUsecasesContextProvider: FC<
 
   const [s, set] = useStates({ round: null as RoundModel | null });
 
-  useEffect(() => {
-    if (!currentGame.value?.roundID) return;
+  const currentGame = useSelector(
+    ({ auth, game }) =>
+      game.games.find((game) => game.id === auth.me?.currentGameID) ?? null,
+  );
 
-    getRound
-      .execute(currentGame.value.roundID)
-      .then(set('round'))
-      .catch(logError);
-  }, [currentGame.value?.roundID]);
+  useEffect(() => {
+    if (!currentGame?.roundID) return;
+
+    getRound.execute(currentGame.roundID).then(set('round')).catch(logError);
+  }, [currentGame?.roundID]);
 
   const passTurn = useCallback(() => {
-    if (!currentGame.value)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-    if (!currentGame.value.roundID)
+    if (!currentGame.roundID)
       throw new NotFoundError({ metadata: { entity: 'Round' } });
 
-    return props.passTurn.execute(currentGame.value.roundID);
-  }, [currentGame.value, props.passTurn]);
+    return props.passTurn.execute(currentGame.roundID);
+  }, [currentGame, props.passTurn]);
 
   const passLightspotTurn = useCallback(() => {
-    if (!currentGame.value)
+    if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-    if (!currentGame.value.lightspotRoundID)
+    if (!currentGame.lightspotRoundID)
       throw new NotFoundError({ metadata: { entity: 'Round' } });
 
-    return props.passTurn.execute(currentGame.value.lightspotRoundID);
-  }, [currentGame.value, props.passTurn]);
+    return props.passTurn.execute(currentGame.lightspotRoundID);
+  }, [currentGame, props.passTurn]);
 
   return (
     <Context.Provider

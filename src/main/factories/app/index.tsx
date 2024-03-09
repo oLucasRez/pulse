@@ -1,34 +1,37 @@
 import { ReactNode } from 'react';
+import { Provider as ReactReduxProvider } from 'react-redux';
 
 import { GlobalStyle } from '@presentation/styles';
+
+import { store } from '@main/store';
 
 import {
   makeAuthPublisher,
   makeGamePublisher,
   makePlayerPublisher,
   makeRouter,
-  makeSignalAuthSubscriber,
-  makeSignalGameSubscriber,
-  makeSignalPlayerSubscriber,
+  makeStoreAuthSubscriber,
+  makeStoreGameSubscriber,
+  makeStorePlayerSubscriber,
 } from '..';
 
 export function makeApp(): ReactNode {
-  const signalAuthSubscriber = makeSignalAuthSubscriber();
+  const storeAuthSubscriber = makeStoreAuthSubscriber();
   const authPublisher = makeAuthPublisher();
-  authPublisher.subscribe(signalAuthSubscriber);
+  authPublisher.subscribe(storeAuthSubscriber);
 
-  const signalGameSubscriber = makeSignalGameSubscriber();
+  const storeGameSubscriber = makeStoreGameSubscriber();
   const gamePublisher = makeGamePublisher();
-  gamePublisher.subscribe(signalGameSubscriber);
+  gamePublisher.subscribe(storeGameSubscriber);
 
-  const signalPlayerSubscriber = makeSignalPlayerSubscriber();
+  const storePlayerSubscriber = makeStorePlayerSubscriber();
   const playerPublisher = makePlayerPublisher();
-  playerPublisher.subscribe(signalPlayerSubscriber);
+  playerPublisher.subscribe(storePlayerSubscriber);
 
   return (
-    <>
+    <ReactReduxProvider store={store}>
       <GlobalStyle />
       {makeRouter()}
-    </>
+    </ReactReduxProvider>
   );
 }

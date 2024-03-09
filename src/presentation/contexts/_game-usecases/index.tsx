@@ -8,6 +8,10 @@ import {
   StartGameUsecase,
 } from '@domain/usecases';
 
+import { useSelector } from '@presentation/hooks';
+
+import { currentGameSelector, gamesSelector } from '@main/store';
+
 import {
   GameUsecasesContextProviderProps,
   GameUsecasesContextValue,
@@ -22,6 +26,9 @@ export const GameUsecasesContextProvider: FC<
   GameUsecasesContextProviderProps
 > = (props) => {
   const { children } = props;
+
+  const games = useSelector(gamesSelector);
+  const currentGame = useSelector(currentGameSelector);
 
   const fetchGames = useCallback<GetGamesUsecase['execute']>(
     () => props.getGames.execute(),
@@ -51,6 +58,8 @@ export const GameUsecasesContextProvider: FC<
   return (
     <Context.Provider
       value={{
+        games,
+        currentGame,
         fetchGames,
         createGame,
         changeGame,

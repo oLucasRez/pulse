@@ -9,13 +9,15 @@ import {
   SignUpWithCredentialsUsecase,
 } from '@domain/usecases';
 
+import { useSelector } from '@presentation/hooks';
+
+import { meSelector } from '@main/store';
+
 import {
   AuthUsecasesContextProviderProps,
   AuthUsecasesContextValue,
 } from './types';
 import { Provider } from '@domain/types';
-
-import { useStates } from '@presentation/hooks';
 
 const Context = createContext({} as AuthUsecasesContextValue);
 
@@ -27,66 +29,54 @@ export const AuthUsecasesContextProvider: FC<
 > = (props) => {
   const { children } = props;
 
-  const [s, set] = useStates({ meVersion: Date.now() });
+  const me = useSelector(meSelector);
 
   const signUpWithCredentials = useCallback<
     SignUpWithCredentialsUsecase['execute']
   >(
     (payload: SignUpWithCredentialsUsecase.Payload) =>
-      props.signUpWithCredentials
-        .execute(payload)
-        .finally(set('meVersion', Date.now())),
-    [set, props.signUpWithCredentials],
+      props.signUpWithCredentials.execute(payload),
+    [],
   );
 
   const signInWithCredentials = useCallback<
     SignInWithCredentialsUsecase['execute']
   >(
     (payload: SignInWithCredentialsUsecase.Payload) =>
-      props.signInWithCredentials
-        .execute(payload)
-        .finally(set('meVersion', Date.now())),
-    [set, props.signInWithCredentials],
+      props.signInWithCredentials.execute(payload),
+    [],
   );
 
   const signInWithProvider = useCallback<SignInWithProviderUsecase['execute']>(
-    (provider: Provider) =>
-      props.signInWithProvider
-        .execute(provider)
-        .finally(set('meVersion', Date.now())),
-    [set, props.signInWithProvider],
+    (provider: Provider) => props.signInWithProvider.execute(provider),
+    [],
   );
 
   const linkWithProvider = useCallback<LinkWithProviderUsecase['execute']>(
-    (provider: Provider) =>
-      props.linkWithProvider
-        .execute(provider)
-        .finally(set('meVersion', Date.now())),
-    [set, props.linkWithProvider],
+    (provider: Provider) => props.linkWithProvider.execute(provider),
+    [],
   );
 
   const signInAnonymously = useCallback<SignInAnonymouslyUsecase['execute']>(
-    () =>
-      props.signInAnonymously.execute().finally(set('meVersion', Date.now())),
-    [set, props.signInAnonymously],
+    () => props.signInAnonymously.execute(),
+    [],
   );
 
   const signOut = useCallback<SignOutUsecase['execute']>(
-    () => props.signOut.execute().finally(set('meVersion', Date.now())),
-    [set, props.signOut],
+    () => props.signOut.execute(),
+    [],
   );
 
   return (
     <Context.Provider
       value={{
+        me,
         signUpWithCredentials,
         signInWithCredentials,
         signInWithProvider,
         linkWithProvider,
         signInAnonymously,
         signOut,
-
-        meVersion: s.meVersion,
       }}
     >
       {children}

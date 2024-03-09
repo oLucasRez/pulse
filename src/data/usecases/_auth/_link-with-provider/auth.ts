@@ -10,8 +10,6 @@ import {
   SignInWithProviderUsecase,
 } from '@domain/usecases';
 
-import { Provider } from '@domain/types';
-
 import { AuthProviderProtocol } from '@data/protocols';
 
 import { AuthObserver } from '@data/observers';
@@ -19,6 +17,8 @@ import { AuthObserver } from '@data/observers';
 import { UserCRUD } from '@data/cruds';
 
 import { dontThrow } from '@data/utils';
+
+import { Provider } from '@domain/types';
 
 export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly changeMe: ChangeMeUsecase;
@@ -71,7 +71,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifyMeChange(user);
+    this.authPublisher.notifyChangeMe(user);
 
     return user;
   }

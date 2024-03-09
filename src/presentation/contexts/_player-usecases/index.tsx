@@ -5,7 +5,16 @@ import {
   ChangePlayerUsecase,
   CreatePlayerUsecase,
   GetMyPlayerUsecase,
+  WatchPlayersUsecase,
 } from '@domain/usecases';
+
+import { useSelector } from '@presentation/hooks';
+
+import {
+  allPlayersSelector,
+  myPlayerSelector,
+  playersSelector,
+} from '@main/store';
 
 import {
   PlayerUsecasesContextProviderProps,
@@ -21,6 +30,16 @@ export const PlayerUsecasesContextProvider: FC<
   PlayerUsecasesContextProviderProps
 > = (props) => {
   const { children } = props;
+
+  const players = useSelector(playersSelector);
+  const allPlayers = useSelector(allPlayersSelector);
+  const myPlayer = useSelector(myPlayerSelector);
+
+  const watchPlayers = useCallback(
+    (callback: WatchPlayersUsecase.Callback = (): any => {}) =>
+      props.watchPlayers.execute(callback),
+    [],
+  );
 
   const fetchMyPlayer = useCallback<GetMyPlayerUsecase['execute']>(
     () => props.getMyPlayer.execute(),
@@ -47,6 +66,10 @@ export const PlayerUsecasesContextProvider: FC<
   return (
     <Context.Provider
       value={{
+        players,
+        allPlayers,
+        myPlayer,
+        watchPlayers,
         fetchMyPlayer,
         createPlayer,
         changePlayer,

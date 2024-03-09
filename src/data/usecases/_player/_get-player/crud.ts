@@ -22,7 +22,7 @@ export class CRUDGetPlayerUsecase implements GetPlayerUsecase {
 
     const player = dto ? PlayerHydrator.hydrate(dto) : null;
 
-    this.playerPublisher.notifyFetchPlayer(player);
+    this.playerPublisher.notifyFetchPlayer(id, player);
 
     return player;
   }

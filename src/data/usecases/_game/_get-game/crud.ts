@@ -22,7 +22,7 @@ export class CRUDGetGameUsecase implements GetGameUsecase {
 
     const game = dto ? GameHydrator.hydrate(dto) : null;
 
-    this.gamePublisher.notifyFetchGame(game);
+    this.gamePublisher.notifyFetchGame(id, game);
 
     return game;
   }

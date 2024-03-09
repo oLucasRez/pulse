@@ -33,7 +33,10 @@ export class CRUDGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
 
     const currentPlayer = await this.getPlayer.execute(round.currentPlayerID);
 
-    this.playerPublisher.notifyFetchCurrentPlayer(currentPlayer);
+    this.playerPublisher.notifyFetchPlayer(
+      round.currentPlayerID,
+      currentPlayer,
+    );
 
     return currentPlayer;
   }

@@ -44,7 +44,7 @@ export class AuthSignUpWithCredentialsUsecase
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifyMeChange(user);
+    this.authPublisher.notifySignIn(user);
 
     return user;
   }

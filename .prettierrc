@@ -22,7 +22,6 @@
     "(.*)cruds$",
     "(.*)services$",
 
-    "(.*)signals$",
     "(.*)hooks$",
     "(.*)contexts$",
     "(.*)components$",
@@ -36,6 +35,7 @@
 
     "(.*)decorators$",
     "(.*)adapters$",
+    "(.*)store$",
     "(.*)factories$",
 
     "(.*)types$",

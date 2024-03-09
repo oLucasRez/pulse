@@ -3,31 +3,15 @@ import { GameModel } from '@domain/models';
 import { GameObserver } from '@data/observers';
 
 export class GamePublisher implements GameObserver.Publisher {
-  private static subscribers: GameObserver.Subscriber[] = [];
-
-  public subscribe(subscriber: GameObserver.Subscriber): void {
-    GamePublisher.subscribers.push(subscriber);
-  }
-  public unsubscribe(subscriber: GameObserver.Subscriber): void {
-    GamePublisher.subscribers.splice(
-      GamePublisher.subscribers.indexOf(subscriber),
-      1,
-    );
-  }
-
   public notifyFetchGames(games: GameModel[]): void {
     GamePublisher.subscribers.map((subscriber) =>
       subscriber.onFetchGames(games),
     );
   }
 
-  public notifyFetchGame(game: GameModel | null): void {
-    GamePublisher.subscribers.map((subscriber) => subscriber.onFetchGame(game));
-  }
-
-  public notifyFetchCurrentGame(game: GameModel | null): void {
+  public notifyFetchGame(id: string, game: GameModel | null): void {
     GamePublisher.subscribers.map((subscriber) =>
-      subscriber.onFetchCurrentGame(game),
+      subscriber.onFetchGame(id, game),
     );
   }
 
@@ -50,6 +34,16 @@ export class GamePublisher implements GameObserver.Publisher {
   public notifyStartGame(game: GameModel): void {
     GamePublisher.subscribers.map((subscriber) => subscriber.onStartGame(game));
   }
-}
 
-export * from './_signal';
+  private static subscribers: GameObserver.Subscriber[] = [];
+
+  public subscribe(subscriber: GameObserver.Subscriber): void {
+    GamePublisher.subscribers.push(subscriber);
+  }
+  public unsubscribe(subscriber: GameObserver.Subscriber): void {
+    GamePublisher.subscribers.splice(
+      GamePublisher.subscribers.indexOf(subscriber),
+      1,
+    );
+  }
+}

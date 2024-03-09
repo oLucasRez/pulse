@@ -7,6 +7,7 @@ import {
   makeChangePlayerUsecase,
   makeCreatePlayerUsecase,
   makeGetMyPlayerUsecase,
+  makeWatchPlayersUsecase,
 } from '@main/factories';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -14,6 +15,7 @@ import { ContextProviderProps } from '@presentation/types';
 export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactElement {
+  const watchPlayers = makeWatchPlayersUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const createPlayer = makeCreatePlayerUsecase();
   const changePlayer = makeChangePlayerUsecase();
@@ -21,6 +23,7 @@ export function makePlayerUsecasesContextProvider(
 
   return (
     <PlayerUsecasesContextProvider
+      watchPlayers={watchPlayers}
       getMyPlayer={getMyPlayer}
       createPlayer={createPlayer}
       changePlayer={changePlayer}

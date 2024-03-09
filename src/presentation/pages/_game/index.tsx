@@ -1,13 +1,15 @@
-import { FC, FocusEvent, ReactNode, useRef } from 'react';
+import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
-
-import { authSignals, gameSignals, playerSignals } from '@presentation/signals';
 
 import { useMutatePlayerModal } from './hooks';
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { useGameUsecases, usePlayerUsecases } from '@presentation/contexts';
+import {
+  useAuthUsecases,
+  useGameUsecases,
+  usePlayerUsecases,
+} from '@presentation/contexts';
 
 import { Map, Settings } from './components';
 import { GlobalLoading } from '@presentation/components';
@@ -18,29 +20,35 @@ import { getClasses, getColor } from '@presentation/styles/mixins';
 
 import { alertError } from '@presentation/utils';
 
-const { me } = authSignals;
-const { currentGame } = gameSignals;
-const { players, myPlayer } = playerSignals;
-
 const GamePage: FC = () => {
   const [s, set] = useStates({
-    watchingPlayers: false,
+    watchingPlayers: true,
     settingsIsOpen: false,
     banningPlayer: false,
     startingGame: false,
   });
 
-  const { startGame } = useGameUsecases();
+  const { currentGame, startGame } = useGameUsecases();
 
-  const { banPlayer } = usePlayerUsecases();
+  const { players, myPlayer, watchPlayers, banPlayer } = usePlayerUsecases();
+
+  useEffect(() => {
+    const unsubscribe = watchPlayers().finally(set('watchingPlayers', false));
+
+    return () => {
+      unsubscribe.then((_) => _);
+    };
+  }, []);
 
   const { navigateToHome, navigateToLogout } = useNavigate();
 
   const linkInputRef = useRef<HTMLInputElement>(null);
 
-  if (!me.value) return null;
+  const { me } = useAuthUsecases();
 
-  const imHost = me.value?.uid === currentGame.value?.uid;
+  if (!me) return null;
+
+  const imHost = me?.uid === currentGame?.uid;
 
   function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>): any {
     event.target.select();
@@ -76,8 +84,7 @@ const GamePage: FC = () => {
     if (!imHost)
       return <p className='invite'>Wait until the host starts the game!</p>;
 
-    const reachedMaxPlayers =
-      currentGame.value?.config.maxPlayers === players.value.length;
+    const reachedMaxPlayers = currentGame?.config.maxPlayers === players.length;
 
     if (reachedMaxPlayers) return;
 
@@ -109,8 +116,8 @@ const GamePage: FC = () => {
 
     return (
       <div className='players'>
-        {players.value.map((player) => {
-          const isMyPlayer = player.id === myPlayer.value?.id;
+        {players.map((player) => {
+          const isMyPlayer = player.id === myPlayer?.id;
           const bannable = imHost && !isMyPlayer;
           const editable = isMyPlayer;
           const styledColor = getColor(player.color);
@@ -151,7 +158,7 @@ const GamePage: FC = () => {
   }
 
   function renderMain(): ReactNode {
-    if (myPlayer.value?.banned)
+    if (myPlayer?.banned)
       return (
         <Main>
           <span className='icon block'>🚫</span>
@@ -160,9 +167,9 @@ const GamePage: FC = () => {
         </Main>
       );
 
-    if (!currentGame.value) return null;
+    if (!currentGame) return null;
 
-    if (currentGame.value.started)
+    if (currentGame.started)
       return (
         <Main>
           <Map />
@@ -204,10 +211,10 @@ const GamePage: FC = () => {
   function renderMyHeader(): ReactNode {
     return (
       <span className='greetings'>
-        {myPlayer.value?.avatar} Hello
-        {me.value?.name ? (
+        {myPlayer?.avatar} Hello
+        {me?.name ? (
           <>
-            , <b>{me.value.name}</b>
+            , <b>{me.name}</b>
           </>
         ) : (
           ''
@@ -217,7 +224,7 @@ const GamePage: FC = () => {
     );
   }
 
-  if (!currentGame.value) return <GlobalLoading />;
+  if (!currentGame) return <GlobalLoading />;
 
   return (
     <>
@@ -226,7 +233,7 @@ const GamePage: FC = () => {
           <button onClick={navigateToHome}>🔙</button>
 
           <h2>
-            <b>{currentGame.value.title}</b>
+            <b>{currentGame.title}</b>
           </h2>
 
           {renderMyHeader()}

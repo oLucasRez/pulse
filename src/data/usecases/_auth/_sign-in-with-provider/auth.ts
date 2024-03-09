@@ -4,8 +4,6 @@ import { UserHydrator } from '@data/hydration';
 
 import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
-import { Provider } from '@domain/types';
-
 import { AuthProviderProtocol } from '@data/protocols';
 
 import { AuthObserver } from '@data/observers';
@@ -13,6 +11,8 @@ import { AuthObserver } from '@data/observers';
 import { UserCRUD } from '@data/cruds';
 
 import { dontThrow } from '@data/utils';
+
+import { Provider } from '@domain/types';
 
 export class AuthSignInWithProviderUsecase
   implements SignInWithProviderUsecase
@@ -52,7 +52,7 @@ export class AuthSignInWithProviderUsecase
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifyMeChange(user);
+    this.authPublisher.notifySignIn(user);
 
     return user;
   }

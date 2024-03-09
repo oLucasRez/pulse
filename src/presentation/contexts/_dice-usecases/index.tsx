@@ -4,9 +4,7 @@ import { DiceModel } from '@domain/models';
 
 import { WatchDicesUsecase } from '@domain/usecases';
 
-import { gameSignals } from '@presentation/signals';
-
-import { useStates } from '@presentation/hooks';
+import { useSelector, useStates } from '@presentation/hooks';
 
 import { logError } from '@presentation/utils';
 
@@ -20,8 +18,6 @@ const Context = createContext({} as DiceUsecasesContextValue);
 export const useDiceUsecases = (): DiceUsecasesContextValue =>
   useContext(Context);
 
-const { currentGame } = gameSignals;
-
 export const DiceUsecasesContextProvider: FC<
   DiceUsecasesContextProviderProps
 > = (props) => {
@@ -33,8 +29,13 @@ export const DiceUsecasesContextProvider: FC<
 
   const [s, set] = useStates({ dices: [] as DiceModel[] });
 
+  const currentGame = useSelector(
+    ({ auth, game }) =>
+      game.games.find((game) => game.id === auth.me?.currentGameID) ?? null,
+  );
+
   useEffect(() => {
-    if (!currentGame.value?.started) return;
+    if (!currentGame?.started) return;
 
     let unsubscribe: WatchDicesUsecase.Response;
 
@@ -44,7 +45,7 @@ export const DiceUsecasesContextProvider: FC<
       .catch(logError);
 
     return () => unsubscribe?.();
-  }, [currentGame.value?.started]);
+  }, [currentGame?.started]);
 
   return (
     <Context.Provider value={{ dices: s.dices }}>{children}</Context.Provider>

@@ -16,7 +16,7 @@ export class AuthSignOutUsecase implements SignOutUsecase {
   public async execute(): Promise<void> {
     await this.sessionDestroyer.destroySession();
 
-    this.authPublisher.notifyMeChange(null);
+    this.authPublisher.notifySignOut();
   }
 }
 

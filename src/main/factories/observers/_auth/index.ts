@@ -1,2 +1,2 @@
 export * from './publisher';
-export * from './signal-subscriber';
+export * from './store-subscriber';

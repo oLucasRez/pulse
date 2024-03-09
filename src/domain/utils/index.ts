@@ -4,6 +4,7 @@ export * from './_is-integer';
 export * from './_is-non-nullable';
 export * from './_map-enum';
 export * from './_matrix';
+export * from './_remove-item';
 export * from './_uuid';
 export * from './_vector';
 export * from './_vector-space';

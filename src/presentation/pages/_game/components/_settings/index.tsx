@@ -1,8 +1,6 @@
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { SettingsFieldValues, SettingsProps } from './types';
-
 import { useStates } from '@presentation/hooks';
 
 import { useGameUsecases } from '@presentation/contexts';
@@ -11,7 +9,7 @@ import { Container } from './styles';
 
 import { alertError } from '@presentation/utils';
 
-import { useGameLoaderData } from '../../loader';
+import { SettingsFieldValues, SettingsProps } from './types';
 
 export const Settings: FC<SettingsProps> = (props) => {
   const { onClose } = props;
@@ -20,9 +18,7 @@ export const Settings: FC<SettingsProps> = (props) => {
     changingGame: false,
   });
 
-  const { changeGame } = useGameUsecases();
-
-  const currentGame = useGameLoaderData();
+  const { currentGame, changeGame } = useGameUsecases();
 
   const {
     register,
@@ -31,10 +27,12 @@ export const Settings: FC<SettingsProps> = (props) => {
     formState: { isValid },
   } = useForm<SettingsFieldValues>({
     defaultValues: {
-      title: currentGame.title ?? undefined,
-      maxPlayers: Number(currentGame.config.maxPlayers),
-      withLightspot: currentGame.config.withLightspot,
-      dicesMode: currentGame.config.dicesMode,
+      title: currentGame?.title ?? undefined,
+      maxPlayers: currentGame
+        ? Number(currentGame?.config.maxPlayers)
+        : undefined,
+      withLightspot: currentGame?.config.withLightspot,
+      dicesMode: currentGame?.config.dicesMode,
     },
   });
 

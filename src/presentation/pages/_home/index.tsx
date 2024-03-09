@@ -3,8 +3,6 @@ import { FC, ReactNode, useEffect } from 'react';
 
 import { GameModel } from '@domain/models';
 
-import { authSignals, gameSignals } from '@presentation/signals';
-
 import { useNavigate, useStates } from '@presentation/hooks';
 
 import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
@@ -15,9 +13,6 @@ import { githubIcon, googleIcon } from '@presentation/assets';
 
 import { alertError } from '@presentation/utils';
 
-const { me } = authSignals;
-const { games } = gameSignals;
-
 const HomePage: FC = () => {
   const [s, set] = useStates({
     fetchingGames: true,
@@ -26,7 +21,7 @@ const HomePage: FC = () => {
     linking: false,
   });
 
-  const { fetchGames, createGame, deleteGame } = useGameUsecases();
+  const { games, fetchGames, createGame, deleteGame } = useGameUsecases();
 
   useEffect(() => {
     fetchGames().finally(set('fetchingGames', false));
@@ -94,14 +89,14 @@ const HomePage: FC = () => {
   }
 
   function renderGamesList(): ReactNode {
-    if (s.fetchingGames && !games.value.length)
+    if (s.fetchingGames && !games.length)
       return (
         <ul className='games'>
           <span className='emoji loading'>⏳</span>
         </ul>
       );
 
-    if (!games.value.length)
+    if (!games.length)
       return (
         <ul className='games'>
           <li>
@@ -118,7 +113,7 @@ const HomePage: FC = () => {
 
     return (
       <ul className='games'>
-        {games.value.map((game) => {
+        {games.map((game) => {
           const deletingGame = s.deletingGame === game.id;
 
           return (
@@ -156,8 +151,10 @@ const HomePage: FC = () => {
     );
   }
 
-  const notLinkedWithGoogle = !me.value?.providers.includes('google');
-  const notLinkedWithGithub = !me.value?.providers.includes('github');
+  const { me } = useAuthUsecases();
+
+  const notLinkedWithGoogle = !me?.providers.includes('google');
+  const notLinkedWithGithub = !me?.providers.includes('github');
 
   return (
     <Container>
@@ -188,9 +185,9 @@ const HomePage: FC = () => {
 
         <span className='greetings'>
           👤 Hello
-          {me.value?.name ? (
+          {me?.name ? (
             <>
-              , <b>{me.value?.name}</b>
+              , <b>{me?.name}</b>
             </>
           ) : (
             ''
