@@ -5,6 +5,7 @@ import {
   CreateGameUsecase,
   DeleteGameUsecase,
   GetGamesUsecase,
+  GetGameUsecase,
   StartGameUsecase,
 } from '@domain/usecases';
 
@@ -35,6 +36,11 @@ export const GameUsecasesContextProvider: FC<
     [],
   );
 
+  const fetchGame = useCallback<GetGameUsecase['execute']>(
+    (id: string) => props.getGame.execute(id),
+    [],
+  );
+
   const createGame = useCallback<CreateGameUsecase['execute']>(
     (payload: CreateGameUsecase.Payload) => props.createGame.execute(payload),
     [],
@@ -60,6 +66,7 @@ export const GameUsecasesContextProvider: FC<
       value={{
         games,
         currentGame,
+        fetchGame,
         fetchGames,
         createGame,
         changeGame,

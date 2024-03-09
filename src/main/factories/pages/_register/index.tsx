@@ -2,21 +2,16 @@ import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
 
-import { makeAuthUsecasesContextProvider } from '@main/factories';
+import { WithoutSessionProxy } from '@presentation/proxies';
 
 const RegisterPage = lazy(() => import('@presentation/pages/_register'));
 
 export function makeRegisterPage(): ReactElement {
-  const page = [
-    // inner
-    makeAuthUsecasesContextProvider,
-    // outer
-  ].reduce<ReactElement>(
-    (children, wrapper) => wrapper({ children }),
+  return (
     <Suspense fallback={<GlobalLoading />}>
-      <RegisterPage />
-    </Suspense>,
+      <WithoutSessionProxy>
+        <RegisterPage />
+      </WithoutSessionProxy>
+    </Suspense>
   );
-
-  return page;
 }

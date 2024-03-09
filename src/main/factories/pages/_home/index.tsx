@@ -2,8 +2,9 @@ import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
 
+import { WithSessionProxy } from '@presentation/pages/_home/proxies';
+
 import {
-  makeAuthUsecasesContextProvider,
   makeGameUsecasesContextProvider,
   makeUserUsecasesContextProvider,
 } from '@main/factories';
@@ -15,12 +16,13 @@ export function makeHomePage(): ReactElement {
     // inner
     makeGameUsecasesContextProvider,
     makeUserUsecasesContextProvider,
-    makeAuthUsecasesContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),
     <Suspense fallback={<GlobalLoading />}>
-      <HomePage />
+      <WithSessionProxy>
+        <HomePage />
+      </WithSessionProxy>
     </Suspense>,
   );
 

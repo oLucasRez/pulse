@@ -1,6 +1,7 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
+  GetMeUsecase,
   LinkWithProviderUsecase,
   SignInAnonymouslyUsecase,
   SignInWithCredentialsUsecase,
@@ -30,6 +31,11 @@ export const AuthUsecasesContextProvider: FC<
   const { children } = props;
 
   const me = useSelector(meSelector);
+
+  const fetchMe = useCallback<GetMeUsecase['execute']>(
+    () => props.getMe.execute(),
+    [],
+  );
 
   const signUpWithCredentials = useCallback<
     SignUpWithCredentialsUsecase['execute']
@@ -71,6 +77,7 @@ export const AuthUsecasesContextProvider: FC<
     <Context.Provider
       value={{
         me,
+        fetchMe,
         signUpWithCredentials,
         signInWithCredentials,
         signInWithProvider,

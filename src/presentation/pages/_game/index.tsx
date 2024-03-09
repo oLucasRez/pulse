@@ -248,7 +248,4 @@ const GamePage: FC = () => {
   );
 };
 
-export * from './proxies';
-export { gameLoader } from './loader';
-
 export default GamePage;

@@ -20,6 +20,4 @@ const RegisterPage: FC = () => {
   );
 };
 
-export { registerLoader } from './loader';
-
 export default RegisterPage;

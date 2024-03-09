@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
 
-export interface AuthProxyProps {
+export interface WithoutSessionProxyProps {
   children: ReactElement;
 }

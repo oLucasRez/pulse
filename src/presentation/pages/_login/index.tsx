@@ -20,6 +20,4 @@ const LoginPage: FC = () => {
   );
 };
 
-export { loginLoader } from './loader';
-
 export default LoginPage;

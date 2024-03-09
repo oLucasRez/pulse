@@ -1,6 +1,7 @@
 import { UserModel } from '@domain/models';
 
 import {
+  GetMeUsecase,
   LinkWithProviderUsecase,
   SignInAnonymouslyUsecase,
   SignInWithCredentialsUsecase,
@@ -13,6 +14,7 @@ import { ContextProviderProps } from '@presentation/types';
 
 export type AuthUsecasesContextValue = {
   me: UserModel | null;
+  fetchMe: GetMeUsecase['execute'];
   signUpWithCredentials: SignUpWithCredentialsUsecase['execute'];
   signInWithCredentials: SignInWithCredentialsUsecase['execute'];
   signInWithProvider: SignInWithProviderUsecase['execute'];
@@ -22,6 +24,7 @@ export type AuthUsecasesContextValue = {
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
+  getMe: GetMeUsecase;
   signUpWithCredentials: SignUpWithCredentialsUsecase;
   signInWithCredentials: SignInWithCredentialsUsecase;
   signInWithProvider: SignInWithProviderUsecase;

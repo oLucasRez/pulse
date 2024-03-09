@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useNavigate as useDefaultNavigate } from 'react-router-dom';
 
-import { LinkProps, NavigateHookReturn, NavigateProps } from './types';
+import { NavigateHookReturn } from './types';
 
 function replaceIfIsLogout(): boolean {
   return location.pathname === '/logout';
@@ -15,22 +15,6 @@ export function useNavigate(): NavigateHookReturn {
     [navigate],
   );
 
-  const linkToHomeProps = useMemo<LinkProps>(
-    () => ({
-      to: '/',
-      replace: replaceIfIsLogout(),
-    }),
-    [],
-  );
-
-  const navigateToHomeProps = useMemo<NavigateProps>(
-    () => ({
-      to: '/',
-      replace: replaceIfIsLogout(),
-    }),
-    [],
-  );
-
   const navigateToGame = useCallback(
     (id: string) => navigate(`/game/${id}`, { replace: replaceIfIsLogout() }),
     [navigate],
@@ -41,33 +25,9 @@ export function useNavigate(): NavigateHookReturn {
     [navigate],
   );
 
-  const linkToLoginProps = useMemo<LinkProps>(
-    () => ({
-      to: '/login',
-      replace: replaceIfIsLogout(),
-    }),
-    [],
-  );
-
-  const navigateToLoginProps = useMemo<NavigateProps>(
-    () => ({
-      to: '/login',
-      replace: replaceIfIsLogout(),
-    }),
-    [],
-  );
-
   const navigateToRegister = useCallback(
     () => navigate('/register', { replace: replaceIfIsLogout() }),
     [navigate],
-  );
-
-  const linkToRegisterProps = useMemo<LinkProps>(
-    () => ({
-      to: '/register',
-      replace: replaceIfIsLogout(),
-    }),
-    [],
   );
 
   const navigateToLogout = useCallback(() => navigate('/logout'), [navigate]);
@@ -81,12 +41,5 @@ export function useNavigate(): NavigateHookReturn {
     navigateToRegister,
     navigateToLogout,
     reloadWindow,
-
-    linkToHomeProps,
-    linkToLoginProps,
-    linkToRegisterProps,
-
-    navigateToHomeProps,
-    navigateToLoginProps,
   };
 }

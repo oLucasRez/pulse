@@ -1,10 +1,9 @@
 import { ReactElement } from 'react';
 
-import { ContextProviderProps } from '@presentation/types';
-
 import { AuthUsecasesContextProvider } from '@presentation/contexts';
 
 import {
+  makeGetMeUsecase,
   makeLinkWithProviderUsecase,
   makeSignInAnonymouslyUsecase,
   makeSignInWithCredentialsUsecase,
@@ -13,9 +12,12 @@ import {
   makeSignUpWithCredentialsUsecase,
 } from '@main/factories';
 
+import { ContextProviderProps } from '@presentation/types';
+
 export function makeAuthUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactElement {
+  const getMe = makeGetMeUsecase();
   const signUpWithCredentials = makeSignUpWithCredentialsUsecase();
   const signInWithCredentials = makeSignInWithCredentialsUsecase();
   const signInWithProvider = makeSignInWithProviderUsecase();
@@ -25,6 +27,7 @@ export function makeAuthUsecasesContextProvider(
 
   return (
     <AuthUsecasesContextProvider
+      getMe={getMe}
       signUpWithCredentials={signUpWithCredentials}
       signInWithCredentials={signInWithCredentials}
       signInWithProvider={signInWithProvider}

@@ -210,6 +210,4 @@ const HomePage: FC = () => {
   );
 };
 
-export { homeLoader } from './loader';
-
 export default HomePage;

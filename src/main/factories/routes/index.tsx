@@ -13,37 +13,30 @@ import {
   makeLoginPage,
   makeLogoutPage,
   makeRegisterPage,
+  makeRootPage,
 } from '../pages';
 
 import {
-  makeGameLoader,
-  makeHomeLoader,
-  makeLoginLoader,
-  makeRegisterLoader,
-} from './_loaders';
-import {
   makeGamePath,
-  makeHomePath,
   makeLoginPath,
   makeLogoutPath,
   makeRegisterPath,
+  makeRootPath,
 } from './_paths';
 
 export function makeRouter(): ReactElement {
   const loginPath = makeLoginPath();
-  const loginLoader = makeLoginLoader();
   const loginPage = makeLoginPage();
 
   const registerPath = makeRegisterPath();
-  const registerLoader = makeRegisterLoader();
   const registerPage = makeRegisterPage();
 
-  const homePath = makeHomePath();
-  const homeLoader = makeHomeLoader();
+  const rootPath = makeRootPath();
+  const rootPage = makeRootPage();
+
   const homePage = makeHomePage();
 
   const gamePath = makeGamePath();
-  const gameLoader = makeGameLoader();
   const gamePage = makeGamePage();
 
   const logoutPath = makeLogoutPath();
@@ -54,17 +47,13 @@ export function makeRouter(): ReactElement {
   const router = createBrowserRouter(
     createRoutesFromChildren(
       <>
-        <Route path={loginPath} loader={loginLoader} element={loginPage} />
-        <Route
-          path={registerPath}
-          loader={registerLoader}
-          element={registerPage}
-        />
+        <Route path={rootPath} element={rootPage}>
+          <Route path={loginPath} element={loginPage} />
+          <Route path={registerPath} element={registerPage} />
 
-        <Route path={homePath} loader={homeLoader}>
           <Route index element={homePage} />
 
-          <Route path={gamePath} loader={gameLoader} element={gamePage} />
+          <Route path={gamePath} element={gamePage} />
         </Route>
 
         <Route path={logoutPath} element={logoutPage} />

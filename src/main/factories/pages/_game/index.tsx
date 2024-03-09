@@ -2,10 +2,13 @@ import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
 
-import { AuthProxy, CreatePlayerProxy } from '@presentation/pages/_game';
+import {
+  AuthProxy,
+  CreatePlayerProxy,
+  GameExistsProxy,
+} from '@presentation/pages/_game/proxies';
 
 import {
-  makeAuthUsecasesContextProvider,
   makeCentralFactUsecasesContextProvider,
   makeCentralPulseUsecasesContextProvider,
   makeDiceUsecasesContextProvider,
@@ -27,16 +30,17 @@ export function makeGamePage(): ReactElement {
     makeDiceUsecasesContextProvider,
     makeGameUsecasesContextProvider,
     makeUserUsecasesContextProvider,
-    makeAuthUsecasesContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),
     <Suspense fallback={<GlobalLoading />}>
-      <AuthProxy>
-        <CreatePlayerProxy>
-          <GamePage />
-        </CreatePlayerProxy>
-      </AuthProxy>
+      <GameExistsProxy>
+        <AuthProxy>
+          <CreatePlayerProxy>
+            <GamePage />
+          </CreatePlayerProxy>
+        </AuthProxy>
+      </GameExistsProxy>
     </Suspense>,
   );
 

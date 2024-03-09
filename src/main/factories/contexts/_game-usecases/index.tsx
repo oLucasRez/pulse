@@ -1,7 +1,5 @@
 import { ReactElement } from 'react';
 
-import { ContextProviderProps } from '@presentation/types';
-
 import { GameUsecasesContextProvider } from '@presentation/contexts';
 
 import {
@@ -9,12 +7,16 @@ import {
   makeCreateGameUsecase,
   makeDeleteGameUsecase,
   makeGetGamesUsecase,
+  makeGetGameUsecase,
   makeStartGameUsecase,
 } from '@main/factories';
+
+import { ContextProviderProps } from '@presentation/types';
 
 export function makeGameUsecasesContextProvider(
   props: ContextProviderProps,
 ): ReactElement {
+  const getGame = makeGetGameUsecase();
   const getGames = makeGetGamesUsecase();
   const createGame = makeCreateGameUsecase();
   const changeGame = makeChangeGameUsecase();
@@ -24,6 +26,7 @@ export function makeGameUsecasesContextProvider(
 
   return (
     <GameUsecasesContextProvider
+      getGame={getGame}
       getGames={getGames}
       createGame={createGame}
       changeGame={changeGame}
