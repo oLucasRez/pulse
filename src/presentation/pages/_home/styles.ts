@@ -11,6 +11,15 @@ const rotate = keyframes`
   }
 `;
 
+const fromBottom = keyframes`
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+`;
+
 export const Container = styled.div`
   font-weight: 500;
   min-height: 100vh;
@@ -126,5 +135,28 @@ export const Container = styled.div`
   main {
     padding-top: ${headerHeight};
     flex: 1;
+  }
+
+  > #return-to-game {
+    background: lightblue;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    animation: ${fromBottom} 0.4s ease;
+
+    > button:first-of-type {
+      margin-left: auto;
+    }
+
+    > button {
+      line-height: 1.1;
+    }
   }
 `;

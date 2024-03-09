@@ -6,6 +6,7 @@ import {
   changeGameReducers,
   createGameReducers,
   deleteGameReducers,
+  fetchCurrentGameReducers,
   fetchGameReducers,
   fetchGamesReducers,
   startGameReducers,
@@ -13,6 +14,7 @@ import {
 
 const initialState: GameState = {
   games: [],
+  currentGame: null,
 };
 
 const gameSlice: Slice<GameState> = createSlice({
@@ -23,6 +25,7 @@ const gameSlice: Slice<GameState> = createSlice({
     changeGameReducers(builder);
     createGameReducers(builder);
     deleteGameReducers(builder);
+    fetchCurrentGameReducers(builder);
     fetchGameReducers(builder);
     fetchGamesReducers(builder);
     startGameReducers(builder);

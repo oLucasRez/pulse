@@ -10,7 +10,7 @@ import {
 export function makeSocketWatchPlayersUsecase(): WatchPlayersUsecase {
   const playerPublisher = makePlayerPublisher();
   const tableGenerator = makePlayersTableGenerator();
-  const socket = makeSocket();
+  const socket = makeSocket('multiple users listen same data');
 
   return new SocketWatchPlayersUsecase({
     playerPublisher,

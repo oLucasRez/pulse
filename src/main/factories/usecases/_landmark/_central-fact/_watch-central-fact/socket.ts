@@ -5,7 +5,7 @@ import { makeCentralFactsTableGenerator, makeSocket } from '@main/factories';
 
 export function makeSocketWatchCentralFactUsecase(): WatchCentralFactUsecase {
   const tableGenerator = makeCentralFactsTableGenerator();
-  const socket = makeSocket();
+  const socket = makeSocket('multiple users listen same data');
 
   return new SocketWatchCentralFactUsecase({ tableGenerator, socket });
 }

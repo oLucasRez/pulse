@@ -28,7 +28,7 @@ export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
 
     const game = dto ? GameHydrator.hydrate(dto) : null;
 
-    this.gamePublisher.notifyFetchGame(me.currentGameID, game);
+    this.gamePublisher.notifyFetchCurrentGame(game);
 
     return game;
   }

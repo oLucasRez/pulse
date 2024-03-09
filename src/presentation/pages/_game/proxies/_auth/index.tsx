@@ -41,15 +41,13 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
     });
   }
 
-  useEffect(() => {
-    handleAuth();
-  }, []);
-
   const { me } = useAuthUsecases();
 
-  const { currentGame } = useGameUsecases();
+  useEffect(() => {
+    if (me) handleAuth();
+  }, [!me]);
 
-  if (!currentGame) return <GlobalLoading />;
+  const { currentGame } = useGameUsecases();
 
   if (!me)
     return (
@@ -62,6 +60,8 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
         />
       </Container>
     );
+
+  if (!currentGame) return <GlobalLoading />;
 
   return children;
 };

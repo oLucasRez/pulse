@@ -7,5 +7,7 @@ import { selectGame } from '../select';
 export const currentGameSelector = createSelector(
   [selectAuth, selectGame],
   (auth, game) =>
-    game.games.find((game) => game.id === auth.me?.currentGameID) ?? null,
+    game.currentGame ??
+    game.games.find((game) => game.id === auth.me?.currentGameID) ??
+    null,
 );

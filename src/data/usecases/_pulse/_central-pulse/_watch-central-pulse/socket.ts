@@ -25,7 +25,7 @@ export class SocketWatchCentralPulseUsecase
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<CentralPulseCRUD.DTO[]>(
+      const unsubscribe = this.socket.watch<CentralPulseCRUD.DTO>(
         table,
         ([centralPulse]) =>
           centralPulse && callback(CentralPulseHydrator.hydrate(centralPulse)),

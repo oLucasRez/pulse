@@ -23,7 +23,7 @@ export const UserUsecasesContextProvider: FC<
   );
 
   const setCurrentGame = useCallback<SetCurrentGameUsecase['execute']>(
-    (gameID: string) => props.setCurrentGame.execute(gameID),
+    (gameID: string | null) => props.setCurrentGame.execute(gameID),
     [],
   );
 

@@ -5,7 +5,7 @@ import { makeDicesTableGenerator, makeSocket } from '@main/factories';
 
 export function makeSocketWatchDicesUsecase(): WatchDicesUsecase {
   const tableGenerator = makeDicesTableGenerator();
-  const socket = makeSocket();
+  const socket = makeSocket('multiple users listen same data');
 
   return new SocketWatchDicesUsecase({ tableGenerator, socket });
 }

@@ -7,6 +7,7 @@ import {
   changeGameAction,
   createGameAction,
   deleteGameAction,
+  fetchCurrentGameAction,
   fetchGameAction,
   fetchGamesAction,
   startGameAction,
@@ -19,6 +20,10 @@ export class StoreGameSubscriber implements GameObserver.Subscriber {
 
   public onFetchGame(id: string, game: GameModel | null): void {
     store.dispatch(fetchGameAction([id, game]));
+  }
+
+  public onFetchCurrentGame(currentGame: GameModel | null): void {
+    store.dispatch(fetchCurrentGameAction(currentGame));
   }
 
   public onCreateGame(game: GameModel): void {

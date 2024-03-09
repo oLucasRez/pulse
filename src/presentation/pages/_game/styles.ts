@@ -42,7 +42,7 @@ export const Container = styled.div`
     vertical-align: middle;
   }
 
-  header {
+  > header {
     left: 0;
     top: 0;
     right: 0;
@@ -70,6 +70,7 @@ export const Container = styled.div`
     padding-top: calc(1rem + ${headerHeight});
     border-right: 1px solid lightgray;
     min-height: 100vh;
+    background: white;
 
     h3 {
       font-weight: 600;

@@ -5,7 +5,7 @@ import { makeCentralPulsesTableGenerator, makeSocket } from '@main/factories';
 
 export function makeSocketWatchCentralPulseUsecase(): WatchCentralPulseUsecase {
   const tableGenerator = makeCentralPulsesTableGenerator();
-  const socket = makeSocket();
+  const socket = makeSocket('multiple users listen same data');
 
   return new SocketWatchCentralPulseUsecase({ tableGenerator, socket });
 }

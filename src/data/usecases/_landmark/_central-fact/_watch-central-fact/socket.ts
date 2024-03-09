@@ -20,7 +20,7 @@ export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
   ): Promise<WatchCentralFactUsecase.Response> {
     const table = await this.tableGenerator.getTable();
 
-    const unsubscribe = this.socket.watch<CentralFactCRUD.DTO[]>(
+    const unsubscribe = this.socket.watch<CentralFactCRUD.DTO>(
       table,
       ([centralFact]) =>
         centralFact && callback(CentralFactHydrator.hydrate(centralFact)),

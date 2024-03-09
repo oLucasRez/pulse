@@ -23,7 +23,7 @@ export class SocketWatchSubjectsUsecase implements WatchSubjectsUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<SubjectCRUD.DTO[]>(
+      const unsubscribe = this.socket.watch<SubjectCRUD.DTO>(
         table,
         (subjects) => callback(subjects.map(SubjectHydrator.hydrate)),
       );

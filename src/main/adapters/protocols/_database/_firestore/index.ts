@@ -1,13 +1,3 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  updateDoc,
-} from 'firebase/firestore';
-
 import { FailedError } from '@domain/errors';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -18,6 +8,16 @@ import { FirebaseService } from '@data/services';
 
 import { Asyncleton } from '@main/utils';
 
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore';
+
 function clearGarbage(data: Record<any, any>): void {
   Object.keys(data).map((key) => {
     if ((data as any)[key] === undefined) delete (data as any)[key];
@@ -25,17 +25,17 @@ function clearGarbage(data: Record<any, any>): void {
 }
 
 function asyncletonKey(table: string): string {
-  return `firebaseDatabase:${table}`;
+  return `firestoreDatabase:${table}`;
 }
 
-export class FirebaseDatabase implements DatabaseProtocol {
+export class FirestoreDatabase implements DatabaseProtocol {
   public async select<M extends ModelCRUD.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
     try {
       const querySnapshot = await Asyncleton.run(asyncletonKey(table), () =>
-        getDocs(collection(FirebaseService.db, table)),
+        getDocs(collection(FirebaseService.firestoreDB, table)),
       );
 
       const data: M[] = [];
@@ -65,11 +65,14 @@ export class FirebaseDatabase implements DatabaseProtocol {
 
       const createdAt = Date.now();
 
-      const docRef = await addDoc(collection(FirebaseService.db, table), {
-        ...data,
-        createdAt,
-        updatedAt: createdAt,
-      });
+      const docRef = await addDoc(
+        collection(FirebaseService.firestoreDB, table),
+        {
+          ...data,
+          createdAt,
+          updatedAt: createdAt,
+        },
+      );
 
       return { ...data, id: docRef.id } as M;
     } catch {
@@ -87,7 +90,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
     try {
       Asyncleton.clear(asyncletonKey(table));
 
-      const docRef = doc(FirebaseService.db, table, id);
+      const docRef = doc(FirebaseService.firestoreDB, table, id);
 
       clearGarbage(data);
 
@@ -110,7 +113,7 @@ export class FirebaseDatabase implements DatabaseProtocol {
     try {
       Asyncleton.clear(asyncletonKey(table));
 
-      const docRef = doc(FirebaseService.db, table, id);
+      const docRef = doc(FirebaseService.firestoreDB, table, id);
 
       await deleteDoc(docRef);
     } catch {

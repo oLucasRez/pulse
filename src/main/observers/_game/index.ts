@@ -15,6 +15,12 @@ export class GamePublisher implements GameObserver.Publisher {
     );
   }
 
+  public notifyFetchCurrentGame(currentGame: GameModel | null): void {
+    GamePublisher.subscribers.map((subscriber) =>
+      subscriber.onFetchCurrentGame(currentGame),
+    );
+  }
+
   public notifyCreateGame(game: GameModel): void {
     GamePublisher.subscribers.map((subscriber) =>
       subscriber.onCreateGame(game),

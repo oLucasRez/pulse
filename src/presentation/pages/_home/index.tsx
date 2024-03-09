@@ -5,7 +5,11 @@ import { GameModel } from '@domain/models';
 
 import { useNavigate, useStates } from '@presentation/hooks';
 
-import { useAuthUsecases, useGameUsecases } from '@presentation/contexts';
+import {
+  useAuthUsecases,
+  useGameUsecases,
+  useUserUsecases,
+} from '@presentation/contexts';
 
 import { Container } from './styles';
 
@@ -19,9 +23,13 @@ const HomePage: FC = () => {
     creatingGame: false,
     deletingGame: null as string | null,
     linking: false,
+    returnToGameBannerIsClosed: false,
   });
 
-  const { games, fetchGames, createGame, deleteGame } = useGameUsecases();
+  const { games, currentGame, fetchGames, createGame, deleteGame } =
+    useGameUsecases();
+
+  const { setCurrentGame } = useUserUsecases();
 
   useEffect(() => {
     fetchGames().finally(set('fetchingGames', false));
@@ -48,6 +56,8 @@ const HomePage: FC = () => {
     set('deletingGame')(game.id);
 
     deleteGame(game.id).catch(alertError).finally(set('deletingGame', null));
+
+    if (currentGame?.id === game.id) s.returnToGameBannerIsClosed = false;
   }
 
   const { linkWithProvider } = useAuthUsecases();
@@ -206,6 +216,23 @@ const HomePage: FC = () => {
       </aside>
 
       <main />
+
+      {currentGame && !s.returnToGameBannerIsClosed && (
+        <span id='return-to-game'>
+          Return to the game {currentGame.title}
+          <button onClick={(): any => navigateToGame(currentGame.id)}>
+            Return
+          </button>
+          <button
+            onClick={(): any => {
+              setCurrentGame(null);
+              s.returnToGameBannerIsClosed = true;
+            }}
+          >
+            x
+          </button>
+        </span>
+      )}
     </Container>
   );
 };

@@ -5,4 +5,3 @@ export * from './_get-game';
 export * from './_get-games';
 export * from './_start-game';
 export * from './get-current-game';
-export * from './watch-current-game';

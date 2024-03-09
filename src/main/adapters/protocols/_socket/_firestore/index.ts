@@ -1,19 +1,19 @@
-import { collection, onSnapshot } from 'firebase/firestore';
-
 import { UnknownError } from '@domain/errors';
 
 import { SocketProtocol } from '@data/protocols';
 
 import { FirebaseService } from '@data/services';
 
-export class FirebaseSocket implements SocketProtocol {
-  public watch<P>(key: string, callback: (snapshot: P) => any): () => void {
+import { collection, onSnapshot } from 'firebase/firestore';
+
+export class FirestoreSocket implements SocketProtocol {
+  public watch<P>(key: string, callback: (snapshot: P[]) => any): () => void {
     try {
       const unsubscribe = onSnapshot(
-        collection(FirebaseService.db, key),
+        collection(FirebaseService.firestoreDB, key),
         (snapshot) =>
           callback(
-            snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as P,
+            snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as P[],
           ),
       );
 

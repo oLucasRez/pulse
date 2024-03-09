@@ -3,8 +3,6 @@ import { useForm } from 'react-hook-form';
 
 import { UserModel } from '@domain/models';
 
-import { AuthFieldValues, AuthFormMode, AuthFormProps } from './types';
-
 import { useStates } from '@presentation/hooks';
 
 import { useAuthUsecases } from '@presentation/contexts';
@@ -14,6 +12,8 @@ import { Container } from './styles';
 import { githubIcon, googleIcon } from '@presentation/assets';
 
 import { alertError } from '@presentation/utils';
+
+import { AuthFieldValues, AuthFormMode, AuthFormProps } from './types';
 
 export const AuthForm: FC<AuthFormProps> = (props) => {
   const { mode, onAuth, onWantToLogin, onWantToRegister } = props;
@@ -125,7 +125,9 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
         type='password'
       />
 
-      <button disabled={!formState.isValid || s.signing}>{button}</button>
+      <button type='submit' disabled={!formState.isValid || s.signing}>
+        {button}
+      </button>
 
       <div className='providers'>
         <span>Or sign in with:</span>
@@ -140,13 +142,18 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       {mode === 'login' && onWantToRegister && (
         <span className='changeMode'>
           Do not have an account yet?{' '}
-          <button onClick={onWantToRegister}>Create one</button>!
+          <button type='reset' onClick={onWantToRegister}>
+            Create one
+          </button>
+          !
         </span>
       )}
       {mode === 'register' && onWantToLogin && (
         <span className='changeMode'>
           Already have an account?{' '}
-          <button onClick={onWantToLogin}>Login</button>
+          <button type='reset' onClick={onWantToLogin}>
+            Login
+          </button>
         </span>
       )}
     </Container>

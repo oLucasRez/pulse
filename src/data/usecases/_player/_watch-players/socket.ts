@@ -27,7 +27,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<PlayerCRUD.DTO[]>(
+      const unsubscribe = this.socket.watch<PlayerCRUD.DTO>(
         table,
         (snapshot) => {
           const players = snapshot.map(PlayerHydrator.hydrate);

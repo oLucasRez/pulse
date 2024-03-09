@@ -9,6 +9,7 @@ export const Container = styled.aside`
   padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;
+  background: white;
 
   > h2 {
     margin-bottom: 0.5rem;

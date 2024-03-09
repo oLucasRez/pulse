@@ -59,7 +59,7 @@ export const Settings: FC<SettingsProps> = (props) => {
   return (
     <Container>
       <h2>
-        Configurações
+        Settings
         {onClose && (
           <button onClick={onClose}>
             <span className='emoji'>✖️</span>
