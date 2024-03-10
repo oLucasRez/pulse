@@ -10,17 +10,17 @@ import { SignInAnonymouslyUsecase } from '@domain/usecases';
 
 import { AuthAnonymousProtocol } from '@data/protocols';
 
-import { AuthObserver } from '@data/observers';
+import { SignInObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
 export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
   private readonly authAnonymous: AuthAnonymousProtocol;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly signInPublisher: SignInObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInAnonymouslyUsecase.Deps) {
-    this.authPublisher = deps.authPublisher;
+    this.signInPublisher = deps.signInPublisher;
     this.authAnonymous = deps.authAnonymous;
     this.userCRUD = deps.userCRUD;
   }
@@ -48,7 +48,7 @@ export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifySignIn(user);
+    this.signInPublisher.notifySignIn(user);
 
     return user;
   }
@@ -56,7 +56,7 @@ export class AuthSignInAnonymouslyUsecase implements SignInAnonymouslyUsecase {
 
 export namespace AuthSignInAnonymouslyUsecase {
   export type Deps = {
-    authPublisher: AuthObserver.Publisher;
+    signInPublisher: SignInObserver.Publisher;
     authAnonymous: AuthAnonymousProtocol;
     userCRUD: UserCRUD;
   };

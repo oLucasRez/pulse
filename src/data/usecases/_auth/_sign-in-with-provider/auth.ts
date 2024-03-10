@@ -6,7 +6,7 @@ import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
 import { AuthProviderProtocol } from '@data/protocols';
 
-import { AuthObserver } from '@data/observers';
+import { SignInObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
@@ -19,13 +19,13 @@ export class AuthSignInWithProviderUsecase
 {
   private readonly changeMe: ChangeMeUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly signInPublisher: SignInObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.authProvider = deps.authProvider;
-    this.authPublisher = deps.authPublisher;
+    this.signInPublisher = deps.signInPublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -52,7 +52,7 @@ export class AuthSignInWithProviderUsecase
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifySignIn(user);
+    this.signInPublisher.notifySignIn(user);
 
     return user;
   }
@@ -62,7 +62,7 @@ export namespace AuthSignInWithProviderUsecase {
   export type Deps = {
     changeMe: ChangeMeUsecase;
     authProvider: AuthProviderProtocol;
-    authPublisher: AuthObserver.Publisher;
+    signInPublisher: SignInObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

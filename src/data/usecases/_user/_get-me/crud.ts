@@ -6,18 +6,18 @@ import { GetMeUsecase } from '@domain/usecases';
 
 import { SessionGetterProtocol } from '@data/protocols';
 
-import { AuthObserver } from '@data/observers';
+import { FetchMeObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
 export class CRUDGetMeUsecase implements GetMeUsecase {
   private readonly sessionGetter: SessionGetterProtocol;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly fetchMePublisher: FetchMeObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: CRUDGetMeUsecase.Deps) {
     this.sessionGetter = deps.sessionGetter;
-    this.authPublisher = deps.authPublisher;
+    this.fetchMePublisher = deps.fetchMePublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -36,7 +36,7 @@ export class CRUDGetMeUsecase implements GetMeUsecase {
 
     const user = dto ? UserHydrator.hydrate(dto) : null;
 
-    this.authPublisher.notifyFetchMe(user);
+    this.fetchMePublisher.notifyFetchMe(user);
 
     return user;
   }
@@ -45,7 +45,7 @@ export class CRUDGetMeUsecase implements GetMeUsecase {
 export namespace CRUDGetMeUsecase {
   export type Deps = {
     sessionGetter: SessionGetterProtocol;
-    authPublisher: AuthObserver.Publisher;
+    fetchMePublisher: FetchMeObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

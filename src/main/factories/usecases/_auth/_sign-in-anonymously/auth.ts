@@ -3,18 +3,18 @@ import { SignInAnonymouslyUsecase } from '@domain/usecases';
 
 import {
   makeAuthAnonymous,
-  makeAuthPublisher,
+  makeSignInPublisher,
   makeUserCRUD,
 } from '@main/factories';
 
 export function makeAuthSignInAnonymouslyUsecase(): SignInAnonymouslyUsecase {
   const authAnonymous = makeAuthAnonymous();
-  const authPublisher = makeAuthPublisher();
+  const signInPublisher = makeSignInPublisher();
   const userCRUD = makeUserCRUD();
 
   return new AuthSignInAnonymouslyUsecase({
     authAnonymous,
-    authPublisher,
+    signInPublisher,
     userCRUD,
   });
 }

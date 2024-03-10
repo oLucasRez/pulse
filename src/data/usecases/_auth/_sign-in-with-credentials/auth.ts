@@ -8,7 +8,7 @@ import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
 import { AuthCredentialsProtocol } from '@data/protocols';
 
-import { AuthObserver } from '@data/observers';
+import { SignInObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
@@ -16,12 +16,12 @@ export class AuthSignInWithCredentialsUsecase
   implements SignInWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly signInPublisher: SignInObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthSignInWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
-    this.authPublisher = deps.authPublisher;
+    this.signInPublisher = deps.signInPublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -44,7 +44,7 @@ export class AuthSignInWithCredentialsUsecase
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifySignIn(user);
+    this.signInPublisher.notifySignIn(user);
 
     return user;
   }
@@ -53,7 +53,7 @@ export class AuthSignInWithCredentialsUsecase
 export namespace AuthSignInWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
-    authPublisher: AuthObserver.Publisher;
+    signInPublisher: SignInObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

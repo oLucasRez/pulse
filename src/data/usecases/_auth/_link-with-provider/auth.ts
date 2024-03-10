@@ -12,7 +12,7 @@ import {
 
 import { AuthProviderProtocol } from '@data/protocols';
 
-import { AuthObserver } from '@data/observers';
+import { ChangeMeObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
@@ -24,14 +24,14 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly changeMe: ChangeMeUsecase;
   private readonly signInWithProvider: SignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly changeMePublisher: ChangeMeObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: AuthLinkWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.signInWithProvider = deps.signInWithProvider;
     this.authProvider = deps.authProvider;
-    this.authPublisher = deps.authPublisher;
+    this.changeMePublisher = deps.changeMePublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -71,7 +71,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
 
     const user = UserHydrator.hydrate(userDTO);
 
-    this.authPublisher.notifyChangeMe(user);
+    this.changeMePublisher.notifyChangeMe(user);
 
     return user;
   }
@@ -82,7 +82,7 @@ export namespace AuthLinkWithProviderUsecase {
     changeMe: ChangeMeUsecase;
     signInWithProvider: SignInWithProviderUsecase;
     authProvider: AuthProviderProtocol;
-    authPublisher: AuthObserver.Publisher;
+    changeMePublisher: ChangeMeObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

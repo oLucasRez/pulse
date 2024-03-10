@@ -2,18 +2,18 @@ import { CRUDGetMeUsecase } from '@data/usecases';
 import { GetMeUsecase } from '@domain/usecases';
 
 import {
-  makeAuthPublisher,
+  makeFetchMePublisher,
   makeSessionGetter,
   makeUserCRUD,
 } from '@main/factories';
 
 export function makeCRUDGetMeUsecase(): GetMeUsecase {
-  const authPublisher = makeAuthPublisher();
+  const fetchMePublisher = makeFetchMePublisher();
   const sessionGetter = makeSessionGetter();
   const userCRUD = makeUserCRUD();
 
   return new CRUDGetMeUsecase({
-    authPublisher,
+    fetchMePublisher,
     sessionGetter,
     userCRUD,
   });

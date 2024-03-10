@@ -3,20 +3,20 @@ import { SignInWithProviderUsecase } from '@domain/usecases';
 
 import {
   makeAuthProvider,
-  makeAuthPublisher,
   makeChangeMeUsecase,
+  makeSignInPublisher,
   makeUserCRUD,
 } from '@main/factories';
 
 export function makeAuthSignInWithProviderUsecase(): SignInWithProviderUsecase {
   const authProvider = makeAuthProvider();
-  const authPublisher = makeAuthPublisher();
+  const signInPublisher = makeSignInPublisher();
   const changeMe = makeChangeMeUsecase();
   const userCRUD = makeUserCRUD();
 
   return new AuthSignInWithProviderUsecase({
     authProvider,
-    authPublisher,
+    signInPublisher,
     changeMe,
     userCRUD,
   });

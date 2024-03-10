@@ -5,4 +5,5 @@ export * from './decorators';
 export * from './observers';
 export * from './pages';
 export * from './routes';
+export * from './store';
 export * from './usecases';

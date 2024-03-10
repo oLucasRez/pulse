@@ -10,21 +10,21 @@ import {
   SetCurrentGameUsecase,
 } from '@domain/usecases';
 
-import { AuthObserver, GameObserver } from '@data/observers';
+import { ChangeMeObserver, GameObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
 export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
   private readonly getMe: GetMeUsecase;
-  private readonly authPublisher: AuthObserver.Publisher;
+  private readonly changeMePublisher: ChangeMeObserver.Publisher;
   private readonly gamePublisher: GameObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: CRUDSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
     this.getMe = deps.getMe;
-    this.authPublisher = deps.authPublisher;
+    this.changeMePublisher = deps.changeMePublisher;
     this.gamePublisher = deps.gamePublisher;
     this.userCRUD = deps.userCRUD;
   }
@@ -49,7 +49,7 @@ export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
 
     const user = UserHydrator.hydrate(dto);
 
-    this.authPublisher.notifyChangeMe(user);
+    this.changeMePublisher.notifyChangeMe(user);
 
     return user;
   }
@@ -59,7 +59,7 @@ export namespace CRUDSetCurrentGameUsecase {
   export type Deps = {
     getGame: GetGameUsecase;
     getMe: GetMeUsecase;
-    authPublisher: AuthObserver.Publisher;
+    changeMePublisher: ChangeMeObserver.Publisher;
     gamePublisher: GameObserver.Publisher;
     userCRUD: UserCRUD;
   };

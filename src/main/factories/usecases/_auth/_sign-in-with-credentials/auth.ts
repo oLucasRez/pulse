@@ -3,18 +3,18 @@ import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
 import {
   makeAuthCredentials,
-  makeAuthPublisher,
+  makeSignInPublisher,
   makeUserCRUD,
 } from '@main/factories';
 
 export function makeAuthSignInWithCredentialsUsecase(): SignInWithCredentialsUsecase {
   const authCredentials = makeAuthCredentials();
-  const authPublisher = makeAuthPublisher();
+  const signInPublisher = makeSignInPublisher();
   const userCRUD = makeUserCRUD();
 
   return new AuthSignInWithCredentialsUsecase({
     authCredentials,
-    authPublisher,
+    signInPublisher,
     userCRUD,
   });
 }

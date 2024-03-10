@@ -1,14 +1,14 @@
 import { AuthSignOutUsecase } from '@data/usecases';
 import { SignOutUsecase } from '@domain/usecases';
 
-import { makeAuthPublisher, makeSessionDestroyer } from '@main/factories';
+import { makeSessionDestroyer, makeSignOutPublisher } from '@main/factories';
 
 export function makeAuthSignOutUsecase(): SignOutUsecase {
-  const authPublisher = makeAuthPublisher();
+  const signOutPublisher = makeSignOutPublisher();
   const sessionDestroyer = makeSessionDestroyer();
 
   return new AuthSignOutUsecase({
-    authPublisher,
+    signOutPublisher,
     sessionDestroyer,
   });
 }
