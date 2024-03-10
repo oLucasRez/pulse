@@ -1,8 +1,8 @@
 import { FC, ReactNode } from 'react';
 
-import { PulseProps } from './types';
-
 import { Vector } from '@domain/utils';
+
+import { PulseProps } from './types';
 
 import { useMapContext } from '../..';
 

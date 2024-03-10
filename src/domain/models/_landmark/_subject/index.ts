@@ -1,5 +1,4 @@
 import { Color } from '@domain/enums';
-
 import { PlayerModel, SubjectPulseModel } from '@domain/models';
 
 import { LandmarkModel } from '..';

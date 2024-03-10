@@ -1,18 +1,15 @@
-import { DiceModel } from '@domain/models';
-
 import { ForbiddenError } from '@domain/errors';
-
-import { DiceHydrator } from '@data/hydration';
-
+import { DiceModel } from '@domain/models';
 import { CreateDiceUsecase } from '@domain/usecases';
 
-import { DiceCRUD } from '@data/cruds';
+import { DiceDAO } from '@data/dao';
+import { DiceHydrator } from '@data/hydration';
 
-export class CRUDCreateDiceUsecase implements CreateDiceUsecase {
-  private readonly diceCRUD: DiceCRUD;
+export class DAOCreateDiceUsecase implements CreateDiceUsecase {
+  private readonly diceDAO: DiceDAO;
 
-  public constructor(deps: CRUDCreateDiceUsecase.Deps) {
-    this.diceCRUD = deps.diceCRUD;
+  public constructor(deps: DAOCreateDiceUsecase.Deps) {
+    this.diceDAO = deps.diceDAO;
   }
 
   public async execute(payload: CreateDiceUsecase.Payload): Promise<DiceModel> {
@@ -24,7 +21,7 @@ export class CRUDCreateDiceUsecase implements CreateDiceUsecase {
         metadata: { prop: 'sides', value: sides },
       });
 
-    const diceDTO = await this.diceCRUD.create({
+    const diceDTO = await this.diceDAO.create({
       sides,
       value: null,
       position: null,
@@ -35,8 +32,8 @@ export class CRUDCreateDiceUsecase implements CreateDiceUsecase {
   }
 }
 
-export namespace CRUDCreateDiceUsecase {
+export namespace DAOCreateDiceUsecase {
   export type Deps = {
-    diceCRUD: DiceCRUD;
+    diceDAO: DiceDAO;
   };
 }

@@ -1,7 +1,7 @@
 import { DeleteGameUsecase } from '@domain/usecases';
 
-import { makeCRUDDeleteGameUsecase } from './crud';
+import { makeDAODeleteGameUsecase } from './crud';
 
 export function makeDeleteGameUsecase(): DeleteGameUsecase {
-  return makeCRUDDeleteGameUsecase();
+  return makeDAODeleteGameUsecase();
 }

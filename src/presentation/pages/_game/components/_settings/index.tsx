@@ -1,13 +1,11 @@
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useStates } from '@presentation/hooks';
-
 import { useGameUsecases } from '@presentation/contexts';
+import { useStates } from '@presentation/hooks';
+import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
-
-import { alertError } from '@presentation/utils';
 
 import { SettingsFieldValues, SettingsProps } from './types';
 

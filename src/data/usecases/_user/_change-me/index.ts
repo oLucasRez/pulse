@@ -1,1 +1,1 @@
-export { CRUDChangeMeUsecase } from './crud';
+export { DAOChangeMeUsecase } from './crud';

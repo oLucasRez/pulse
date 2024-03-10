@@ -1,7 +1,6 @@
 import { TableGenerator } from '@data/protocols';
 
 import { CentralFactsTableGeneratorDecorator } from '@main/decorators';
-
 import { makeGetCurrentGameUsecase } from '@main/factories';
 
 export function makeCentralFactsTableGeneratorDecorator(

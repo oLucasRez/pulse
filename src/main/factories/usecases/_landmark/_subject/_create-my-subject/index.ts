@@ -1,7 +1,7 @@
 import { CreateMySubjectUsecase } from '@domain/usecases';
 
-import { makeCRUDCreateMySubjectUsecase } from './crud';
+import { makeDAOCreateMySubjectUsecase } from './crud';
 
 export function makeCreateMySubjectUsecase(): CreateMySubjectUsecase {
-  return makeCRUDCreateMySubjectUsecase();
+  return makeDAOCreateMySubjectUsecase();
 }

@@ -1,7 +1,7 @@
 import { CreatePlayerUsecase } from '@domain/usecases';
 
-import { makeCRUDCreatePlayerUsecase } from './crud';
+import { makeDAOCreatePlayerUsecase } from './crud';
 
 export function makeCreatePlayerUsecase(): CreatePlayerUsecase {
-  return makeCRUDCreatePlayerUsecase();
+  return makeDAOCreatePlayerUsecase();
 }

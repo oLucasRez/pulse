@@ -1,20 +1,21 @@
-import { CRUDGetMeUsecase } from '@data/usecases';
 import { GetMeUsecase } from '@domain/usecases';
+
+import { DAOGetMeUsecase } from '@data/usecases';
 
 import {
   makeFetchMePublisher,
   makeSessionGetter,
-  makeUserCRUD,
+  makeUserDAO,
 } from '@main/factories';
 
-export function makeCRUDGetMeUsecase(): GetMeUsecase {
+export function makeDAOGetMeUsecase(): GetMeUsecase {
   const fetchMePublisher = makeFetchMePublisher();
   const sessionGetter = makeSessionGetter();
-  const userCRUD = makeUserCRUD();
+  const userDAO = makeUserDAO();
 
-  return new CRUDGetMeUsecase({
+  return new DAOGetMeUsecase({
     fetchMePublisher,
     sessionGetter,
-    userCRUD,
+    userDAO,
   });
 }

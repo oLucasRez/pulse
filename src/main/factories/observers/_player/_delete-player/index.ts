@@ -1,7 +1,7 @@
 import { DeletePlayerObserver } from '@data/observers';
-import { DeletePlayerPublisher } from '@main/observers';
 
 import { makePlayerStoreDeletePlayerSubscriber } from '@main/factories';
+import { DeletePlayerPublisher } from '@main/observers';
 
 export function makeDeletePlayerPublisher(): DeletePlayerObserver.Publisher {
   const publisher = new DeletePlayerPublisher();

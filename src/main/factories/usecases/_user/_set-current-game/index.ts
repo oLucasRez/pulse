@@ -1,7 +1,7 @@
 import { SetCurrentGameUsecase } from '@domain/usecases';
 
-import { makeCRUDSetCurrentGameUsecase } from './crud';
+import { makeDAOSetCurrentGameUsecase } from './crud';
 
 export function makeSetCurrentGameUsecase(): SetCurrentGameUsecase {
-  return makeCRUDSetCurrentGameUsecase();
+  return makeDAOSetCurrentGameUsecase();
 }

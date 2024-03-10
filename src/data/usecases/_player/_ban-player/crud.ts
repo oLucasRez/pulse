@@ -1,28 +1,25 @@
 import { ForbiddenError, NotFoundError } from '@domain/errors';
-
-import { PlayerHydrator } from '@data/hydration';
-
 import {
   BanPlayerUsecase,
   GetCurrentGameUsecase,
   GetMeUsecase,
 } from '@domain/usecases';
 
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { BanPlayerObserver } from '@data/observers';
 
-import { PlayerCRUD } from '@data/cruds';
-
-export class CRUDBanPlayerUsecase implements BanPlayerUsecase {
+export class DAOBanPlayerUsecase implements BanPlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly banPlayerPublisher: BanPlayerObserver.Publisher;
-  private readonly playerCRUD: PlayerCRUD;
+  private readonly playerDAO: PlayerDAO;
 
-  public constructor(deps: CRUDBanPlayerUsecase.Deps) {
+  public constructor(deps: DAOBanPlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.banPlayerPublisher = deps.banPlayerPublisher;
-    this.playerCRUD = deps.playerCRUD;
+    this.playerDAO = deps.playerDAO;
   }
 
   public async execute(id: string): Promise<void> {
@@ -43,7 +40,7 @@ export class CRUDBanPlayerUsecase implements BanPlayerUsecase {
         metadata: { tried: 'ban player if Im not the host' },
       });
 
-    const dto = await this.playerCRUD.update(id, {
+    const dto = await this.playerDAO.update(id, {
       banned: true,
     });
 
@@ -53,11 +50,11 @@ export class CRUDBanPlayerUsecase implements BanPlayerUsecase {
   }
 }
 
-export namespace CRUDBanPlayerUsecase {
+export namespace DAOBanPlayerUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     banPlayerPublisher: BanPlayerObserver.Publisher;
-    playerCRUD: PlayerCRUD;
+    playerDAO: PlayerDAO;
   };
 }

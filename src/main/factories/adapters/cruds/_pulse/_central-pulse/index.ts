@@ -1,7 +1,7 @@
-import { CentralPulseCRUD } from '@data/cruds';
+import { CentralPulseDAO } from '@data/dao';
 
-import { makeDatabaseCentralPulseCRUD } from './database';
+import { makeDatabaseCentralPulseDAO } from './database';
 
-export function makeCentralPulseCRUD(): CentralPulseCRUD {
-  return makeDatabaseCentralPulseCRUD();
+export function makeCentralPulseDAO(): CentralPulseDAO {
+  return makeDatabaseCentralPulseDAO();
 }

@@ -1,8 +1,7 @@
 import { FC } from 'react';
 
-import { useNavigate } from '@presentation/hooks';
-
 import { AuthForm } from '@presentation/components';
+import { useNavigate } from '@presentation/hooks';
 
 import { Container } from './styles';
 

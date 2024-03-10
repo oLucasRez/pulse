@@ -1,10 +1,8 @@
 import { FC, useEffect } from 'react';
 
-import { useNavigate, useStates } from '@presentation/hooks';
-
-import { useAuthUsecases } from '@presentation/contexts';
-
 import { GlobalLoading } from '@presentation/components';
+import { useAuthUsecases } from '@presentation/contexts';
+import { useNavigate, useStates } from '@presentation/hooks';
 
 import { SessionFetchedProxyProps } from './types';
 

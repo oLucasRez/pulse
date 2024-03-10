@@ -3,7 +3,6 @@ import { UnknownError } from '@domain/errors';
 import { DatabaseProtocol } from '@data/protocols';
 
 import { makeFirestoreDatabase } from './firestore';
-
 import { makeRealtimeDatabase } from './realtime';
 
 export function makeDatabase(option: makeDatabase.Option): DatabaseProtocol {

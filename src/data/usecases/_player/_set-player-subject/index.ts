@@ -1,1 +1,1 @@
-export { CRUDSetPlayerSubjectUsecase } from './crud';
+export { DAOSetPlayerSubjectUsecase } from './crud';

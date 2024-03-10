@@ -1,7 +1,7 @@
-import { DiceCRUD } from '@data/cruds';
+import { DiceDAO } from '@data/dao';
 
-import { makeDatabaseDiceCRUD } from './database';
+import { makeDatabaseDiceDAO } from './database';
 
-export function makeDiceCRUD(): DiceCRUD {
-  return makeDatabaseDiceCRUD();
+export function makeDiceDAO(): DiceDAO {
+  return makeDatabaseDiceDAO();
 }

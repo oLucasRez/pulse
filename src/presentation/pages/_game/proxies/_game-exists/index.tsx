@@ -3,11 +3,9 @@ import { useParams } from 'react-router-dom';
 
 import { GameModel } from '@domain/models';
 
-import { useNavigate, useStates } from '@presentation/hooks';
-
-import { useGameUsecases } from '@presentation/contexts';
-
 import { GlobalLoading, Navigate } from '@presentation/components';
+import { useGameUsecases } from '@presentation/contexts';
+import { useNavigate, useStates } from '@presentation/hooks';
 
 import { GameExistsProxyProps } from './types';
 

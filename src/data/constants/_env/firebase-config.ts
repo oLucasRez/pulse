@@ -1,8 +1,8 @@
 import { DomainError, RequiredError } from '@domain/errors';
 
-import { FirebaseOptions } from 'firebase/app';
-
 import { logError } from '@presentation/utils';
+
+import { FirebaseOptions } from 'firebase/app';
 
 const requiredError = new RequiredError({
   metadata: { entity: 'Firebase config env' },

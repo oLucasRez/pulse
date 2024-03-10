@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 
 import { AuthUsecasesContextProvider } from '@presentation/contexts';
+import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeGetMeUsecase,
@@ -11,8 +12,6 @@ import {
   makeSignOutUsecase,
   makeSignUpWithCredentialsUsecase,
 } from '@main/factories';
-
-import { ContextProviderProps } from '@presentation/types';
 
 export function makeAuthUsecasesContextProvider(
   props: ContextProviderProps,

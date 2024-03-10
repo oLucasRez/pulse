@@ -1,24 +1,20 @@
-import { UserModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { UserHydrator } from '@data/hydration';
-
+import { UserModel } from '@domain/models';
 import { ChangeMeUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { ChangeMeObserver } from '@data/observers';
 
-import { UserCRUD } from '@data/cruds';
-
-export class CRUDChangeMeUsecase implements ChangeMeUsecase {
+export class DAOChangeMeUsecase implements ChangeMeUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
-  public constructor(deps: CRUDChangeMeUsecase.Deps) {
+  public constructor(deps: DAOChangeMeUsecase.Deps) {
     this.getMe = deps.getMe;
     this.changeMePublisher = deps.changeMePublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(payload: ChangeMeUsecase.Payload): Promise<UserModel> {
@@ -27,7 +23,7 @@ export class CRUDChangeMeUsecase implements ChangeMeUsecase {
     let user = await this.getMe.execute();
     if (!user) throw new NotFoundError({ metadata: { entity: 'User' } });
 
-    const userDTO = await this.userCRUD.update(user.id, {
+    const userDTO = await this.userDAO.update(user.id, {
       name,
     });
 
@@ -39,10 +35,10 @@ export class CRUDChangeMeUsecase implements ChangeMeUsecase {
   }
 }
 
-export namespace CRUDChangeMeUsecase {
+export namespace DAOChangeMeUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     changeMePublisher: ChangeMeObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

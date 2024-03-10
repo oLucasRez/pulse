@@ -1,5 +1,6 @@
-import { CRUDGetCurrentPlayerUsecase } from '@data/usecases';
 import { GetCurrentPlayerUsecase } from '@domain/usecases';
+
+import { DAOGetCurrentPlayerUsecase } from '@data/usecases';
 
 import {
   makeFetchPlayerPublisher,
@@ -7,12 +8,12 @@ import {
   makeGetRoundUsecase,
 } from '@main/factories';
 
-export function makeCRUDGetCurrentPlayerUsecase(): GetCurrentPlayerUsecase {
+export function makeDAOGetCurrentPlayerUsecase(): GetCurrentPlayerUsecase {
   const getPlayer = makeGetPlayerUsecase();
   const getRound = makeGetRoundUsecase();
   const fetchPlayerPublisher = makeFetchPlayerPublisher();
 
-  return new CRUDGetCurrentPlayerUsecase({
+  return new DAOGetCurrentPlayerUsecase({
     getPlayer,
     getRound,
     fetchPlayerPublisher,

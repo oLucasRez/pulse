@@ -1,12 +1,13 @@
-import { AuthLinkWithProviderUsecase } from '@data/usecases';
 import { LinkWithProviderUsecase } from '@domain/usecases';
+
+import { AuthLinkWithProviderUsecase } from '@data/usecases';
 
 import {
   makeAuthProvider,
   makeChangeMePublisher,
   makeChangeMeUsecase,
   makeSignInWithProviderUsecase,
-  makeUserCRUD,
+  makeUserDAO,
 } from '@main/factories';
 
 export function makeAuthLinkWithProviderUsecase(): LinkWithProviderUsecase {
@@ -14,13 +15,13 @@ export function makeAuthLinkWithProviderUsecase(): LinkWithProviderUsecase {
   const changeMePublisher = makeChangeMePublisher();
   const changeMe = makeChangeMeUsecase();
   const signInWithProvider = makeSignInWithProviderUsecase();
-  const userCRUD = makeUserCRUD();
+  const userDAO = makeUserDAO();
 
   return new AuthLinkWithProviderUsecase({
     authProvider,
     changeMePublisher,
     changeMe,
     signInWithProvider,
-    userCRUD,
+    userDAO,
   });
 }

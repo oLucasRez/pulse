@@ -1,4 +1,4 @@
-export namespace ModelCRUD {
+export namespace ModelDAO {
   export type DTO = {
     id: string;
     createdAt: number;

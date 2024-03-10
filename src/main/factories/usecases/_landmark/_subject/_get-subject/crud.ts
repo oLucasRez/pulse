@@ -1,12 +1,13 @@
-import { CRUDGetSubjectUsecase } from '@data/usecases';
 import { GetSubjectUsecase } from '@domain/usecases';
 
-import { makeSubjectCRUD } from '@main/factories';
+import { DAOGetSubjectUsecase } from '@data/usecases';
 
-export function makeCRUDGetSubjectUsecase(): GetSubjectUsecase {
-  const subjectCRUD = makeSubjectCRUD();
+import { makeSubjectDAO } from '@main/factories';
 
-  return new CRUDGetSubjectUsecase({
-    subjectCRUD,
+export function makeDAOGetSubjectUsecase(): GetSubjectUsecase {
+  const subjectDAO = makeSubjectDAO();
+
+  return new DAOGetSubjectUsecase({
+    subjectDAO,
   });
 }

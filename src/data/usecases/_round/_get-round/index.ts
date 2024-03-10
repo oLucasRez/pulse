@@ -1,1 +1,1 @@
-export { CRUDGetRoundUsecase } from './crud';
+export { DAOGetRoundUsecase } from './crud';

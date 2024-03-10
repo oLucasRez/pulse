@@ -1,4 +1,3 @@
-import { ms } from '@presentation/constants';
 import {
   createContext,
   FC,
@@ -9,24 +8,22 @@ import {
 } from 'react';
 
 import { CentralPulseModel } from '@domain/models';
-
 import { WatchCentralPulseUsecase } from '@domain/usecases';
+import { Vector, VectorSpace } from '@domain/utils';
 
-import { MapContextValue } from './types';
-
-import { useInterval, useStates } from '@presentation/hooks';
-
+import { ms } from '@presentation/constants';
 import {
   useCentralPulseUsecases,
   useRoundUsecases,
 } from '@presentation/contexts';
+import { useInterval, useStates } from '@presentation/hooks';
+import { logError } from '@presentation/utils';
 
 import { Pulse } from './components';
 
 import { Container, ViewBox } from './styles';
 
-import { Vector, VectorSpace } from '@domain/utils';
-import { logError } from '@presentation/utils';
+import { MapContextValue } from './types';
 
 const Context = createContext({} as MapContextValue);
 

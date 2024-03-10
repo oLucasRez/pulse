@@ -1,14 +1,11 @@
 import { child, get, ref, remove, set, update } from 'firebase/database';
 
 import { NotFoundError } from '@domain/errors';
-
-import { DatabaseProtocol } from '@data/protocols';
-
-import { ModelCRUD } from '@data/cruds';
-
-import { FirebaseService } from '@data/services';
-
 import { uuid } from '@domain/utils';
+
+import { ModelDAO } from '@data/dao';
+import { DatabaseProtocol } from '@data/protocols';
+import { FirebaseService } from '@data/services';
 
 function parseData<M>(snapshot: Record<string, M>): (M & { id: string })[] {
   return Object.entries(snapshot).map(([id, data]) => ({
@@ -18,7 +15,7 @@ function parseData<M>(snapshot: Record<string, M>): (M & { id: string })[] {
 }
 
 export class RealtimeDatabase implements DatabaseProtocol {
-  public async select<M extends ModelCRUD.DTO>(
+  public async select<M extends ModelDAO.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -39,9 +36,9 @@ export class RealtimeDatabase implements DatabaseProtocol {
     return data ?? [];
   }
 
-  public async insert<M extends ModelCRUD.DTO>(
+  public async insert<M extends ModelDAO.DTO>(
     table: string,
-    data: Omit<M, keyof ModelCRUD.DTO>,
+    data: Omit<M, keyof ModelDAO.DTO>,
   ): Promise<M> {
     const createdAt = Date.now();
 
@@ -61,10 +58,10 @@ export class RealtimeDatabase implements DatabaseProtocol {
     } as M;
   }
 
-  public async update<M extends ModelCRUD.DTO>(
+  public async update<M extends ModelDAO.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof ModelCRUD.DTO>>,
+    data: Partial<Omit<M, keyof ModelDAO.DTO>>,
   ): Promise<M> {
     const dbRef = ref(FirebaseService.realtimeDB);
 

@@ -1,5 +1,4 @@
 import { GameModel } from '@domain/models';
-
 import {
   ChangeGameUsecase,
   CreateGameUsecase,

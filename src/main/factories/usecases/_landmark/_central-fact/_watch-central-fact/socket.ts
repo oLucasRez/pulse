@@ -1,5 +1,6 @@
-import { SocketWatchCentralFactUsecase } from '@data/usecases';
 import { WatchCentralFactUsecase } from '@domain/usecases';
+
+import { SocketWatchCentralFactUsecase } from '@data/usecases';
 
 import { makeCentralFactsTableGenerator, makeSocket } from '@main/factories';
 

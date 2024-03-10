@@ -1,10 +1,9 @@
 import { Model } from '@domain/models';
+import { uuid } from '@domain/utils';
 
+import { ModelDAO } from '@data/dao';
 import { DatabaseProtocol } from '@data/protocols';
 
-import { ModelCRUD } from '@data/cruds';
-
-import { uuid } from '@domain/utils';
 import { delay } from '@main/utils';
 
 export class MemoryDatabase implements DatabaseProtocol {
@@ -12,7 +11,7 @@ export class MemoryDatabase implements DatabaseProtocol {
 
   private static tablesListeners: Record<
     string,
-    ((snapshot: ModelCRUD.DTO[]) => void)[]
+    ((snapshot: ModelDAO.DTO[]) => void)[]
   > = {};
   public static subscribeDatabaseChanges<M>(
     table: string,
@@ -36,7 +35,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     );
   }
 
-  public async select<M extends ModelCRUD.DTO>(
+  public async select<M extends ModelDAO.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -53,7 +52,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     return data;
   }
 
-  public async insert<M extends ModelCRUD.DTO>(
+  public async insert<M extends ModelDAO.DTO>(
     table: string,
     data: Omit<M, keyof Model>,
   ): Promise<M> {
@@ -77,7 +76,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     return result;
   }
 
-  public async update<M extends ModelCRUD.DTO>(
+  public async update<M extends ModelDAO.DTO>(
     table: string,
     id: string,
     data: Partial<Omit<M, keyof Model>>,
@@ -105,5 +104,5 @@ export class MemoryDatabase implements DatabaseProtocol {
 }
 
 export namespace MemoryDatabase {
-  export type Database = Record<string, Record<string, ModelCRUD.DTO>>;
+  export type Database = Record<string, Record<string, ModelDAO.DTO>>;
 }

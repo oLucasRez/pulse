@@ -1,11 +1,11 @@
-import { RoundCRUD } from '@data/cruds';
-import { DatabaseRoundCRUD } from '@main/adapters/cruds';
+import { RoundDAO } from '@data/dao';
 
+import { DatabaseRoundDAO } from '@main/adapters/cruds';
 import { makeDatabase, makeRoundsTableGenerator } from '@main/factories';
 
-export function makeDatabaseRoundCRUD(): RoundCRUD {
+export function makeDatabaseRoundDAO(): RoundDAO {
   const database = makeDatabase('multiple users read/write same data');
   const tableGenerator = makeRoundsTableGenerator();
 
-  return new DatabaseRoundCRUD({ database, tableGenerator });
+  return new DatabaseRoundDAO({ database, tableGenerator });
 }

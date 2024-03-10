@@ -1,10 +1,11 @@
-import { CRUDGetCentralFactUsecase } from '@data/usecases';
 import { GetCentralFactUsecase } from '@domain/usecases';
 
-import { makeCentralFactCRUD } from '@main/factories';
+import { DAOGetCentralFactUsecase } from '@data/usecases';
 
-export function makeCRUDGetCentralFactUsecase(): GetCentralFactUsecase {
-  const centralFactCRUD = makeCentralFactCRUD();
+import { makeCentralFactDAO } from '@main/factories';
 
-  return new CRUDGetCentralFactUsecase({ centralFactCRUD });
+export function makeDAOGetCentralFactUsecase(): GetCentralFactUsecase {
+  const centralFactDAO = makeCentralFactDAO();
+
+  return new DAOGetCentralFactUsecase({ centralFactDAO });
 }

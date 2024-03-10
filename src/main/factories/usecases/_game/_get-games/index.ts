@@ -1,7 +1,7 @@
 import { GetGamesUsecase } from '@domain/usecases';
 
-import { makeCRUDGetGamesUsecase } from './crud';
+import { makeDAOGetGamesUsecase } from './crud';
 
 export function makeGetGamesUsecase(): GetGamesUsecase {
-  return makeCRUDGetGamesUsecase();
+  return makeDAOGetGamesUsecase();
 }

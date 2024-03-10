@@ -1,7 +1,7 @@
 import { ChangeCentralPulseUsecase } from '@domain/usecases';
 
-import { makeCRUDChangeCentralPulseUsecase } from './crud';
+import { makeDAOChangeCentralPulseUsecase } from './crud';
 
 export function makeChangeCentralPulseUsecase(): ChangeCentralPulseUsecase {
-  return makeCRUDChangeCentralPulseUsecase();
+  return makeDAOChangeCentralPulseUsecase();
 }

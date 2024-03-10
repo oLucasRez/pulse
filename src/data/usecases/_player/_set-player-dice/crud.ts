@@ -1,24 +1,21 @@
 import { PlayerModel } from '@domain/models';
-
-import { PlayerHydrator } from '@data/hydration';
-
 import { SetPlayerDiceUsecase } from '@domain/usecases';
 
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { ChangePlayerObserver } from '@data/observers';
 
-import { PlayerCRUD } from '@data/cruds';
-
-export class CRUDSetPlayerDiceUsecase implements SetPlayerDiceUsecase {
+export class DAOSetPlayerDiceUsecase implements SetPlayerDiceUsecase {
   private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
-  private readonly playerCRUD: PlayerCRUD;
+  private readonly playerDAO: PlayerDAO;
 
-  public constructor(deps: CRUDSetPlayerDiceUsecase.Deps) {
+  public constructor(deps: DAOSetPlayerDiceUsecase.Deps) {
     this.changePlayerPublisher = deps.changePlayerPublisher;
-    this.playerCRUD = deps.playerCRUD;
+    this.playerDAO = deps.playerDAO;
   }
 
   public async execute(id: string, diceID: string): Promise<PlayerModel> {
-    const dto = await this.playerCRUD.update(id, {
+    const dto = await this.playerDAO.update(id, {
       diceID,
     });
 
@@ -30,9 +27,9 @@ export class CRUDSetPlayerDiceUsecase implements SetPlayerDiceUsecase {
   }
 }
 
-export namespace CRUDSetPlayerDiceUsecase {
+export namespace DAOSetPlayerDiceUsecase {
   export type Deps = {
     changePlayerPublisher: ChangePlayerObserver.Publisher;
-    playerCRUD: PlayerCRUD;
+    playerDAO: PlayerDAO;
   };
 }

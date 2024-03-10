@@ -1,5 +1,4 @@
 import { UserModel } from '@domain/models';
-
 import {
   GetMeUsecase,
   LinkWithProviderUsecase,

@@ -1,18 +1,12 @@
 import { UserModel } from '@domain/models';
-
-import { UserHydrator } from '@data/hydration';
-
+import { Provider } from '@domain/types';
 import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
-import { AuthProviderProtocol } from '@data/protocols';
-
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
-
-import { UserCRUD } from '@data/cruds';
-
+import { AuthProviderProtocol } from '@data/protocols';
 import { dontThrow } from '@data/utils';
-
-import { Provider } from '@domain/types';
 
 export class AuthSignInWithProviderUsecase
   implements SignInWithProviderUsecase
@@ -20,19 +14,19 @@ export class AuthSignInWithProviderUsecase
   private readonly changeMe: ChangeMeUsecase;
   private readonly authProvider: AuthProviderProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
   public constructor(deps: AuthSignInWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.authProvider = deps.authProvider;
     this.signInPublisher = deps.signInPublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
     const { uid, name } = await this.authProvider.signInWith(provider);
 
-    let userDTO = await this.userCRUD.read(uid);
+    let userDTO = await this.userDAO.read(uid);
 
     if (userDTO) {
       await dontThrow(async () => {
@@ -40,7 +34,7 @@ export class AuthSignInWithProviderUsecase
           await this.changeMe.execute({ name });
       });
     } else {
-      userDTO = await this.userCRUD.create({
+      userDTO = await this.userDAO.create({
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -63,6 +57,6 @@ export namespace AuthSignInWithProviderUsecase {
     changeMe: ChangeMeUsecase;
     authProvider: AuthProviderProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

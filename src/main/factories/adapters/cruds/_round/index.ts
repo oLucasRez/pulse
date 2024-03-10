@@ -1,7 +1,7 @@
-import { RoundCRUD } from '@data/cruds';
+import { RoundDAO } from '@data/dao';
 
-import { makeDatabaseRoundCRUD } from './database';
+import { makeDatabaseRoundDAO } from './database';
 
-export function makeRoundCRUD(): RoundCRUD {
-  return makeDatabaseRoundCRUD();
+export function makeRoundDAO(): RoundDAO {
+  return makeDatabaseRoundDAO();
 }

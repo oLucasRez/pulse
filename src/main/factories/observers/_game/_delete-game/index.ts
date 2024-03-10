@@ -1,7 +1,7 @@
 import { DeleteGameObserver } from '@data/observers';
-import { DeleteGamePublisher } from '@main/observers';
 
 import { makeGameStoreDeleteGameSubscriber } from '@main/factories';
+import { DeleteGamePublisher } from '@main/observers';
 
 export function makeDeleteGamePublisher(): DeleteGameObserver.Publisher {
   const publisher = new DeleteGamePublisher();

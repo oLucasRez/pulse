@@ -1,13 +1,3 @@
-import { FailedError } from '@domain/errors';
-
-import { DatabaseProtocol } from '@data/protocols';
-
-import { ModelCRUD } from '@data/cruds';
-
-import { FirebaseService } from '@data/services';
-
-import { Asyncleton } from '@main/utils';
-
 import {
   addDoc,
   collection,
@@ -17,6 +7,14 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore';
+
+import { FailedError } from '@domain/errors';
+
+import { ModelDAO } from '@data/dao';
+import { DatabaseProtocol } from '@data/protocols';
+import { FirebaseService } from '@data/services';
+
+import { Asyncleton } from '@main/utils';
 
 function clearGarbage(data: Record<any, any>): void {
   Object.keys(data).map((key) => {
@@ -29,7 +27,7 @@ function asyncletonKey(table: string): string {
 }
 
 export class FirestoreDatabase implements DatabaseProtocol {
-  public async select<M extends ModelCRUD.DTO>(
+  public async select<M extends ModelDAO.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -56,9 +54,9 @@ export class FirestoreDatabase implements DatabaseProtocol {
     }
   }
 
-  public async insert<M extends ModelCRUD.DTO>(
+  public async insert<M extends ModelDAO.DTO>(
     table: string,
-    data: Omit<M, keyof ModelCRUD.DTO>,
+    data: Omit<M, keyof ModelDAO.DTO>,
   ): Promise<M> {
     try {
       Asyncleton.clear(asyncletonKey(table));
@@ -82,10 +80,10 @@ export class FirestoreDatabase implements DatabaseProtocol {
     }
   }
 
-  public async update<M extends ModelCRUD.DTO>(
+  public async update<M extends ModelDAO.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof ModelCRUD.DTO>>,
+    data: Partial<Omit<M, keyof ModelDAO.DTO>>,
   ): Promise<M> {
     try {
       Asyncleton.clear(asyncletonKey(table));

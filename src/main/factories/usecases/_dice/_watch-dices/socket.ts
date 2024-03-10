@@ -1,5 +1,6 @@
-import { SocketWatchDicesUsecase } from '@data/usecases';
 import { WatchDicesUsecase } from '@domain/usecases';
+
+import { SocketWatchDicesUsecase } from '@data/usecases';
 
 import { makeDicesTableGenerator, makeSocket } from '@main/factories';
 

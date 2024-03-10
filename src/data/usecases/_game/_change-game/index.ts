@@ -1,1 +1,1 @@
-export { CRUDChangeGameUsecase } from './crud';
+export { DAOChangeGameUsecase } from './crud';

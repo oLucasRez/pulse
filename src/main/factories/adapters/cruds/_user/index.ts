@@ -1,7 +1,7 @@
-import { UserCRUD } from '@data/cruds';
+import { UserDAO } from '@data/dao';
 
-import { makeDatabaseUserCRUD } from './database';
+import { makeDatabaseUserDAO } from './database';
 
-export function makeUserCRUD(): UserCRUD {
-  return makeDatabaseUserCRUD();
+export function makeUserDAO(): UserDAO {
+  return makeDatabaseUserDAO();
 }

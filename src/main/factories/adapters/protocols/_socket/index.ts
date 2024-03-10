@@ -3,7 +3,6 @@ import { UnknownError } from '@domain/errors';
 import { SocketProtocol } from '@data/protocols';
 
 import { makeFirestoreSocket } from './firestore';
-
 import { makeRealtimeSocket } from './realtime';
 
 export function makeSocket(option: makeSocket.Option): SocketProtocol {

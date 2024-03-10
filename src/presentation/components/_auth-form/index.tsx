@@ -3,15 +3,12 @@ import { useForm } from 'react-hook-form';
 
 import { UserModel } from '@domain/models';
 
-import { useStates } from '@presentation/hooks';
-
+import { githubIcon, googleIcon } from '@presentation/assets';
 import { useAuthUsecases } from '@presentation/contexts';
+import { useStates } from '@presentation/hooks';
+import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
-
-import { githubIcon, googleIcon } from '@presentation/assets';
-
-import { alertError } from '@presentation/utils';
 
 import { AuthFieldValues, AuthFormMode, AuthFormProps } from './types';
 

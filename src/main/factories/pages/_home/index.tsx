@@ -1,7 +1,6 @@
 import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
-
 import { WithSessionProxy } from '@presentation/pages/_home/proxies';
 
 import {

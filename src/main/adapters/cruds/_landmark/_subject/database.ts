@@ -1,40 +1,39 @@
+import { SubjectDAO } from '@data/dao';
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
-
-import { SubjectCRUD } from '@data/cruds';
 
 import { Asyncleton } from '@main/utils';
 
-export class DatabaseSubjectCRUD implements SubjectCRUD {
+export class DatabaseSubjectDAO implements SubjectDAO {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: DatabaseSubjectCRUD.Deps) {
+  public constructor(deps: DatabaseSubjectDAO.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
   public async create(
-    payload: SubjectCRUD.CreatePayload,
-  ): Promise<SubjectCRUD.DTO> {
+    payload: SubjectDAO.CreatePayload,
+  ): Promise<SubjectDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const subject = await this.database.insert<SubjectCRUD.DTO>(table, payload);
+    const subject = await this.database.insert<SubjectDAO.DTO>(table, payload);
 
     return subject;
   }
 
-  public async read(): Promise<SubjectCRUD.DTO[]>;
-  public async read(id: string): Promise<SubjectCRUD.DTO | null>;
+  public async read(): Promise<SubjectDAO.DTO[]>;
+  public async read(id: string): Promise<SubjectDAO.DTO | null>;
   public async read(
     id?: string,
-  ): Promise<SubjectCRUD.DTO | SubjectCRUD.DTO[] | null> {
+  ): Promise<SubjectDAO.DTO | SubjectDAO.DTO[] | null> {
     const table = await this.tableGenerator.getTable();
 
     if (id) {
       const [subject] = await Asyncleton.run(
-        `databaseSubjectCRUD:read:${id}`,
+        `databaseSubjectDAO:read:${id}`,
         () =>
-          this.database.select<SubjectCRUD.DTO>(
+          this.database.select<SubjectDAO.DTO>(
             table,
             (subject) => subject.id === id,
           ),
@@ -43,8 +42,8 @@ export class DatabaseSubjectCRUD implements SubjectCRUD {
       return subject || null;
     }
 
-    const subjects = await Asyncleton.run('databaseSubjectCRUD:read', () =>
-      this.database.select<SubjectCRUD.DTO>(table),
+    const subjects = await Asyncleton.run('databaseSubjectDAO:read', () =>
+      this.database.select<SubjectDAO.DTO>(table),
     );
 
     return subjects;
@@ -52,11 +51,11 @@ export class DatabaseSubjectCRUD implements SubjectCRUD {
 
   public async update(
     id: string,
-    payload: SubjectCRUD.UpdatePayload,
-  ): Promise<SubjectCRUD.DTO> {
+    payload: SubjectDAO.UpdatePayload,
+  ): Promise<SubjectDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const subject = await this.database.update<SubjectCRUD.DTO>(
+    const subject = await this.database.update<SubjectDAO.DTO>(
       table,
       id,
       payload,
@@ -72,7 +71,7 @@ export class DatabaseSubjectCRUD implements SubjectCRUD {
   }
 }
 
-export namespace DatabaseSubjectCRUD {
+export namespace DatabaseSubjectDAO {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;

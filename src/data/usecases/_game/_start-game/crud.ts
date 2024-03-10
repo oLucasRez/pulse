@@ -1,9 +1,5 @@
-import { GameModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { GameHydrator } from '@data/hydration';
-
+import { GameModel } from '@domain/models';
 import {
   CreateCentralPulseUsecase,
   CreateDiceUsecase,
@@ -15,11 +11,11 @@ import {
   StartGameUsecase,
 } from '@domain/usecases';
 
+import { GameDAO } from '@data/dao';
+import { GameHydrator } from '@data/hydration';
 import { StartGameObserver } from '@data/observers';
 
-import { GameCRUD } from '@data/cruds';
-
-export class CRUDStartGameUsecase implements StartGameUsecase {
+export class DAOStartGameUsecase implements StartGameUsecase {
   private readonly createCentralPulse: CreateCentralPulseUsecase;
   private readonly createDice: CreateDiceUsecase;
   private readonly createRound: CreateRoundUsecase;
@@ -28,9 +24,9 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
   private readonly passTurn: PassTurnUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly startGamePublisher: StartGameObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDStartGameUsecase.Deps) {
+  public constructor(deps: DAOStartGameUsecase.Deps) {
     this.createCentralPulse = deps.createCentralPulse;
     this.createDice = deps.createDice;
     this.createRound = deps.createRound;
@@ -39,7 +35,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
     this.passTurn = deps.passTurn;
     this.setPlayerDice = deps.setPlayerDice;
     this.startGamePublisher = deps.startGamePublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(): Promise<GameModel> {
@@ -73,7 +69,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
       this.createRound.execute({ playerIDs }),
     ]);
 
-    const dto = await this.gameCRUD.update(currentGame.id, {
+    const dto = await this.gameDAO.update(currentGame.id, {
       started: true,
       state: 'creating:subjects',
       roundID: round.id,
@@ -93,7 +89,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
   }
 }
 
-export namespace CRUDStartGameUsecase {
+export namespace DAOStartGameUsecase {
   export type Deps = {
     createCentralPulse: CreateCentralPulseUsecase;
     createDice: CreateDiceUsecase;
@@ -103,6 +99,6 @@ export namespace CRUDStartGameUsecase {
     passTurn: PassTurnUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     startGamePublisher: StartGameObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

@@ -1,7 +1,7 @@
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
 
-import { makeDatabaseSubjectCRUD } from './database';
+import { makeDatabaseSubjectDAO } from './database';
 
-export function makeSubjectCRUD(): SubjectCRUD {
-  return makeDatabaseSubjectCRUD();
+export function makeSubjectDAO(): SubjectDAO {
+  return makeDatabaseSubjectDAO();
 }

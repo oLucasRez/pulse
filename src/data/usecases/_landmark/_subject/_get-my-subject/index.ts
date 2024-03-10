@@ -1,1 +1,1 @@
-export { CRUDGetMySubjectUsecase } from './crud';
+export { DAOGetMySubjectUsecase } from './crud';

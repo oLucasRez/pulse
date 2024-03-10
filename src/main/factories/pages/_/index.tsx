@@ -1,6 +1,6 @@
-import { RootPage } from '@presentation/pages/_';
 import { ReactElement } from 'react';
 
+import { RootPage } from '@presentation/pages/_';
 import { SessionFetchedProxy } from '@presentation/proxies';
 
 import { makeAuthUsecasesContextProvider } from '@main/factories';

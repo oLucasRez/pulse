@@ -2,12 +2,11 @@ import { FC, useEffect } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-import { useMutatePlayerModal } from '../../hooks';
+import { GlobalLoading } from '@presentation/components';
+import { usePlayerUsecases } from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
 
-import { usePlayerUsecases } from '@presentation/contexts';
-
-import { GlobalLoading } from '@presentation/components';
+import { useMutatePlayerModal } from '../../hooks';
 
 import { CreatePlayerProxyProps } from './types';
 

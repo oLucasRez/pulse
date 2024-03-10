@@ -1,7 +1,6 @@
 import { TableGenerator } from '@data/protocols';
 
 import { SubjectsTableGeneratorDecorator } from '@main/decorators';
-
 import { makeGetCurrentGameUsecase } from '@main/factories';
 
 export function makeSubjectsTableGeneratorDecorator(

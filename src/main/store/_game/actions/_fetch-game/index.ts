@@ -1,7 +1,6 @@
 import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { GameModel } from '@domain/models';
-
 import { removeItem } from '@domain/utils';
 
 import { GameState } from '../../types';

@@ -1,24 +1,20 @@
-import { GameModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { GameHydrator } from '@data/hydration';
-
+import { GameModel } from '@domain/models';
 import { ChangeGameUsecase, GetCurrentGameUsecase } from '@domain/usecases';
 
+import { GameDAO } from '@data/dao';
+import { GameHydrator } from '@data/hydration';
 import { ChangeGameObserver } from '@data/observers';
 
-import { GameCRUD } from '@data/cruds';
-
-export class CRUDChangeGameUsecase implements ChangeGameUsecase {
+export class DAOChangeGameUsecase implements ChangeGameUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly changeGamePublisher: ChangeGameObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDChangeGameUsecase.Deps) {
+  public constructor(deps: DAOChangeGameUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.changeGamePublisher = deps.changeGamePublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(payload: ChangeGameUsecase.Payload): Promise<GameModel> {
@@ -29,7 +25,7 @@ export class CRUDChangeGameUsecase implements ChangeGameUsecase {
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    const dto = await this.gameCRUD.update(currentGame.id, {
+    const dto = await this.gameDAO.update(currentGame.id, {
       title,
       config,
     });
@@ -42,10 +38,10 @@ export class CRUDChangeGameUsecase implements ChangeGameUsecase {
   }
 }
 
-export namespace CRUDChangeGameUsecase {
+export namespace DAOChangeGameUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     changeGamePublisher: ChangeGameObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

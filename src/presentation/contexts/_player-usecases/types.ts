@@ -1,5 +1,4 @@
 import { PlayerModel } from '@domain/models';
-
 import {
   BanPlayerUsecase,
   ChangePlayerUsecase,

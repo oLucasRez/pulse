@@ -1,14 +1,10 @@
 import { FailedError } from '@domain/errors';
-
-import { PlayerHydrator } from '@data/hydration';
-
 import { WatchPlayersUsecase } from '@domain/usecases';
 
-import { SocketProtocol, TableGenerator } from '@data/protocols';
-
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { FetchPlayersObserver } from '@data/observers';
-
-import { PlayerCRUD } from '@data/cruds';
+import { SocketProtocol, TableGenerator } from '@data/protocols';
 
 export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
   private readonly socket: SocketProtocol;
@@ -27,7 +23,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<PlayerCRUD.DTO>(
+      const unsubscribe = this.socket.watch<PlayerDAO.DTO>(
         table,
         (snapshot) => {
           const players = snapshot.map(PlayerHydrator.hydrate);

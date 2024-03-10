@@ -1,8 +1,7 @@
 import { SignOutUsecase } from '@domain/usecases';
 
-import { SessionDestroyerProtocol } from '@data/protocols';
-
 import { SignOutObserver } from '@data/observers';
+import { SessionDestroyerProtocol } from '@data/protocols';
 
 export class AuthSignOutUsecase implements SignOutUsecase {
   private readonly sessionDestroyer: SessionDestroyerProtocol;

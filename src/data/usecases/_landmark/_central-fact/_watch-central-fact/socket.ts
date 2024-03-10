@@ -1,10 +1,8 @@
-import { CentralFactHydrator } from '@data/hydration';
-
 import { WatchCentralFactUsecase } from '@domain/usecases';
 
+import { CentralFactDAO } from '@data/dao';
+import { CentralFactHydrator } from '@data/hydration';
 import { SocketProtocol, TableGenerator } from '@data/protocols';
-
-import { CentralFactCRUD } from '@data/cruds';
 
 export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
   private readonly tableGenerator: TableGenerator;
@@ -20,7 +18,7 @@ export class SocketWatchCentralFactUsecase implements WatchCentralFactUsecase {
   ): Promise<WatchCentralFactUsecase.Response> {
     const table = await this.tableGenerator.getTable();
 
-    const unsubscribe = this.socket.watch<CentralFactCRUD.DTO>(
+    const unsubscribe = this.socket.watch<CentralFactDAO.DTO>(
       table,
       ([centralFact]) =>
         centralFact && callback(CentralFactHydrator.hydrate(centralFact)),

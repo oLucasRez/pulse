@@ -1,13 +1,13 @@
 import { Vector } from '@domain/utils';
 
-import { ModelCRUD } from '..';
+import { ModelDAO } from '..';
 
-export namespace LandmarkCRUD {
+export namespace LandmarkDAO {
   export type BaseDTO = {
     position: Vector.JSON | null;
   };
 
-  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type DTO = ModelDAO.DTO & BaseDTO;
 }
 
 export * from './_central-fact';

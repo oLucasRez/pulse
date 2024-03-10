@@ -1,45 +1,42 @@
 import { NotFoundError } from '@domain/errors';
 
+import { UserDAO } from '@data/dao';
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
-
-import { UserCRUD } from '@data/cruds';
 
 import { Asyncleton } from '@main/utils';
 
-export class DatabaseUserCRUD implements UserCRUD {
+export class DatabaseUserDAO implements UserDAO {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: DatabaseUserCRUD.Deps) {
+  public constructor(deps: DatabaseUserDAO.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
-  public async create(payload: UserCRUD.CreatePayload): Promise<UserCRUD.DTO> {
+  public async create(payload: UserDAO.CreatePayload): Promise<UserDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const user = await this.database.insert<UserCRUD.DTO>(table, payload);
+    const user = await this.database.insert<UserDAO.DTO>(table, payload);
 
     return user;
   }
 
-  public async read(): Promise<UserCRUD.DTO[]>;
-  public async read(uid: string): Promise<UserCRUD.DTO | null>;
-  public async read(
-    uid?: string,
-  ): Promise<UserCRUD.DTO | UserCRUD.DTO[] | null> {
+  public async read(): Promise<UserDAO.DTO[]>;
+  public async read(uid: string): Promise<UserDAO.DTO | null>;
+  public async read(uid?: string): Promise<UserDAO.DTO | UserDAO.DTO[] | null> {
     const table = await this.tableGenerator.getTable();
 
     if (uid) {
-      const [user] = await Asyncleton.run(`databaseUserCRUD:read:${uid}`, () =>
-        this.database.select<UserCRUD.DTO>(table, (user) => user.uid === uid),
+      const [user] = await Asyncleton.run(`databaseUserDAO:read:${uid}`, () =>
+        this.database.select<UserDAO.DTO>(table, (user) => user.uid === uid),
       );
 
       return user || null;
     }
 
-    const users = await Asyncleton.run('databaseUserCRUD:read', () =>
-      this.database.select<UserCRUD.DTO>(table),
+    const users = await Asyncleton.run('databaseUserDAO:read', () =>
+      this.database.select<UserDAO.DTO>(table),
     );
 
     return users;
@@ -47,8 +44,8 @@ export class DatabaseUserCRUD implements UserCRUD {
 
   public async update(
     uid: string,
-    payload: UserCRUD.UpdatePayload,
-  ): Promise<UserCRUD.DTO> {
+    payload: UserDAO.UpdatePayload,
+  ): Promise<UserDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
     const { id } = (await this.read(uid)) ?? {};
@@ -58,7 +55,7 @@ export class DatabaseUserCRUD implements UserCRUD {
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    const user = await this.database.update<UserCRUD.DTO>(table, id, payload);
+    const user = await this.database.update<UserDAO.DTO>(table, id, payload);
 
     return user;
   }
@@ -77,7 +74,7 @@ export class DatabaseUserCRUD implements UserCRUD {
   }
 }
 
-export namespace DatabaseUserCRUD {
+export namespace DatabaseUserDAO {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;

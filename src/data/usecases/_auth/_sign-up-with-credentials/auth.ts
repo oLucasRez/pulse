@@ -1,26 +1,22 @@
 import { UserModel } from '@domain/models';
-
-import { UserHydrator } from '@data/hydration';
-
 import { SignUpWithCredentialsUsecase } from '@domain/usecases';
 
-import { AuthCredentialsProtocol } from '@data/protocols';
-
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
-
-import { UserCRUD } from '@data/cruds';
+import { AuthCredentialsProtocol } from '@data/protocols';
 
 export class AuthSignUpWithCredentialsUsecase
   implements SignUpWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
   public constructor(deps: AuthSignUpWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
     this.signInPublisher = deps.signInPublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(
@@ -33,7 +29,7 @@ export class AuthSignUpWithCredentialsUsecase
       password,
     });
 
-    const userDTO = await this.userCRUD.create({
+    const userDTO = await this.userDAO.create({
       uid,
       name,
       currentGameID: null,
@@ -54,6 +50,6 @@ export namespace AuthSignUpWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

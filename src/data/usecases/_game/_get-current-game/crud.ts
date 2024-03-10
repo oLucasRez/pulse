@@ -1,22 +1,19 @@
 import { GameModel } from '@domain/models';
-
-import { GameHydrator } from '@data/hydration';
-
 import { GetCurrentGameUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { GameDAO } from '@data/dao';
+import { GameHydrator } from '@data/hydration';
 import { FetchCurrentGameObserver } from '@data/observers';
 
-import { GameCRUD } from '@data/cruds';
-
-export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
+export class DAOGetCurrentGameUsecase implements GetCurrentGameUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDGetCurrentGameUsecase.Deps) {
+  public constructor(deps: DAOGetCurrentGameUsecase.Deps) {
     this.getMe = deps.getMe;
     this.fetchCurrentGamePublisher = deps.fetchCurrentGamePublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(): Promise<GameModel | null> {
@@ -24,7 +21,7 @@ export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
 
     if (!me?.currentGameID) return null;
 
-    const dto = await this.gameCRUD.read(me.currentGameID);
+    const dto = await this.gameDAO.read(me.currentGameID);
 
     const game = dto ? GameHydrator.hydrate(dto) : null;
 
@@ -34,10 +31,10 @@ export class CRUDGetCurrentGameUsecase implements GetCurrentGameUsecase {
   }
 }
 
-export namespace CRUDGetCurrentGameUsecase {
+export namespace DAOGetCurrentGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

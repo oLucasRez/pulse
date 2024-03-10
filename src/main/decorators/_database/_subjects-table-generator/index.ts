@@ -1,5 +1,4 @@
 import { NotFoundError } from '@domain/errors';
-
 import { GetCurrentGameUsecase } from '@domain/usecases';
 
 import { TableGenerator } from '@data/protocols';

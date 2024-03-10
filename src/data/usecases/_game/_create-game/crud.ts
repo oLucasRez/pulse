@@ -1,30 +1,25 @@
-import { GameModel } from '@domain/models';
-
 import {
   ForbiddenError,
   NotIntegerError,
   OutOfBoundError,
 } from '@domain/errors';
-
-import { GameHydrator } from '@data/hydration';
-
+import { GameModel } from '@domain/models';
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
-
-import { CreateGameObserver } from '@data/observers';
-
-import { GameCRUD } from '@data/cruds';
-
 import { isInteger } from '@domain/utils';
 
-export class CRUDCreateGameUsecase implements CreateGameUsecase {
+import { GameDAO } from '@data/dao';
+import { GameHydrator } from '@data/hydration';
+import { CreateGameObserver } from '@data/observers';
+
+export class DAOCreateGameUsecase implements CreateGameUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly createGamePublisher: CreateGameObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDCreateGameUsecase.Deps) {
+  public constructor(deps: DAOCreateGameUsecase.Deps) {
     this.getMe = deps.getMe;
     this.createGamePublisher = deps.createGamePublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(payload: CreateGameUsecase.Payload): Promise<GameModel> {
@@ -38,7 +33,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 
     this.maxPlayersShouldBeValid(config.maxPlayers);
 
-    const dto = await this.gameCRUD.create({
+    const dto = await this.gameDAO.create({
       uid: me.uid,
       title,
       config,
@@ -74,10 +69,10 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
   }
 }
 
-export namespace CRUDCreateGameUsecase {
+export namespace DAOCreateGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     createGamePublisher: CreateGameObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

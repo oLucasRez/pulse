@@ -1,20 +1,18 @@
 import { CentralPulseModel } from '@domain/models';
-
-import { CentralPulseHydrator } from '@data/hydration';
-
 import { GetCentralPulseUsecase } from '@domain/usecases';
 
-import { CentralPulseCRUD } from '@data/cruds';
+import { CentralPulseDAO } from '@data/dao';
+import { CentralPulseHydrator } from '@data/hydration';
 
-export class CRUDGetCentralPulseUsecase implements GetCentralPulseUsecase {
-  private readonly centralPulseCRUD: CentralPulseCRUD;
+export class DAOGetCentralPulseUsecase implements GetCentralPulseUsecase {
+  private readonly centralPulseDAO: CentralPulseDAO;
 
-  public constructor(deps: CRUDGetCentralPulseUsecase.Deps) {
-    this.centralPulseCRUD = deps.centralPulseCRUD;
+  public constructor(deps: DAOGetCentralPulseUsecase.Deps) {
+    this.centralPulseDAO = deps.centralPulseDAO;
   }
 
   public async execute(): Promise<CentralPulseModel | null> {
-    const [centralPulseDTO] = await this.centralPulseCRUD.read();
+    const [centralPulseDTO] = await this.centralPulseDAO.read();
 
     return centralPulseDTO
       ? CentralPulseHydrator.hydrate(centralPulseDTO)
@@ -22,8 +20,8 @@ export class CRUDGetCentralPulseUsecase implements GetCentralPulseUsecase {
   }
 }
 
-export namespace CRUDGetCentralPulseUsecase {
+export namespace DAOGetCentralPulseUsecase {
   export type Deps = {
-    centralPulseCRUD: CentralPulseCRUD;
+    centralPulseDAO: CentralPulseDAO;
   };
 }

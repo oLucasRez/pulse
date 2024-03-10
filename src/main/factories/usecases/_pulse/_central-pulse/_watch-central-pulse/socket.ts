@@ -1,5 +1,6 @@
-import { SocketWatchCentralPulseUsecase } from '@data/usecases';
 import { WatchCentralPulseUsecase } from '@domain/usecases';
+
+import { SocketWatchCentralPulseUsecase } from '@data/usecases';
 
 import { makeCentralPulsesTableGenerator, makeSocket } from '@main/factories';
 

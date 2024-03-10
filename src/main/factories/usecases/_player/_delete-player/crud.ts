@@ -1,11 +1,12 @@
-import { CRUDDeletePlayerUsecase } from '@data/usecases';
 import { DeletePlayerUsecase } from '@domain/usecases';
 
-import { makeDeletePlayerPublisher, makePlayerCRUD } from '@main/factories';
+import { DAODeletePlayerUsecase } from '@data/usecases';
 
-export function makeCRUDDeletePlayerUsecase(): DeletePlayerUsecase {
-  const playerCRUD = makePlayerCRUD();
+import { makeDeletePlayerPublisher, makePlayerDAO } from '@main/factories';
+
+export function makeDAODeletePlayerUsecase(): DeletePlayerUsecase {
+  const playerDAO = makePlayerDAO();
   const deletePlayerPublisher = makeDeletePlayerPublisher();
 
-  return new CRUDDeletePlayerUsecase({ playerCRUD, deletePlayerPublisher });
+  return new DAODeletePlayerUsecase({ playerDAO, deletePlayerPublisher });
 }

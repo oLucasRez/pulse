@@ -1,28 +1,27 @@
 import { DeleteGameUsecase } from '@domain/usecases';
 
+import { GameDAO } from '@data/dao';
 import { DeleteGameObserver } from '@data/observers';
 
-import { GameCRUD } from '@data/cruds';
-
-export class CRUDDeleteGameUsecase implements DeleteGameUsecase {
+export class DAODeleteGameUsecase implements DeleteGameUsecase {
   private readonly deleteGamePublisher: DeleteGameObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDDeleteGameUsecase.Deps) {
+  public constructor(deps: DAODeleteGameUsecase.Deps) {
     this.deleteGamePublisher = deps.deleteGamePublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(id: string): Promise<void> {
-    await this.gameCRUD.delete(id);
+    await this.gameDAO.delete(id);
 
     this.deleteGamePublisher.notifyDeleteGame(id);
   }
 }
 
-export namespace CRUDDeleteGameUsecase {
+export namespace DAODeleteGameUsecase {
   export type Deps = {
     deleteGamePublisher: DeleteGameObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

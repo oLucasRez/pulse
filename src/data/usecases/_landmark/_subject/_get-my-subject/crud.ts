@@ -1,18 +1,16 @@
 import { SubjectModel } from '@domain/models';
-
-import { SubjectHydrator } from '@data/hydration';
-
 import { GetMyPlayerUsecase, GetMySubjectUsecase } from '@domain/usecases';
 
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
+import { SubjectHydrator } from '@data/hydration';
 
-export class CRUDGetMySubjectUsecase implements GetMySubjectUsecase {
+export class DAOGetMySubjectUsecase implements GetMySubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly subjectCRUD: SubjectCRUD;
+  private readonly subjectDAO: SubjectDAO;
 
-  public constructor(deps: CRUDGetMySubjectUsecase.Deps) {
+  public constructor(deps: DAOGetMySubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
-    this.subjectCRUD = deps.subjectCRUD;
+    this.subjectDAO = deps.subjectDAO;
   }
 
   public async execute(): Promise<SubjectModel | null> {
@@ -20,7 +18,7 @@ export class CRUDGetMySubjectUsecase implements GetMySubjectUsecase {
 
     if (!myPlayer?.subjectID) return null;
 
-    const subjectDTO = (await this.subjectCRUD.read()).find(
+    const subjectDTO = (await this.subjectDAO.read()).find(
       (subject) => subject.id === myPlayer.subjectID,
     );
 
@@ -28,9 +26,9 @@ export class CRUDGetMySubjectUsecase implements GetMySubjectUsecase {
   }
 }
 
-export namespace CRUDGetMySubjectUsecase {
+export namespace DAOGetMySubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
-    subjectCRUD: SubjectCRUD;
+    subjectDAO: SubjectDAO;
   };
 }

@@ -1,27 +1,25 @@
 import { DiceModel } from '@domain/models';
-
-import { DiceHydrator } from '@data/hydration';
-
 import { GetDiceUsecase } from '@domain/usecases';
 
-import { DiceCRUD } from '@data/cruds';
+import { DiceDAO } from '@data/dao';
+import { DiceHydrator } from '@data/hydration';
 
-export class CRUDGetDiceUsecase implements GetDiceUsecase {
-  private readonly diceCRUD: DiceCRUD;
+export class DAOGetDiceUsecase implements GetDiceUsecase {
+  private readonly diceDAO: DiceDAO;
 
-  public constructor(deps: CRUDGetDiceUsecase.Deps) {
-    this.diceCRUD = deps.diceCRUD;
+  public constructor(deps: DAOGetDiceUsecase.Deps) {
+    this.diceDAO = deps.diceDAO;
   }
 
   public async execute(id: string): Promise<DiceModel | null> {
-    const diceDTO = await this.diceCRUD.read(id);
+    const diceDTO = await this.diceDAO.read(id);
 
     return diceDTO ? DiceHydrator.hydrate(diceDTO) : null;
   }
 }
 
-export namespace CRUDGetDiceUsecase {
+export namespace DAOGetDiceUsecase {
   export type Deps = {
-    diceCRUD: DiceCRUD;
+    diceDAO: DiceDAO;
   };
 }

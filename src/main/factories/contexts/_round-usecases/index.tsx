@@ -1,8 +1,7 @@
 import { ReactElement } from 'react';
 
-import { ContextProviderProps } from '@presentation/types';
-
 import { RoundUsecasesContextProvider } from '@presentation/contexts';
+import { ContextProviderProps } from '@presentation/types';
 
 import { makeGetRoundUsecase, makePassTurnUsecase } from '@main/factories';
 

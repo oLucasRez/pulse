@@ -1,1 +1,1 @@
-export { CRUDPassTurnUsecase } from './crud';
+export { DAOPassTurnUsecase } from './crud';

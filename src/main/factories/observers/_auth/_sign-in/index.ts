@@ -1,7 +1,7 @@
 import { SignInObserver } from '@data/observers';
-import { SignInPublisher } from '@main/observers';
 
 import { makeAuthStoreSignInSubscriber } from '@main/factories';
+import { SignInPublisher } from '@main/observers';
 
 export function makeSignInPublisher(): SignInObserver.Publisher {
   const publisher = new SignInPublisher();

@@ -1,21 +1,17 @@
 import { Color } from '@domain/enums';
-
 import { DeepPartial } from '@domain/types';
 
-import { ModelCRUD } from '..';
+import { ModelDAO } from '..';
 
-export interface PlayerCRUD {
-  create(payload: PlayerCRUD.CreatePayload): Promise<PlayerCRUD.DTO>;
-  read(): Promise<PlayerCRUD.DTO[]>;
-  read(id: string): Promise<PlayerCRUD.DTO | null>;
-  update(
-    id: string,
-    payload: PlayerCRUD.UpdatePayload,
-  ): Promise<PlayerCRUD.DTO>;
+export interface PlayerDAO {
+  create(payload: PlayerDAO.CreatePayload): Promise<PlayerDAO.DTO>;
+  read(): Promise<PlayerDAO.DTO[]>;
+  read(id: string): Promise<PlayerDAO.DTO | null>;
+  update(id: string, payload: PlayerDAO.UpdatePayload): Promise<PlayerDAO.DTO>;
   delete(id: string): Promise<void>;
 }
 
-export namespace PlayerCRUD {
+export namespace PlayerDAO {
   type BaseDTO = {
     name: string;
     color: Color;
@@ -26,7 +22,7 @@ export namespace PlayerCRUD {
     banned: boolean;
   };
 
-  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type DTO = ModelDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

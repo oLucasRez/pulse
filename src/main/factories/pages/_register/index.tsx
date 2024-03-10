@@ -1,7 +1,6 @@
 import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
-
 import { WithoutSessionProxy } from '@presentation/proxies';
 
 const RegisterPage = lazy(() => import('@presentation/pages/_register'));

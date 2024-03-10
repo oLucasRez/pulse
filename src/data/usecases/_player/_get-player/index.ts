@@ -1,1 +1,1 @@
-export { CRUDGetPlayerUsecase } from './crud';
+export { DAOGetPlayerUsecase } from './crud';

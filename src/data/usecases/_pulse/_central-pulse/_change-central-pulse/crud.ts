@@ -1,25 +1,20 @@
-import { CentralPulseModel } from '@domain/models';
-
 import { NotFoundError, OutOfBoundError } from '@domain/errors';
-
-import { CentralPulseHydrator } from '@data/hydration';
-
+import { CentralPulseModel } from '@domain/models';
 import {
   ChangeCentralPulseUsecase,
   GetCentralPulseUsecase,
 } from '@domain/usecases';
 
-import { CentralPulseCRUD } from '@data/cruds';
+import { CentralPulseDAO } from '@data/dao';
+import { CentralPulseHydrator } from '@data/hydration';
 
-export class CRUDChangeCentralPulseUsecase
-  implements ChangeCentralPulseUsecase
-{
+export class DAOChangeCentralPulseUsecase implements ChangeCentralPulseUsecase {
   private readonly getCentralPulse: GetCentralPulseUsecase;
-  private readonly centralPulseCRUD: CentralPulseCRUD;
+  private readonly centralPulseDAO: CentralPulseDAO;
 
-  public constructor(deps: CRUDChangeCentralPulseUsecase.Deps) {
+  public constructor(deps: DAOChangeCentralPulseUsecase.Deps) {
     this.getCentralPulse = deps.getCentralPulse;
-    this.centralPulseCRUD = deps.centralPulseCRUD;
+    this.centralPulseDAO = deps.centralPulseDAO;
   }
 
   public async execute(
@@ -34,12 +29,9 @@ export class CRUDChangeCentralPulseUsecase
 
     this.amountShouldBeGreaterOrEqual(amount, centralPulse);
 
-    const centralPulseDTO = await this.centralPulseCRUD.update(
-      centralPulse.id,
-      {
-        amount,
-      },
-    );
+    const centralPulseDTO = await this.centralPulseDAO.update(centralPulse.id, {
+      amount,
+    });
 
     return CentralPulseHydrator.hydrate(centralPulseDTO);
   }
@@ -60,9 +52,9 @@ export class CRUDChangeCentralPulseUsecase
   }
 }
 
-export namespace CRUDChangeCentralPulseUsecase {
+export namespace DAOChangeCentralPulseUsecase {
   export type Deps = {
     getCentralPulse: GetCentralPulseUsecase;
-    centralPulseCRUD: CentralPulseCRUD;
+    centralPulseDAO: CentralPulseDAO;
   };
 }

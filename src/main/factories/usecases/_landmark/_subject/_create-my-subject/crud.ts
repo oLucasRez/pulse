@@ -1,5 +1,6 @@
-import { CRUDCreateMySubjectUsecase } from '@data/usecases';
 import { CreateMySubjectUsecase } from '@domain/usecases';
+
+import { DAOCreateMySubjectUsecase } from '@data/usecases';
 
 import {
   makeCreateSubjectUsecase,
@@ -8,13 +9,13 @@ import {
   makeSetPlayerSubjectUsecase,
 } from '@main/factories';
 
-export function makeCRUDCreateMySubjectUsecase(): CreateMySubjectUsecase {
+export function makeDAOCreateMySubjectUsecase(): CreateMySubjectUsecase {
   const createSubject = makeCreateSubjectUsecase();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const setPlayerSubject = makeSetPlayerSubjectUsecase();
 
-  return new CRUDCreateMySubjectUsecase({
+  return new DAOCreateMySubjectUsecase({
     createSubject,
     getCurrentGame,
     getMyPlayer,

@@ -1,26 +1,27 @@
-import { CRUDSetCurrentGameUsecase } from '@data/usecases';
 import { SetCurrentGameUsecase } from '@domain/usecases';
+
+import { DAOSetCurrentGameUsecase } from '@data/usecases';
 
 import {
   makeChangeMePublisher,
   makeFetchCurrentGamePublisher,
   makeGetGameUsecase,
   makeGetMeUsecase,
-  makeUserCRUD,
+  makeUserDAO,
 } from '@main/factories';
 
-export function makeCRUDSetCurrentGameUsecase(): SetCurrentGameUsecase {
+export function makeDAOSetCurrentGameUsecase(): SetCurrentGameUsecase {
   const changeMePublisher = makeChangeMePublisher();
   const fetchCurrentGamePublisher = makeFetchCurrentGamePublisher();
   const getGame = makeGetGameUsecase();
   const getMe = makeGetMeUsecase();
-  const userCRUD = makeUserCRUD();
+  const userDAO = makeUserDAO();
 
-  return new CRUDSetCurrentGameUsecase({
+  return new DAOSetCurrentGameUsecase({
     changeMePublisher,
     fetchCurrentGamePublisher,
     getGame,
     getMe,
-    userCRUD,
+    userDAO,
   });
 }

@@ -1,24 +1,20 @@
 import { UserModel } from '@domain/models';
-
-import { UserHydrator } from '@data/hydration';
-
 import { GetMeUsecase } from '@domain/usecases';
 
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
+import { FetchMeObserver } from '@data/observers';
 import { SessionGetterProtocol } from '@data/protocols';
 
-import { FetchMeObserver } from '@data/observers';
-
-import { UserCRUD } from '@data/cruds';
-
-export class CRUDGetMeUsecase implements GetMeUsecase {
+export class DAOGetMeUsecase implements GetMeUsecase {
   private readonly sessionGetter: SessionGetterProtocol;
   private readonly fetchMePublisher: FetchMeObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
-  public constructor(deps: CRUDGetMeUsecase.Deps) {
+  public constructor(deps: DAOGetMeUsecase.Deps) {
     this.sessionGetter = deps.sessionGetter;
     this.fetchMePublisher = deps.fetchMePublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(): Promise<UserModel | null> {
@@ -27,7 +23,7 @@ export class CRUDGetMeUsecase implements GetMeUsecase {
 
     if (!uid) return null;
 
-    const dto = await this.userCRUD.read(uid);
+    const dto = await this.userDAO.read(uid);
 
     if (dto) {
       dto.isAnonymous = isAnonymous;
@@ -42,10 +38,10 @@ export class CRUDGetMeUsecase implements GetMeUsecase {
   }
 }
 
-export namespace CRUDGetMeUsecase {
+export namespace DAOGetMeUsecase {
   export type Deps = {
     sessionGetter: SessionGetterProtocol;
     fetchMePublisher: FetchMeObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

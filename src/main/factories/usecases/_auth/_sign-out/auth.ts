@@ -1,5 +1,6 @@
-import { AuthSignOutUsecase } from '@data/usecases';
 import { SignOutUsecase } from '@domain/usecases';
+
+import { AuthSignOutUsecase } from '@data/usecases';
 
 import { makeSessionDestroyer, makeSignOutPublisher } from '@main/factories';
 

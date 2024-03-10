@@ -3,19 +3,16 @@ import { useParams } from 'react-router-dom';
 
 import { DomainError } from '@domain/errors';
 
-import { useNavigate, useStates } from '@presentation/hooks';
-
+import { AuthForm, GlobalLoading } from '@presentation/components';
 import {
   useAuthUsecases,
   useGameUsecases,
   useUserUsecases,
 } from '@presentation/contexts';
-
-import { AuthForm, GlobalLoading } from '@presentation/components';
+import { useNavigate, useStates } from '@presentation/hooks';
+import { logError } from '@presentation/utils';
 
 import { Container } from './styles';
-
-import { logError } from '@presentation/utils';
 
 import { AuthProxyProps } from './types';
 

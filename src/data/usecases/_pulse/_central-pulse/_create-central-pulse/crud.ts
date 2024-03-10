@@ -1,29 +1,25 @@
 import { CentralPulseModel } from '@domain/models';
-
-import { CentralPulseHydrator } from '@data/hydration';
-
 import {
   CreateCentralFactUsecase,
   CreateCentralPulseUsecase,
 } from '@domain/usecases';
 
-import { CentralPulseCRUD } from '@data/cruds';
+import { CentralPulseDAO } from '@data/dao';
+import { CentralPulseHydrator } from '@data/hydration';
 
-export class CRUDCreateCentralPulseUsecase
-  implements CreateCentralPulseUsecase
-{
+export class DAOCreateCentralPulseUsecase implements CreateCentralPulseUsecase {
   private readonly createCentralFact: CreateCentralFactUsecase;
-  private readonly centralPulseCRUD: CentralPulseCRUD;
+  private readonly centralPulseDAO: CentralPulseDAO;
 
-  public constructor(deps: CRUDCreateCentralPulseUsecase.Deps) {
+  public constructor(deps: DAOCreateCentralPulseUsecase.Deps) {
     this.createCentralFact = deps.createCentralFact;
-    this.centralPulseCRUD = deps.centralPulseCRUD;
+    this.centralPulseDAO = deps.centralPulseDAO;
   }
 
   public async execute(): Promise<CentralPulseModel> {
     const centralFact = await this.createCentralFact.execute();
 
-    const centralPulseDTO = await this.centralPulseCRUD.create({
+    const centralPulseDTO = await this.centralPulseDAO.create({
       origin: { x: 0, y: 0 },
       gap: 1,
       amount: 0,
@@ -34,9 +30,9 @@ export class CRUDCreateCentralPulseUsecase
   }
 }
 
-export namespace CRUDCreateCentralPulseUsecase {
+export namespace DAOCreateCentralPulseUsecase {
   export type Deps = {
     createCentralFact: CreateCentralFactUsecase;
-    centralPulseCRUD: CentralPulseCRUD;
+    centralPulseDAO: CentralPulseDAO;
   };
 }

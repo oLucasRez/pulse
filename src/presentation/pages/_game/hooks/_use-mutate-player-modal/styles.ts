@@ -48,6 +48,7 @@ export const Container = styled.div`
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         position: relative;
+        line-height: 1.3;
       }
 
       input.name {

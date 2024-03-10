@@ -1,7 +1,8 @@
-import { env } from '@data/constants';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
 import { getFirestore } from 'firebase/firestore';
+
+import { env } from '@data/constants';
 
 import { initializeApp } from 'firebase/app';
 

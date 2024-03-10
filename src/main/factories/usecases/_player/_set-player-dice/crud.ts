@@ -1,14 +1,15 @@
-import { CRUDSetPlayerDiceUsecase } from '@data/usecases';
 import { SetPlayerDiceUsecase } from '@domain/usecases';
 
-import { makeChangePlayerPublisher, makePlayerCRUD } from '@main/factories';
+import { DAOSetPlayerDiceUsecase } from '@data/usecases';
 
-export function makeCRUDSetPlayerDiceUsecase(): SetPlayerDiceUsecase {
-  const playerCRUD = makePlayerCRUD();
+import { makeChangePlayerPublisher, makePlayerDAO } from '@main/factories';
+
+export function makeDAOSetPlayerDiceUsecase(): SetPlayerDiceUsecase {
+  const playerDAO = makePlayerDAO();
   const changePlayerPublisher = makeChangePlayerPublisher();
 
-  return new CRUDSetPlayerDiceUsecase({
-    playerCRUD,
+  return new DAOSetPlayerDiceUsecase({
+    playerDAO,
     changePlayerPublisher,
   });
 }

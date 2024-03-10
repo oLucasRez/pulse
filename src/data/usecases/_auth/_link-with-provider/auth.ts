@@ -1,38 +1,31 @@
-import { UserModel } from '@domain/models';
-
 import { AlreadyExistsError } from '@domain/errors';
-
-import { UserHydrator } from '@data/hydration';
-
+import { UserModel } from '@domain/models';
+import { Provider } from '@domain/types';
 import {
   ChangeMeUsecase,
   LinkWithProviderUsecase,
   SignInWithProviderUsecase,
 } from '@domain/usecases';
 
-import { AuthProviderProtocol } from '@data/protocols';
-
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { ChangeMeObserver } from '@data/observers';
-
-import { UserCRUD } from '@data/cruds';
-
+import { AuthProviderProtocol } from '@data/protocols';
 import { dontThrow } from '@data/utils';
-
-import { Provider } from '@domain/types';
 
 export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly changeMe: ChangeMeUsecase;
   private readonly signInWithProvider: SignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
   public constructor(deps: AuthLinkWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
     this.signInWithProvider = deps.signInWithProvider;
     this.authProvider = deps.authProvider;
     this.changeMePublisher = deps.changeMePublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
@@ -52,14 +45,14 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       } else throw e;
     }
 
-    let userDTO = await this.userCRUD.read(uid);
+    let userDTO = await this.userDAO.read(uid);
 
     if (userDTO) {
       await dontThrow(async () => {
         if (name) await this.changeMe.execute({ name });
       });
     } else {
-      userDTO = await this.userCRUD.update(uid, {
+      userDTO = await this.userDAO.update(uid, {
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -83,6 +76,6 @@ export namespace AuthLinkWithProviderUsecase {
     signInWithProvider: SignInWithProviderUsecase;
     authProvider: AuthProviderProtocol;
     changeMePublisher: ChangeMeObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

@@ -1,1 +1,1 @@
-export { CRUDDeletePlayerUsecase } from './crud';
+export { DAODeletePlayerUsecase } from './crud';

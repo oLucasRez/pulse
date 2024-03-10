@@ -1,11 +1,8 @@
 import { FC, useEffect } from 'react';
 
-import { useNavigate } from '@presentation/hooks';
-
-import { useAuthUsecases } from '@presentation/contexts';
-
 import { GlobalLoading } from '@presentation/components';
-
+import { useAuthUsecases } from '@presentation/contexts';
+import { useNavigate } from '@presentation/hooks';
 import { logError } from '@presentation/utils';
 
 const LogoutPage: FC = () => {

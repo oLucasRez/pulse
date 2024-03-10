@@ -1,10 +1,11 @@
-import { CRUDCreateRoundUsecase } from '@data/usecases';
 import { CreateRoundUsecase } from '@domain/usecases';
 
-import { makeRoundCRUD } from '@main/factories';
+import { DAOCreateRoundUsecase } from '@data/usecases';
 
-export function makeCRUDCreateRoundUsecase(): CreateRoundUsecase {
-  const roundCRUD = makeRoundCRUD();
+import { makeRoundDAO } from '@main/factories';
 
-  return new CRUDCreateRoundUsecase({ roundCRUD });
+export function makeDAOCreateRoundUsecase(): CreateRoundUsecase {
+  const roundDAO = makeRoundDAO();
+
+  return new DAOCreateRoundUsecase({ roundDAO });
 }

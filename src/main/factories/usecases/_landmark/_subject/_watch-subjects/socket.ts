@@ -1,5 +1,6 @@
-import { SocketWatchSubjectsUsecase } from '@data/usecases';
 import { WatchSubjectsUsecase } from '@domain/usecases';
+
+import { SocketWatchSubjectsUsecase } from '@data/usecases';
 
 import { makeSocket, makeSubjectsTableGenerator } from '@main/factories';
 

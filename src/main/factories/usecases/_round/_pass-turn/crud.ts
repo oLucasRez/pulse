@@ -1,16 +1,17 @@
-import { CRUDPassTurnUsecase } from '@data/usecases';
 import { PassTurnUsecase } from '@domain/usecases';
+
+import { DAOPassTurnUsecase } from '@data/usecases';
 
 import {
   makeGetCurrentGameUsecase,
   makeGetRoundUsecase,
-  makeRoundCRUD,
+  makeRoundDAO,
 } from '@main/factories';
 
-export function makeCRUDPassTurnUsecase(): PassTurnUsecase {
+export function makeDAOPassTurnUsecase(): PassTurnUsecase {
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getRound = makeGetRoundUsecase();
-  const roundCRUD = makeRoundCRUD();
+  const roundDAO = makeRoundDAO();
 
-  return new CRUDPassTurnUsecase({ getCurrentGame, getRound, roundCRUD });
+  return new DAOPassTurnUsecase({ getCurrentGame, getRound, roundDAO });
 }

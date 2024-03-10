@@ -1,7 +1,7 @@
 import { GetCurrentPlayerUsecase } from '@domain/usecases';
 
-import { makeCRUDGetCurrentPlayerUsecase } from './crud';
+import { makeDAOGetCurrentPlayerUsecase } from './crud';
 
 export function makeGetCurrentPlayerUsecase(): GetCurrentPlayerUsecase {
-  return makeCRUDGetCurrentPlayerUsecase();
+  return makeDAOGetCurrentPlayerUsecase();
 }

@@ -1,16 +1,14 @@
-import { RoundHydrator } from '@data/hydration/_round';
-
 import { RoundModel } from '@domain/models';
-
 import { CreateRoundUsecase } from '@domain/usecases';
 
-import { RoundCRUD } from '@data/cruds';
+import { RoundDAO } from '@data/dao';
+import { RoundHydrator } from '@data/hydration/_round';
 
-export class CRUDCreateRoundUsecase implements CreateRoundUsecase {
-  private readonly roundCRUD: RoundCRUD;
+export class DAOCreateRoundUsecase implements CreateRoundUsecase {
+  private readonly roundDAO: RoundDAO;
 
-  public constructor(deps: CRUDCreateRoundUsecase.Deps) {
-    this.roundCRUD = deps.roundCRUD;
+  public constructor(deps: DAOCreateRoundUsecase.Deps) {
+    this.roundDAO = deps.roundDAO;
   }
 
   public async execute(
@@ -18,7 +16,7 @@ export class CRUDCreateRoundUsecase implements CreateRoundUsecase {
   ): Promise<RoundModel> {
     const { playerIDs } = payload;
 
-    const roundDTO = await this.roundCRUD.create({
+    const roundDTO = await this.roundDAO.create({
       playerIDs,
       currentPlayerID: null,
     });
@@ -27,8 +25,8 @@ export class CRUDCreateRoundUsecase implements CreateRoundUsecase {
   }
 }
 
-export namespace CRUDCreateRoundUsecase {
+export namespace DAOCreateRoundUsecase {
   export type Deps = {
-    roundCRUD: RoundCRUD;
+    roundDAO: RoundDAO;
   };
 }

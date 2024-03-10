@@ -1,7 +1,7 @@
-import { PlayerCRUD } from '@data/cruds';
+import { PlayerDAO } from '@data/dao';
 
-import { makeDatabasePlayerCRUD } from './database';
+import { makeDatabasePlayerDAO } from './database';
 
-export function makePlayerCRUD(): PlayerCRUD {
-  return makeDatabasePlayerCRUD();
+export function makePlayerDAO(): PlayerDAO {
+  return makeDatabasePlayerDAO();
 }

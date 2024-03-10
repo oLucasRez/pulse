@@ -1,5 +1,4 @@
 import { Color } from '@domain/enums';
-
 import { PlayerModel } from '@domain/models';
 
 export interface CreatePlayerUsecase {

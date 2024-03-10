@@ -1,7 +1,7 @@
-import { GameCRUD } from '@data/cruds';
+import { GameDAO } from '@data/dao';
 
-import { makeDatabaseGameCRUD } from './database';
+import { makeDatabaseGameDAO } from './database';
 
-export function makeGameCRUD(): GameCRUD {
-  return makeDatabaseGameCRUD();
+export function makeGameDAO(): GameDAO {
+  return makeDatabaseGameDAO();
 }

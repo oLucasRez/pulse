@@ -1,1 +1,1 @@
-export { CRUDCreateRoundUsecase } from './crud';
+export { DAOCreateRoundUsecase } from './crud';

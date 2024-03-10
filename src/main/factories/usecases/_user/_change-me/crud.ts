@@ -1,20 +1,21 @@
-import { CRUDChangeMeUsecase } from '@data/usecases';
 import { ChangeMeUsecase } from '@domain/usecases';
+
+import { DAOChangeMeUsecase } from '@data/usecases';
 
 import {
   makeChangeMePublisher,
   makeGetMeUsecase,
-  makeUserCRUD,
+  makeUserDAO,
 } from '@main/factories';
 
-export function makeCRUDChangeMeUsecase(): ChangeMeUsecase {
+export function makeDAOChangeMeUsecase(): ChangeMeUsecase {
   const changeMePublisher = makeChangeMePublisher();
   const getMe = makeGetMeUsecase();
-  const userCRUD = makeUserCRUD();
+  const userDAO = makeUserDAO();
 
-  return new CRUDChangeMeUsecase({
+  return new DAOChangeMeUsecase({
     changeMePublisher,
     getMe,
-    userCRUD,
+    userDAO,
   });
 }

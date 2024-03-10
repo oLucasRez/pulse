@@ -1,1 +1,1 @@
-export { CRUDCreatePlayerUsecase } from './crud';
+export { DAOCreatePlayerUsecase } from './crud';

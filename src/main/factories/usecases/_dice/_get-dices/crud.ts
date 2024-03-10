@@ -1,10 +1,11 @@
-import { CRUDGetDicesUsecase } from '@data/usecases';
 import { GetDicesUsecase } from '@domain/usecases';
 
-import { makeDiceCRUD } from '@main/factories';
+import { DAOGetDicesUsecase } from '@data/usecases';
 
-export function makeCRUDGetDicesUsecase(): GetDicesUsecase {
-  const diceCRUD = makeDiceCRUD();
+import { makeDiceDAO } from '@main/factories';
 
-  return new CRUDGetDicesUsecase({ diceCRUD });
+export function makeDAOGetDicesUsecase(): GetDicesUsecase {
+  const diceDAO = makeDiceDAO();
+
+  return new DAOGetDicesUsecase({ diceDAO });
 }

@@ -1,6 +1,6 @@
-import { StyledSVG } from '@presentation/types';
-
 import styled from 'styled-components';
+
+import { StyledSVG } from '@presentation/types';
 
 export const Container = styled.div`
   width: 100%;

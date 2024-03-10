@@ -1,7 +1,5 @@
-import { SubjectModel } from '@domain/models';
-
 import { FailedError, ForbiddenError, NotFoundError } from '@domain/errors';
-
+import { SubjectModel } from '@domain/models';
 import {
   CreateMySubjectUsecase,
   CreateSubjectUsecase,
@@ -10,13 +8,13 @@ import {
   SetPlayerSubjectUsecase,
 } from '@domain/usecases';
 
-export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
+export class DAOCreateMySubjectUsecase implements CreateMySubjectUsecase {
   private readonly createSubject: CreateSubjectUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly setPlayerSubject: SetPlayerSubjectUsecase;
 
-  public constructor(deps: CRUDCreateMySubjectUsecase.Deps) {
+  public constructor(deps: DAOCreateMySubjectUsecase.Deps) {
     this.createSubject = deps.createSubject;
     this.getCurrentGame = deps.getCurrentGame;
     this.getMyPlayer = deps.getMyPlayer;
@@ -57,7 +55,7 @@ export class CRUDCreateMySubjectUsecase implements CreateMySubjectUsecase {
   }
 }
 
-export namespace CRUDCreateMySubjectUsecase {
+export namespace DAOCreateMySubjectUsecase {
   export type Deps = {
     createSubject: CreateSubjectUsecase;
     getCurrentGame: GetCurrentGameUsecase;

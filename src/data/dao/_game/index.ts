@@ -1,18 +1,17 @@
 import { GameModel } from '@domain/models';
-
 import { DeepPartial } from '@domain/types';
 
-import { ModelCRUD } from '..';
+import { ModelDAO } from '..';
 
-export interface GameCRUD {
-  create(payload: GameCRUD.CreatePayload): Promise<GameCRUD.DTO>;
-  read(): Promise<GameCRUD.DTO[]>;
-  read(id: string): Promise<GameCRUD.DTO | null>;
-  update(id: string, payload: GameCRUD.UpdatePayload): Promise<GameCRUD.DTO>;
+export interface GameDAO {
+  create(payload: GameDAO.CreatePayload): Promise<GameDAO.DTO>;
+  read(): Promise<GameDAO.DTO[]>;
+  read(id: string): Promise<GameDAO.DTO | null>;
+  update(id: string, payload: GameDAO.UpdatePayload): Promise<GameDAO.DTO>;
   delete(id: string): Promise<void>;
 }
 
-export namespace GameCRUD {
+export namespace GameDAO {
   type BaseDTO = {
     uid: string;
     title: string | null;
@@ -27,7 +26,7 @@ export namespace GameCRUD {
     lightspotRoundID: string | null;
   };
 
-  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type DTO = ModelDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

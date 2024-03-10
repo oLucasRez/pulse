@@ -1,24 +1,20 @@
-import { PlayerModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { PlayerHydrator } from '@data/hydration';
-
+import { PlayerModel } from '@domain/models';
 import { ChangePlayerUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { ChangePlayerObserver } from '@data/observers';
 
-import { PlayerCRUD } from '@data/cruds';
-
-export class CRUDChangePlayerUsecase implements ChangePlayerUsecase {
+export class DAOChangePlayerUsecase implements ChangePlayerUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
-  private readonly playerCRUD: PlayerCRUD;
+  private readonly playerDAO: PlayerDAO;
 
-  public constructor(deps: CRUDChangePlayerUsecase.Deps) {
+  public constructor(deps: DAOChangePlayerUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
     this.changePlayerPublisher = deps.changePlayerPublisher;
-    this.playerCRUD = deps.playerCRUD;
+    this.playerDAO = deps.playerDAO;
   }
 
   public async execute(
@@ -31,7 +27,7 @@ export class CRUDChangePlayerUsecase implements ChangePlayerUsecase {
     if (!myPlayer)
       throw new NotFoundError({ metadata: { entity: 'MyPlayer' } });
 
-    const dto = await this.playerCRUD.update(myPlayer.id, {
+    const dto = await this.playerDAO.update(myPlayer.id, {
       name,
       color,
       avatar,
@@ -45,10 +41,10 @@ export class CRUDChangePlayerUsecase implements ChangePlayerUsecase {
   }
 }
 
-export namespace CRUDChangePlayerUsecase {
+export namespace DAOChangePlayerUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     changePlayerPublisher: ChangePlayerObserver.Publisher;
-    playerCRUD: PlayerCRUD;
+    playerDAO: PlayerDAO;
   };
 }

@@ -1,5 +1,4 @@
 import { RoundModel } from '@domain/models';
-
 import { GetRoundUsecase, PassTurnUsecase } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';

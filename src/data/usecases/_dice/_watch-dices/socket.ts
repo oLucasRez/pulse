@@ -1,12 +1,9 @@
 import { FailedError } from '@domain/errors';
-
-import { DiceHydrator } from '@data/hydration';
-
 import { WatchDicesUsecase } from '@domain/usecases';
 
+import { DiceDAO } from '@data/dao';
+import { DiceHydrator } from '@data/hydration';
 import { SocketProtocol, TableGenerator } from '@data/protocols';
-
-import { DiceCRUD } from '@data/cruds';
 
 export class SocketWatchDicesUsecase implements WatchDicesUsecase {
   private readonly tableGenerator: TableGenerator;
@@ -23,7 +20,7 @@ export class SocketWatchDicesUsecase implements WatchDicesUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<DiceCRUD.DTO>(table, (dices) =>
+      const unsubscribe = this.socket.watch<DiceDAO.DTO>(table, (dices) =>
         callback(dices.map(DiceHydrator.hydrate)),
       );
 

@@ -1,24 +1,21 @@
 import { PlayerModel } from '@domain/models';
-
-import { PlayerHydrator } from '@data/hydration';
-
 import { GetPlayerUsecase } from '@domain/usecases';
 
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { FetchPlayerObserver } from '@data/observers';
 
-import { PlayerCRUD } from '@data/cruds';
-
-export class CRUDGetPlayerUsecase implements GetPlayerUsecase {
+export class DAOGetPlayerUsecase implements GetPlayerUsecase {
   private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
-  private readonly playerCRUD: PlayerCRUD;
+  private readonly playerDAO: PlayerDAO;
 
-  public constructor(deps: CRUDGetPlayerUsecase.Deps) {
+  public constructor(deps: DAOGetPlayerUsecase.Deps) {
     this.fetchPlayerPublisher = deps.fetchPlayerPublisher;
-    this.playerCRUD = deps.playerCRUD;
+    this.playerDAO = deps.playerDAO;
   }
 
   public async execute(id: string): Promise<PlayerModel | null> {
-    const dto = await this.playerCRUD.read(id);
+    const dto = await this.playerDAO.read(id);
 
     const player = dto ? PlayerHydrator.hydrate(dto) : null;
 
@@ -28,9 +25,9 @@ export class CRUDGetPlayerUsecase implements GetPlayerUsecase {
   }
 }
 
-export namespace CRUDGetPlayerUsecase {
+export namespace DAOGetPlayerUsecase {
   export type Deps = {
     fetchPlayerPublisher: FetchPlayerObserver.Publisher;
-    playerCRUD: PlayerCRUD;
+    playerDAO: PlayerDAO;
   };
 }

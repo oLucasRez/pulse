@@ -1,11 +1,6 @@
 import { Color } from '@domain/enums';
-
-import { GameModel, PlayerModel, UserModel } from '@domain/models';
-
 import { ForbiddenError, NotFoundError, OutOfBoundError } from '@domain/errors';
-
-import { PlayerHydrator } from '@data/hydration';
-
+import { GameModel, PlayerModel, UserModel } from '@domain/models';
 import {
   CreatePlayerUsecase,
   GetCurrentGameUsecase,
@@ -13,23 +8,23 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
+import { PlayerDAO } from '@data/dao';
+import { PlayerHydrator } from '@data/hydration';
 import { CreatePlayerObserver } from '@data/observers';
 
-import { PlayerCRUD } from '@data/cruds';
-
-export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
+export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
   private readonly createPlayerPublisher: CreatePlayerObserver.Publisher;
-  private readonly playerCRUD: PlayerCRUD;
+  private readonly playerDAO: PlayerDAO;
 
-  public constructor(deps: CRUDCreatePlayerUsecase.Deps) {
+  public constructor(deps: DAOCreatePlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
     this.createPlayerPublisher = deps.createPlayerPublisher;
-    this.playerCRUD = deps.playerCRUD;
+    this.playerDAO = deps.playerDAO;
   }
 
   public async execute(
@@ -56,7 +51,7 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
 
     await this.shouldntPassMaxPlayers(currentGame, players);
 
-    const dto = await this.playerCRUD.create({
+    const dto = await this.playerDAO.create({
       name,
       color,
       avatar,
@@ -116,12 +111,12 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
   }
 }
 
-export namespace CRUDCreatePlayerUsecase {
+export namespace DAOCreatePlayerUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
     createPlayerPublisher: CreatePlayerObserver.Publisher;
-    playerCRUD: PlayerCRUD;
+    playerDAO: PlayerDAO;
   };
 }

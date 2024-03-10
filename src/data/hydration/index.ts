@@ -1,9 +1,9 @@
 import { Model } from '@domain/models';
 
-import { ModelCRUD } from '@data/cruds';
+import { ModelDAO } from '@data/dao';
 
 export class ModelHydrator {
-  public static hydrate(dto: ModelCRUD.DTO): Model {
+  public static hydrate(dto: ModelDAO.DTO): Model {
     const model: Model = {
       id: dto.id,
       createdAt: new Date(dto.createdAt),

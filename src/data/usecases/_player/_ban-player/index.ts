@@ -1,1 +1,1 @@
-export { CRUDBanPlayerUsecase } from './crud';
+export { DAOBanPlayerUsecase } from './crud';

@@ -1,23 +1,24 @@
-import { CRUDBanPlayerUsecase } from '@data/usecases';
 import { BanPlayerUsecase } from '@domain/usecases';
+
+import { DAOBanPlayerUsecase } from '@data/usecases';
 
 import {
   makeBanPlayerPublisher,
   makeGetCurrentGameUsecase,
   makeGetMeUsecase,
-  makePlayerCRUD,
+  makePlayerDAO,
 } from '@main/factories';
 
-export function makeCRUDBanPlayerUsecase(): BanPlayerUsecase {
+export function makeDAOBanPlayerUsecase(): BanPlayerUsecase {
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getMe = makeGetMeUsecase();
-  const playerCRUD = makePlayerCRUD();
+  const playerDAO = makePlayerDAO();
   const banPlayerPublisher = makeBanPlayerPublisher();
 
-  return new CRUDBanPlayerUsecase({
+  return new DAOBanPlayerUsecase({
     getCurrentGame,
     getMe,
-    playerCRUD,
+    playerDAO,
     banPlayerPublisher,
   });
 }

@@ -1,24 +1,23 @@
+import { CentralPulseDAO } from '@data/dao';
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
-
-import { CentralPulseCRUD } from '@data/cruds';
 
 import { Asyncleton } from '@main/utils';
 
-export class DatabaseCentralPulseCRUD implements CentralPulseCRUD {
+export class DatabaseCentralPulseDAO implements CentralPulseDAO {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: DatabaseCentralPulseCRUD.Deps) {
+  public constructor(deps: DatabaseCentralPulseDAO.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
   public async create(
-    payload: CentralPulseCRUD.CreatePayload,
-  ): Promise<CentralPulseCRUD.DTO> {
+    payload: CentralPulseDAO.CreatePayload,
+  ): Promise<CentralPulseDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const centralPulse = await this.database.insert<CentralPulseCRUD.DTO>(
+    const centralPulse = await this.database.insert<CentralPulseDAO.DTO>(
       table,
       payload,
     );
@@ -26,18 +25,18 @@ export class DatabaseCentralPulseCRUD implements CentralPulseCRUD {
     return centralPulse;
   }
 
-  public async read(): Promise<CentralPulseCRUD.DTO[]>;
-  public async read(id: string): Promise<CentralPulseCRUD.DTO | null>;
+  public async read(): Promise<CentralPulseDAO.DTO[]>;
+  public async read(id: string): Promise<CentralPulseDAO.DTO | null>;
   public async read(
     id?: string,
-  ): Promise<CentralPulseCRUD.DTO | CentralPulseCRUD.DTO[] | null> {
+  ): Promise<CentralPulseDAO.DTO | CentralPulseDAO.DTO[] | null> {
     const table = await this.tableGenerator.getTable();
 
     if (id) {
       const [centralPulse] = await Asyncleton.run(
-        `databaseCentralPulseCRUD:read:${id}`,
+        `databaseCentralPulseDAO:read:${id}`,
         () =>
-          this.database.select<CentralPulseCRUD.DTO>(
+          this.database.select<CentralPulseDAO.DTO>(
             table,
             (centralPulse) => centralPulse.id === id,
           ),
@@ -47,8 +46,8 @@ export class DatabaseCentralPulseCRUD implements CentralPulseCRUD {
     }
 
     const centralPulses = await Asyncleton.run(
-      'databaseCentralPulseCRUD:read',
-      () => this.database.select<CentralPulseCRUD.DTO>(table),
+      'databaseCentralPulseDAO:read',
+      () => this.database.select<CentralPulseDAO.DTO>(table),
     );
 
     return centralPulses;
@@ -56,11 +55,11 @@ export class DatabaseCentralPulseCRUD implements CentralPulseCRUD {
 
   public async update(
     id: string,
-    payload: CentralPulseCRUD.UpdatePayload,
-  ): Promise<CentralPulseCRUD.DTO> {
+    payload: CentralPulseDAO.UpdatePayload,
+  ): Promise<CentralPulseDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const centralPulse = await this.database.update<CentralPulseCRUD.DTO>(
+    const centralPulse = await this.database.update<CentralPulseDAO.DTO>(
       table,
       id,
       payload,
@@ -76,7 +75,7 @@ export class DatabaseCentralPulseCRUD implements CentralPulseCRUD {
   }
 }
 
-export namespace DatabaseCentralPulseCRUD {
+export namespace DatabaseCentralPulseDAO {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;

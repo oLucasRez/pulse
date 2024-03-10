@@ -1,27 +1,25 @@
 import { SubjectModel } from '@domain/models';
-
-import { SubjectHydrator } from '@data/hydration';
-
 import { GetSubjectsUsecase } from '@domain/usecases';
 
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
+import { SubjectHydrator } from '@data/hydration';
 
-export class CRUDGetSubjectsUsecase implements GetSubjectsUsecase {
-  private readonly subjectCRUD: SubjectCRUD;
+export class DAOGetSubjectsUsecase implements GetSubjectsUsecase {
+  private readonly subjectDAO: SubjectDAO;
 
-  public constructor(deps: CRUDGetSubjectsUsecase.Deps) {
-    this.subjectCRUD = deps.subjectCRUD;
+  public constructor(deps: DAOGetSubjectsUsecase.Deps) {
+    this.subjectDAO = deps.subjectDAO;
   }
 
   public async execute(): Promise<SubjectModel[]> {
-    const subjectDTOs = await this.subjectCRUD.read();
+    const subjectDTOs = await this.subjectDAO.read();
 
     return subjectDTOs.map(SubjectHydrator.hydrate);
   }
 }
 
-export namespace CRUDGetSubjectsUsecase {
+export namespace DAOGetSubjectsUsecase {
   export type Deps = {
-    subjectCRUD: SubjectCRUD;
+    subjectDAO: SubjectDAO;
   };
 }

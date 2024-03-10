@@ -1,43 +1,40 @@
+import { GameDAO } from '@data/dao';
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
-
-import { GameCRUD } from '@data/cruds';
 
 import { Asyncleton } from '@main/utils';
 
-export class DatabaseGameCRUD implements GameCRUD {
+export class DatabaseGameDAO implements GameDAO {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: DatabaseGameCRUD.Deps) {
+  public constructor(deps: DatabaseGameDAO.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
-  public async create(payload: GameCRUD.CreatePayload): Promise<GameCRUD.DTO> {
+  public async create(payload: GameDAO.CreatePayload): Promise<GameDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const game = await this.database.insert<GameCRUD.DTO>(table, payload);
+    const game = await this.database.insert<GameDAO.DTO>(table, payload);
 
     return game;
   }
 
-  public async read(): Promise<GameCRUD.DTO[]>;
-  public async read(id: string): Promise<GameCRUD.DTO | null>;
-  public async read(
-    id?: string,
-  ): Promise<GameCRUD.DTO | GameCRUD.DTO[] | null> {
+  public async read(): Promise<GameDAO.DTO[]>;
+  public async read(id: string): Promise<GameDAO.DTO | null>;
+  public async read(id?: string): Promise<GameDAO.DTO | GameDAO.DTO[] | null> {
     const table = await this.tableGenerator.getTable();
 
     if (id) {
-      const [game] = await Asyncleton.run(`databaseGameCRUD:read:${id}`, () =>
-        this.database.select<GameCRUD.DTO>(table, (game) => game.id === id),
+      const [game] = await Asyncleton.run(`databaseGameDAO:read:${id}`, () =>
+        this.database.select<GameDAO.DTO>(table, (game) => game.id === id),
       );
 
       return game || null;
     }
 
-    const games = await Asyncleton.run('databaseGameCRUD:read', () =>
-      this.database.select<GameCRUD.DTO>(table),
+    const games = await Asyncleton.run('databaseGameDAO:read', () =>
+      this.database.select<GameDAO.DTO>(table),
     );
 
     return games;
@@ -45,11 +42,11 @@ export class DatabaseGameCRUD implements GameCRUD {
 
   public async update(
     id: string,
-    payload: GameCRUD.UpdatePayload,
-  ): Promise<GameCRUD.DTO> {
+    payload: GameDAO.UpdatePayload,
+  ): Promise<GameDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const game = await this.database.update<GameCRUD.DTO>(table, id, payload);
+    const game = await this.database.update<GameDAO.DTO>(table, id, payload);
 
     return game;
   }
@@ -61,7 +58,7 @@ export class DatabaseGameCRUD implements GameCRUD {
   }
 }
 
-export namespace DatabaseGameCRUD {
+export namespace DatabaseGameDAO {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;

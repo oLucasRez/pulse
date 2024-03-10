@@ -1,16 +1,17 @@
-import { CRUDCreateGameUsecase } from '@data/usecases';
 import { CreateGameUsecase } from '@domain/usecases';
+
+import { DAOCreateGameUsecase } from '@data/usecases';
 
 import {
   makeCreateGamePublisher,
-  makeGameCRUD,
+  makeGameDAO,
   makeGetMeUsecase,
 } from '@main/factories';
 
-export function makeCRUDCreateGameUsecase(): CreateGameUsecase {
-  const gameCRUD = makeGameCRUD();
+export function makeDAOCreateGameUsecase(): CreateGameUsecase {
+  const gameDAO = makeGameDAO();
   const createGamePublisher = makeCreateGamePublisher();
   const getMe = makeGetMeUsecase();
 
-  return new CRUDCreateGameUsecase({ gameCRUD, createGamePublisher, getMe });
+  return new DAOCreateGameUsecase({ gameDAO, createGamePublisher, getMe });
 }

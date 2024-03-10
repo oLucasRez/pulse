@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 
 import { PlayerUsecasesContextProvider } from '@presentation/contexts';
+import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeBanPlayerUsecase,
@@ -9,8 +10,6 @@ import {
   makeGetMyPlayerUsecase,
   makeWatchPlayersUsecase,
 } from '@main/factories';
-
-import { ContextProviderProps } from '@presentation/types';
 
 export function makePlayerUsecasesContextProvider(
   props: ContextProviderProps,

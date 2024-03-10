@@ -1,11 +1,9 @@
 import { createContext, FC, useCallback, useContext, useEffect } from 'react';
 
+import { NotFoundError } from '@domain/errors';
 import { RoundModel } from '@domain/models';
 
-import { NotFoundError } from '@domain/errors';
-
 import { useSelector, useStates } from '@presentation/hooks';
-
 import { logError } from '@presentation/utils';
 
 import {

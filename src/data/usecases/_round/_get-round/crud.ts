@@ -1,27 +1,25 @@
-import { RoundHydrator } from '@data/hydration/_round';
-
 import { RoundModel } from '@domain/models';
-
 import { GetRoundUsecase } from '@domain/usecases';
 
-import { RoundCRUD } from '@data/cruds';
+import { RoundDAO } from '@data/dao';
+import { RoundHydrator } from '@data/hydration/_round';
 
-export class CRUDGetRoundUsecase implements GetRoundUsecase {
-  private readonly roundCRUD: RoundCRUD;
+export class DAOGetRoundUsecase implements GetRoundUsecase {
+  private readonly roundDAO: RoundDAO;
 
-  public constructor(deps: CRUDGetRoundUsecase.Deps) {
-    this.roundCRUD = deps.roundCRUD;
+  public constructor(deps: DAOGetRoundUsecase.Deps) {
+    this.roundDAO = deps.roundDAO;
   }
 
   public async execute(id: string): Promise<RoundModel | null> {
-    const roundDTO = await this.roundCRUD.read(id);
+    const roundDTO = await this.roundDAO.read(id);
 
     return roundDTO ? RoundHydrator.hydrate(roundDTO) : null;
   }
 }
 
-export namespace CRUDGetRoundUsecase {
+export namespace DAOGetRoundUsecase {
   export type Deps = {
-    roundCRUD: RoundCRUD;
+    roundDAO: RoundDAO;
   };
 }

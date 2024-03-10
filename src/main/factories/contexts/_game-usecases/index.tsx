@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 
 import { GameUsecasesContextProvider } from '@presentation/contexts';
+import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeChangeGameUsecase,
@@ -10,8 +11,6 @@ import {
   makeGetGameUsecase,
   makeStartGameUsecase,
 } from '@main/factories';
-
-import { ContextProviderProps } from '@presentation/types';
 
 export function makeGameUsecasesContextProvider(
   props: ContextProviderProps,

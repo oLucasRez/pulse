@@ -1,16 +1,17 @@
-import { CRUDChangeDiceUsecase } from '@data/usecases';
 import { ChangeDiceUsecase } from '@domain/usecases';
 
+import { DAOChangeDiceUsecase } from '@data/usecases';
+
 import {
-  makeDiceCRUD,
+  makeDiceDAO,
   makeGetDiceUsecase,
   makeGetPlayerUsecase,
 } from '@main/factories';
 
-export function makeCRUDChangeDiceUsecase(): ChangeDiceUsecase {
-  const diceCRUD = makeDiceCRUD();
+export function makeDAOChangeDiceUsecase(): ChangeDiceUsecase {
+  const diceDAO = makeDiceDAO();
   const getDice = makeGetDiceUsecase();
   const getPlayer = makeGetPlayerUsecase();
 
-  return new CRUDChangeDiceUsecase({ diceCRUD, getDice, getPlayer });
+  return new DAOChangeDiceUsecase({ diceDAO, getDice, getPlayer });
 }

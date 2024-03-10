@@ -1,43 +1,40 @@
+import { DiceDAO } from '@data/dao';
 import { DatabaseProtocol, TableGenerator } from '@data/protocols';
-
-import { DiceCRUD } from '@data/cruds';
 
 import { Asyncleton } from '@main/utils';
 
-export class DatabaseDiceCRUD implements DiceCRUD {
+export class DatabaseDiceDAO implements DiceDAO {
   private readonly database: DatabaseProtocol;
   private readonly tableGenerator: TableGenerator;
 
-  public constructor(deps: DatabaseDiceCRUD.Deps) {
+  public constructor(deps: DatabaseDiceDAO.Deps) {
     this.database = deps.database;
     this.tableGenerator = deps.tableGenerator;
   }
 
-  public async create(payload: DiceCRUD.CreatePayload): Promise<DiceCRUD.DTO> {
+  public async create(payload: DiceDAO.CreatePayload): Promise<DiceDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const dice = await this.database.insert<DiceCRUD.DTO>(table, payload);
+    const dice = await this.database.insert<DiceDAO.DTO>(table, payload);
 
     return dice;
   }
 
-  public async read(): Promise<DiceCRUD.DTO[]>;
-  public async read(id: string): Promise<DiceCRUD.DTO | null>;
-  public async read(
-    id?: string,
-  ): Promise<DiceCRUD.DTO | DiceCRUD.DTO[] | null> {
+  public async read(): Promise<DiceDAO.DTO[]>;
+  public async read(id: string): Promise<DiceDAO.DTO | null>;
+  public async read(id?: string): Promise<DiceDAO.DTO | DiceDAO.DTO[] | null> {
     const table = await this.tableGenerator.getTable();
 
     if (id) {
-      const [dice] = await Asyncleton.run(`databaseDiceCRUD:read:${id}`, () =>
-        this.database.select<DiceCRUD.DTO>(table, (dice) => dice.id === id),
+      const [dice] = await Asyncleton.run(`databaseDiceDAO:read:${id}`, () =>
+        this.database.select<DiceDAO.DTO>(table, (dice) => dice.id === id),
       );
 
       return dice || null;
     }
 
-    const dices = await Asyncleton.run('databaseDiceCRUD:read', () =>
-      this.database.select<DiceCRUD.DTO>(table),
+    const dices = await Asyncleton.run('databaseDiceDAO:read', () =>
+      this.database.select<DiceDAO.DTO>(table),
     );
 
     return dices;
@@ -45,11 +42,11 @@ export class DatabaseDiceCRUD implements DiceCRUD {
 
   public async update(
     id: string,
-    payload: DiceCRUD.UpdatePayload,
-  ): Promise<DiceCRUD.DTO> {
+    payload: DiceDAO.UpdatePayload,
+  ): Promise<DiceDAO.DTO> {
     const table = await this.tableGenerator.getTable();
 
-    const dice = await this.database.update<DiceCRUD.DTO>(table, id, payload);
+    const dice = await this.database.update<DiceDAO.DTO>(table, id, payload);
 
     return dice;
   }
@@ -61,7 +58,7 @@ export class DatabaseDiceCRUD implements DiceCRUD {
   }
 }
 
-export namespace DatabaseDiceCRUD {
+export namespace DatabaseDiceDAO {
   export type Deps = {
     database: DatabaseProtocol;
     tableGenerator: TableGenerator;

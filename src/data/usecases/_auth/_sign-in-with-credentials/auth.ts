@@ -1,28 +1,23 @@
-import { UserModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { UserHydrator } from '@data/hydration';
-
+import { UserModel } from '@domain/models';
 import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
-import { AuthCredentialsProtocol } from '@data/protocols';
-
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
-
-import { UserCRUD } from '@data/cruds';
+import { AuthCredentialsProtocol } from '@data/protocols';
 
 export class AuthSignInWithCredentialsUsecase
   implements SignInWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
   public constructor(deps: AuthSignInWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
     this.signInPublisher = deps.signInPublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(
@@ -35,7 +30,7 @@ export class AuthSignInWithCredentialsUsecase
       password,
     });
 
-    const userDTO = await this.userCRUD.read(uid);
+    const userDTO = await this.userDAO.read(uid);
 
     if (!userDTO)
       throw new NotFoundError({
@@ -54,6 +49,6 @@ export namespace AuthSignInWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

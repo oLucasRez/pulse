@@ -1,8 +1,8 @@
 import { Vector } from '@domain/utils';
 
-import { ModelCRUD } from '..';
+import { ModelDAO } from '..';
 
-export namespace PulseCRUD {
+export namespace PulseDAO {
   export type BaseDTO = {
     origin: Vector.JSON;
     gap: number;
@@ -10,7 +10,7 @@ export namespace PulseCRUD {
     landmarkID: string;
   };
 
-  export type DTO = ModelCRUD.DTO & BaseDTO;
+  export type DTO = ModelDAO.DTO & BaseDTO;
 }
 
 export * from './_central-pulse';

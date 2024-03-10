@@ -1,7 +1,7 @@
-import { CentralFactCRUD } from '@data/cruds';
+import { CentralFactDAO } from '@data/dao';
 
-import { makeDatabaseCentralFactCRUD } from './database';
+import { makeDatabaseCentralFactDAO } from './database';
 
-export function makeCentralFactCRUD(): CentralFactCRUD {
-  return makeDatabaseCentralFactCRUD();
+export function makeCentralFactDAO(): CentralFactDAO {
+  return makeDatabaseCentralFactDAO();
 }

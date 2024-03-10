@@ -1,11 +1,11 @@
 import { Model, UserModel } from '@domain/models';
 
-import { UserCRUD } from '@data/cruds';
+import { UserDAO } from '@data/dao';
 
 import { ModelHydrator } from '..';
 
 export class UserHydrator {
-  public static hydrate(dto: UserCRUD.DTO): UserModel {
+  public static hydrate(dto: UserDAO.DTO): UserModel {
     const user: UserModel = Object.assign<Model, Omit<UserModel, keyof Model>>(
       ModelHydrator.hydrate(dto),
       {

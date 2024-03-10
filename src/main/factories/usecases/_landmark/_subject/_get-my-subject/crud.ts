@@ -1,14 +1,15 @@
-import { CRUDGetMySubjectUsecase } from '@data/usecases';
 import { GetMySubjectUsecase } from '@domain/usecases';
 
-import { makeGetMyPlayerUsecase, makeSubjectCRUD } from '@main/factories';
+import { DAOGetMySubjectUsecase } from '@data/usecases';
 
-export function makeCRUDGetMySubjectUsecase(): GetMySubjectUsecase {
+import { makeGetMyPlayerUsecase, makeSubjectDAO } from '@main/factories';
+
+export function makeDAOGetMySubjectUsecase(): GetMySubjectUsecase {
   const getMyPlayer = makeGetMyPlayerUsecase();
-  const subjectCRUD = makeSubjectCRUD();
+  const subjectDAO = makeSubjectDAO();
 
-  return new CRUDGetMySubjectUsecase({
+  return new DAOGetMySubjectUsecase({
     getMyPlayer,
-    subjectCRUD,
+    subjectDAO,
   });
 }

@@ -1,11 +1,11 @@
 import { GameModel, Model } from '@domain/models';
 
-import { GameCRUD } from '@data/cruds';
+import { GameDAO } from '@data/dao';
 
 import { ModelHydrator } from '..';
 
 export class GameHydrator {
-  public static hydrate(dto: GameCRUD.DTO): GameModel {
+  public static hydrate(dto: GameDAO.DTO): GameModel {
     const game: GameModel = Object.assign<Model, Omit<GameModel, keyof Model>>(
       ModelHydrator.hydrate(dto),
       {

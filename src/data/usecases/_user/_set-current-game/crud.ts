@@ -1,32 +1,28 @@
-import { UserModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { UserHydrator } from '@data/hydration';
-
+import { UserModel } from '@domain/models';
 import {
   GetGameUsecase,
   GetMeUsecase,
   SetCurrentGameUsecase,
 } from '@domain/usecases';
 
+import { UserDAO } from '@data/dao';
+import { UserHydrator } from '@data/hydration';
 import { ChangeMeObserver, FetchCurrentGameObserver } from '@data/observers';
 
-import { UserCRUD } from '@data/cruds';
-
-export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
+export class DAOSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
   private readonly fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
-  private readonly userCRUD: UserCRUD;
+  private readonly userDAO: UserDAO;
 
-  public constructor(deps: CRUDSetCurrentGameUsecase.Deps) {
+  public constructor(deps: DAOSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
     this.getMe = deps.getMe;
     this.changeMePublisher = deps.changeMePublisher;
     this.fetchCurrentGamePublisher = deps.fetchCurrentGamePublisher;
-    this.userCRUD = deps.userCRUD;
+    this.userDAO = deps.userDAO;
   }
 
   public async execute(gameID: string | null): Promise<UserModel> {
@@ -43,7 +39,7 @@ export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
       this.fetchCurrentGamePublisher.notifyFetchCurrentGame(game);
     } else this.fetchCurrentGamePublisher.notifyFetchCurrentGame(null);
 
-    const dto = await this.userCRUD.update(me.uid, {
+    const dto = await this.userDAO.update(me.uid, {
       currentGameID: gameID,
     });
 
@@ -55,12 +51,12 @@ export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
   }
 }
 
-export namespace CRUDSetCurrentGameUsecase {
+export namespace DAOSetCurrentGameUsecase {
   export type Deps = {
     getGame: GetGameUsecase;
     getMe: GetMeUsecase;
     changeMePublisher: ChangeMeObserver.Publisher;
     fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
-    userCRUD: UserCRUD;
+    userDAO: UserDAO;
   };
 }

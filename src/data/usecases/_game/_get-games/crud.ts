@@ -1,24 +1,20 @@
-import { GameModel } from '@domain/models';
-
 import { ForbiddenError } from '@domain/errors';
-
-import { GameHydrator } from '@data/hydration';
-
+import { GameModel } from '@domain/models';
 import { GetGamesUsecase, GetMeUsecase } from '@domain/usecases';
 
+import { GameDAO } from '@data/dao';
+import { GameHydrator } from '@data/hydration';
 import { FetchGamesObserver } from '@data/observers';
 
-import { GameCRUD } from '@data/cruds';
-
-export class CRUDGetGamesUsecase implements GetGamesUsecase {
+export class DAOGetGamesUsecase implements GetGamesUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly fetchGamesPublisher: FetchGamesObserver.Publisher;
-  private readonly gameCRUD: GameCRUD;
+  private readonly gameDAO: GameDAO;
 
-  public constructor(deps: CRUDGetGamesUsecase.Deps) {
+  public constructor(deps: DAOGetGamesUsecase.Deps) {
     this.getMe = deps.getMe;
     this.fetchGamesPublisher = deps.fetchGamesPublisher;
-    this.gameCRUD = deps.gameCRUD;
+    this.gameDAO = deps.gameDAO;
   }
 
   public async execute(): Promise<GameModel[]> {
@@ -28,7 +24,7 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
         metadata: { tried: 'get games without session' },
       });
 
-    const dto = (await this.gameCRUD.read()).filter(
+    const dto = (await this.gameDAO.read()).filter(
       (value) => value.uid === me.uid,
     );
 
@@ -40,10 +36,10 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
   }
 }
 
-export namespace CRUDGetGamesUsecase {
+export namespace DAOGetGamesUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     fetchGamesPublisher: FetchGamesObserver.Publisher;
-    gameCRUD: GameCRUD;
+    gameDAO: GameDAO;
   };
 }

@@ -1,5 +1,6 @@
-import { SocketWatchPlayersUsecase } from '@data/usecases';
 import { WatchPlayersUsecase } from '@domain/usecases';
+
+import { SocketWatchPlayersUsecase } from '@data/usecases';
 
 import {
   makeFetchPlayersPublisher,

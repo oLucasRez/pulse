@@ -1,7 +1,5 @@
-import { PlayerModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
+import { PlayerModel } from '@domain/models';
 import {
   GetCurrentPlayerUsecase,
   GetPlayerUsecase,
@@ -10,12 +8,12 @@ import {
 
 import { FetchPlayerObserver } from '@data/observers';
 
-export class CRUDGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
+export class DAOGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
   private readonly getPlayer: GetPlayerUsecase;
   private readonly getRound: GetRoundUsecase;
   private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
 
-  public constructor(deps: CRUDGetCurrentPlayerUsecase.Deps) {
+  public constructor(deps: DAOGetCurrentPlayerUsecase.Deps) {
     this.getPlayer = deps.getPlayer;
     this.getRound = deps.getRound;
     this.fetchPlayerPublisher = deps.fetchPlayerPublisher;
@@ -42,7 +40,7 @@ export class CRUDGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
   }
 }
 
-export namespace CRUDGetCurrentPlayerUsecase {
+export namespace DAOGetCurrentPlayerUsecase {
   export type Deps = {
     getPlayer: GetPlayerUsecase;
     getRound: GetRoundUsecase;

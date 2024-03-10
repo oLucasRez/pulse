@@ -1,20 +1,17 @@
-import { SubjectModel } from '@domain/models';
-
 import { ForbiddenError } from '@domain/errors';
-
-import { SubjectHydrator } from '@data/hydration';
-
+import { SubjectModel } from '@domain/models';
 import { CreateSubjectUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
+import { SubjectHydrator } from '@data/hydration';
 
-export class CRUDCreateSubjectUsecase implements CreateSubjectUsecase {
+export class DAOCreateSubjectUsecase implements CreateSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly subjectCRUD: SubjectCRUD;
+  private readonly subjectDAO: SubjectDAO;
 
-  public constructor(deps: CRUDCreateSubjectUsecase.Deps) {
+  public constructor(deps: DAOCreateSubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
-    this.subjectCRUD = deps.subjectCRUD;
+    this.subjectDAO = deps.subjectDAO;
   }
 
   public async execute(
@@ -27,7 +24,7 @@ export class CRUDCreateSubjectUsecase implements CreateSubjectUsecase {
     if (!myPlayer)
       throw new ForbiddenError({ metadata: { tried: 'create subject' } });
 
-    const subjectDTO = await this.subjectCRUD.create({
+    const subjectDTO = await this.subjectDAO.create({
       position: position ? position.toJSON() : null,
       description,
       color,
@@ -39,9 +36,9 @@ export class CRUDCreateSubjectUsecase implements CreateSubjectUsecase {
   }
 }
 
-export namespace CRUDCreateSubjectUsecase {
+export namespace DAOCreateSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
-    subjectCRUD: SubjectCRUD;
+    subjectDAO: SubjectDAO;
   };
 }

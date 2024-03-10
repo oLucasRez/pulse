@@ -1,1 +1,1 @@
-export { CRUDGetDicesUsecase } from './crud';
+export { DAOGetDicesUsecase } from './crud';

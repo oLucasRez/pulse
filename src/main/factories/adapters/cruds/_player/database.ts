@@ -1,11 +1,11 @@
-import { PlayerCRUD } from '@data/cruds';
-import { DatabasePlayerCRUD } from '@main/adapters/cruds';
+import { PlayerDAO } from '@data/dao';
 
+import { DatabasePlayerDAO } from '@main/adapters/cruds';
 import { makeDatabase, makePlayersTableGenerator } from '@main/factories';
 
-export function makeDatabasePlayerCRUD(): PlayerCRUD {
+export function makeDatabasePlayerDAO(): PlayerDAO {
   const database = makeDatabase('multiple users read/write same data');
   const tableGenerator = makePlayersTableGenerator();
 
-  return new DatabasePlayerCRUD({ database, tableGenerator });
+  return new DatabasePlayerDAO({ database, tableGenerator });
 }

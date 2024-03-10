@@ -1,5 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
+import { Provider } from '@domain/types';
 import {
   GetMeUsecase,
   LinkWithProviderUsecase,
@@ -18,7 +19,6 @@ import {
   AuthUsecasesContextProviderProps,
   AuthUsecasesContextValue,
 } from './types';
-import { Provider } from '@domain/types';
 
 const Context = createContext({} as AuthUsecasesContextValue);
 

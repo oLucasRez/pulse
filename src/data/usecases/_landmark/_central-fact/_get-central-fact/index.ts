@@ -1,1 +1,1 @@
-export { CRUDGetCentralFactUsecase } from './crud';
+export { DAOGetCentralFactUsecase } from './crud';

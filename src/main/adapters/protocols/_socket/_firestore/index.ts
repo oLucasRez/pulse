@@ -1,10 +1,9 @@
+import { collection, onSnapshot } from 'firebase/firestore';
+
 import { UnknownError } from '@domain/errors';
 
 import { SocketProtocol } from '@data/protocols';
-
 import { FirebaseService } from '@data/services';
-
-import { collection, onSnapshot } from 'firebase/firestore';
 
 export class FirestoreSocket implements SocketProtocol {
   public watch<P>(key: string, callback: (snapshot: P[]) => any): () => void {

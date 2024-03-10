@@ -142,6 +142,7 @@ export const Main = styled.main`
         height: 6rem;
         text-align: center;
         border-radius: 50rem;
+        line-height: 1.3;
       }
 
       .me {

@@ -1,11 +1,11 @@
 import { Model, RoundModel } from '@domain/models';
 
-import { RoundCRUD } from '@data/cruds';
+import { RoundDAO } from '@data/dao';
 
 import { ModelHydrator } from '..';
 
 export class RoundHydrator {
-  public static hydrate(dto: RoundCRUD.DTO): RoundModel {
+  public static hydrate(dto: RoundDAO.DTO): RoundModel {
     const round: RoundModel = Object.assign<
       Model,
       Omit<RoundModel, keyof Model>

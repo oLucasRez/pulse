@@ -1,27 +1,25 @@
 import { CentralFactModel } from '@domain/models';
-
-import { CentralFactHydrator } from '@data/hydration';
-
 import { GetCentralFactUsecase } from '@domain/usecases';
 
-import { CentralFactCRUD } from '@data/cruds';
+import { CentralFactDAO } from '@data/dao';
+import { CentralFactHydrator } from '@data/hydration';
 
-export class CRUDGetCentralFactUsecase implements GetCentralFactUsecase {
-  private readonly centralFactCRUD: CentralFactCRUD;
+export class DAOGetCentralFactUsecase implements GetCentralFactUsecase {
+  private readonly centralFactDAO: CentralFactDAO;
 
-  public constructor(deps: CRUDGetCentralFactUsecase.Deps) {
-    this.centralFactCRUD = deps.centralFactCRUD;
+  public constructor(deps: DAOGetCentralFactUsecase.Deps) {
+    this.centralFactDAO = deps.centralFactDAO;
   }
 
   public async execute(): Promise<CentralFactModel | null> {
-    const [centralFactDTO] = await this.centralFactCRUD.read();
+    const [centralFactDTO] = await this.centralFactDAO.read();
 
     return centralFactDTO ? CentralFactHydrator.hydrate(centralFactDTO) : null;
   }
 }
 
-export namespace CRUDGetCentralFactUsecase {
+export namespace DAOGetCentralFactUsecase {
   export type Deps = {
-    centralFactCRUD: CentralFactCRUD;
+    centralFactDAO: CentralFactDAO;
   };
 }

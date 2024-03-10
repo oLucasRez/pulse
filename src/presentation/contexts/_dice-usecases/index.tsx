@@ -1,11 +1,9 @@
 import { createContext, FC, useContext, useEffect } from 'react';
 
 import { DiceModel } from '@domain/models';
-
 import { WatchDicesUsecase } from '@domain/usecases';
 
 import { useSelector, useStates } from '@presentation/hooks';
-
 import { logError } from '@presentation/utils';
 
 import {

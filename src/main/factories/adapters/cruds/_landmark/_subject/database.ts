@@ -1,11 +1,11 @@
-import { SubjectCRUD } from '@data/cruds';
-import { DatabaseSubjectCRUD } from '@main/adapters/cruds';
+import { SubjectDAO } from '@data/dao';
 
+import { DatabaseSubjectDAO } from '@main/adapters/cruds';
 import { makeDatabase, makeSubjectsTableGenerator } from '@main/factories';
 
-export function makeDatabaseSubjectCRUD(): SubjectCRUD {
+export function makeDatabaseSubjectDAO(): SubjectDAO {
   const database = makeDatabase('multiple users read/write same data');
   const tableGenerator = makeSubjectsTableGenerator();
 
-  return new DatabaseSubjectCRUD({ database, tableGenerator });
+  return new DatabaseSubjectDAO({ database, tableGenerator });
 }

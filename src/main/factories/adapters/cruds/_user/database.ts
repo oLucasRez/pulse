@@ -1,11 +1,11 @@
-import { UserCRUD } from '@data/cruds';
-import { DatabaseUserCRUD } from '@main/adapters/cruds';
+import { UserDAO } from '@data/dao';
 
+import { DatabaseUserDAO } from '@main/adapters/cruds';
 import { makeDatabase, makeUsersTableGenerator } from '@main/factories';
 
-export function makeDatabaseUserCRUD(): UserCRUD {
+export function makeDatabaseUserDAO(): UserDAO {
   const database = makeDatabase('only 1 user read/write each data');
   const tableGenerator = makeUsersTableGenerator();
 
-  return new DatabaseUserCRUD({ database, tableGenerator });
+  return new DatabaseUserDAO({ database, tableGenerator });
 }

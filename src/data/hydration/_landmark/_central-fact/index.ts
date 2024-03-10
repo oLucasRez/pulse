@@ -1,13 +1,12 @@
 import { CentralFactModel, LandmarkModel } from '@domain/models';
-
-import { CentralFactCRUD } from '@data/cruds';
-
 import { Vector } from '@domain/utils';
+
+import { CentralFactDAO } from '@data/dao';
 
 import { LandmarkHydrator } from '..';
 
 export class CentralFactHydrator {
-  public static hydrate(dto: CentralFactCRUD.DTO): CentralFactModel {
+  public static hydrate(dto: CentralFactDAO.DTO): CentralFactModel {
     const centralFact: CentralFactModel = Object.assign<
       LandmarkModel,
       Omit<CentralFactModel, keyof LandmarkModel> &

@@ -1,8 +1,7 @@
 import { FC } from 'react';
 
-import { useAuthUsecases } from '@presentation/contexts';
-
 import { Navigate } from '@presentation/components';
+import { useAuthUsecases } from '@presentation/contexts';
 
 import { WithoutSessionProxyProps } from './types';
 

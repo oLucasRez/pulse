@@ -1,1 +1,1 @@
-export { CRUDCreateCentralPulseUsecase } from './crud';
+export { DAOCreateCentralPulseUsecase } from './crud';

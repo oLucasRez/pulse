@@ -1,26 +1,23 @@
-import { RoundHydrator } from '@data/hydration/_round';
-
-import { RoundModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
+import { RoundModel } from '@domain/models';
 import {
   GetCurrentGameUsecase,
   GetRoundUsecase,
   PassTurnUsecase,
 } from '@domain/usecases';
 
-import { RoundCRUD } from '@data/cruds';
+import { RoundDAO } from '@data/dao';
+import { RoundHydrator } from '@data/hydration/_round';
 
-export class CRUDPassTurnUsecase implements PassTurnUsecase {
+export class DAOPassTurnUsecase implements PassTurnUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getRound: GetRoundUsecase;
-  private readonly roundCRUD: RoundCRUD;
+  private readonly roundDAO: RoundDAO;
 
-  public constructor(deps: CRUDPassTurnUsecase.Deps) {
+  public constructor(deps: DAOPassTurnUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getRound = deps.getRound;
-    this.roundCRUD = deps.roundCRUD;
+    this.roundDAO = deps.roundDAO;
   }
 
   public async execute(id: string): Promise<RoundModel> {
@@ -54,7 +51,7 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
 
     const playerID = round.playerIDs[i ?? -1];
 
-    const roundDTO = await this.roundCRUD.update(round.id, {
+    const roundDTO = await this.roundDAO.update(round.id, {
       currentPlayerID: playerID || null,
     });
 
@@ -62,10 +59,10 @@ export class CRUDPassTurnUsecase implements PassTurnUsecase {
   }
 }
 
-export namespace CRUDPassTurnUsecase {
+export namespace DAOPassTurnUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     getRound: GetRoundUsecase;
-    roundCRUD: RoundCRUD;
+    roundDAO: RoundDAO;
   };
 }

@@ -1,7 +1,7 @@
 import { GetPlayersUsecase } from '@domain/usecases';
 
-import { makeCRUDGetPlayersUsecase } from './crud';
+import { makeDAOGetPlayersUsecase } from './crud';
 
 export function makeGetPlayersUsecase(): GetPlayersUsecase {
-  return makeCRUDGetPlayersUsecase();
+  return makeDAOGetPlayersUsecase();
 }

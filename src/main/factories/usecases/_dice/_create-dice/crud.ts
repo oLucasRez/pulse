@@ -1,10 +1,11 @@
-import { CRUDCreateDiceUsecase } from '@data/usecases';
 import { CreateDiceUsecase } from '@domain/usecases';
 
-import { makeDiceCRUD } from '@main/factories';
+import { DAOCreateDiceUsecase } from '@data/usecases';
 
-export function makeCRUDCreateDiceUsecase(): CreateDiceUsecase {
-  const diceCRUD = makeDiceCRUD();
+import { makeDiceDAO } from '@main/factories';
 
-  return new CRUDCreateDiceUsecase({ diceCRUD });
+export function makeDAOCreateDiceUsecase(): CreateDiceUsecase {
+  const diceDAO = makeDiceDAO();
+
+  return new DAOCreateDiceUsecase({ diceDAO });
 }

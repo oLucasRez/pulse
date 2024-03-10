@@ -1,7 +1,6 @@
 import { TableGenerator } from '@data/protocols';
 
 import { DicesTableGeneratorDecorator } from '@main/decorators';
-
 import { makeGetCurrentGameUsecase } from '@main/factories';
 
 export function makeDicesTableGeneratorDecorator(

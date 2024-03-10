@@ -1,17 +1,18 @@
-import { CRUDCreateCentralPulseUsecase } from '@data/usecases';
 import { CreateCentralPulseUsecase } from '@domain/usecases';
 
+import { DAOCreateCentralPulseUsecase } from '@data/usecases';
+
 import {
-  makeCentralPulseCRUD,
+  makeCentralPulseDAO,
   makeCreateCentralFactUsecase,
 } from '@main/factories';
 
-export function makeCRUDCreateCentralPulseUsecase(): CreateCentralPulseUsecase {
-  const centralPulseCRUD = makeCentralPulseCRUD();
+export function makeDAOCreateCentralPulseUsecase(): CreateCentralPulseUsecase {
+  const centralPulseDAO = makeCentralPulseDAO();
   const createCentralFact = makeCreateCentralFactUsecase();
 
-  return new CRUDCreateCentralPulseUsecase({
-    centralPulseCRUD,
+  return new DAOCreateCentralPulseUsecase({
+    centralPulseDAO,
     createCentralFact,
   });
 }

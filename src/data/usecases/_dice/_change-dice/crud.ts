@@ -1,33 +1,29 @@
-import { DiceModel } from '@domain/models';
-
 import {
   ForbiddenError,
   NotFoundError,
   NotIntegerError,
   OutOfBoundError,
 } from '@domain/errors';
-
-import { DiceHydrator } from '@data/hydration';
-
+import { DiceModel } from '@domain/models';
 import {
   ChangeDiceUsecase,
   GetDiceUsecase,
   GetPlayerUsecase,
 } from '@domain/usecases';
-
-import { DiceCRUD } from '@data/cruds';
-
 import { isInteger, isNonNullable } from '@domain/utils';
 
-export class CRUDChangeDiceUsecase implements ChangeDiceUsecase {
+import { DiceDAO } from '@data/dao';
+import { DiceHydrator } from '@data/hydration';
+
+export class DAOChangeDiceUsecase implements ChangeDiceUsecase {
   private readonly getDice: GetDiceUsecase;
   private readonly getPlayer: GetPlayerUsecase;
-  private readonly diceCRUD: DiceCRUD;
+  private readonly diceDAO: DiceDAO;
 
-  public constructor(deps: CRUDChangeDiceUsecase.Deps) {
+  public constructor(deps: DAOChangeDiceUsecase.Deps) {
     this.getDice = deps.getDice;
     this.getPlayer = deps.getPlayer;
-    this.diceCRUD = deps.diceCRUD;
+    this.diceDAO = deps.diceDAO;
   }
 
   public async execute(
@@ -53,7 +49,7 @@ export class CRUDChangeDiceUsecase implements ChangeDiceUsecase {
       await this.ownerShouldExists(ownerID);
     }
 
-    const diceDTO = await this.diceCRUD.update(id, {
+    const diceDTO = await this.diceDAO.update(id, {
       value,
       position,
       ownerID,
@@ -91,10 +87,10 @@ export class CRUDChangeDiceUsecase implements ChangeDiceUsecase {
   }
 }
 
-export namespace CRUDChangeDiceUsecase {
+export namespace DAOChangeDiceUsecase {
   export type Deps = {
     getDice: GetDiceUsecase;
     getPlayer: GetPlayerUsecase;
-    diceCRUD: DiceCRUD;
+    diceDAO: DiceDAO;
   };
 }

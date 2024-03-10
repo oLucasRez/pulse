@@ -1,23 +1,20 @@
-import { CentralFactModel } from '@domain/models';
-
 import { NotFoundError } from '@domain/errors';
-
-import { CentralFactHydrator } from '@data/hydration';
-
+import { CentralFactModel } from '@domain/models';
 import {
   ChangeCentralFactUsecase,
   GetCentralFactUsecase,
 } from '@domain/usecases';
 
-import { CentralFactCRUD } from '@data/cruds';
+import { CentralFactDAO } from '@data/dao';
+import { CentralFactHydrator } from '@data/hydration';
 
-export class CRUDChangeCentralFactUsecase implements ChangeCentralFactUsecase {
+export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   private readonly getCentralFact: GetCentralFactUsecase;
-  private readonly centralFactCRUD: CentralFactCRUD;
+  private readonly centralFactDAO: CentralFactDAO;
 
-  public constructor(deps: CRUDChangeCentralFactUsecase.Deps) {
+  public constructor(deps: DAOChangeCentralFactUsecase.Deps) {
     this.getCentralFact = deps.getCentralFact;
-    this.centralFactCRUD = deps.centralFactCRUD;
+    this.centralFactDAO = deps.centralFactDAO;
   }
 
   public async execute(
@@ -30,7 +27,7 @@ export class CRUDChangeCentralFactUsecase implements ChangeCentralFactUsecase {
     if (!centralFact)
       throw new NotFoundError({ metadata: { entity: 'CentralFact' } });
 
-    const centralFactDTO = await this.centralFactCRUD.update(centralFact.id, {
+    const centralFactDTO = await this.centralFactDAO.update(centralFact.id, {
       description,
     });
 
@@ -38,9 +35,9 @@ export class CRUDChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   }
 }
 
-export namespace CRUDChangeCentralFactUsecase {
+export namespace DAOChangeCentralFactUsecase {
   export type Deps = {
     getCentralFact: GetCentralFactUsecase;
-    centralFactCRUD: CentralFactCRUD;
+    centralFactDAO: CentralFactDAO;
   };
 }

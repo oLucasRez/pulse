@@ -1,7 +1,7 @@
 import { GetRoundUsecase } from '@domain/usecases';
 
-import { makeCRUDGetRoundUsecase } from './crud';
+import { makeDAOGetRoundUsecase } from './crud';
 
 export function makeGetRoundUsecase(): GetRoundUsecase {
-  return makeCRUDGetRoundUsecase();
+  return makeDAOGetRoundUsecase();
 }

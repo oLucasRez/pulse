@@ -1,20 +1,21 @@
-import { CRUDGetMyPlayerUsecase } from '@data/usecases';
 import { GetMyPlayerUsecase } from '@domain/usecases';
+
+import { DAOGetMyPlayerUsecase } from '@data/usecases';
 
 import {
   makeFetchPlayerPublisher,
   makeGetMeUsecase,
-  makePlayerCRUD,
+  makePlayerDAO,
 } from '@main/factories';
 
-export function makeCRUDGetMyPlayerUsecase(): GetMyPlayerUsecase {
+export function makeDAOGetMyPlayerUsecase(): GetMyPlayerUsecase {
   const getMe = makeGetMeUsecase();
-  const playerCRUD = makePlayerCRUD();
+  const playerDAO = makePlayerDAO();
   const fetchPlayerPublisher = makeFetchPlayerPublisher();
 
-  return new CRUDGetMyPlayerUsecase({
+  return new DAOGetMyPlayerUsecase({
     getMe,
-    playerCRUD,
+    playerDAO,
     fetchPlayerPublisher,
   });
 }

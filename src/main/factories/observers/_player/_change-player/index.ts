@@ -1,7 +1,7 @@
 import { ChangePlayerObserver } from '@data/observers';
-import { ChangePlayerPublisher } from '@main/observers';
 
 import { makePlayerStoreChangePlayerSubscriber } from '@main/factories';
+import { ChangePlayerPublisher } from '@main/observers';
 
 export function makeChangePlayerPublisher(): ChangePlayerObserver.Publisher {
   const publisher = new ChangePlayerPublisher();

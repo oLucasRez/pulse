@@ -1,11 +1,11 @@
 import { LandmarkModel, SubjectModel } from '@domain/models';
 
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
 
 import { LandmarkHydrator } from '..';
 
 export class SubjectHydrator {
-  public static hydrate(dto: SubjectCRUD.DTO): SubjectModel {
+  public static hydrate(dto: SubjectDAO.DTO): SubjectModel {
     const subject: SubjectModel = Object.assign<
       LandmarkModel,
       Omit<SubjectModel, keyof LandmarkModel>

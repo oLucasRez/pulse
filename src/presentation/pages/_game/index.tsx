@@ -2,23 +2,21 @@ import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-import { useMutatePlayerModal } from './hooks';
-import { useNavigate, useStates } from '@presentation/hooks';
-
+import { GlobalLoading } from '@presentation/components';
 import {
   useAuthUsecases,
   useGameUsecases,
   usePlayerUsecases,
 } from '@presentation/contexts';
+import { useNavigate, useStates } from '@presentation/hooks';
+import { getClasses, getColor } from '@presentation/styles/mixins';
+import { alertError } from '@presentation/utils';
+
+import { useMutatePlayerModal } from './hooks';
 
 import { Map, Settings } from './components';
-import { GlobalLoading } from '@presentation/components';
 
 import { Container, Main } from './styles';
-
-import { getClasses, getColor } from '@presentation/styles/mixins';
-
-import { alertError } from '@presentation/utils';
 
 const GamePage: FC = () => {
   const [s, set] = useStates({

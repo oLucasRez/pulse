@@ -1,11 +1,12 @@
-import { CRUDStartGameUsecase } from '@data/usecases';
 import { StartGameUsecase } from '@domain/usecases';
+
+import { DAOStartGameUsecase } from '@data/usecases';
 
 import {
   makeCreateCentralPulseUsecase,
   makeCreateDiceUsecase,
   makeCreateRoundUsecase,
-  makeGameCRUD,
+  makeGameDAO,
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
   makePassTurnUsecase,
@@ -13,22 +14,22 @@ import {
   makeStartGamePublisher,
 } from '@main/factories';
 
-export function makeCRUDStartGameUsecase(): StartGameUsecase {
+export function makeDAOStartGameUsecase(): StartGameUsecase {
   const createCentralPulse = makeCreateCentralPulseUsecase();
   const createDice = makeCreateDiceUsecase();
   const createRound = makeCreateRoundUsecase();
-  const gameCRUD = makeGameCRUD();
+  const gameDAO = makeGameDAO();
   const startGamePublisher = makeStartGamePublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const passTurn = makePassTurnUsecase();
   const setPlayerDice = makeSetPlayerDiceUsecase();
 
-  return new CRUDStartGameUsecase({
+  return new DAOStartGameUsecase({
     createCentralPulse,
     createDice,
     createRound,
-    gameCRUD,
+    gameDAO,
     startGamePublisher,
     getCurrentGame,
     getPlayers,

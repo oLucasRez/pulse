@@ -1,7 +1,7 @@
 import { ChangeCentralFactUsecase } from '@domain/usecases';
 
-import { makeCRUDChangeCentralFactUsecase } from './crud';
+import { makeDAOChangeCentralFactUsecase } from './crud';
 
 export function makeChangeCentralFactUsecase(): ChangeCentralFactUsecase {
-  return makeCRUDChangeCentralFactUsecase();
+  return makeDAOChangeCentralFactUsecase();
 }

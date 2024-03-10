@@ -20,8 +20,6 @@ import {
   OutOfBoundError,
   UnknownError,
 } from '@domain/errors';
-
-import { FirebaseErrorCode } from './types';
 import { Provider } from '@domain/types';
 
 import {
@@ -31,10 +29,11 @@ import {
   SessionDestroyerProtocol,
   SessionGetterProtocol,
 } from '@data/protocols';
-
 import { FirebaseService } from '@data/services';
 
 import { FirebaseError } from 'firebase/app';
+
+import { FirebaseErrorCode } from './types';
 
 export class FirebaseAuth
   implements

@@ -1,5 +1,6 @@
-import { SocketWatchMyPlayerUsecase } from '@data/usecases';
 import { WatchMyPlayerUsecase } from '@domain/usecases';
+
+import { SocketWatchMyPlayerUsecase } from '@data/usecases';
 
 import {
   makeGetMyPlayerUsecase,

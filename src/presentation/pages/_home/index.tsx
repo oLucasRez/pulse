@@ -3,19 +3,16 @@ import { FC, ReactNode, useEffect } from 'react';
 
 import { GameModel } from '@domain/models';
 
-import { useNavigate, useStates } from '@presentation/hooks';
-
+import { githubIcon, googleIcon } from '@presentation/assets';
 import {
   useAuthUsecases,
   useGameUsecases,
   useUserUsecases,
 } from '@presentation/contexts';
+import { useNavigate, useStates } from '@presentation/hooks';
+import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
-
-import { githubIcon, googleIcon } from '@presentation/assets';
-
-import { alertError } from '@presentation/utils';
 
 const HomePage: FC = () => {
   const [s, set] = useStates({

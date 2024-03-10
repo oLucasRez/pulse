@@ -1,7 +1,7 @@
 import { GetDiceUsecase } from '@domain/usecases';
 
-import { makeCRUDGetDiceUsecase } from './crud';
+import { makeDAOGetDiceUsecase } from './crud';
 
 export function makeGetDiceUsecase(): GetDiceUsecase {
-  return makeCRUDGetDiceUsecase();
+  return makeDAOGetDiceUsecase();
 }

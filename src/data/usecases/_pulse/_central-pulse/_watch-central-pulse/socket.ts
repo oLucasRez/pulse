@@ -1,12 +1,9 @@
 import { FailedError } from '@domain/errors';
-
-import { CentralPulseHydrator } from '@data/hydration';
-
 import { WatchCentralPulseUsecase } from '@domain/usecases';
 
+import { CentralPulseDAO } from '@data/dao';
+import { CentralPulseHydrator } from '@data/hydration';
 import { SocketProtocol, TableGenerator } from '@data/protocols';
-
-import { CentralPulseCRUD } from '@data/cruds';
 
 export class SocketWatchCentralPulseUsecase
   implements WatchCentralPulseUsecase
@@ -25,7 +22,7 @@ export class SocketWatchCentralPulseUsecase
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<CentralPulseCRUD.DTO>(
+      const unsubscribe = this.socket.watch<CentralPulseDAO.DTO>(
         table,
         ([centralPulse]) =>
           centralPulse && callback(CentralPulseHydrator.hydrate(centralPulse)),

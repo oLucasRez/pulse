@@ -1,7 +1,6 @@
 import { onValue, ref } from 'firebase/database';
 
 import { SocketProtocol } from '@data/protocols';
-
 import { FirebaseService } from '@data/services';
 
 function parseData<M>(snapshot: Record<string, M>): (M & { id: string })[] {

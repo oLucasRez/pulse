@@ -1,26 +1,23 @@
-import { SubjectModel } from '@domain/models';
-
 import { ForbiddenError, NotFoundError } from '@domain/errors';
-
-import { SubjectHydrator } from '@data/hydration';
-
+import { SubjectModel } from '@domain/models';
 import {
   ChangeSubjectUsecase,
   GetMyPlayerUsecase,
   GetSubjectUsecase,
 } from '@domain/usecases';
 
-import { SubjectCRUD } from '@data/cruds';
+import { SubjectDAO } from '@data/dao';
+import { SubjectHydrator } from '@data/hydration';
 
-export class CRUDChangeSubjectUsecase implements ChangeSubjectUsecase {
+export class DAOChangeSubjectUsecase implements ChangeSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly getSubject: GetSubjectUsecase;
-  private readonly subjectCRUD: SubjectCRUD;
+  private readonly subjectDAO: SubjectDAO;
 
-  public constructor(deps: CRUDChangeSubjectUsecase.Deps) {
+  public constructor(deps: DAOChangeSubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
     this.getSubject = deps.getSubject;
-    this.subjectCRUD = deps.subjectCRUD;
+    this.subjectDAO = deps.subjectDAO;
   }
 
   public async execute(
@@ -46,7 +43,7 @@ export class CRUDChangeSubjectUsecase implements ChangeSubjectUsecase {
         metadata: { tried: 'change subject that is not mine' },
       });
 
-    const subjectDTO = await this.subjectCRUD.update(id, {
+    const subjectDTO = await this.subjectDAO.update(id, {
       position: position.toJSON(),
       description,
     });
@@ -55,10 +52,10 @@ export class CRUDChangeSubjectUsecase implements ChangeSubjectUsecase {
   }
 }
 
-export namespace CRUDChangeSubjectUsecase {
+export namespace DAOChangeSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     getSubject: GetSubjectUsecase;
-    subjectCRUD: SubjectCRUD;
+    subjectDAO: SubjectDAO;
   };
 }

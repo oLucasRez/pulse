@@ -1,8 +1,7 @@
 import { ReactElement } from 'react';
 
-import { ContextProviderProps } from '@presentation/types';
-
 import { CentralPulseUsecasesContextProvider } from '@presentation/contexts';
+import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeChangeCentralPulseUsecase,

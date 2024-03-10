@@ -1,17 +1,14 @@
 import { MouseEvent, ReactNode, useCallback } from 'react';
 
 import { PlayerModel } from '@domain/models';
-
-import { useStates } from '@presentation/hooks';
+import { getAvailableColors } from '@domain/utils';
 
 import { useAuthUsecases, usePlayerUsecases } from '@presentation/contexts';
+import { useStates } from '@presentation/hooks';
+import { darken, getColor } from '@presentation/styles/mixins';
+import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
-
-import { darken, getColor } from '@presentation/styles/mixins';
-
-import { getAvailableColors } from '@domain/utils';
-import { alertError } from '@presentation/utils';
 
 import {
   MutatePlayerModalHookProps,
