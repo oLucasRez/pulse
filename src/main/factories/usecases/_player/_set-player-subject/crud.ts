@@ -2,19 +2,19 @@ import { CRUDSetPlayerSubjectUsecase } from '@data/usecases';
 import { SetPlayerSubjectUsecase } from '@domain/usecases';
 
 import {
+  makeChangePlayerPublisher,
   makeGetMyPlayerUsecase,
   makePlayerCRUD,
-  makePlayerPublisher,
 } from '@main/factories';
 
 export function makeCRUDSetPlayerSubjectUsecase(): SetPlayerSubjectUsecase {
   const getMyPlayer = makeGetMyPlayerUsecase();
   const playerCRUD = makePlayerCRUD();
-  const playerPublisher = makePlayerPublisher();
+  const changePlayerPublisher = makeChangePlayerPublisher();
 
   return new CRUDSetPlayerSubjectUsecase({
     getMyPlayer,
     playerCRUD,
-    playerPublisher,
+    changePlayerPublisher,
   });
 }

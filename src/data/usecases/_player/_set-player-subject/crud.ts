@@ -6,18 +6,18 @@ import { PlayerHydrator } from '@data/hydration';
 
 import { GetMyPlayerUsecase, SetPlayerSubjectUsecase } from '@domain/usecases';
 
-import { PlayerObserver } from '@data/observers';
+import { ChangePlayerObserver } from '@data/observers';
 
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDSetPlayerSubjectUsecase implements SetPlayerSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDSetPlayerSubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
-    this.playerPublisher = deps.playerPublisher;
+    this.changePlayerPublisher = deps.changePlayerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -33,7 +33,7 @@ export class CRUDSetPlayerSubjectUsecase implements SetPlayerSubjectUsecase {
 
     const player = PlayerHydrator.hydrate(dto);
 
-    this.playerPublisher.notifyChangePlayer(player);
+    this.changePlayerPublisher.notifyChangePlayer(player);
 
     return player;
   }
@@ -42,7 +42,7 @@ export class CRUDSetPlayerSubjectUsecase implements SetPlayerSubjectUsecase {
 export namespace CRUDSetPlayerSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
-    playerPublisher: PlayerObserver.Publisher;
+    changePlayerPublisher: ChangePlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

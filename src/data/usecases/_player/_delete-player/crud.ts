@@ -1,28 +1,28 @@
 import { DeletePlayerUsecase } from '@domain/usecases';
 
-import { PlayerObserver } from '@data/observers';
+import { DeletePlayerObserver } from '@data/observers';
 
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDDeletePlayerUsecase implements DeletePlayerUsecase {
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly deletePlayerPublisher: DeletePlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDDeletePlayerUsecase.Deps) {
-    this.playerPublisher = deps.playerPublisher;
+    this.deletePlayerPublisher = deps.deletePlayerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
   public async execute(id: string): Promise<void> {
     await this.playerCRUD.delete(id);
 
-    this.playerPublisher.notifyDeletePlayer(id);
+    this.deletePlayerPublisher.notifyDeletePlayer(id);
   }
 }
 
 export namespace CRUDDeletePlayerUsecase {
   export type Deps = {
-    playerPublisher: PlayerObserver.Publisher;
+    deletePlayerPublisher: DeletePlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

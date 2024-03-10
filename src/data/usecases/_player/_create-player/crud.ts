@@ -13,7 +13,7 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
-import { PlayerObserver } from '@data/observers';
+import { CreatePlayerObserver } from '@data/observers';
 
 import { PlayerCRUD } from '@data/cruds';
 
@@ -21,14 +21,14 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly createPlayerPublisher: CreatePlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDCreatePlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
     this.getPlayers = deps.getPlayers;
-    this.playerPublisher = deps.playerPublisher;
+    this.createPlayerPublisher = deps.createPlayerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -68,7 +68,7 @@ export class CRUDCreatePlayerUsecase implements CreatePlayerUsecase {
 
     const player = PlayerHydrator.hydrate(dto);
 
-    this.playerPublisher.notifyCreatePlayer(player);
+    this.createPlayerPublisher.notifyCreatePlayer(player);
 
     return player;
   }
@@ -121,7 +121,7 @@ export namespace CRUDCreatePlayerUsecase {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
-    playerPublisher: PlayerObserver.Publisher;
+    createPlayerPublisher: CreatePlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

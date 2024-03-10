@@ -1,11 +1,11 @@
 import { CRUDGetPlayersUsecase } from '@data/usecases';
 import { GetPlayersUsecase } from '@domain/usecases';
 
-import { makePlayerCRUD, makePlayerPublisher } from '@main/factories';
+import { makeFetchPlayersPublisher, makePlayerCRUD } from '@main/factories';
 
 export function makeCRUDGetPlayersUsecase(): GetPlayersUsecase {
   const playerCRUD = makePlayerCRUD();
-  const playerPublisher = makePlayerPublisher();
+  const fetchPlayersPublisher = makeFetchPlayersPublisher();
 
-  return new CRUDGetPlayersUsecase({ playerCRUD, playerPublisher });
+  return new CRUDGetPlayersUsecase({ playerCRUD, fetchPlayersPublisher });
 }

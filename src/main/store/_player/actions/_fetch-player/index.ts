@@ -2,12 +2,24 @@ import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { PlayerModel } from '@domain/models';
 
+import { FetchPlayerObserver } from '@data/observers';
+
 import { removeItem } from '@domain/utils';
+
+import { store } from '@main/store';
 
 import { PlayerState } from '../../types';
 
-export const fetchPlayerAction =
+const fetchPlayerAction =
   createAction<[string, PlayerModel | null]>('player/fetchPlayer');
+
+export class PlayerStoreFetchPlayerSubscriber
+  implements FetchPlayerObserver.Subscriber
+{
+  public onFetchPlayer(id: string, player: PlayerModel | null): void {
+    store.dispatch(fetchPlayerAction([id, player]));
+  }
+}
 
 export function fetchPlayerReducers(
   builder: ActionReducerMapBuilder<PlayerState>,

@@ -6,19 +6,19 @@ import { WatchPlayersUsecase } from '@domain/usecases';
 
 import { SocketProtocol, TableGenerator } from '@data/protocols';
 
-import { PlayerObserver } from '@data/observers';
+import { FetchPlayersObserver } from '@data/observers';
 
 import { PlayerCRUD } from '@data/cruds';
 
 export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
   private readonly socket: SocketProtocol;
   private readonly tableGenerator: TableGenerator;
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly fetchPlayersObserver: FetchPlayersObserver.Publisher;
 
   public constructor(deps: SocketWatchPlayersUsecase.Deps) {
     this.socket = deps.socket;
     this.tableGenerator = deps.tableGenerator;
-    this.playerPublisher = deps.playerPublisher;
+    this.fetchPlayersObserver = deps.fetchPlayersObserver;
   }
 
   public async execute(
@@ -32,7 +32,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
         (snapshot) => {
           const players = snapshot.map(PlayerHydrator.hydrate);
 
-          this.playerPublisher.notifyFetchPlayers(players);
+          this.fetchPlayersObserver.notifyFetchPlayers(players);
 
           callback(players);
         },
@@ -49,6 +49,6 @@ export namespace SocketWatchPlayersUsecase {
   export type Deps = {
     socket: SocketProtocol;
     tableGenerator: TableGenerator;
-    playerPublisher: PlayerObserver.Publisher;
+    fetchPlayersObserver: FetchPlayersObserver.Publisher;
   };
 }

@@ -8,20 +8,20 @@ import {
   GetMeUsecase,
 } from '@domain/usecases';
 
-import { PlayerObserver } from '@data/observers';
+import { BanPlayerObserver } from '@data/observers';
 
 import { PlayerCRUD } from '@data/cruds';
 
 export class CRUDBanPlayerUsecase implements BanPlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly banPlayerPublisher: BanPlayerObserver.Publisher;
   private readonly playerCRUD: PlayerCRUD;
 
   public constructor(deps: CRUDBanPlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
     this.getMe = deps.getMe;
-    this.playerPublisher = deps.playerPublisher;
+    this.banPlayerPublisher = deps.banPlayerPublisher;
     this.playerCRUD = deps.playerCRUD;
   }
 
@@ -49,7 +49,7 @@ export class CRUDBanPlayerUsecase implements BanPlayerUsecase {
 
     const player = PlayerHydrator.hydrate(dto);
 
-    this.playerPublisher.notifyBanPlayer(player);
+    this.banPlayerPublisher.notifyBanPlayer(player);
   }
 }
 
@@ -57,7 +57,7 @@ export namespace CRUDBanPlayerUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
-    playerPublisher: PlayerObserver.Publisher;
+    banPlayerPublisher: BanPlayerObserver.Publisher;
     playerCRUD: PlayerCRUD;
   };
 }

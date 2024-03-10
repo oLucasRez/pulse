@@ -2,11 +2,23 @@ import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { PlayerModel } from '@domain/models';
 
+import { BanPlayerObserver } from '@data/observers';
+
 import { removeItem } from '@domain/utils';
+
+import { store } from '@main/store';
 
 import { PlayerState } from '../../types';
 
-export const banPlayerAction = createAction<PlayerModel>('player/banPlayer');
+const banPlayerAction = createAction<PlayerModel>('player/banPlayer');
+
+export class PlayerStoreBanPlayerSubscriber
+  implements BanPlayerObserver.Subscriber
+{
+  public onBanPlayer(player: PlayerModel): void {
+    store.dispatch(banPlayerAction(player));
+  }
+}
 
 export function banPlayerReducers(
   builder: ActionReducerMapBuilder<PlayerState>,

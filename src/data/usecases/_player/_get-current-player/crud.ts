@@ -8,17 +8,17 @@ import {
   GetRoundUsecase,
 } from '@domain/usecases';
 
-import { PlayerObserver } from '@data/observers';
+import { FetchPlayerObserver } from '@data/observers';
 
 export class CRUDGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
   private readonly getPlayer: GetPlayerUsecase;
   private readonly getRound: GetRoundUsecase;
-  private readonly playerPublisher: PlayerObserver.Publisher;
+  private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
 
   public constructor(deps: CRUDGetCurrentPlayerUsecase.Deps) {
     this.getPlayer = deps.getPlayer;
     this.getRound = deps.getRound;
-    this.playerPublisher = deps.playerPublisher;
+    this.fetchPlayerPublisher = deps.fetchPlayerPublisher;
   }
 
   public async execute(roundID: string): Promise<PlayerModel | null> {
@@ -33,7 +33,7 @@ export class CRUDGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
 
     const currentPlayer = await this.getPlayer.execute(round.currentPlayerID);
 
-    this.playerPublisher.notifyFetchPlayer(
+    this.fetchPlayerPublisher.notifyFetchPlayer(
       round.currentPlayerID,
       currentPlayer,
     );
@@ -46,6 +46,6 @@ export namespace CRUDGetCurrentPlayerUsecase {
   export type Deps = {
     getPlayer: GetPlayerUsecase;
     getRound: GetRoundUsecase;
-    playerPublisher: PlayerObserver.Publisher;
+    fetchPlayerPublisher: FetchPlayerObserver.Publisher;
   };
 }

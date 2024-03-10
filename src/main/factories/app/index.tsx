@@ -5,13 +5,9 @@ import { GlobalStyle } from '@presentation/styles';
 
 import { store } from '@main/store';
 
-import { makePlayerPublisher, makeRouter, makeStorePlayerSubscriber } from '..';
+import { makeRouter } from '..';
 
 export function makeApp(): ReactNode {
-  const storePlayerSubscriber = makeStorePlayerSubscriber();
-  const playerPublisher = makePlayerPublisher();
-  playerPublisher.subscribe(storePlayerSubscriber);
-
   return (
     <ReactReduxProvider store={store}>
       <GlobalStyle />
