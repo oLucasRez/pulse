@@ -2,23 +2,13 @@ import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { PlayerModel } from '@domain/models';
 
-import { CreatePlayerObserver } from '@data/observers';
-
 import { removeItem } from '@domain/utils';
-
-import { store } from '@main/store';
 
 import { PlayerState } from '../../types';
 
-const createPlayerAction = createAction<PlayerModel>('player/createPlayer');
-
-export class PlayerStoreCreatePlayerSubscriber
-  implements CreatePlayerObserver.Subscriber
-{
-  public onCreatePlayer(player: PlayerModel): void {
-    store.dispatch(createPlayerAction(player));
-  }
-}
+export const createPlayerAction = createAction<PlayerModel>(
+  'player/createPlayer',
+);
 
 export function createPlayerReducers(
   builder: ActionReducerMapBuilder<PlayerState>,

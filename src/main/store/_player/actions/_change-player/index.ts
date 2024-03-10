@@ -2,23 +2,13 @@ import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { PlayerModel } from '@domain/models';
 
-import { ChangePlayerObserver } from '@data/observers';
-
 import { removeItem } from '@domain/utils';
-
-import { store } from '@main/store';
 
 import { PlayerState } from '../../types';
 
-const changePlayerAction = createAction<PlayerModel>('player/changePlayer');
-
-export class PlayerStoreChangePlayerSubscriber
-  implements ChangePlayerObserver.Subscriber
-{
-  public onChangePlayer(player: PlayerModel): void {
-    store.dispatch(changePlayerAction(player));
-  }
-}
+export const changePlayerAction = createAction<PlayerModel>(
+  'player/changePlayer',
+);
 
 export function changePlayerReducers(
   builder: ActionReducerMapBuilder<PlayerState>,

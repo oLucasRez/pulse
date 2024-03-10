@@ -7,7 +7,7 @@ import {
   fetchMeReducers,
   signInReducers,
   signOutReducers,
-} from '.';
+} from './actions';
 
 const initialState: AuthState = {
   me: null,

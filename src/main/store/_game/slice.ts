@@ -9,8 +9,9 @@ import {
   fetchCurrentGameReducers,
   fetchGameReducers,
   fetchGamesReducers,
+  signOutReducers,
   startGameReducers,
-} from '.';
+} from './actions';
 
 const initialState: GameState = {
   games: [],
@@ -28,6 +29,7 @@ const gameSlice: Slice<GameState> = createSlice({
     fetchCurrentGameReducers(builder);
     fetchGameReducers(builder);
     fetchGamesReducers(builder);
+    signOutReducers(builder);
     startGameReducers(builder);
   },
 });

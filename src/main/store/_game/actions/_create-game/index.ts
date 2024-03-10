@@ -2,23 +2,11 @@ import { ActionReducerMapBuilder, createAction } from '@reduxjs/toolkit';
 
 import { GameModel } from '@domain/models';
 
-import { CreateGameObserver } from '@data/observers';
-
 import { removeItem } from '@domain/utils';
-
-import { store } from '@main/store';
 
 import { GameState } from '../../types';
 
-const createGameAction = createAction<GameModel>('game/createGame');
-
-export class GameStoreCreateGameSubscriber
-  implements CreateGameObserver.Subscriber
-{
-  public onCreateGame(game: GameModel): void {
-    store.dispatch(createGameAction(game));
-  }
-}
+export const createGameAction = createAction<GameModel>('game/createGame');
 
 export function createGameReducers(
   builder: ActionReducerMapBuilder<GameState>,

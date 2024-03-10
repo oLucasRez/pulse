@@ -9,7 +9,8 @@ import {
   deletePlayerReducers,
   fetchPlayerReducers,
   fetchPlayersReducers,
-} from '.';
+  signOutReducers,
+} from './actions';
 
 const initialState: PlayerState = {
   players: [],
@@ -26,6 +27,7 @@ const playerSlice: Slice<PlayerState> = createSlice({
     deletePlayerReducers(builder);
     fetchPlayerReducers(builder);
     fetchPlayersReducers(builder);
+    signOutReducers(builder);
   },
 });
 
