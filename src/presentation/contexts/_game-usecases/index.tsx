@@ -11,7 +11,7 @@ import {
 
 import { useSelector } from '@presentation/hooks';
 
-import { currentGameSelector, gamesSelector } from '@main/store';
+import { currentGameSelector, myGamesSelector } from '@main/store';
 
 import {
   GameUsecasesContextProviderProps,
@@ -28,7 +28,7 @@ export const GameUsecasesContextProvider: FC<
 > = (props) => {
   const { children } = props;
 
-  const games = useSelector(gamesSelector);
+  const myGames = useSelector(myGamesSelector);
   const currentGame = useSelector(currentGameSelector);
 
   const fetchGames = useCallback<GetGamesUsecase['execute']>(
@@ -64,7 +64,7 @@ export const GameUsecasesContextProvider: FC<
   return (
     <Context.Provider
       value={{
-        games,
+        myGames,
         currentGame,
         fetchGame,
         fetchGames,

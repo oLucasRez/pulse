@@ -12,7 +12,7 @@ import {
 import { ContextProviderProps } from '@presentation/types';
 
 export type GameUsecasesContextValue = {
-  games: GameModel[];
+  myGames: GameModel[];
   currentGame: GameModel | null;
   fetchGame: GetGameUsecase['execute'];
   fetchGames: GetGamesUsecase['execute'];

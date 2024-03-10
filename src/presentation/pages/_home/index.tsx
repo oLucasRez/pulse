@@ -26,7 +26,7 @@ const HomePage: FC = () => {
     returnToGameBannerIsClosed: false,
   });
 
-  const { games, currentGame, fetchGames, createGame, deleteGame } =
+  const { myGames, currentGame, fetchGames, createGame, deleteGame } =
     useGameUsecases();
 
   const { setCurrentGame } = useUserUsecases();
@@ -99,14 +99,14 @@ const HomePage: FC = () => {
   }
 
   function renderGamesList(): ReactNode {
-    if (s.fetchingGames && !games.length)
+    if (s.fetchingGames && !myGames.length)
       return (
         <ul className='games'>
           <span className='emoji loading'>⏳</span>
         </ul>
       );
 
-    if (!games.length)
+    if (!myGames.length)
       return (
         <ul className='games'>
           <li>
@@ -123,7 +123,7 @@ const HomePage: FC = () => {
 
     return (
       <ul className='games'>
-        {games.map((game) => {
+        {myGames.map((game) => {
           const deletingGame = s.deletingGame === game.id;
 
           return (

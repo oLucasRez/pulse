@@ -15,7 +15,6 @@ import {
 
 const initialState: GameState = {
   games: [],
-  currentGame: null,
 };
 
 const gameSlice: Slice<GameState> = createSlice({

@@ -4,8 +4,7 @@ import { selectAuth } from '@main/store';
 
 import { selectGame } from '../select';
 
-export const currentGameSelector = createSelector(
+export const myGamesSelector = createSelector(
   [selectAuth, selectGame],
-  (auth, game) =>
-    game.games.find((game) => game.id === auth.me?.currentGameID) ?? null,
+  (auth, game) => game.games.filter((value) => value.uid === auth.me?.uid),
 );

@@ -9,6 +9,5 @@ export function signOutReducers(
 ): void {
   builder.addCase(signOutAction, (state) => {
     state.games = [];
-    state.currentGame = null;
   });
 }
