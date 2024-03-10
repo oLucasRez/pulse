@@ -2,15 +2,15 @@ import { CRUDCreateGameUsecase } from '@data/usecases';
 import { CreateGameUsecase } from '@domain/usecases';
 
 import {
+  makeCreateGamePublisher,
   makeGameCRUD,
-  makeGamePublisher,
   makeGetMeUsecase,
 } from '@main/factories';
 
 export function makeCRUDCreateGameUsecase(): CreateGameUsecase {
   const gameCRUD = makeGameCRUD();
-  const gamePublisher = makeGamePublisher();
+  const createGamePublisher = makeCreateGamePublisher();
   const getMe = makeGetMeUsecase();
 
-  return new CRUDCreateGameUsecase({ gameCRUD, gamePublisher, getMe });
+  return new CRUDCreateGameUsecase({ gameCRUD, createGamePublisher, getMe });
 }

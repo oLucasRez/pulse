@@ -1,11 +1,11 @@
 import { CRUDDeleteGameUsecase } from '@data/usecases';
 import { DeleteGameUsecase } from '@domain/usecases';
 
-import { makeGameCRUD, makeGamePublisher } from '@main/factories';
+import { makeDeleteGamePublisher, makeGameCRUD } from '@main/factories';
 
 export function makeCRUDDeleteGameUsecase(): DeleteGameUsecase {
   const gameCRUD = makeGameCRUD();
-  const gamePublisher = makeGamePublisher();
+  const deleteGamePublisher = makeDeleteGamePublisher();
 
-  return new CRUDDeleteGameUsecase({ gameCRUD, gamePublisher });
+  return new CRUDDeleteGameUsecase({ gameCRUD, deleteGamePublisher });
 }

@@ -10,7 +10,7 @@ import { GameHydrator } from '@data/hydration';
 
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 
-import { GameObserver } from '@data/observers';
+import { CreateGameObserver } from '@data/observers';
 
 import { GameCRUD } from '@data/cruds';
 
@@ -18,12 +18,12 @@ import { isInteger } from '@domain/utils';
 
 export class CRUDCreateGameUsecase implements CreateGameUsecase {
   private readonly getMe: GetMeUsecase;
-  private readonly gamePublisher: GameObserver.Publisher;
+  private readonly createGamePublisher: CreateGameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDCreateGameUsecase.Deps) {
     this.getMe = deps.getMe;
-    this.gamePublisher = deps.gamePublisher;
+    this.createGamePublisher = deps.createGamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -50,7 +50,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 
     const game = GameHydrator.hydrate(dto);
 
-    this.gamePublisher.notifyCreateGame(game);
+    this.createGamePublisher.notifyCreateGame(game);
 
     return game;
   }
@@ -77,7 +77,7 @@ export class CRUDCreateGameUsecase implements CreateGameUsecase {
 export namespace CRUDCreateGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
-    gamePublisher: GameObserver.Publisher;
+    createGamePublisher: CreateGameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

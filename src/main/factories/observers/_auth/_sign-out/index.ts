@@ -1,12 +1,12 @@
 import { SignOutObserver } from '@data/observers';
 import { SignOutPublisher } from '@main/observers';
 
-import { makeStoreSignOutSubscriber } from '@main/factories';
+import { makeAuthStoreSignOutSubscriber } from '@main/factories';
 
 export function makeSignOutPublisher(): SignOutObserver.Publisher {
   const publisher = new SignOutPublisher();
 
-  publisher.subscribe(makeStoreSignOutSubscriber());
+  publisher.subscribe(makeAuthStoreSignOutSubscriber());
 
   return publisher;
 }

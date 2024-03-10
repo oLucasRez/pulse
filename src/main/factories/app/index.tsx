@@ -5,19 +5,9 @@ import { GlobalStyle } from '@presentation/styles';
 
 import { store } from '@main/store';
 
-import {
-  makeGamePublisher,
-  makePlayerPublisher,
-  makeRouter,
-  makeStoreGameSubscriber,
-  makeStorePlayerSubscriber,
-} from '..';
+import { makePlayerPublisher, makeRouter, makeStorePlayerSubscriber } from '..';
 
 export function makeApp(): ReactNode {
-  const storeGameSubscriber = makeStoreGameSubscriber();
-  const gamePublisher = makeGamePublisher();
-  gamePublisher.subscribe(storeGameSubscriber);
-
   const storePlayerSubscriber = makeStorePlayerSubscriber();
   const playerPublisher = makePlayerPublisher();
   playerPublisher.subscribe(storePlayerSubscriber);

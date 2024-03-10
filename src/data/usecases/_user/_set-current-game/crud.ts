@@ -10,7 +10,7 @@ import {
   SetCurrentGameUsecase,
 } from '@domain/usecases';
 
-import { ChangeMeObserver, GameObserver } from '@data/observers';
+import { ChangeMeObserver, FetchCurrentGameObserver } from '@data/observers';
 
 import { UserCRUD } from '@data/cruds';
 
@@ -18,14 +18,14 @@ export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly gamePublisher: GameObserver.Publisher;
+  private readonly fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
   private readonly userCRUD: UserCRUD;
 
   public constructor(deps: CRUDSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
     this.getMe = deps.getMe;
     this.changeMePublisher = deps.changeMePublisher;
-    this.gamePublisher = deps.gamePublisher;
+    this.fetchCurrentGamePublisher = deps.fetchCurrentGamePublisher;
     this.userCRUD = deps.userCRUD;
   }
 
@@ -40,8 +40,8 @@ export class CRUDSetCurrentGameUsecase implements SetCurrentGameUsecase {
           metadata: { entity: 'Game', prop: 'id', value: gameID },
         });
 
-      this.gamePublisher.notifyFetchCurrentGame(game);
-    } else this.gamePublisher.notifyFetchCurrentGame(null);
+      this.fetchCurrentGamePublisher.notifyFetchCurrentGame(game);
+    } else this.fetchCurrentGamePublisher.notifyFetchCurrentGame(null);
 
     const dto = await this.userCRUD.update(me.uid, {
       currentGameID: gameID,
@@ -60,7 +60,7 @@ export namespace CRUDSetCurrentGameUsecase {
     getGame: GetGameUsecase;
     getMe: GetMeUsecase;
     changeMePublisher: ChangeMeObserver.Publisher;
-    gamePublisher: GameObserver.Publisher;
+    fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
     userCRUD: UserCRUD;
   };
 }

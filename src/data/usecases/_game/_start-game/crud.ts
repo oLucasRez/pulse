@@ -15,7 +15,7 @@ import {
   StartGameUsecase,
 } from '@domain/usecases';
 
-import { GameObserver } from '@data/observers';
+import { StartGameObserver } from '@data/observers';
 
 import { GameCRUD } from '@data/cruds';
 
@@ -27,7 +27,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
   private readonly getPlayers: GetPlayersUsecase;
   private readonly passTurn: PassTurnUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
-  private readonly gamePublisher: GameObserver.Publisher;
+  private readonly startGamePublisher: StartGameObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDStartGameUsecase.Deps) {
@@ -38,7 +38,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
     this.getPlayers = deps.getPlayers;
     this.passTurn = deps.passTurn;
     this.setPlayerDice = deps.setPlayerDice;
-    this.gamePublisher = deps.gamePublisher;
+    this.startGamePublisher = deps.startGamePublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -87,7 +87,7 @@ export class CRUDStartGameUsecase implements StartGameUsecase {
 
     const game = GameHydrator.hydrate(dto);
 
-    this.gamePublisher.notifyStartGame(game);
+    this.startGamePublisher.notifyStartGame(game);
 
     return game;
   }
@@ -102,7 +102,7 @@ export namespace CRUDStartGameUsecase {
     getPlayers: GetPlayersUsecase;
     passTurn: PassTurnUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
-    gamePublisher: GameObserver.Publisher;
+    startGamePublisher: StartGameObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }

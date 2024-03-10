@@ -3,7 +3,7 @@ import { SetCurrentGameUsecase } from '@domain/usecases';
 
 import {
   makeChangeMePublisher,
-  makeGamePublisher,
+  makeFetchCurrentGamePublisher,
   makeGetGameUsecase,
   makeGetMeUsecase,
   makeUserCRUD,
@@ -11,14 +11,14 @@ import {
 
 export function makeCRUDSetCurrentGameUsecase(): SetCurrentGameUsecase {
   const changeMePublisher = makeChangeMePublisher();
-  const gamePublisher = makeGamePublisher();
+  const fetchCurrentGamePublisher = makeFetchCurrentGamePublisher();
   const getGame = makeGetGameUsecase();
   const getMe = makeGetMeUsecase();
   const userCRUD = makeUserCRUD();
 
   return new CRUDSetCurrentGameUsecase({
     changeMePublisher,
-    gamePublisher,
+    fetchCurrentGamePublisher,
     getGame,
     getMe,
     userCRUD,

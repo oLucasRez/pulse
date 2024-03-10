@@ -2,15 +2,19 @@ import { CRUDGetCurrentGameUsecase } from '@data/usecases';
 import { GetCurrentGameUsecase } from '@domain/usecases';
 
 import {
+  makeFetchCurrentGamePublisher,
   makeGameCRUD,
-  makeGamePublisher,
   makeGetMeUsecase,
 } from '@main/factories';
 
 export function makeCRUDGetCurrentGameUsecase(): GetCurrentGameUsecase {
   const gameCRUD = makeGameCRUD();
-  const gamePublisher = makeGamePublisher();
+  const fetchCurrentGamePublisher = makeFetchCurrentGamePublisher();
   const getMe = makeGetMeUsecase();
 
-  return new CRUDGetCurrentGameUsecase({ gameCRUD, gamePublisher, getMe });
+  return new CRUDGetCurrentGameUsecase({
+    gameCRUD,
+    fetchCurrentGamePublisher,
+    getMe,
+  });
 }

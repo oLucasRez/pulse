@@ -6,18 +6,18 @@ import { GameHydrator } from '@data/hydration';
 
 import { GetGamesUsecase, GetMeUsecase } from '@domain/usecases';
 
-import { GameObserver } from '@data/observers';
+import { FetchGamesObserver } from '@data/observers';
 
 import { GameCRUD } from '@data/cruds';
 
 export class CRUDGetGamesUsecase implements GetGamesUsecase {
   private readonly getMe: GetMeUsecase;
-  private readonly gamePublisher: GameObserver.Publisher;
+  private readonly fetchGamesPublisher: FetchGamesObserver.Publisher;
   private readonly gameCRUD: GameCRUD;
 
   public constructor(deps: CRUDGetGamesUsecase.Deps) {
     this.getMe = deps.getMe;
-    this.gamePublisher = deps.gamePublisher;
+    this.fetchGamesPublisher = deps.fetchGamesPublisher;
     this.gameCRUD = deps.gameCRUD;
   }
 
@@ -34,7 +34,7 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
 
     const games = dto.map(GameHydrator.hydrate);
 
-    this.gamePublisher.notifyFetchGames(games);
+    this.fetchGamesPublisher.notifyFetchGames(games);
 
     return games;
   }
@@ -43,7 +43,7 @@ export class CRUDGetGamesUsecase implements GetGamesUsecase {
 export namespace CRUDGetGamesUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
-    gamePublisher: GameObserver.Publisher;
+    fetchGamesPublisher: FetchGamesObserver.Publisher;
     gameCRUD: GameCRUD;
   };
 }
