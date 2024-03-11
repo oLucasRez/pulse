@@ -1,6 +1,6 @@
 import { GetMySubjectUsecase } from '@domain/usecases';
 
-import { makeDAOGetMySubjectUsecase } from './crud';
+import { makeDAOGetMySubjectUsecase } from './dao';
 
 export function makeGetMySubjectUsecase(): GetMySubjectUsecase {
   return makeDAOGetMySubjectUsecase();

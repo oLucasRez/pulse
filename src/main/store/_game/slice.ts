@@ -3,10 +3,10 @@ import { createSlice, Slice } from '@reduxjs/toolkit';
 import { GameState } from './types';
 
 import {
+  changeCurrentGameReducers,
   changeGameReducers,
   createGameReducers,
   deleteGameReducers,
-  fetchCurrentGameReducers,
   fetchGameReducers,
   fetchGamesReducers,
   signOutReducers,
@@ -22,10 +22,10 @@ const gameSlice: Slice<GameState> = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    changeCurrentGameReducers(builder);
     changeGameReducers(builder);
     createGameReducers(builder);
     deleteGameReducers(builder);
-    fetchCurrentGameReducers(builder);
     fetchGameReducers(builder);
     fetchGamesReducers(builder);
     signOutReducers(builder);

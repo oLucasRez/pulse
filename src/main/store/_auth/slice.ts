@@ -3,6 +3,7 @@ import { createSlice, Slice } from '@reduxjs/toolkit';
 import { AuthState } from './types';
 
 import {
+  changeCurrentGameReducers,
   changeMeReducers,
   fetchMeReducers,
   signInReducers,
@@ -18,6 +19,7 @@ const authSlice: Slice<AuthState> = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    changeCurrentGameReducers(builder);
     changeMeReducers(builder);
     fetchMeReducers(builder);
     signInReducers(builder);

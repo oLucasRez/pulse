@@ -1,6 +1,6 @@
 import { UserDAO } from '@data/dao';
 
-import { DatabaseUserDAO } from '@main/adapters/cruds';
+import { DatabaseUserDAO } from '@main/adapters/dao';
 import { makeDatabase, makeUsersTableGenerator } from '@main/factories';
 
 export function makeDatabaseUserDAO(): UserDAO {

@@ -3,15 +3,18 @@ import { WatchSubjectsUsecase } from '@domain/usecases';
 
 import { SubjectDAO } from '@data/dao';
 import { SubjectHydrator } from '@data/hydration';
+import { FetchSubjectsObserver } from '@data/observers';
 import { SocketProtocol, TableGenerator } from '@data/protocols';
 
 export class SocketWatchSubjectsUsecase implements WatchSubjectsUsecase {
   private readonly tableGenerator: TableGenerator;
   private readonly socket: SocketProtocol;
+  private readonly fetchSubjectsPublisher: FetchSubjectsObserver.Publisher;
 
   public constructor(deps: SocketWatchSubjectsUsecase.Deps) {
     this.tableGenerator = deps.tableGenerator;
     this.socket = deps.socket;
+    this.fetchSubjectsPublisher = deps.fetchSubjectsPublisher;
   }
 
   public async execute(
@@ -20,8 +23,15 @@ export class SocketWatchSubjectsUsecase implements WatchSubjectsUsecase {
     try {
       const table = await this.tableGenerator.getTable();
 
-      const unsubscribe = this.socket.watch<SubjectDAO.DTO>(table, (subjects) =>
-        callback(subjects.map(SubjectHydrator.hydrate)),
+      const unsubscribe = this.socket.watch<SubjectDAO.DTO>(
+        table,
+        (snapshot) => {
+          const subjects = snapshot.map(SubjectHydrator.hydrate);
+
+          this.fetchSubjectsPublisher.notifyFetchSubjects(subjects);
+
+          callback(subjects);
+        },
       );
 
       return unsubscribe;
@@ -37,5 +47,6 @@ export namespace SocketWatchSubjectsUsecase {
   export type Deps = {
     tableGenerator: TableGenerator;
     socket: SocketProtocol;
+    fetchSubjectsPublisher: FetchSubjectsObserver.Publisher;
   };
 }

@@ -1,6 +1,6 @@
 import { CentralFactDAO } from '@data/dao';
 
-import { DatabaseCentralFactDAO } from '@main/adapters/cruds';
+import { DatabaseCentralFactDAO } from '@main/adapters/dao';
 import { makeCentralFactsTableGenerator, makeDatabase } from '@main/factories';
 
 export function makeDatabaseCentralFactDAO(): CentralFactDAO {

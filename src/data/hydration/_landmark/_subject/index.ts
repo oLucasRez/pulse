@@ -12,6 +12,7 @@ export class SubjectHydrator {
     >(LandmarkHydrator.hydrate(dto), {
       description: dto.description,
       color: dto.color,
+      icon: dto.icon,
       authorID: dto.authorID,
       pathIDs: dto.pathIDs,
     });

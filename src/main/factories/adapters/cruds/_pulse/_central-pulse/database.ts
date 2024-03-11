@@ -1,6 +1,6 @@
 import { CentralPulseDAO } from '@data/dao';
 
-import { DatabaseCentralPulseDAO } from '@main/adapters/cruds';
+import { DatabaseCentralPulseDAO } from '@main/adapters/dao';
 import { makeCentralPulsesTableGenerator, makeDatabase } from '@main/factories';
 
 export function makeDatabaseCentralPulseDAO(): CentralPulseDAO {

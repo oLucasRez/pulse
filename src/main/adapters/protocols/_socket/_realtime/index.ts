@@ -15,9 +15,11 @@ export class RealtimeSocket implements SocketProtocol {
     const _ref = ref(FirebaseService.realtimeDB, key);
 
     return onValue(_ref, (snapshot) => {
-      const data = parseData<P>(snapshot.val());
+      if (snapshot.exists()) {
+        const data = parseData<P>(snapshot.val());
 
-      callback(data);
+        callback(data);
+      } else callback([]);
     });
   }
 }

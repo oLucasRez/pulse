@@ -2,11 +2,20 @@ import { WatchSubjectsUsecase } from '@domain/usecases';
 
 import { SocketWatchSubjectsUsecase } from '@data/usecases';
 
-import { makeSocket, makeSubjectsTableGenerator } from '@main/factories';
+import {
+  makeFetchSubjectsPublisher,
+  makeSocket,
+  makeSubjectsTableGenerator,
+} from '@main/factories';
 
 export function makeSocketWatchSubjectsUsecase(): WatchSubjectsUsecase {
+  const fetchSubjectsPublisher = makeFetchSubjectsPublisher();
   const socket = makeSocket('multiple users listen same data');
   const tableGenerator = makeSubjectsTableGenerator();
 
-  return new SocketWatchSubjectsUsecase({ socket, tableGenerator });
+  return new SocketWatchSubjectsUsecase({
+    fetchSubjectsPublisher,
+    socket,
+    tableGenerator,
+  });
 }

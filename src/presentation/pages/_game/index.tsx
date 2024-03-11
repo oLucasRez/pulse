@@ -1,14 +1,15 @@
-import { FC, FocusEvent, ReactNode, useEffect, useRef } from 'react';
+import { FC, FocusEvent, ReactNode, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-import { GlobalLoading } from '@presentation/components';
+import { GlobalLoading, Navigate } from '@presentation/components';
 import {
   useAuthUsecases,
   useGameUsecases,
   usePlayerUsecases,
+  useSubjectUsecases,
 } from '@presentation/contexts';
-import { useNavigate, useStates } from '@presentation/hooks';
+import { useNavigate, useStates, useWatch } from '@presentation/hooks';
 import { getClasses, getColor } from '@presentation/styles/mixins';
 import { alertError } from '@presentation/utils';
 
@@ -20,23 +21,23 @@ import { Container, Main } from './styles';
 
 const GamePage: FC = () => {
   const [s, set] = useStates({
+    watchingCurrentGame: true,
     watchingPlayers: true,
+    watchingSubjects: true,
     settingsIsOpen: false,
     banningPlayer: false,
     startingGame: false,
   });
 
-  const { currentGame, startGame } = useGameUsecases();
+  const { currentGame, watchCurrentGame, startGame } = useGameUsecases();
 
   const { players, myPlayer, watchPlayers, banPlayer } = usePlayerUsecases();
 
-  useEffect(() => {
-    const unsubscribe = watchPlayers().finally(set('watchingPlayers', false));
+  const { watchSubjects } = useSubjectUsecases();
 
-    return () => {
-      unsubscribe.then((_) => _);
-    };
-  }, []);
+  useWatch(() => watchPlayers().finally(set('watchingPlayers', false)));
+  useWatch(() => watchCurrentGame().finally(set('watchingCurrentGame', false)));
+  useWatch(() => watchSubjects().finally(set('watchingSubjects', false)));
 
   const { navigateToHome, navigateToLogout } = useNavigate();
 
@@ -105,7 +106,7 @@ const GamePage: FC = () => {
   }
 
   function renderPlayers(): ReactNode {
-    if (s.watchingPlayers)
+    if (s.watchingPlayers || s.watchingSubjects)
       return (
         <div className='players'>
           <span className='loading'>⏳</span>
@@ -222,7 +223,9 @@ const GamePage: FC = () => {
     );
   }
 
-  if (!currentGame) return <GlobalLoading />;
+  if (s.watchingCurrentGame) return <GlobalLoading />;
+
+  if (!currentGame) return <Navigate.toHome />;
 
   return (
     <>

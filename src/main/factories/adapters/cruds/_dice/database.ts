@@ -1,6 +1,6 @@
 import { DiceDAO } from '@data/dao';
 
-import { DatabaseDiceDAO } from '@main/adapters/cruds';
+import { DatabaseDiceDAO } from '@main/adapters/dao';
 import { makeDatabase, makeDicesTableGenerator } from '@main/factories';
 
 export function makeDatabaseDiceDAO(): DiceDAO {

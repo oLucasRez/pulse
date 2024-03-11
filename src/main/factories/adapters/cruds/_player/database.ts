@@ -1,6 +1,6 @@
 import { PlayerDAO } from '@data/dao';
 
-import { DatabasePlayerDAO } from '@main/adapters/cruds';
+import { DatabasePlayerDAO } from '@main/adapters/dao';
 import { makeDatabase, makePlayersTableGenerator } from '@main/factories';
 
 export function makeDatabasePlayerDAO(): PlayerDAO {

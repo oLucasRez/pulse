@@ -6,6 +6,7 @@ import {
   GetGamesUsecase,
   GetGameUsecase,
   StartGameUsecase,
+  WatchCurrentGameUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -13,6 +14,9 @@ import { ContextProviderProps } from '@presentation/types';
 export type GameUsecasesContextValue = {
   myGames: GameModel[];
   currentGame: GameModel | null;
+  watchCurrentGame(
+    callback?: WatchCurrentGameUsecase.Callback,
+  ): Promise<WatchCurrentGameUsecase.Response>;
   fetchGame: GetGameUsecase['execute'];
   fetchGames: GetGamesUsecase['execute'];
   createGame: CreateGameUsecase['execute'];
@@ -22,6 +26,7 @@ export type GameUsecasesContextValue = {
 };
 
 export interface GameUsecasesContextProviderProps extends ContextProviderProps {
+  watchCurrentGame: WatchCurrentGameUsecase;
   getGame: GetGameUsecase;
   getGames: GetGamesUsecase;
   createGame: CreateGameUsecase;

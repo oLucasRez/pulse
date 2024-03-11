@@ -8,20 +8,18 @@ import {
 
 import { UserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
-import { ChangeMeObserver, FetchCurrentGameObserver } from '@data/observers';
+import { ChangeCurrentGameObserver } from '@data/observers';
 
 export class DAOSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
   private readonly getMe: GetMeUsecase;
-  private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
+  private readonly changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
   private readonly userDAO: UserDAO;
 
   public constructor(deps: DAOSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
     this.getMe = deps.getMe;
-    this.changeMePublisher = deps.changeMePublisher;
-    this.fetchCurrentGamePublisher = deps.fetchCurrentGamePublisher;
+    this.changeCurrentGamePublisher = deps.changeCurrentGamePublisher;
     this.userDAO = deps.userDAO;
   }
 
@@ -36,16 +34,14 @@ export class DAOSetCurrentGameUsecase implements SetCurrentGameUsecase {
           metadata: { entity: 'Game', prop: 'id', value: gameID },
         });
 
-      this.fetchCurrentGamePublisher.notifyFetchCurrentGame(game);
-    } else this.fetchCurrentGamePublisher.notifyFetchCurrentGame(null);
+      this.changeCurrentGamePublisher.notifyChangeCurrentGame(game);
+    } else this.changeCurrentGamePublisher.notifyChangeCurrentGame(null);
 
     const dto = await this.userDAO.update(me.uid, {
       currentGameID: gameID,
     });
 
     const user = UserHydrator.hydrate(dto);
-
-    this.changeMePublisher.notifyChangeMe(user);
 
     return user;
   }
@@ -55,8 +51,7 @@ export namespace DAOSetCurrentGameUsecase {
   export type Deps = {
     getGame: GetGameUsecase;
     getMe: GetMeUsecase;
-    changeMePublisher: ChangeMeObserver.Publisher;
-    fetchCurrentGamePublisher: FetchCurrentGameObserver.Publisher;
+    changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
     userDAO: UserDAO;
   };
 }

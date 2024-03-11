@@ -7,5 +7,6 @@ export interface CreateMySubjectUsecase {
 export namespace CreateMySubjectUsecase {
   export type Payload = {
     description: string;
+    icon: string;
   };
 }

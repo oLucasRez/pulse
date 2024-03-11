@@ -1,6 +1,6 @@
 import { RoundDAO } from '@data/dao';
 
-import { DatabaseRoundDAO } from '@main/adapters/cruds';
+import { DatabaseRoundDAO } from '@main/adapters/dao';
 import { makeDatabase, makeRoundsTableGenerator } from '@main/factories';
 
 export function makeDatabaseRoundDAO(): RoundDAO {

@@ -14,6 +14,7 @@ import {
   makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
   makeRoundUsecasesContextProvider,
+  makeSubjectUsecasesContextProvider,
   makeUserUsecasesContextProvider,
 } from '@main/factories';
 
@@ -24,6 +25,7 @@ export function makeGamePage(): ReactElement {
     // inner
     makeCentralFactUsecasesContextProvider,
     makeCentralPulseUsecasesContextProvider,
+    makeSubjectUsecasesContextProvider,
     makeRoundUsecasesContextProvider,
     makePlayerUsecasesContextProvider,
     makeDiceUsecasesContextProvider,

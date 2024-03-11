@@ -1,1 +1,1 @@
-export { DAOCreateSubjectUsecase } from './crud';
+export { DAOCreateSubjectUsecase } from './dao';

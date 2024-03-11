@@ -9,12 +9,12 @@ import { SocketProtocol, TableGenerator } from '@data/protocols';
 export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
   private readonly socket: SocketProtocol;
   private readonly tableGenerator: TableGenerator;
-  private readonly fetchPlayersObserver: FetchPlayersObserver.Publisher;
+  private readonly fetchPlayersPublisher: FetchPlayersObserver.Publisher;
 
   public constructor(deps: SocketWatchPlayersUsecase.Deps) {
     this.socket = deps.socket;
     this.tableGenerator = deps.tableGenerator;
-    this.fetchPlayersObserver = deps.fetchPlayersObserver;
+    this.fetchPlayersPublisher = deps.fetchPlayersPublisher;
   }
 
   public async execute(
@@ -28,7 +28,7 @@ export class SocketWatchPlayersUsecase implements WatchPlayersUsecase {
         (snapshot) => {
           const players = snapshot.map(PlayerHydrator.hydrate);
 
-          this.fetchPlayersObserver.notifyFetchPlayers(players);
+          this.fetchPlayersPublisher.notifyFetchPlayers(players);
 
           callback(players);
         },
@@ -45,6 +45,6 @@ export namespace SocketWatchPlayersUsecase {
   export type Deps = {
     socket: SocketProtocol;
     tableGenerator: TableGenerator;
-    fetchPlayersObserver: FetchPlayersObserver.Publisher;
+    fetchPlayersPublisher: FetchPlayersObserver.Publisher;
   };
 }

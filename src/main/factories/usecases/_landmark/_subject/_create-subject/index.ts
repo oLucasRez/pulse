@@ -1,6 +1,6 @@
 import { CreateSubjectUsecase } from '@domain/usecases';
 
-import { makeDAOCreateSubjectUsecase } from './crud';
+import { makeDAOCreateSubjectUsecase } from './dao';
 
 export function makeCreateSubjectUsecase(): CreateSubjectUsecase {
   return makeDAOCreateSubjectUsecase();

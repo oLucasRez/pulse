@@ -4,6 +4,7 @@ import { PlayerState } from './types';
 
 import {
   banPlayerReducers,
+  changeCurrentGameReducers,
   changePlayerReducers,
   createPlayerReducers,
   deletePlayerReducers,
@@ -22,6 +23,7 @@ const playerSlice: Slice<PlayerState> = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     banPlayerReducers(builder);
+    changeCurrentGameReducers(builder);
     changePlayerReducers(builder);
     createPlayerReducers(builder);
     deletePlayerReducers(builder);

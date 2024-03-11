@@ -1,6 +1,6 @@
 import { SubjectDAO } from '@data/dao';
 
-import { DatabaseSubjectDAO } from '@main/adapters/cruds';
+import { DatabaseSubjectDAO } from '@main/adapters/dao';
 import { makeDatabase, makeSubjectsTableGenerator } from '@main/factories';
 
 export function makeDatabaseSubjectDAO(): SubjectDAO {

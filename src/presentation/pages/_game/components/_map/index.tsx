@@ -14,12 +14,15 @@ import { Vector, VectorSpace } from '@domain/utils';
 import { ms } from '@presentation/constants';
 import {
   useCentralPulseUsecases,
-  useRoundUsecases,
+  useGameUsecases,
+  useSubjectUsecases,
 } from '@presentation/contexts';
 import { useInterval, useStates } from '@presentation/hooks';
 import { logError } from '@presentation/utils';
 
-import { Pulse } from './components';
+import { useMutateSubjectModal } from '../../hooks';
+
+import { PlayersList, Pulse } from './components';
 
 import { Container, ViewBox } from './styles';
 
@@ -55,6 +58,8 @@ export const Map: FC = () => {
     [s.width, s.height],
   );
 
+  const { currentGame } = useGameUsecases();
+
   const { watchCentralPulse } = useCentralPulseUsecases();
   useEffect(() => {
     let unsubscribe: WatchCentralPulseUsecase.Response;
@@ -67,12 +72,22 @@ export const Map: FC = () => {
     return () => unsubscribe?.();
   }, []);
 
-  const { round } = useRoundUsecases();
+  const { mySubject } = useSubjectUsecases();
+
+  const mySubjectShouldBeCreated =
+    currentGame?.state === 'creating:subjects' && !mySubject;
+
+  const { renderMutateSubjectModal } = useMutateSubjectModal({
+    open: mySubjectShouldBeCreated,
+  });
+
+  if (mySubjectShouldBeCreated)
+    return <Container>{renderMutateSubjectModal()}</Container>;
 
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
-        {round && <div>{round.playerIDs.map((player) => player)}</div>}
+        <PlayersList />
 
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}

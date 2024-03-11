@@ -9,12 +9,12 @@ import {
 } from '@main/factories';
 
 export function makeSocketWatchPlayersUsecase(): WatchPlayersUsecase {
-  const fetchPlayersObserver = makeFetchPlayersPublisher();
+  const fetchPlayersPublisher = makeFetchPlayersPublisher();
   const tableGenerator = makePlayersTableGenerator();
   const socket = makeSocket('multiple users listen same data');
 
   return new SocketWatchPlayersUsecase({
-    fetchPlayersObserver,
+    fetchPlayersPublisher,
     socket,
     tableGenerator,
   });

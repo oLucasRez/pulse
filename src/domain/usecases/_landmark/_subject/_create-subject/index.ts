@@ -11,5 +11,6 @@ export namespace CreateSubjectUsecase {
     position: Vector | null;
     description: string;
     color: Color;
+    icon: string;
   };
 }

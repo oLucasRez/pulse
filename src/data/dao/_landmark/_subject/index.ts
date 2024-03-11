@@ -18,6 +18,7 @@ export namespace SubjectDAO {
   type BaseDTO = LandmarkDAO.BaseDTO & {
     description: string;
     color: Color;
+    icon: string;
     authorID: string;
     pathIDs: string[];
   };
