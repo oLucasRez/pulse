@@ -15,7 +15,8 @@ import { ms } from '@presentation/constants';
 import {
   useCentralPulseUsecases,
   useGameUsecases,
-  useSubjectUsecases,
+  usePlayerUsecases,
+  useRoundUsecases,
 } from '@presentation/contexts';
 import { useInterval, useStates } from '@presentation/hooks';
 import { logError } from '@presentation/utils';
@@ -72,17 +73,19 @@ export const Map: FC = () => {
     return () => unsubscribe?.();
   }, []);
 
-  const { mySubject } = useSubjectUsecases();
+  const { currentPlayer, passTurn } = useRoundUsecases();
+  const { myPlayer } = usePlayerUsecases();
 
-  const mySubjectShouldBeCreated =
-    currentGame?.state === 'creating:subjects' && !mySubject;
+  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
-  const { renderMutateSubjectModal } = useMutateSubjectModal({
-    open: mySubjectShouldBeCreated,
-  });
+  const { renderMutateSubjectModal, openMutateSubjectModal } =
+    useMutateSubjectModal({ onSuccess: passTurn });
 
-  if (mySubjectShouldBeCreated)
-    return <Container>{renderMutateSubjectModal()}</Container>;
+  useEffect(() => {
+    if (currentGame?.state !== 'creating:subjects') return;
+
+    if (isMyTurn) openMutateSubjectModal();
+  }, [isMyTurn]);
 
   return (
     <Context.Provider value={{ mapSpace }}>
@@ -92,6 +95,8 @@ export const Map: FC = () => {
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}
         </ViewBox>
+
+        {renderMutateSubjectModal()}
       </Container>
     </Context.Provider>
   );

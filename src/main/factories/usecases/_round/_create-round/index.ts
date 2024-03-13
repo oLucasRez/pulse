@@ -1,6 +1,6 @@
 import { CreateRoundUsecase } from '@domain/usecases';
 
-import { makeDAOCreateRoundUsecase } from './crud';
+import { makeDAOCreateRoundUsecase } from './dao';
 
 export function makeCreateRoundUsecase(): CreateRoundUsecase {
   return makeDAOCreateRoundUsecase();

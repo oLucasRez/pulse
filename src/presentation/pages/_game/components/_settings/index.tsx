@@ -29,7 +29,7 @@ export const Settings: FC<SettingsProps> = (props) => {
       maxPlayers: currentGame
         ? Number(currentGame?.config.maxPlayers)
         : undefined,
-      withLightspot: currentGame?.config.withLightspot,
+      withLightSpot: currentGame?.config.withLightSpot,
       dicesMode: currentGame?.config.dicesMode,
     },
   });
@@ -43,7 +43,7 @@ export const Settings: FC<SettingsProps> = (props) => {
       title: data.title,
       config: {
         maxPlayers: data.maxPlayers,
-        withLightspot: data.withLightspot,
+        withLightSpot: data.withLightSpot,
         dicesMode: data.dicesMode,
       },
     })
@@ -86,10 +86,10 @@ export const Settings: FC<SettingsProps> = (props) => {
           <span>{maxPlayers}</span>
         </div>
 
-        <label htmlFor='withLightspot'>With Lightspot</label>
+        <label htmlFor='withLightSpot'>With LightSpot</label>
         <input
-          {...register('withLightspot')}
-          id='withLightspot'
+          {...register('withLightSpot')}
+          id='withLightSpot'
           type='checkbox'
         />
 

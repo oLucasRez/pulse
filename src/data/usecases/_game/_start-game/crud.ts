@@ -6,9 +6,9 @@ import {
   CreateRoundUsecase,
   GetCurrentGameUsecase,
   GetPlayersUsecase,
-  PassTurnUsecase,
   SetPlayerDiceUsecase,
   StartGameUsecase,
+  StartRoundUsecase,
 } from '@domain/usecases';
 
 import { GameDAO } from '@data/dao';
@@ -21,7 +21,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
   private readonly createRound: CreateRoundUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly passTurn: PassTurnUsecase;
+  private readonly startRound: StartRoundUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly startGamePublisher: StartGameObserver.Publisher;
   private readonly gameDAO: GameDAO;
@@ -32,7 +32,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
     this.createRound = deps.createRound;
     this.getCurrentGame = deps.getCurrentGame;
     this.getPlayers = deps.getPlayers;
-    this.passTurn = deps.passTurn;
+    this.startRound = deps.startRound;
     this.setPlayerDice = deps.setPlayerDice;
     this.startGamePublisher = deps.startGamePublisher;
     this.gameDAO = deps.gameDAO;
@@ -64,7 +64,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
       ),
     );
 
-    const [round, lightspotRound] = await Promise.all([
+    const [round, lightSpotRound] = await Promise.all([
       this.createRound.execute({ playerIDs }),
       this.createRound.execute({ playerIDs }),
     ]);
@@ -73,12 +73,12 @@ export class DAOStartGameUsecase implements StartGameUsecase {
       started: true,
       state: 'creating:subjects',
       roundID: round.id,
-      lightspotRoundID: lightspotRound.id,
+      lightSpotRoundID: lightSpotRound.id,
     });
 
     await Promise.all([
-      this.passTurn.execute(round.id),
-      this.passTurn.execute(lightspotRound.id),
+      this.startRound.execute(round.id, 'clockwise'),
+      this.startRound.execute(lightSpotRound.id, 'clockwise'),
     ]);
 
     const game = GameHydrator.hydrate(dto);
@@ -96,7 +96,7 @@ export namespace DAOStartGameUsecase {
     createRound: CreateRoundUsecase;
     getCurrentGame: GetCurrentGameUsecase;
     getPlayers: GetPlayersUsecase;
-    passTurn: PassTurnUsecase;
+    startRound: StartRoundUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     startGamePublisher: StartGameObserver.Publisher;
     gameDAO: GameDAO;

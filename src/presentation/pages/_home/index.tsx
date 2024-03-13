@@ -41,7 +41,7 @@ const HomePage: FC = () => {
       title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
       config: {
         maxPlayers: 5,
-        withLightspot: true,
+        withLightSpot: true,
         dicesMode: 'growing',
       },
     })

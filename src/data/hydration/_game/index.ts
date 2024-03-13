@@ -13,13 +13,13 @@ export class GameHydrator {
         title: dto.title,
         config: {
           maxPlayers: dto.config.maxPlayers,
-          withLightspot: dto.config.withLightspot,
+          withLightSpot: dto.config.withLightSpot,
           dicesMode: dto.config.dicesMode,
         },
         started: dto.started,
         state: dto.state,
         roundID: dto.roundID,
-        lightspotRoundID: dto.lightspotRoundID,
+        lightSpotRoundID: dto.lightSpotRoundID,
       },
     );
 

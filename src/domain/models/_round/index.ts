@@ -1,6 +1,11 @@
 import { Model, PlayerModel } from '..';
 
 export interface RoundModel extends Model {
+  i: number | null;
+  clockwise: RoundModel.Clockwise | null;
   playerIDs: PlayerModel['id'][];
-  currentPlayerID: PlayerModel['id'] | null;
+}
+
+export namespace RoundModel {
+  export type Clockwise = 'clockwise' | 'counterclockwise';
 }

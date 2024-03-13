@@ -9,7 +9,7 @@ export namespace CreateGameUsecase {
     title?: string;
     config: {
       maxPlayers: number;
-      withLightspot: boolean;
+      withLightSpot: boolean;
       dicesMode: 'equal' | 'growing';
     };
   };

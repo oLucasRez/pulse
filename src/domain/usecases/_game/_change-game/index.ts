@@ -9,7 +9,7 @@ export namespace ChangeGameUsecase {
     title?: string;
     config?: {
       maxPlayers?: number;
-      withLightspot?: boolean;
+      withLightSpot?: boolean;
       dicesMode?: GameModel.DicesMode;
     };
   };

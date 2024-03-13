@@ -7,6 +7,7 @@ import {
   useAuthUsecases,
   useGameUsecases,
   usePlayerUsecases,
+  useRoundUsecases,
   useSubjectUsecases,
 } from '@presentation/contexts';
 import { useNavigate, useStates, useWatch } from '@presentation/hooks';
@@ -24,6 +25,7 @@ const GamePage: FC = () => {
     watchingCurrentGame: true,
     watchingPlayers: true,
     watchingSubjects: true,
+    watchingRounds: true,
     settingsIsOpen: false,
     banningPlayer: false,
     startingGame: false,
@@ -33,10 +35,12 @@ const GamePage: FC = () => {
 
   const { players, myPlayer, watchPlayers, banPlayer } = usePlayerUsecases();
 
+  const { watchRounds } = useRoundUsecases();
   const { watchSubjects } = useSubjectUsecases();
 
   useWatch(() => watchPlayers().finally(set('watchingPlayers', false)));
   useWatch(() => watchCurrentGame().finally(set('watchingCurrentGame', false)));
+  useWatch(() => watchRounds().finally(set('watchingRounds', false)));
   useWatch(() => watchSubjects().finally(set('watchingSubjects', false)));
 
   const { navigateToHome, navigateToLogout } = useNavigate();
@@ -106,7 +110,7 @@ const GamePage: FC = () => {
   }
 
   function renderPlayers(): ReactNode {
-    if (s.watchingPlayers || s.watchingSubjects)
+    if (s.watchingPlayers)
       return (
         <div className='players'>
           <span className='loading'>⏳</span>
@@ -223,7 +227,8 @@ const GamePage: FC = () => {
     );
   }
 
-  if (s.watchingCurrentGame) return <GlobalLoading />;
+  if (s.watchingCurrentGame || s.watchingRounds || s.watchingSubjects)
+    return <GlobalLoading />;
 
   if (!currentGame) return <Navigate.toHome />;
 

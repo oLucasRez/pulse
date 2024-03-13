@@ -7,7 +7,7 @@ export interface GameModel extends Model {
   started: boolean;
   state: GameModel.State;
   roundID: RoundModel['id'] | null;
-  lightspotRoundID: RoundModel['id'] | null;
+  lightSpotRoundID: RoundModel['id'] | null;
 }
 
 export namespace GameModel {
@@ -20,7 +20,7 @@ export namespace GameModel {
 
   export type Config = {
     maxPlayers: number;
-    withLightspot: boolean;
+    withLightSpot: boolean;
     dicesMode: DicesMode;
   };
 }

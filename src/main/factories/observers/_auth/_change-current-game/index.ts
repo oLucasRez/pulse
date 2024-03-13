@@ -4,6 +4,7 @@ import {
   makeAuthStoreChangeCurrentGameSubscriber,
   makeGameStoreChangeCurrentGameSubscriber,
   makePlayerStoreChangeCurrentGameSubscriber,
+  makeRoundStoreChangeCurrentGameSubscriber,
   makeSubjectStoreChangeCurrentGameSubscriber,
 } from '@main/factories';
 import { ChangeCurrentGamePublisher } from '@main/observers';
@@ -14,6 +15,7 @@ export function makeChangeCurrentGamePublisher(): ChangeCurrentGameObserver.Publ
   publisher.subscribe(makeAuthStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeGameStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makePlayerStoreChangeCurrentGameSubscriber());
+  publisher.subscribe(makeRoundStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeSubjectStoreChangeCurrentGameSubscriber());
 
   return publisher;

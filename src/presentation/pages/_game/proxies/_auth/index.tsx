@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DomainError } from '@domain/errors';
+import { GameModel } from '@domain/models';
 
 import { AuthForm, GlobalLoading } from '@presentation/components';
 import {
@@ -20,10 +21,13 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   const { children } = props;
 
   const [s, set] = useStates({
+    currentGame: null as GameModel | null,
     authFormMode: 'login' as AuthForm.Mode,
   });
 
   const { setCurrentGame } = useUserUsecases();
+
+  const { fetchGame } = useGameUsecases();
 
   const { navigateToHome } = useNavigate();
 
@@ -32,10 +36,17 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   async function handleAuth(): Promise<any> {
     if (!params.id) return;
 
-    await setCurrentGame(params.id).catch((error: DomainError) => {
+    setCurrentGame(params.id).catch((error: DomainError) => {
       logError(error);
       navigateToHome();
     });
+
+    fetchGame(params.id)
+      .then(set('currentGame'))
+      .catch((error: DomainError) => {
+        logError(error);
+        navigateToHome();
+      });
   }
 
   const { me } = useAuthUsecases();
@@ -43,8 +54,6 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   useEffect(() => {
     if (me) handleAuth();
   }, [!me]);
-
-  const { currentGame } = useGameUsecases();
 
   if (!me)
     return (
@@ -58,7 +67,7 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
       </Container>
     );
 
-  if (!currentGame) return <GlobalLoading />;
+  if (!s.currentGame) return <GlobalLoading />;
 
   return children;
 };

@@ -11,6 +11,15 @@ const rotate = keyframes`
   }
 `;
 
+const grow = keyframes`
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+`;
+
 export const Container = styled.div`
   font-weight: 500;
   min-height: 100vh;
@@ -179,6 +188,7 @@ export const Main = styled.main`
         text-align: center;
         border-radius: 50rem;
         line-height: 1.3;
+        animation: ${grow} 0.2s ease;
       }
 
       .name {

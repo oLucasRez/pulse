@@ -1,10 +1,16 @@
-import { createContext, FC, useCallback, useContext, useEffect } from 'react';
+import { createContext, FC, useCallback, useContext } from 'react';
 
 import { NotFoundError } from '@domain/errors';
-import { RoundModel } from '@domain/models';
+import { WatchRoundsUsecase } from '@domain/usecases';
 
-import { useSelector, useStates } from '@presentation/hooks';
-import { logError } from '@presentation/utils';
+import { useSelector } from '@presentation/hooks';
+
+import {
+  currentLightSpotPlayerSelector,
+  currentPlayerSelector,
+  lightSpotRoundSelector,
+  roundSelector,
+} from '@main/store';
 
 import {
   RoundUsecasesContextProviderProps,
@@ -19,49 +25,42 @@ export const useRoundUsecases = (): RoundUsecasesContextValue =>
 export const RoundUsecasesContextProvider: FC<
   RoundUsecasesContextProviderProps
 > = (props) => {
-  const {
-    getRound,
+  const { children } = props;
 
-    children,
-  } = props;
-
-  const [s, set] = useStates({ round: null as RoundModel | null });
-
-  const currentGame = useSelector(
-    ({ auth, game }) =>
-      game.games.find((game) => game.id === auth.me?.currentGameID) ?? null,
-  );
-
-  useEffect(() => {
-    if (!currentGame?.roundID) return;
-
-    getRound.execute(currentGame.roundID).then(set('round')).catch(logError);
-  }, [currentGame?.roundID]);
+  const round = useSelector(roundSelector);
+  const currentPlayer = useSelector(currentPlayerSelector);
+  const lightSpotRound = useSelector(lightSpotRoundSelector);
+  const currentLightSpotPlayer = useSelector(currentLightSpotPlayerSelector);
 
   const passTurn = useCallback(() => {
-    if (!currentGame)
-      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-    if (!currentGame.roundID)
+    if (!round) throw new NotFoundError({ metadata: { entity: 'Round' } });
+
+    return props.passTurn.execute(round.id);
+  }, [round]);
+
+  const passLightSpotTurn = useCallback(() => {
+    if (!lightSpotRound)
       throw new NotFoundError({ metadata: { entity: 'Round' } });
 
-    return props.passTurn.execute(currentGame.roundID);
-  }, [currentGame, props.passTurn]);
+    return props.passTurn.execute(lightSpotRound.id);
+  }, [lightSpotRound]);
 
-  const passLightspotTurn = useCallback(() => {
-    if (!currentGame)
-      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-    if (!currentGame.lightspotRoundID)
-      throw new NotFoundError({ metadata: { entity: 'Round' } });
-
-    return props.passTurn.execute(currentGame.lightspotRoundID);
-  }, [currentGame, props.passTurn]);
+  const watchRounds = useCallback(
+    (callback?: WatchRoundsUsecase.Callback) =>
+      props.watchRounds.execute(callback ?? ((): any => {})),
+    [],
+  );
 
   return (
     <Context.Provider
       value={{
-        round: s.round,
+        round,
+        currentPlayer,
+        lightSpotRound,
+        currentLightSpotPlayer,
         passTurn,
-        passLightspotTurn,
+        passLightSpotTurn,
+        watchRounds,
       }}
     >
       {children}

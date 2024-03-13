@@ -12,17 +12,20 @@ import { Container } from './styles';
 export const PlayersList: FC = () => {
   const { players } = usePlayerUsecases();
   const { subjects } = useSubjectUsecases();
-  const { round } = useRoundUsecases();
+  const { round, currentPlayer } = useRoundUsecases();
 
   return (
     <Container id='players-list'>
-      {players.map((player) => {
-        const isCurrentPlayer = round?.currentPlayerID === player.id;
+      {round?.playerIDs.map((playerID) => {
+        const isCurrentPlayer = currentPlayer?.id === playerID;
 
-        const subject = subjects.find((value) => value.authorID === player.id);
+        const subject = subjects.find((value) => value.authorID === playerID);
+
+        const player = players.find((value) => value.id === playerID);
+        if (!player) return null;
 
         return (
-          <li key={player.id} style={{ opacity: isCurrentPlayer ? 1 : 0.5 }}>
+          <li key={playerID} style={{ opacity: isCurrentPlayer ? 1 : 0.5 }}>
             <span
               className='avatar'
               style={{ background: getColor(player.color) }}
@@ -30,7 +33,7 @@ export const PlayersList: FC = () => {
               {player.avatar}
             </span>
             <p>
-              <em>
+              <em style={{ color: getColor(player.color) }}>
                 <span className='icon'>{subject?.icon}</span>
                 {subject?.description ?? '--'}
               </em>

@@ -17,13 +17,13 @@ export namespace GameDAO {
     title: string | null;
     config: {
       maxPlayers: number;
-      withLightspot: boolean;
+      withLightSpot: boolean;
       dicesMode: GameModel.DicesMode;
     };
     started: boolean;
     state: GameModel.State;
     roundID: string | null;
-    lightspotRoundID: string | null;
+    lightSpotRoundID: string | null;
   };
 
   export type DTO = ModelDAO.DTO & BaseDTO;

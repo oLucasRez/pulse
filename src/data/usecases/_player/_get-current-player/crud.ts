@@ -27,12 +27,13 @@ export class DAOGetCurrentPlayerUsecase implements GetCurrentPlayerUsecase {
         metadata: { entity: 'Round', prop: 'id', value: roundID },
       });
 
-    if (!round.currentPlayerID) return null;
+    // @todo: corrigir isso
+    if (!round.playerIDs[0]) return null;
 
-    const currentPlayer = await this.getPlayer.execute(round.currentPlayerID);
+    const currentPlayer = await this.getPlayer.execute(round.playerIDs[0]);
 
     this.fetchPlayerPublisher.notifyFetchPlayer(
-      round.currentPlayerID,
+      round.playerIDs[0],
       currentPlayer,
     );
 

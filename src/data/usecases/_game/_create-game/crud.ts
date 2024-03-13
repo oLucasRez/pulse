@@ -40,7 +40,7 @@ export class DAOCreateGameUsecase implements CreateGameUsecase {
       started: false,
       state: 'initial:state',
       roundID: null,
-      lightspotRoundID: null,
+      lightSpotRoundID: null,
     });
 
     const game = GameHydrator.hydrate(dto);

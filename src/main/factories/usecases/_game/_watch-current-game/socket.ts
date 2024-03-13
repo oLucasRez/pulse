@@ -12,7 +12,7 @@ import {
 export function makeSocketWatchCurrentGameUsecase(): WatchCurrentGameUsecase {
   const fetchGamePublisher = makeFetchGamePublisher();
   const getMe = makeGetMeUsecase();
-  const socket = makeSocket('only 1 user listen each data');
+  const socket = makeSocket('multiple users listen same data');
   const tableGenerator = makeGamesTableGenerator();
 
   return new SocketWatchCurrentGameUsecase({

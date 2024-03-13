@@ -7,6 +7,6 @@ export interface SettingsProps {
 export type SettingsFieldValues = {
   title: string;
   maxPlayers: number;
-  withLightspot: boolean;
+  withLightSpot: boolean;
   dicesMode: GameModel.DicesMode;
 };

@@ -35,7 +35,7 @@ export const Container = styled.aside`
       }
     }
 
-    > input#withLightspot {
+    > input#withLightSpot {
       width: 1.5rem;
     }
 

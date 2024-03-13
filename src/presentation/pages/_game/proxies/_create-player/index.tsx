@@ -5,6 +5,7 @@ import { PlayerModel } from '@domain/models';
 import { GlobalLoading } from '@presentation/components';
 import { usePlayerUsecases } from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
+import { logError } from '@presentation/utils';
 
 import { useMutatePlayerModal } from '../../hooks';
 
@@ -23,6 +24,7 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
   useEffect(() => {
     fetchMyPlayer()
       .then(set('myPlayer'))
+      .catch(logError)
       .finally(set('fetchingMyPlayer', false));
   }, []);
 

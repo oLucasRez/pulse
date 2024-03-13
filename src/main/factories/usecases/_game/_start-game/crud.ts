@@ -9,9 +9,9 @@ import {
   makeGameDAO,
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
-  makePassTurnUsecase,
   makeSetPlayerDiceUsecase,
   makeStartGamePublisher,
+  makeStartRoundUsecase,
 } from '@main/factories';
 
 export function makeDAOStartGameUsecase(): StartGameUsecase {
@@ -22,18 +22,18 @@ export function makeDAOStartGameUsecase(): StartGameUsecase {
   const startGamePublisher = makeStartGamePublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
-  const passTurn = makePassTurnUsecase();
   const setPlayerDice = makeSetPlayerDiceUsecase();
+  const startRound = makeStartRoundUsecase();
 
   return new DAOStartGameUsecase({
     createCentralPulse,
     createDice,
     createRound,
     gameDAO,
-    startGamePublisher,
     getCurrentGame,
     getPlayers,
-    passTurn,
     setPlayerDice,
+    startGamePublisher,
+    startRound,
   });
 }

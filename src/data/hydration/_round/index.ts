@@ -11,7 +11,8 @@ export class RoundHydrator {
       Omit<RoundModel, keyof Model>
     >(ModelHydrator.hydrate(dto), {
       playerIDs: dto.playerIDs,
-      currentPlayerID: dto.currentPlayerID,
+      i: dto.i,
+      clockwise: dto.clockwise,
     });
 
     return round;

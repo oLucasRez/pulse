@@ -1,3 +1,4 @@
+import { RoundModel } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
 import { ModelDAO } from '..';
@@ -13,7 +14,8 @@ export interface RoundDAO {
 export namespace RoundDAO {
   type BaseDTO = {
     playerIDs: string[];
-    currentPlayerID: string | null;
+    i: number | null;
+    clockwise: RoundModel.Clockwise | null;
   };
 
   export type DTO = ModelDAO.DTO & BaseDTO;
