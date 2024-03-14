@@ -1,1 +1,1 @@
-export { DAODeleteGameUsecase } from './crud';
+export * from './dao';

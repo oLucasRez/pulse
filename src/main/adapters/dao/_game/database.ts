@@ -1,14 +1,20 @@
 import { GameDAO } from '@data/dao';
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import {
+  DatabaseProtocol,
+  SocketProtocol,
+  TableGenerator,
+} from '@data/protocols';
 
 import { Asyncleton } from '@main/utils';
 
 export class DatabaseGameDAO implements GameDAO {
   private readonly database: DatabaseProtocol;
+  private readonly socket: SocketProtocol;
   private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseGameDAO.Deps) {
     this.database = deps.database;
+    this.socket = deps.socket;
     this.tableGenerator = deps.tableGenerator;
   }
 
@@ -56,11 +62,20 @@ export class DatabaseGameDAO implements GameDAO {
 
     await this.database.delete(table, id);
   }
+
+  public async watch(
+    callback: (dtos: GameDAO.DTO[]) => void,
+  ): Promise<() => void> {
+    const table = await this.tableGenerator.getTable();
+
+    return this.socket.watch<GameDAO.DTO>(table, callback);
+  }
 }
 
 export namespace DatabaseGameDAO {
   export type Deps = {
     database: DatabaseProtocol;
+    socket: SocketProtocol;
     tableGenerator: TableGenerator;
   };
 }

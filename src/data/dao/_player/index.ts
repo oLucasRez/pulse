@@ -9,6 +9,7 @@ export interface PlayerDAO {
   read(id: string): Promise<PlayerDAO.DTO | null>;
   update(id: string, payload: PlayerDAO.UpdatePayload): Promise<PlayerDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: PlayerDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace PlayerDAO {

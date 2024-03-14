@@ -1,7 +1,7 @@
 import { WatchCentralPulseUsecase } from '@domain/usecases';
 
-import { makeSocketWatchCentralPulseUsecase } from './socket';
+import { makeDAOWatchCentralPulseUsecase } from './dao';
 
 export function makeWatchCentralPulseUsecase(): WatchCentralPulseUsecase {
-  return makeSocketWatchCentralPulseUsecase();
+  return makeDAOWatchCentralPulseUsecase();
 }

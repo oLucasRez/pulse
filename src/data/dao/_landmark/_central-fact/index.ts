@@ -12,6 +12,7 @@ export interface CentralFactDAO {
     payload: CentralFactDAO.UpdatePayload,
   ): Promise<CentralFactDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: CentralFactDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace CentralFactDAO {

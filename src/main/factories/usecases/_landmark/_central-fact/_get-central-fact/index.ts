@@ -1,6 +1,6 @@
 import { GetCentralFactUsecase } from '@domain/usecases';
 
-import { makeDAOGetCentralFactUsecase } from './crud';
+import { makeDAOGetCentralFactUsecase } from './dao';
 
 export function makeGetCentralFactUsecase(): GetCentralFactUsecase {
   return makeDAOGetCentralFactUsecase();

@@ -1,6 +1,6 @@
 import { GetMyPlayerUsecase } from '@domain/usecases';
 
-import { makeDAOGetMyPlayerUsecase } from './crud';
+import { makeDAOGetMyPlayerUsecase } from './dao';
 
 export function makeGetMyPlayerUsecase(): GetMyPlayerUsecase {
   return makeDAOGetMyPlayerUsecase();

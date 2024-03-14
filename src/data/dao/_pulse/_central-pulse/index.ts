@@ -11,6 +11,7 @@ export interface CentralPulseDAO {
     payload: CentralPulseDAO.UpdatePayload,
   ): Promise<CentralPulseDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: CentralPulseDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace CentralPulseDAO {

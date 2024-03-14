@@ -4,11 +4,11 @@ import {
   WatchPlayersUsecase,
 } from '@domain/usecases';
 
-export class SocketWatchMyPlayerUsecase implements WatchMyPlayerUsecase {
+export class DAOWatchMyPlayerUsecase implements WatchMyPlayerUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly watchPlayers: WatchPlayersUsecase;
 
-  public constructor(deps: SocketWatchMyPlayerUsecase.Deps) {
+  public constructor(deps: DAOWatchMyPlayerUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
     this.watchPlayers = deps.watchPlayers;
   }
@@ -33,7 +33,7 @@ export class SocketWatchMyPlayerUsecase implements WatchMyPlayerUsecase {
   }
 }
 
-export namespace SocketWatchMyPlayerUsecase {
+export namespace DAOWatchMyPlayerUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     watchPlayers: WatchPlayersUsecase;

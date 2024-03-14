@@ -1,1 +1,1 @@
-export { SocketWatchSubjectsUsecase } from './socket';
+export { DAOWatchSubjectsUsecase } from './dao';

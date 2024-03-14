@@ -1,6 +1,6 @@
 import { CreateCentralPulseUsecase } from '@domain/usecases';
 
-import { makeDAOCreateCentralPulseUsecase } from './crud';
+import { makeDAOCreateCentralPulseUsecase } from './dao';
 
 export function makeCreateCentralPulseUsecase(): CreateCentralPulseUsecase {
   return makeDAOCreateCentralPulseUsecase();

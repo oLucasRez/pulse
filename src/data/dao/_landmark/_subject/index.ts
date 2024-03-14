@@ -12,6 +12,7 @@ export interface SubjectDAO {
     payload: SubjectDAO.UpdatePayload,
   ): Promise<SubjectDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: SubjectDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace SubjectDAO {

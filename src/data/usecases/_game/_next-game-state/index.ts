@@ -1,1 +1,1 @@
-export { DAONextGameStateUsecase } from './dao';
+export * from './dao';

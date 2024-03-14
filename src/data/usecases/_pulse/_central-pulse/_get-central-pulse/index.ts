@@ -1,1 +1,1 @@
-export { DAOGetCentralPulseUsecase } from './crud';
+export { DAOGetCentralPulseUsecase } from './dao';

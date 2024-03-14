@@ -9,6 +9,7 @@ export interface DiceDAO {
   read(id: string): Promise<DiceDAO.DTO | null>;
   update(id: string, payload: DiceDAO.UpdatePayload): Promise<DiceDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: DiceDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace DiceDAO {

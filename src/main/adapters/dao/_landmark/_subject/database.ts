@@ -1,14 +1,20 @@
 import { SubjectDAO } from '@data/dao';
-import { DatabaseProtocol, TableGenerator } from '@data/protocols';
+import {
+  DatabaseProtocol,
+  SocketProtocol,
+  TableGenerator,
+} from '@data/protocols';
 
 import { Asyncleton } from '@main/utils';
 
 export class DatabaseSubjectDAO implements SubjectDAO {
   private readonly database: DatabaseProtocol;
+  private readonly socket: SocketProtocol;
   private readonly tableGenerator: TableGenerator;
 
   public constructor(deps: DatabaseSubjectDAO.Deps) {
     this.database = deps.database;
+    this.socket = deps.socket;
     this.tableGenerator = deps.tableGenerator;
   }
 
@@ -69,11 +75,20 @@ export class DatabaseSubjectDAO implements SubjectDAO {
 
     await this.database.delete(table, id);
   }
+
+  public async watch(
+    callback: (dtos: SubjectDAO.DTO[]) => void,
+  ): Promise<() => void> {
+    const table = await this.tableGenerator.getTable();
+
+    return this.socket.watch<SubjectDAO.DTO>(table, callback);
+  }
 }
 
 export namespace DatabaseSubjectDAO {
   export type Deps = {
     database: DatabaseProtocol;
+    socket: SocketProtocol;
     tableGenerator: TableGenerator;
   };
 }

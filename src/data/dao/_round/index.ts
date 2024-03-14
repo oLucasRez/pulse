@@ -9,6 +9,7 @@ export interface RoundDAO {
   read(id: string): Promise<RoundDAO.DTO | null>;
   update(id: string, payload: RoundDAO.UpdatePayload): Promise<RoundDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: RoundDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace RoundDAO {

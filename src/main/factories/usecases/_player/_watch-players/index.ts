@@ -1,7 +1,7 @@
 import { WatchPlayersUsecase } from '@domain/usecases';
 
-import { makeSocketWatchPlayersUsecase } from './socket';
+import { makeDAOWatchPlayersUsecase } from './dao';
 
 export function makeWatchPlayersUsecase(): WatchPlayersUsecase {
-  return makeSocketWatchPlayersUsecase();
+  return makeDAOWatchPlayersUsecase();
 }

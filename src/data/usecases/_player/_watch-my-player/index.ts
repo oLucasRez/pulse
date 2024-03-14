@@ -1,1 +1,1 @@
-export { SocketWatchMyPlayerUsecase } from './socket';
+export { DAOWatchMyPlayerUsecase } from './dao';

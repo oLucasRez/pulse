@@ -1,1 +1,1 @@
-export { DAOChangeCentralFactUsecase } from './crud';
+export { DAOChangeCentralFactUsecase } from './dao';

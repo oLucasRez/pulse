@@ -9,6 +9,7 @@ export interface GameDAO {
   read(id: string): Promise<GameDAO.DTO | null>;
   update(id: string, payload: GameDAO.UpdatePayload): Promise<GameDAO.DTO>;
   delete(id: string): Promise<void>;
+  watch(callback: (dtos: GameDAO.DTO[]) => void): Promise<() => void>;
 }
 
 export namespace GameDAO {
