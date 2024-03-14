@@ -59,7 +59,7 @@ export const Map: FC = () => {
     [s.width, s.height],
   );
 
-  const { currentGame } = useGameUsecases();
+  const { currentGame, nextGameState } = useGameUsecases();
 
   const { watchCentralPulse } = useCentralPulseUsecases();
   useEffect(() => {
@@ -73,7 +73,7 @@ export const Map: FC = () => {
     return () => unsubscribe?.();
   }, []);
 
-  const { currentPlayer, passTurn } = useRoundUsecases();
+  const { currentPlayer, round, passTurn } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
@@ -87,10 +87,18 @@ export const Map: FC = () => {
     if (isMyTurn) openMutateSubjectModal();
   }, [isMyTurn]);
 
+  useEffect(() => {
+    if (round?.finished) nextGameState();
+  }, [round?.finished]);
+
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
         <PlayersList />
+
+        <div style={{ position: 'absolute', right: '1rem', top: '1rem' }}>
+          {currentGame?.state}
+        </div>
 
         <ViewBox size={[s.width, s.height]}>
           {s.centralPulse && <Pulse {...s.centralPulse} />}

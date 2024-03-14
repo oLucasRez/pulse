@@ -23,6 +23,8 @@ export class DAOCreateRoundUsecase implements CreateRoundUsecase {
       playerIDs,
       i: null,
       clockwise: null,
+      started: false,
+      finished: false,
     });
 
     const round = RoundHydrator.hydrate(dto);

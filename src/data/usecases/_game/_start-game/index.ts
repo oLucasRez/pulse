@@ -1,1 +1,1 @@
-export { DAOStartGameUsecase } from './crud';
+export { DAOStartGameUsecase } from './dao';

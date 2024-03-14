@@ -20,6 +20,7 @@ export namespace PlayerDAO {
     diceID: string | null;
     subjectID: string | null;
     banned: boolean;
+    order: number;
   };
 
   export type DTO = ModelDAO.DTO & BaseDTO;

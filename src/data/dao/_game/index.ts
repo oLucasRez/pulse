@@ -20,7 +20,6 @@ export namespace GameDAO {
       withLightSpot: boolean;
       dicesMode: GameModel.DicesMode;
     };
-    started: boolean;
     state: GameModel.State;
     roundID: string | null;
     lightSpotRoundID: string | null;

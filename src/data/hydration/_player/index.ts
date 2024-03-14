@@ -17,6 +17,7 @@ export class PlayerHydrator {
       diceID: dto.diceID,
       subjectID: dto.subjectID,
       banned: dto.banned,
+      order: dto.order,
     });
 
     return player;

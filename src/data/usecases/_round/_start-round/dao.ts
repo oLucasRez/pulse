@@ -31,7 +31,12 @@ export class DAOStartRoundUsecase implements StartRoundUsecase {
     if (clockwise === 'clockwise') i = 0;
     if (clockwise === 'counterclockwise') i = round.playerIDs.length - 1;
 
-    const dto = await this.roundDAO.update(id, { i, clockwise });
+    const dto = await this.roundDAO.update(id, {
+      i,
+      clockwise,
+      started: true,
+      finished: false,
+    });
 
     round = RoundHydrator.hydrate(dto);
 

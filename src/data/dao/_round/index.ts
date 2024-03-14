@@ -16,6 +16,8 @@ export namespace RoundDAO {
     playerIDs: string[];
     i: number | null;
     clockwise: RoundModel.Clockwise | null;
+    started: boolean;
+    finished: boolean;
   };
 
   export type DTO = ModelDAO.DTO & BaseDTO;

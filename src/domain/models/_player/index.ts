@@ -10,4 +10,5 @@ export interface PlayerModel extends Model {
   diceID: DiceModel['id'] | null;
   subjectID: SubjectModel['id'] | null;
   banned: boolean;
+  order: number;
 }

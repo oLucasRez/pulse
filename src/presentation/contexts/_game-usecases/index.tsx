@@ -6,6 +6,7 @@ import {
   DeleteGameUsecase,
   GetGamesUsecase,
   GetGameUsecase,
+  NextGameStateUsecase,
   StartGameUsecase,
   WatchCurrentGameUsecase,
 } from '@domain/usecases';
@@ -68,6 +69,11 @@ export const GameUsecasesContextProvider: FC<
     [],
   );
 
+  const nextGameState = useCallback<NextGameStateUsecase['execute']>(
+    () => props.nextGameState.execute(),
+    [],
+  );
+
   return (
     <Context.Provider
       value={{
@@ -80,6 +86,7 @@ export const GameUsecasesContextProvider: FC<
         changeGame,
         deleteGame,
         startGame,
+        nextGameState,
       }}
     >
       {children}

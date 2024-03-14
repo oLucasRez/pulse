@@ -172,7 +172,7 @@ const GamePage: FC = () => {
 
     if (!currentGame) return null;
 
-    if (currentGame.started)
+    if (currentGame.state !== 'initial:state')
       return (
         <Main>
           <Map />

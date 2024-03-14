@@ -34,6 +34,7 @@ export function useMutateSubjectModal(
   const { myPlayer } = usePlayerUsecases();
 
   const [s, set] = useStates({
+    isMyFirstSubject: !mySubject,
     open,
     subject,
     description: subject?.description ?? '',
@@ -57,9 +58,9 @@ export function useMutateSubjectModal(
       s.description = subject?.description ?? '';
       s.color = subject?.color;
 
-      if (!mySubject) s.color = myPlayer?.color;
+      if (!s.isMyFirstSubject) s.color = myPlayer?.color;
     },
-    [s.open],
+    [s.isMyFirstSubject],
   );
 
   const closeModal = (): any => {
@@ -84,9 +85,10 @@ export function useMutateSubjectModal(
 
     if (s.subject && position)
       promise = changeSubject(s.subject.id, { description, position });
-    else if (mySubject && position)
+    else if (!s.isMyFirstSubject && position)
       promise = createSubject({ color, description, icon, position });
-    else if (!mySubject) promise = createMySubject({ description, icon });
+    else if (s.isMyFirstSubject)
+      promise = createMySubject({ description, icon });
     else throw new UnknownError('Unknown state');
 
     promise
@@ -97,7 +99,7 @@ export function useMutateSubjectModal(
   }
 
   function renderColors(): ReactNode {
-    if (!mySubject) return;
+    if (s.isMyFirstSubject) return;
 
     return (
       <div className='colors'>

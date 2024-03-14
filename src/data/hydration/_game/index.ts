@@ -16,7 +16,6 @@ export class GameHydrator {
           withLightSpot: dto.config.withLightSpot,
           dicesMode: dto.config.dicesMode,
         },
-        started: dto.started,
         state: dto.state,
         roundID: dto.roundID,
         lightSpotRoundID: dto.lightSpotRoundID,

@@ -13,6 +13,8 @@ export class RoundHydrator {
       playerIDs: dto.playerIDs,
       i: dto.i,
       clockwise: dto.clockwise,
+      started: dto.started,
+      finished: dto.finished,
     });
 
     return round;

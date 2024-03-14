@@ -4,7 +4,6 @@ export interface GameModel extends Model {
   uid: UserModel['uid'];
   title: string | null;
   config: GameModel.Config;
-  started: boolean;
   state: GameModel.State;
   roundID: RoundModel['id'] | null;
   lightSpotRoundID: RoundModel['id'] | null;
@@ -16,7 +15,11 @@ export namespace GameModel {
   export type State =
     | 'initial:state'
     | 'creating:subjects'
-    | 'creating:centralFact';
+    | 'creating:centralFact'
+    | 'creating:questions'
+    | 'creating:answers'
+    | 'creating:lightSpot'
+    | 'final:state';
 
   export type Config = {
     maxPlayers: number;

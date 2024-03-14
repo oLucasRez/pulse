@@ -6,13 +6,12 @@ import {
   CreateRoundUsecase,
   GetCurrentGameUsecase,
   GetPlayersUsecase,
+  NextGameStateUsecase,
   SetPlayerDiceUsecase,
   StartGameUsecase,
-  StartRoundUsecase,
 } from '@domain/usecases';
 
 import { GameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
 import { StartGameObserver } from '@data/observers';
 
 export class DAOStartGameUsecase implements StartGameUsecase {
@@ -21,7 +20,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
   private readonly createRound: CreateRoundUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getPlayers: GetPlayersUsecase;
-  private readonly startRound: StartRoundUsecase;
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly startGamePublisher: StartGameObserver.Publisher;
   private readonly gameDAO: GameDAO;
@@ -32,7 +31,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
     this.createRound = deps.createRound;
     this.getCurrentGame = deps.getCurrentGame;
     this.getPlayers = deps.getPlayers;
-    this.startRound = deps.startRound;
+    this.nextGameState = deps.nextGameState;
     this.setPlayerDice = deps.setPlayerDice;
     this.startGamePublisher = deps.startGamePublisher;
     this.gameDAO = deps.gameDAO;
@@ -54,9 +53,9 @@ export class DAOStartGameUsecase implements StartGameUsecase {
       this.createDice.execute({ sides: 12 }),
     ]);
 
-    const playerIDs = (await this.getPlayers.execute()).map(
-      (player) => player.id,
-    );
+    const playerIDs = (await this.getPlayers.execute())
+      .sort((a, b) => a.order - b.order)
+      .map((player) => player.id);
 
     await Promise.all(
       playerIDs.map((playerID, i) =>
@@ -69,19 +68,12 @@ export class DAOStartGameUsecase implements StartGameUsecase {
       this.createRound.execute({ playerIDs }),
     ]);
 
-    const dto = await this.gameDAO.update(currentGame.id, {
-      started: true,
-      state: 'creating:subjects',
+    await this.gameDAO.update(currentGame.id, {
       roundID: round.id,
       lightSpotRoundID: lightSpotRound.id,
     });
 
-    await Promise.all([
-      this.startRound.execute(round.id, 'clockwise'),
-      this.startRound.execute(lightSpotRound.id, 'clockwise'),
-    ]);
-
-    const game = GameHydrator.hydrate(dto);
+    const game = await this.nextGameState.execute();
 
     this.startGamePublisher.notifyStartGame(game);
 
@@ -96,7 +88,7 @@ export namespace DAOStartGameUsecase {
     createRound: CreateRoundUsecase;
     getCurrentGame: GetCurrentGameUsecase;
     getPlayers: GetPlayersUsecase;
-    startRound: StartRoundUsecase;
+    nextGameState: NextGameStateUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     startGamePublisher: StartGameObserver.Publisher;
     gameDAO: GameDAO;

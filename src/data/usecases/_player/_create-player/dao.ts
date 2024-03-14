@@ -39,17 +39,18 @@ export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
       });
 
     const players = await this.getPlayers.execute({ includeBanned: true });
+    const notBannedPlayers = players.filter((value) => !value.banned);
 
     this.iShouldntHaveCreatedYet(me, players);
 
-    this.colorShouldBeUnchosen(color, players);
+    this.colorShouldBeUnchosen(color, notBannedPlayers);
 
     const currentGame = await this.getCurrentGame.execute();
 
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    await this.shouldntPassMaxPlayers(currentGame, players);
+    await this.shouldntPassMaxPlayers(currentGame, notBannedPlayers);
 
     const dto = await this.playerDAO.create({
       name,
@@ -59,6 +60,7 @@ export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
       diceID: null,
       subjectID: null,
       banned: false,
+      order: notBannedPlayers.length,
     });
 
     const player = PlayerHydrator.hydrate(dto);
@@ -80,7 +82,7 @@ export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
   }
 
   private colorShouldBeUnchosen(color: Color, players: PlayerModel[]): void {
-    if (players.some((player) => !player.banned && player.color === color))
+    if (players.some((player) => player.color === color))
       throw new ForbiddenError({
         metadata: {
           tried: `create player with unavailable color ${color}`,
@@ -97,9 +99,7 @@ export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
     if (!currentGame)
       throw new ForbiddenError({ metadata: { tried: 'create player' } });
 
-    const notBannedPlayers = players.filter((player) => !player.banned);
-
-    if (currentGame.config.maxPlayers <= notBannedPlayers.length)
+    if (currentGame.config.maxPlayers <= players.length)
       throw new OutOfBoundError({
         metadata: {
           prop: 'players',
