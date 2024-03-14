@@ -58,7 +58,7 @@ export function useMutateSubjectModal(
       s.description = subject?.description ?? '';
       s.color = subject?.color;
 
-      if (!s.isMyFirstSubject) s.color = myPlayer?.color;
+      if (s.isMyFirstSubject) s.color = myPlayer?.color;
     },
     [s.isMyFirstSubject],
   );
