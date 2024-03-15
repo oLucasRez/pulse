@@ -46,6 +46,8 @@ export class DAOPassTurnUsecase implements PassTurnUsecase {
 
     this.changeRoundPublisher.notifyChangeRound(round);
 
+    console.log('passTurn', round);
+
     return round;
   }
 }

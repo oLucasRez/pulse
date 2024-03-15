@@ -1,4 +1,13 @@
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useCallback, useContext } from 'react';
+
+import {
+  ChangeCentralFactUsecase,
+  WatchCentralFactUsecase,
+} from '@domain/usecases';
+
+import { useSelector } from '@presentation/hooks';
+
+import { centralFactSelector } from '@main/store';
 
 import {
   CentralFactUsecasesContextProviderProps,
@@ -13,20 +22,27 @@ export const useCentralFactUsecases = (): CentralFactUsecasesContextValue =>
 export const CentralFactUsecasesContextProvider: FC<
   CentralFactUsecasesContextProviderProps
 > = (props) => {
-  const {
-    getCentralFact,
-    watchCentralFact,
-    changeCentralFact,
+  const { children } = props;
 
-    children,
-  } = props;
+  const centralFact = useSelector(centralFactSelector);
+
+  const changeCentralFact = useCallback<ChangeCentralFactUsecase['execute']>(
+    (payload) => props.changeCentralFact.execute(payload),
+    [],
+  );
+
+  const watchCentralFact = useCallback(
+    (callback?: WatchCentralFactUsecase.Callback) =>
+      props.watchCentralFact.execute(callback ?? ((): any => {})),
+    [],
+  );
 
   return (
     <Context.Provider
       value={{
-        getCentralFact,
-        watchCentralFact,
+        centralFact,
         changeCentralFact,
+        watchCentralFact,
       }}
     >
       {children}

@@ -77,5 +77,28 @@ export const GlobalStyle = createGlobalStyle`
       background: buttonface;
       padding: 0 0.5rem;
     }
+
+    textarea {
+      resize: none;
+      min-height: 4rem;
+      border-radius: 0.5rem;
+      border: none;
+      border-top: 2px solid lightgray;
+      background: buttonface;
+      padding: 0 0.5rem;
+    }
+  }
+
+  .handwriting {
+    font-family: "Shantell Sans", cursive;
+    font-optical-sizing: auto;
+    font-variation-settings:
+      "BNCE" 0,
+      "INFM" 0,
+      "SPAC" 0;
+  }
+
+  .sans-serif {
+    font-family: 'Poppins', sans-serif;
   }
 `;

@@ -4,6 +4,9 @@ export const Container = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 
   > li {
     display: flex;

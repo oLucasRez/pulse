@@ -2,11 +2,19 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { auth } from './_auth';
 import { game } from './_game';
+import { centralFact } from './_landmark';
 import { player } from './_player';
 import { round } from './_round';
 import { subject } from './_subject';
 
-const reducer = combineReducers({ auth, game, player, round, subject });
+const reducer = combineReducers({
+  auth,
+  game,
+  centralFact,
+  player,
+  round,
+  subject,
+});
 
 export const store = configureStore({
   reducer,

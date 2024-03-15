@@ -3,15 +3,12 @@ import styled from 'styled-components';
 import { StyledSVG } from '@presentation/types';
 
 export const Container = styled.div`
-  width: 100%;
-  height: 100%;
   overflow: hidden;
-
-  #players-list {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-  }
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
 `;
 
 type ViewBoxProps = { size: [number, number] };

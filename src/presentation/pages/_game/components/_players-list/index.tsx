@@ -33,7 +33,10 @@ export const PlayersList: FC = () => {
               {player.avatar}
             </span>
             <p>
-              <em style={{ color: getColor(player.color) }}>
+              <em
+                className='handwriting'
+                style={{ color: getColor(player.color) }}
+              >
                 <span className='icon'>{subject?.icon}</span>
                 {subject?.description ?? '--'}
               </em>

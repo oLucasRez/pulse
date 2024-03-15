@@ -7,14 +7,17 @@ import {
 
 import { CentralFactDAO } from '@data/dao';
 import { CentralFactHydrator } from '@data/hydration';
+import { ChangeCentralFactObserver } from '@data/observers';
 
 export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   private readonly getCentralFact: GetCentralFactUsecase;
   private readonly centralFactDAO: CentralFactDAO;
+  private readonly changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
 
   public constructor(deps: DAOChangeCentralFactUsecase.Deps) {
     this.getCentralFact = deps.getCentralFact;
     this.centralFactDAO = deps.centralFactDAO;
+    this.changeCentralFactPublisher = deps.changeCentralFactPublisher;
   }
 
   public async execute(
@@ -22,16 +25,20 @@ export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   ): Promise<CentralFactModel> {
     const { description } = payload;
 
-    const centralFact = await this.getCentralFact.execute();
+    let centralFact = await this.getCentralFact.execute();
 
     if (!centralFact)
       throw new NotFoundError({ metadata: { entity: 'CentralFact' } });
 
-    const centralFactDTO = await this.centralFactDAO.update(centralFact.id, {
+    const dto = await this.centralFactDAO.update(centralFact.id, {
       description,
     });
 
-    return CentralFactHydrator.hydrate(centralFactDTO);
+    centralFact = CentralFactHydrator.hydrate(dto);
+
+    this.changeCentralFactPublisher.notifyChangeCentralFact(centralFact);
+
+    return centralFact;
   }
 }
 
@@ -39,5 +46,6 @@ export namespace DAOChangeCentralFactUsecase {
   export type Deps = {
     getCentralFact: GetCentralFactUsecase;
     centralFactDAO: CentralFactDAO;
+    changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
   };
 }

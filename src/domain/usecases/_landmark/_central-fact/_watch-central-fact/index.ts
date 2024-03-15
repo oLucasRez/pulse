@@ -7,6 +7,6 @@ export interface WatchCentralFactUsecase {
 }
 
 export namespace WatchCentralFactUsecase {
-  export type Callback = (centralFact: CentralFactModel) => void;
+  export type Callback = (centralFact: CentralFactModel | null) => void;
   export type Response = () => void;
 }

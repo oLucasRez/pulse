@@ -204,4 +204,14 @@ export const Main = styled.main`
   button.start {
     font-size: 1.5rem;
   }
+
+  .legend {
+    font-style: italic;
+    color: darkgray;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2rem;
+    text-align: center;
+  }
 `;

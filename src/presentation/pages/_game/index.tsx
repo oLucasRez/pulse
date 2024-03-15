@@ -1,164 +1,56 @@
-import { FC, FocusEvent, ReactNode, useRef } from 'react';
+import { FC, ReactNode } from 'react';
 
-import { PlayerModel } from '@domain/models';
+import { GameModel } from '@domain/models';
 
 import { GlobalLoading, Navigate } from '@presentation/components';
 import {
   useAuthUsecases,
+  useCentralFactUsecases,
   useGameUsecases,
   usePlayerUsecases,
   useRoundUsecases,
   useSubjectUsecases,
 } from '@presentation/contexts';
 import { useNavigate, useStates, useWatch } from '@presentation/hooks';
-import { getClasses, getColor } from '@presentation/styles/mixins';
-import { alertError } from '@presentation/utils';
 
-import { useMutatePlayerModal } from './hooks';
-
-import { Map, Settings } from './components';
+import {
+  CreatingCentralFactState,
+  CreatingSubjectsState,
+  InitialState,
+} from './states';
 
 import { Container, Main } from './styles';
 
 const GamePage: FC = () => {
   const [s, set] = useStates({
-    watchingCurrentGame: true,
-    watchingPlayers: true,
-    watchingSubjects: true,
-    watchingRounds: true,
-    settingsIsOpen: false,
-    banningPlayer: false,
-    startingGame: false,
+    watching: true,
   });
 
-  const { currentGame, watchCurrentGame, startGame } = useGameUsecases();
+  const { currentGame, watchCurrentGame } = useGameUsecases();
 
-  const { players, myPlayer, watchPlayers, banPlayer } = usePlayerUsecases();
+  const { myPlayer, watchPlayers } = usePlayerUsecases();
 
   const { watchRounds } = useRoundUsecases();
   const { watchSubjects } = useSubjectUsecases();
+  const { watchCentralFact } = useCentralFactUsecases();
 
-  useWatch(() => watchPlayers().finally(set('watchingPlayers', false)));
-  useWatch(() => watchCurrentGame().finally(set('watchingCurrentGame', false)));
-  useWatch(() => watchRounds().finally(set('watchingRounds', false)));
-  useWatch(() => watchSubjects().finally(set('watchingSubjects', false)));
+  useWatch(async () => {
+    const unsubscribes = await Promise.all([
+      watchPlayers(),
+      watchCurrentGame(),
+      watchRounds(),
+      watchSubjects(),
+      watchCentralFact(),
+    ]).finally(set('watching', false));
+
+    return () => unsubscribes.map((unsubscribe) => unsubscribe());
+  });
 
   const { navigateToHome, navigateToLogout } = useNavigate();
-
-  const linkInputRef = useRef<HTMLInputElement>(null);
 
   const { me } = useAuthUsecases();
 
   if (!me) return null;
-
-  const imHost = me?.uid === currentGame?.uid;
-
-  function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>): any {
-    event.target.select();
-    event.target.setSelectionRange(0, 99999);
-
-    navigator.clipboard.writeText(event.target.value);
-  }
-
-  function handleCopyLinkButtonClick(): any {
-    linkInputRef.current?.focus();
-  }
-
-  const { openMutatePlayerModal, renderMutatePlayerModal } =
-    useMutatePlayerModal();
-
-  function handleEditPlayerButtonClick(player: PlayerModel): any {
-    openMutatePlayerModal(player);
-  }
-
-  function handleBanPlayerButtonClick(playerID: string): any {
-    set('banningPlayer')(true);
-
-    banPlayer(playerID).catch(alertError).finally(set('banningPlayer', false));
-  }
-
-  function handleStartButtonClick(): any {
-    set('startingGame')(true);
-
-    startGame().catch(alertError).finally(set('startingGame', false));
-  }
-
-  function renderInvite(): ReactNode {
-    if (!imHost)
-      return <p className='invite'>Wait until the host starts the game!</p>;
-
-    const reachedMaxPlayers = currentGame?.config.maxPlayers === players.length;
-
-    if (reachedMaxPlayers) return;
-
-    return (
-      <>
-        <p className='invite'>Invite your friends to join the game!</p>
-
-        <div className='link'>
-          <input
-            ref={linkInputRef}
-            value={location.href}
-            autoFocus
-            onFocus={handleLinkInputFocus}
-            readOnly
-          />
-          <button onClick={handleCopyLinkButtonClick}>📑</button>
-        </div>
-      </>
-    );
-  }
-
-  function renderPlayers(): ReactNode {
-    if (s.watchingPlayers)
-      return (
-        <div className='players'>
-          <span className='loading'>⏳</span>
-        </div>
-      );
-
-    return (
-      <div className='players'>
-        {players.map((player) => {
-          const isMyPlayer = player.id === myPlayer?.id;
-          const bannable = imHost && !isMyPlayer;
-          const editable = isMyPlayer;
-          const styledColor = getColor(player.color);
-
-          return (
-            <div key={player.id} className='player'>
-              <div className='actions'>
-                {editable && (
-                  <button
-                    onClick={(): any => handleEditPlayerButtonClick(player)}
-                  >
-                    ✏️
-                  </button>
-                )}
-                {bannable && (
-                  <button
-                    onClick={(): any => handleBanPlayerButtonClick(player.id)}
-                  >
-                    {s.banningPlayer ? (
-                      <span className='emoji loading'>⏳</span>
-                    ) : (
-                      '🚫'
-                    )}
-                  </button>
-                )}
-              </div>
-              <div className='avatar' style={{ background: styledColor }}>
-                {player.avatar}
-              </div>
-              <span className={getClasses({ name: true, me: isMyPlayer })}>
-                {player.name}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
 
   function renderMain(): ReactNode {
     if (myPlayer?.banned)
@@ -172,41 +64,22 @@ const GamePage: FC = () => {
 
     if (!currentGame) return null;
 
-    if (currentGame.state !== 'initial:state')
-      return (
-        <Main>
-          <Map />
-        </Main>
-      );
+    const map: Record<GameModel.State, ReactNode> = {
+      'initial:state': <InitialState />,
+      'creating:subjects': <CreatingSubjectsState />,
+      'creating:centralFact': <CreatingCentralFactState />,
+      'creating:questions': null,
+      'creating:answers': null,
+      'creating:lightSpot': null,
+      'final:state': null,
+    };
 
     return (
       <Main>
-        {imHost && s.settingsIsOpen && (
-          <Settings onClose={set('settingsIsOpen', false)} />
-        )}
-        {imHost && !s.settingsIsOpen && (
-          <button className='settings' onClick={set('settingsIsOpen', true)}>
-            <span className='emoji'>⚙️</span>
-          </button>
-        )}
-
-        {renderInvite()}
-
-        {renderPlayers()}
-
-        {imHost && (
-          <button
-            className='start'
-            disabled={s.startingGame}
-            onClick={handleStartButtonClick}
-          >
-            {s.startingGame ? (
-              <span className='emoji loading'>⏳</span>
-            ) : (
-              'Start'
-            )}
-          </button>
-        )}
+        <div style={{ position: 'absolute', right: '1rem', top: '1rem' }}>
+          {currentGame.state}
+        </div>
+        {map[currentGame.state]}
       </Main>
     );
   }
@@ -227,8 +100,7 @@ const GamePage: FC = () => {
     );
   }
 
-  if (s.watchingCurrentGame || s.watchingRounds || s.watchingSubjects)
-    return <GlobalLoading />;
+  if (s.watching) return <GlobalLoading />;
 
   if (!currentGame) return <Navigate.toHome />;
 
@@ -248,8 +120,6 @@ const GamePage: FC = () => {
 
         {renderMain()}
       </Container>
-
-      {renderMutatePlayerModal()}
     </>
   );
 };
