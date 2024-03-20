@@ -89,7 +89,7 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
-  .handwriting {
+  .handwriting, input, textarea {
     font-family: "Shantell Sans", cursive;
     font-optical-sizing: auto;
     font-variation-settings:

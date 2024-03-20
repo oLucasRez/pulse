@@ -1,0 +1,1 @@
+export { DAORollDiceUsecase } from './dao';

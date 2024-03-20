@@ -9,6 +9,3 @@ if (container) {
 
   root.render(makeApp());
 }
-
-// permitir que jogadores criem seus elementos
-// plotar o central fact na tela

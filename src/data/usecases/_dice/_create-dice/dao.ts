@@ -4,16 +4,19 @@ import { CreateDiceUsecase } from '@domain/usecases';
 
 import { DiceDAO } from '@data/dao';
 import { DiceHydrator } from '@data/hydration';
+import { CreateDiceObserver } from '@data/observers';
 
 export class DAOCreateDiceUsecase implements CreateDiceUsecase {
   private readonly diceDAO: DiceDAO;
+  private readonly createDicePublisher: CreateDiceObserver.Publisher;
 
   public constructor(deps: DAOCreateDiceUsecase.Deps) {
     this.diceDAO = deps.diceDAO;
+    this.createDicePublisher = deps.createDicePublisher;
   }
 
   public async execute(payload: CreateDiceUsecase.Payload): Promise<DiceModel> {
-    const { sides } = payload;
+    const { sides, ownerID } = payload;
 
     if (![4, 6, 8, 10, 12].includes(sides))
       throw new ForbiddenError({
@@ -21,19 +24,24 @@ export class DAOCreateDiceUsecase implements CreateDiceUsecase {
         metadata: { prop: 'sides', value: sides },
       });
 
-    const diceDTO = await this.diceDAO.create({
+    const dto = await this.diceDAO.create({
       sides,
       value: null,
       position: null,
-      ownerID: null,
+      ownerID,
     });
 
-    return DiceHydrator.hydrate(diceDTO);
+    const dice = DiceHydrator.hydrate(dto);
+
+    this.createDicePublisher.notifyCreateDice(dice);
+
+    return dice;
   }
 }
 
 export namespace DAOCreateDiceUsecase {
   export type Deps = {
     diceDAO: DiceDAO;
+    createDicePublisher: CreateDiceObserver.Publisher;
   };
 }

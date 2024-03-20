@@ -1,0 +1,1 @@
+export { DAOGetCurrentDiceUsecase } from './dao';

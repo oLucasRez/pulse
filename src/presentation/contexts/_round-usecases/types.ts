@@ -1,4 +1,4 @@
-import { PlayerModel, RoundModel } from '@domain/models';
+import { DiceModel, PlayerModel, RoundModel } from '@domain/models';
 import {
   GetRoundUsecase,
   PassTurnUsecase,
@@ -10,8 +10,10 @@ import { ContextProviderProps } from '@presentation/types';
 export type RoundUsecasesContextValue = {
   round: RoundModel | null;
   currentPlayer: PlayerModel | null;
+  currentDice: DiceModel | null;
   lightSpotRound: RoundModel | null;
   currentLightSpotPlayer: PlayerModel | null;
+  currentLightSpotDice: DiceModel | null;
   passTurn(): Promise<RoundModel>;
   passLightSpotTurn(): Promise<RoundModel>;
   watchRounds(

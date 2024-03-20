@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react';
 
 import {
   useCentralFactUsecases,
+  useCentralPulseUsecases,
   useGameUsecases,
   usePlayerUsecases,
   useRoundUsecases,
@@ -9,7 +10,7 @@ import {
 import { useStates } from '@presentation/hooks';
 import { alertError, logError } from '@presentation/utils';
 
-import { Map, PlayersList } from '../../components';
+import { DiceRoller, Map, PlayersList } from '../../components';
 
 import { Container } from './styles';
 
@@ -23,11 +24,20 @@ export const CreatingCentralFactState: FC = () => {
   const [s, set] = useStates({
     description: centralFact?.description,
     changingCentralFact: false,
+    diceValue: null as number | null,
   });
 
   useEffect(() => {
     s.description = centralFact?.description;
   }, [centralFact?.description]);
+
+  const { changeCentralPulse } = useCentralPulseUsecases();
+
+  useEffect(() => {
+    if (!s.diceValue) return;
+
+    changeCentralPulse.execute({ amount: s.diceValue }).catch(alertError);
+  }, [!s.diceValue]);
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
@@ -52,6 +62,8 @@ export const CreatingCentralFactState: FC = () => {
     <>
       <Map />
 
+      <DiceRoller onDiceRolled={set('diceValue')} />
+
       <PlayersList />
 
       {!isMyTurn && (
@@ -73,14 +85,6 @@ export const CreatingCentralFactState: FC = () => {
                 defaultValue={s.description}
                 onChange={(e): any => (s.description = e.target.value)}
               />
-
-              {/* <input
-                  autoFocus
-                  className='name'
-                  placeholder='Name'
-                  defaultValue={s.name}
-                  onChange={(e): any => (s.name = e.target.value)}
-                /> */}
             </main>
 
             <footer>

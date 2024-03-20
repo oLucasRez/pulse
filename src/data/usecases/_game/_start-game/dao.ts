@@ -1,5 +1,5 @@
 import { NotFoundError } from '@domain/errors';
-import { GameModel } from '@domain/models';
+import { DiceModel, GameModel } from '@domain/models';
 import {
   CreateCentralPulseUsecase,
   CreateDiceUsecase,
@@ -45,17 +45,26 @@ export class DAOStartGameUsecase implements StartGameUsecase {
 
     await this.createCentralPulse.execute();
 
-    const dices = await Promise.all([
-      this.createDice.execute({ sides: 4 }),
-      this.createDice.execute({ sides: 6 }),
-      this.createDice.execute({ sides: 8 }),
-      this.createDice.execute({ sides: 10 }),
-      this.createDice.execute({ sides: 12 }),
-    ]);
-
     const playerIDs = (await this.getPlayers.execute())
       .sort((a, b) => a.order - b.order)
       .map((player) => player.id);
+
+    const diceCreators = [
+      (ownerID: string): Promise<DiceModel> =>
+        this.createDice.execute({ sides: 4, ownerID }),
+      (ownerID: string): Promise<DiceModel> =>
+        this.createDice.execute({ sides: 6, ownerID }),
+      (ownerID: string): Promise<DiceModel> =>
+        this.createDice.execute({ sides: 8, ownerID }),
+      (ownerID: string): Promise<DiceModel> =>
+        this.createDice.execute({ sides: 10, ownerID }),
+      (ownerID: string): Promise<DiceModel> =>
+        this.createDice.execute({ sides: 12, ownerID }),
+    ];
+
+    const dices = await Promise.all(
+      playerIDs.map((playerID, i) => diceCreators[i](playerID)),
+    );
 
     await Promise.all(
       playerIDs.map((playerID, i) =>

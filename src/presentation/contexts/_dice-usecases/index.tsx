@@ -1,8 +1,11 @@
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useCallback, useContext } from 'react';
 
-import { DiceModel } from '@domain/models';
+import { RollDiceUsecase, WatchDicesUsecase } from '@domain/usecases';
+import { Vector } from '@domain/utils';
 
-import { useStates } from '@presentation/hooks';
+import { useSelector } from '@presentation/hooks';
+
+import { dicesSelector } from '@main/store';
 
 import {
   DiceUsecasesContextProviderProps,
@@ -19,9 +22,23 @@ export const DiceUsecasesContextProvider: FC<
 > = (props) => {
   const { children } = props;
 
-  const [s] = useStates({ dices: [] as DiceModel[] });
+  const dices = useSelector(dicesSelector);
+
+  const watchDices = useCallback(
+    (callback: WatchDicesUsecase.Callback = (): any => {}) =>
+      props.watchDices.execute(callback),
+    [],
+  );
+
+  const rollDice = useCallback<RollDiceUsecase['execute']>(
+    (id: string, position?: Vector | undefined) =>
+      props.rollDice.execute(id, position),
+    [],
+  );
 
   return (
-    <Context.Provider value={{ dices: s.dices }}>{children}</Context.Provider>
+    <Context.Provider value={{ dices, watchDices, rollDice }}>
+      {children}
+    </Context.Provider>
   );
 };

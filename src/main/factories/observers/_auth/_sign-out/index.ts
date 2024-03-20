@@ -3,6 +3,7 @@ import { SignOutObserver } from '@data/observers';
 import {
   makeAuthStoreSignOutSubscriber,
   makeCentralFactStoreSignOutSubscriber,
+  makeDiceStoreSignOutSubscriber,
   makeGameStoreSignOutSubscriber,
   makePlayerStoreSignOutSubscriber,
   makeRoundStoreSignOutSubscriber,
@@ -14,6 +15,7 @@ export function makeSignOutPublisher(): SignOutObserver.Publisher {
   const publisher = new SignOutPublisher();
 
   publisher.subscribe(makeAuthStoreSignOutSubscriber());
+  publisher.subscribe(makeDiceStoreSignOutSubscriber());
   publisher.subscribe(makeGameStoreSignOutSubscriber());
   publisher.subscribe(makeCentralFactStoreSignOutSubscriber());
   publisher.subscribe(makePlayerStoreSignOutSubscriber());

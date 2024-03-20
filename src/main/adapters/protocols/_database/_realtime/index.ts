@@ -1,13 +1,43 @@
 import { child, get, ref, remove, set, update } from 'firebase/database';
 
 import { NotFoundError } from '@domain/errors';
-import { uuid } from '@domain/utils';
+import { isNonNullable, uuid } from '@domain/utils';
 
 import { ModelDAO } from '@data/dao';
 import { DatabaseProtocol } from '@data/protocols';
 import { FirebaseService } from '@data/services';
 
-function parseData<M>(snapshot: Record<string, M>): (M & { id: string })[] {
+const nullable = 'null-r9rng8bY6d';
+
+function encodeData(data: Record<string, any>): any {
+  if (Array.isArray(data)) return data.map((item: any) => encodeData(item));
+
+  if (typeof data === 'object' && data !== null) {
+    Object.keys(data).forEach((key) => (data[key] = encodeData(data[key])));
+
+    return data;
+  }
+
+  if (!isNonNullable(data)) return nullable;
+
+  return data;
+}
+
+function decodeData(data: any): any {
+  if (Array.isArray(data)) return data.map((item: any) => decodeData(item));
+
+  if (typeof data === 'object' && data !== null) {
+    Object.keys(data).forEach((key) => (data[key] = decodeData(data[key])));
+
+    return data;
+  }
+
+  if (data === nullable) return null;
+
+  return data;
+}
+
+function parseSnapshot<M>(snapshot: Record<string, M>): (M & { id: string })[] {
   return Object.entries(snapshot).map(([id, data]) => ({
     id,
     ...(data as any),
@@ -23,7 +53,7 @@ export class RealtimeDatabase implements DatabaseProtocol {
     const data = await get(child(dbRef, table))
       .then((snapshot) => {
         if (snapshot.exists()) {
-          return parseData<M>(snapshot.val());
+          return parseSnapshot<M>(snapshot.val()).map(decodeData);
         } else return [];
       })
       .catch((error) => {
@@ -44,11 +74,15 @@ export class RealtimeDatabase implements DatabaseProtocol {
 
     const id = uuid();
 
+    encodeData(data);
+
     await set(ref(FirebaseService.realtimeDB, `${table}/${id}`), {
       ...data,
       createdAt,
       updatedAt: createdAt,
     });
+
+    decodeData(data);
 
     return {
       id,
@@ -76,7 +110,12 @@ export class RealtimeDatabase implements DatabaseProtocol {
 
     const oldData = snapshot.val();
 
+    encodeData(data);
+
     await update(dbRef, { [path]: { ...oldData, ...data } });
+
+    decodeData(oldData);
+    decodeData(data);
 
     return { id, ...oldData, ...data } as M;
   }

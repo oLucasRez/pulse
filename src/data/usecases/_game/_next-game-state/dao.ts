@@ -85,8 +85,6 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
 
     this.changeGamePublisher.notifyChangeGame(game);
 
-    console.log('nextGameState', game);
-
     return game;
   }
 }

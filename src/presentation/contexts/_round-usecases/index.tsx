@@ -6,6 +6,8 @@ import { WatchRoundsUsecase } from '@domain/usecases';
 import { useSelector } from '@presentation/hooks';
 
 import {
+  currentDiceSelector,
+  currentLightSpotDiceSelector,
   currentLightSpotPlayerSelector,
   currentPlayerSelector,
   lightSpotRoundSelector,
@@ -29,8 +31,10 @@ export const RoundUsecasesContextProvider: FC<
 
   const round = useSelector(roundSelector);
   const currentPlayer = useSelector(currentPlayerSelector);
+  const currentDice = useSelector(currentDiceSelector);
   const lightSpotRound = useSelector(lightSpotRoundSelector);
   const currentLightSpotPlayer = useSelector(currentLightSpotPlayerSelector);
+  const currentLightSpotDice = useSelector(currentLightSpotDiceSelector);
 
   const passTurn = useCallback(() => {
     if (!round) throw new NotFoundError({ metadata: { entity: 'Round' } });
@@ -56,8 +60,10 @@ export const RoundUsecasesContextProvider: FC<
       value={{
         round,
         currentPlayer,
+        currentDice,
         lightSpotRound,
         currentLightSpotPlayer,
+        currentLightSpotDice,
         passTurn,
         passLightSpotTurn,
         watchRounds,

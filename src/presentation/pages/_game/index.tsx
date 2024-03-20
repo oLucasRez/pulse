@@ -6,6 +6,7 @@ import { GlobalLoading, Navigate } from '@presentation/components';
 import {
   useAuthUsecases,
   useCentralFactUsecases,
+  useDiceUsecases,
   useGameUsecases,
   usePlayerUsecases,
   useRoundUsecases,
@@ -33,6 +34,7 @@ const GamePage: FC = () => {
   const { watchRounds } = useRoundUsecases();
   const { watchSubjects } = useSubjectUsecases();
   const { watchCentralFact } = useCentralFactUsecases();
+  const { watchDices } = useDiceUsecases();
 
   useWatch(async () => {
     const unsubscribes = await Promise.all([
@@ -41,6 +43,7 @@ const GamePage: FC = () => {
       watchRounds(),
       watchSubjects(),
       watchCentralFact(),
+      watchDices(),
     ]).finally(set('watching', false));
 
     return () => unsubscribes.map((unsubscribe) => unsubscribe());

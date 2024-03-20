@@ -14,16 +14,19 @@ import { isInteger, isNonNullable } from '@domain/utils';
 
 import { DiceDAO } from '@data/dao';
 import { DiceHydrator } from '@data/hydration';
+import { ChangeDiceObserver } from '@data/observers';
 
 export class DAOChangeDiceUsecase implements ChangeDiceUsecase {
   private readonly getDice: GetDiceUsecase;
   private readonly getPlayer: GetPlayerUsecase;
   private readonly diceDAO: DiceDAO;
+  private readonly changeDicePublisher: ChangeDiceObserver.Publisher;
 
   public constructor(deps: DAOChangeDiceUsecase.Deps) {
     this.getDice = deps.getDice;
     this.getPlayer = deps.getPlayer;
     this.diceDAO = deps.diceDAO;
+    this.changeDicePublisher = deps.changeDicePublisher;
   }
 
   public async execute(
@@ -32,7 +35,7 @@ export class DAOChangeDiceUsecase implements ChangeDiceUsecase {
   ): Promise<DiceModel> {
     const { value, position, ownerID } = payload;
 
-    const dice = await this.getDice.execute(id);
+    let dice = await this.getDice.execute(id);
     if (!dice)
       throw new NotFoundError({
         metadata: { entity: 'Dice', prop: 'id', value: id },
@@ -49,13 +52,17 @@ export class DAOChangeDiceUsecase implements ChangeDiceUsecase {
       await this.ownerShouldExists(ownerID);
     }
 
-    const diceDTO = await this.diceDAO.update(id, {
+    const dto = await this.diceDAO.update(id, {
       value,
       position,
       ownerID,
     });
 
-    return DiceHydrator.hydrate(diceDTO);
+    dice = DiceHydrator.hydrate(dto);
+
+    this.changeDicePublisher.notifyChangeDice(dice);
+
+    return dice;
   }
 
   private valueShouldBeAbove1(value: number): void {
@@ -92,5 +99,6 @@ export namespace DAOChangeDiceUsecase {
     getDice: GetDiceUsecase;
     getPlayer: GetPlayerUsecase;
     diceDAO: DiceDAO;
+    changeDicePublisher: ChangeDiceObserver.Publisher;
   };
 }

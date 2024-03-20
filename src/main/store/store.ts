@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { auth } from './_auth';
+import { dice } from './_dice';
 import { game } from './_game';
 import { centralFact } from './_landmark';
 import { player } from './_player';
@@ -9,6 +10,7 @@ import { subject } from './_subject';
 
 const reducer = combineReducers({
   auth,
+  dice,
   game,
   centralFact,
   player,

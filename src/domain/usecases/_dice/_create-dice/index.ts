@@ -7,5 +7,6 @@ export interface CreateDiceUsecase {
 export namespace CreateDiceUsecase {
   export type Payload = {
     sides: number;
+    ownerID: string;
   };
 }

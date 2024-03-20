@@ -34,7 +34,7 @@ export function useStates<S extends object>(initial: S): [S, SetCallback<S>] {
         const [key] = args;
 
         return (...args) => {
-          if (args.length !== 1) throw new Error('Argument is not setted');
+          if (args.length < 1) throw new Error('Argument is not setted');
 
           if (typeof args[0] === 'function')
             proxy[key] = (args[0] as (prev: S[K]) => S[K])(proxy[key]);

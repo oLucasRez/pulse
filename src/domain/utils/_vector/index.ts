@@ -27,6 +27,47 @@ export class Vector {
   public toMatrix(): Matrix {
     return [[this.x, this.y, 1]];
   }
+
+  public static sum(u: Vector, v: Vector): Vector {
+    return new Vector([u.x + v.x, u.y + v.y]);
+  }
+
+  public sum(v: Vector): Vector {
+    return Vector.sum(this, v);
+  }
+
+  public static sub(u: Vector, v: Vector): Vector {
+    return new Vector([v.x - u.x, v.y - u.y]);
+  }
+
+  public sub(v: Vector): Vector {
+    return Vector.sub(this, v);
+  }
+
+  public static mult(u: Vector, a: number): Vector {
+    return new Vector([u.x * a, u.y * a]);
+  }
+
+  public mult(a: number): Vector {
+    return Vector.mult(this, a);
+  }
+
+  public static mod(u: Vector): number {
+    return Math.sqrt(u.x * u.x + u.y * u.y);
+  }
+
+  public mod(): number {
+    return Vector.mod(this);
+  }
+
+  public static flip(u: Vector, axis: 'x' | 'y'): Vector {
+    if (axis === 'x') return new Vector([-u.x, u.y]);
+    return new Vector([u.x, -u.y]);
+  }
+
+  public flip(axis: 'x' | 'y'): Vector {
+    return Vector.flip(this, axis);
+  }
 }
 
 export namespace Vector {
