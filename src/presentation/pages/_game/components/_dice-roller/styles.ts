@@ -9,10 +9,4 @@ export const Container = styled.svg`
     stroke: darkgray;
     stroke-dasharray: 5 5;
   }
-
-  text {
-    text-anchor: middle;
-    alignment-baseline: middle;
-    fill: white;
-  }
 `;

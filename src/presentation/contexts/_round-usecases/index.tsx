@@ -1,6 +1,5 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { NotFoundError } from '@domain/errors';
 import { WatchRoundsUsecase } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -36,19 +35,6 @@ export const RoundUsecasesContextProvider: FC<
   const currentLightSpotPlayer = useSelector(currentLightSpotPlayerSelector);
   const currentLightSpotDice = useSelector(currentLightSpotDiceSelector);
 
-  const passTurn = useCallback(() => {
-    if (!round) throw new NotFoundError({ metadata: { entity: 'Round' } });
-
-    return props.passTurn.execute(round.id);
-  }, [round]);
-
-  const passLightSpotTurn = useCallback(() => {
-    if (!lightSpotRound)
-      throw new NotFoundError({ metadata: { entity: 'Round' } });
-
-    return props.passTurn.execute(lightSpotRound.id);
-  }, [lightSpotRound]);
-
   const watchRounds = useCallback(
     (callback?: WatchRoundsUsecase.Callback) =>
       props.watchRounds.execute(callback ?? ((): any => {})),
@@ -64,8 +50,6 @@ export const RoundUsecasesContextProvider: FC<
         lightSpotRound,
         currentLightSpotPlayer,
         currentLightSpotDice,
-        passTurn,
-        passLightSpotTurn,
         watchRounds,
       }}
     >

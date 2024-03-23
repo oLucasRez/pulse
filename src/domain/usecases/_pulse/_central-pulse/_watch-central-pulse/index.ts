@@ -7,6 +7,6 @@ export interface WatchCentralPulseUsecase {
 }
 
 export namespace WatchCentralPulseUsecase {
-  export type Callback = (centralPulse: CentralPulseModel) => void;
+  export type Callback = (centralPulse: CentralPulseModel | null) => void;
   export type Response = () => void;
 }

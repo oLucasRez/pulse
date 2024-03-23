@@ -36,8 +36,14 @@ export const DiceUsecasesContextProvider: FC<
     [],
   );
 
+  const setDicePosition = useCallback(
+    (id: string, position: Vector | null) =>
+      props.changeDice.execute(id, { position }),
+    [],
+  );
+
   return (
-    <Context.Provider value={{ dices, watchDices, rollDice }}>
+    <Context.Provider value={{ dices, watchDices, rollDice, setDicePosition }}>
       {children}
     </Context.Provider>
   );

@@ -28,10 +28,16 @@ export class Vector {
     return [[this.x, this.y, 1]];
   }
 
-  public static sum(u: Vector, v: Vector): Vector {
-    return new Vector([u.x + v.x, u.y + v.y]);
-  }
+  public static sum(
+    u: Vector,
+    v: Vector,
+    space: VectorSpace = VectorSpace.identity,
+  ): Vector {
+    const normU = u.space.inverse().mult(u);
+    const normV = v.space.inverse().mult(v);
 
+    return space.mult(new Vector([normU.x + normV.x, normU.y + normV.y]));
+  }
   public sum(v: Vector): Vector {
     return Vector.sum(this, v);
   }
@@ -39,7 +45,6 @@ export class Vector {
   public static sub(u: Vector, v: Vector): Vector {
     return new Vector([v.x - u.x, v.y - u.y]);
   }
-
   public sub(v: Vector): Vector {
     return Vector.sub(this, v);
   }
@@ -47,7 +52,6 @@ export class Vector {
   public static mult(u: Vector, a: number): Vector {
     return new Vector([u.x * a, u.y * a]);
   }
-
   public mult(a: number): Vector {
     return Vector.mult(this, a);
   }
@@ -55,9 +59,18 @@ export class Vector {
   public static mod(u: Vector): number {
     return Math.sqrt(u.x * u.x + u.y * u.y);
   }
-
   public mod(): number {
     return Vector.mod(this);
+  }
+
+  public static norm(u: Vector): Vector {
+    const mod = Vector.mod(u) || 1;
+
+    return new Vector([u.x / mod, u.y / mod]);
+  }
+
+  public norm(): Vector {
+    return Vector.norm(this);
   }
 
   public static flip(u: Vector, axis: 'x' | 'y'): Vector {

@@ -35,7 +35,7 @@ export class DAOCreateMySubjectUsecase implements CreateMySubjectUsecase {
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    if (currentGame.state !== 'creating:subjects')
+    if (currentGame.state[0] !== 'creating:subjects')
       throw new ForbiddenError({ metadata: { tried: 'create my subject' } });
 
     const myPlayer = await this.getMyPlayer.execute();

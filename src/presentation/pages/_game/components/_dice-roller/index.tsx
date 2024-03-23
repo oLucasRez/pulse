@@ -1,106 +1,16 @@
 import { FC, MouseEventHandler, useEffect, useRef } from 'react';
 
-import { Color } from '@domain/enums';
 import { Vector } from '@domain/utils';
 
 import { useDiceUsecases, useRoundUsecases } from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
-import { darken, getColor } from '@presentation/styles/mixins';
 import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
 
 import { DiceRollerProps } from './types';
 
-const d4Edge = 60;
-const d6Edge = 30;
-
-interface DProps {
-  color: Color;
-  position: Vector;
-}
-
-const D4: FC<DProps> = (props) => {
-  const { color, position } = props;
-
-  return (
-    <g>
-      <path
-        d={`M${position.x},${position.y} m-${d4Edge / 2},${
-          (d4Edge * Math.sqrt(3)) / 6
-        } h${d4Edge} l-${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 2} l-${
-          d4Edge / 2
-        },${(d4Edge * Math.sqrt(3)) / 2}`}
-        fill={getColor(color)}
-      />
-      <path
-        d={`M${position.x},${position.y} m-${d4Edge / 2},${
-          (d4Edge * Math.sqrt(3)) / 6
-        } l${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 6} v-${
-          (d4Edge * Math.sqrt(3)) / 3
-        }`}
-        stroke={darken(getColor(color), 0.2)}
-        fill={getColor(color)}
-      />
-      <path
-        d={`M${position.x},${position.y} l${d4Edge / 2},${
-          (d4Edge * Math.sqrt(3)) / 6
-        }`}
-        stroke={darken(getColor(color), 0.2)}
-        fill={getColor(color)}
-      />
-      <path
-        d={`M${position.x},${position.y} m-${d4Edge / 2},${
-          (d4Edge * Math.sqrt(3)) / 6
-        } h${d4Edge} l-${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 2} l-${
-          d4Edge / 2
-        },${(d4Edge * Math.sqrt(3)) / 2}`}
-        stroke={getColor(color)}
-        fill='none'
-      />
-    </g>
-  );
-};
-
-const D6: FC<DProps> = (props) => {
-  const { color, position } = props;
-
-  return (
-    <g>
-      <path
-        d={`M${position.x},${position.y} m0,${d6Edge} l${
-          (d6Edge * Math.sqrt(3)) / 2
-        },-${d6Edge / 2} v-${d6Edge} l-${(d6Edge * Math.sqrt(3)) / 2},-${
-          d6Edge / 2
-        } l-${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} v${d6Edge} z`}
-        fill={getColor(color)}
-      />
-      <path
-        d={`M${position.x},${position.y} m0,${d6Edge} v-${d6Edge} l-${
-          (d6Edge * Math.sqrt(3)) / 2
-        },-${d6Edge / 2}`}
-        fill='none'
-        stroke={darken(getColor(color), 0.2)}
-      />
-      <path
-        d={`M${position.x},${position.y} l${(d6Edge * Math.sqrt(3)) / 2},-${
-          d6Edge / 2
-        }`}
-        fill='none'
-        stroke={darken(getColor(color), 0.2)}
-      />
-      <path
-        d={`M${position.x},${position.y} m0,${d6Edge} l${
-          (d6Edge * Math.sqrt(3)) / 2
-        },-${d6Edge / 2} v-${d6Edge} l-${(d6Edge * Math.sqrt(3)) / 2},-${
-          d6Edge / 2
-        } l-${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} v${d6Edge} z`}
-        stroke={getColor(color)}
-        fill='none'
-      />
-    </g>
-  );
-};
+import { Dice } from '..';
 
 export const DiceRoller: FC<DiceRollerProps> = (props) => {
   const { onDiceRolled } = props;
@@ -142,6 +52,13 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     if (s.origin && s.target) s.vel = s.target.sub(s.origin);
     s.origin = null;
   };
+
+  useEffect(() => {
+    s.origin = null;
+    s.target = null;
+    s.vel = null;
+    s.value = 0;
+  }, [currentDice?.id]);
 
   useEffect(() => {
     if (!s.vel || !s.target) return;
@@ -206,19 +123,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
         <line x1={s.origin.x} y1={s.origin.y} x2={s.target.x} y2={s.target.y} />
       )}
 
-      {s.target &&
-        currentDice &&
-        (currentDice.sides === 4 ? (
-          <D4 color={currentPlayer.color} position={s.target} />
-        ) : currentDice.sides === 6 ? (
-          <D6 color={currentPlayer.color} position={s.target} />
-        ) : null)}
-
-      {!!currentDice?.value && s.target && (
-        <text x={s.target.x} y={s.target.y}>
-          {currentDice.value}
-        </text>
-      )}
+      {s.target && currentDice && <Dice {...currentDice} position={s.target} />}
     </Container>
   );
 };

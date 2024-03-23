@@ -1,20 +1,21 @@
+import { CentralPulseModel } from '@domain/models';
 import {
   ChangeCentralPulseUsecase,
-  GetCentralPulseUsecase,
   WatchCentralPulseUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type CentralPulseUsecasesContextValue = {
-  getCentralPulse: GetCentralPulseUsecase;
-  watchCentralPulse: WatchCentralPulseUsecase;
-  changeCentralPulse: ChangeCentralPulseUsecase;
+  centralPulse: CentralPulseModel | null;
+  watchCentralPulse(
+    callback?: WatchCentralPulseUsecase.Callback,
+  ): Promise<WatchCentralPulseUsecase.Response>;
+  changeCentralPulse: ChangeCentralPulseUsecase['execute'];
 };
 
 export interface CentralPulseUsecasesContextProviderProps
   extends ContextProviderProps {
-  getCentralPulse: GetCentralPulseUsecase;
   watchCentralPulse: WatchCentralPulseUsecase;
   changeCentralPulse: ChangeCentralPulseUsecase;
 }

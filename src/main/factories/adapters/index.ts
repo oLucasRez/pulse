@@ -1,2 +1,2 @@
-export * from './cruds';
+export * from './dao';
 export * from './protocols';

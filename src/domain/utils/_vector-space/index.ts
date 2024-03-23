@@ -21,14 +21,22 @@ export class VectorSpace {
     this.scale = scale;
   }
 
-  public transformVector(vector: Vector): Vector {
-    const v = Matrix.transpose(vector.toMatrix());
+  public mult(vector: Vector): Vector;
+  public mult(scalar: number): number;
+  public mult(value: Vector | number): Vector | number {
+    if (typeof value === 'number') return this.scale * value;
+
+    const v = Matrix.transpose(value.toMatrix());
 
     return Matrix.toVector(Matrix.dot(this._matrix, v));
   }
 
-  public transformScalar(scalar: number): number {
-    return this.scale * scalar;
+  public inverse(): VectorSpace {
+    const newVectorSpace = new VectorSpace();
+    newVectorSpace.scale = this.scale;
+    newVectorSpace._matrix = Matrix.inverse(this._matrix);
+
+    return newVectorSpace;
   }
 }
 

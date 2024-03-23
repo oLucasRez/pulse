@@ -14,8 +14,6 @@ export type RoundUsecasesContextValue = {
   lightSpotRound: RoundModel | null;
   currentLightSpotPlayer: PlayerModel | null;
   currentLightSpotDice: DiceModel | null;
-  passTurn(): Promise<RoundModel>;
-  passLightSpotTurn(): Promise<RoundModel>;
   watchRounds(
     callback?: WatchRoundsUsecase.Callback,
   ): Promise<WatchRoundsUsecase.Response>;

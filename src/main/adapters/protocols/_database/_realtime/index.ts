@@ -9,6 +9,12 @@ import { FirebaseService } from '@data/services';
 
 const nullable = 'null-r9rng8bY6d';
 
+function clearGarbage(data: Record<any, any>): void {
+  Object.keys(data).map((key) => {
+    if ((data as any)[key] === undefined) delete (data as any)[key];
+  });
+}
+
 function encodeData(data: Record<string, any>): any {
   if (Array.isArray(data)) return data.map((item: any) => encodeData(item));
 
@@ -109,6 +115,8 @@ export class RealtimeDatabase implements DatabaseProtocol {
       });
 
     const oldData = snapshot.val();
+
+    clearGarbage(data);
 
     encodeData(data);
 

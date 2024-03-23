@@ -6,6 +6,7 @@ import { GlobalLoading, Navigate } from '@presentation/components';
 import {
   useAuthUsecases,
   useCentralFactUsecases,
+  useCentralPulseUsecases,
   useDiceUsecases,
   useGameUsecases,
   usePlayerUsecases,
@@ -16,6 +17,7 @@ import { useNavigate, useStates, useWatch } from '@presentation/hooks';
 
 import {
   CreatingCentralFactState,
+  CreatingQuestionsState,
   CreatingSubjectsState,
   InitialState,
 } from './states';
@@ -35,6 +37,7 @@ const GamePage: FC = () => {
   const { watchSubjects } = useSubjectUsecases();
   const { watchCentralFact } = useCentralFactUsecases();
   const { watchDices } = useDiceUsecases();
+  const { watchCentralPulse } = useCentralPulseUsecases();
 
   useWatch(async () => {
     const unsubscribes = await Promise.all([
@@ -44,6 +47,7 @@ const GamePage: FC = () => {
       watchSubjects(),
       watchCentralFact(),
       watchDices(),
+      watchCentralPulse(),
     ]).finally(set('watching', false));
 
     return () => unsubscribes.map((unsubscribe) => unsubscribe());
@@ -67,11 +71,11 @@ const GamePage: FC = () => {
 
     if (!currentGame) return null;
 
-    const map: Record<GameModel.State, ReactNode> = {
+    const map: Record<GameModel.State[0], ReactNode> = {
       'initial:state': <InitialState />,
       'creating:subjects': <CreatingSubjectsState />,
       'creating:centralFact': <CreatingCentralFactState />,
-      'creating:questions': null,
+      'creating:questions': <CreatingQuestionsState />,
       'creating:answers': null,
       'creating:lightSpot': null,
       'final:state': null,
@@ -79,10 +83,21 @@ const GamePage: FC = () => {
 
     return (
       <Main>
-        <div style={{ position: 'absolute', right: '1rem', top: '1rem' }}>
-          {currentGame.state}
+        <div
+          style={{
+            position: 'absolute',
+            right: '1rem',
+            top: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {currentGame.state.map((state, i) => (
+            <div key={i}>{state}</div>
+          ))}
         </div>
-        {map[currentGame.state]}
+
+        {map[currentGame.state[0]]}
       </Main>
     );
   }

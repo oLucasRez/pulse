@@ -1,50 +1,48 @@
 import {
   createContext,
   FC,
+  MouseEventHandler,
   useContext,
-  useEffect,
   useMemo,
   useRef,
 } from 'react';
 
-import { CentralPulseModel } from '@domain/models';
-import { WatchCentralPulseUsecase } from '@domain/usecases';
 import { Vector, VectorSpace } from '@domain/utils';
 
 import { ms } from '@presentation/constants';
-import {
-  useCentralPulseUsecases,
-  useGameUsecases,
-} from '@presentation/contexts';
+import { useCentralPulseUsecases } from '@presentation/contexts';
 import { useInterval, useStates } from '@presentation/hooks';
-import { logError } from '@presentation/utils';
 
 import { Pulse } from './components';
 
 import { Container, ViewBox } from './styles';
 
-import { MapContextValue } from './types';
+import { MapContextValue, MapProps } from './types';
 
-const Context = createContext({} as MapContextValue);
+const Context = createContext<MapContextValue>({
+  mapSpace: VectorSpace.identity,
+});
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
-export const Map: FC = () => {
-  const [s, set] = useStates({
-    centralPulse: null as CentralPulseModel | null,
+export const Map: FC<MapProps> = (props) => {
+  const { children, onMouseMove, onClick } = props;
+
+  const [s] = useStates({
     width: 0,
     height: 0,
   });
 
   const divRef = useRef<HTMLDivElement>(null);
-  const div = divRef.current;
 
   function updateSize(): any {
-    s.width = div?.clientWidth ?? 0;
-    s.height = div?.clientHeight ?? 0;
+    s.width = divRef.current?.clientWidth ?? 0;
+    s.height = divRef.current?.clientHeight ?? 0;
   }
 
-  useInterval(updateSize, 300 * ms, [div], { firstShot: true });
+  const { centralPulse } = useCentralPulseUsecases();
+
+  useInterval(updateSize, 300 * ms, [divRef], { firstShot: true });
 
   const mapSpace = useMemo(
     () =>
@@ -55,29 +53,27 @@ export const Map: FC = () => {
     [s.width, s.height],
   );
 
-  const { currentGame } = useGameUsecases();
+  const handleMouseMove: MouseEventHandler<SVGSVGElement> = (event) => {
+    const { x, y } = event.currentTarget.getBoundingClientRect();
 
-  const { watchCentralPulse } = useCentralPulseUsecases();
-  useEffect(() => {
-    let unsubscribe: WatchCentralPulseUsecase.Response;
-
-    watchCentralPulse
-      .execute(set('centralPulse'))
-      .then((value) => (unsubscribe = value))
-      .catch(logError);
-
-    return () => unsubscribe?.();
-  }, []);
+    onMouseMove?.(
+      mapSpace
+        .inverse()
+        .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace)),
+    );
+  };
 
   return (
     <Context.Provider value={{ mapSpace }}>
       <Container ref={divRef}>
-        <div style={{ position: 'absolute', right: '1rem', top: '1rem' }}>
-          {currentGame?.state}
-        </div>
+        <ViewBox
+          size={[s.width, s.height]}
+          onMouseMove={handleMouseMove}
+          onClick={onClick}
+        >
+          {centralPulse && <Pulse pulse={centralPulse} />}
 
-        <ViewBox size={[s.width, s.height]}>
-          {s.centralPulse && <Pulse {...s.centralPulse} />}
+          {typeof children === 'function' ? children({ mapSpace }) : children}
         </ViewBox>
       </Container>
     </Context.Provider>

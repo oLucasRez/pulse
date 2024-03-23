@@ -12,16 +12,14 @@ import { useMutateSubjectModal } from '../../hooks';
 import { Map, PlayersList } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
-  const { currentPlayer, passTurn } = useRoundUsecases();
+  const { currentPlayer } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
   const { nextGameState } = useGameUsecases();
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
   function handleSuccessCreateSubject(): any {
-    passTurn()
-      .then((round) => round.finished && nextGameState().catch(logError))
-      .catch(logError);
+    nextGameState().catch(logError);
   }
 
   const { renderMutateSubjectModal, openMutateSubjectModal } =

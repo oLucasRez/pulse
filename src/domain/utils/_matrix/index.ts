@@ -44,4 +44,89 @@ export namespace Matrix {
 
     return transposed;
   }
+
+  export function inverse(matrix: Matrix): Matrix {
+    const n = matrix.length;
+    if (n !== matrix[0].length)
+      throw new InvalidDataError({
+        message: 'Matrix is not squared',
+      });
+
+    // Cria uma matriz identidade do mesmo tamanho da matriz original
+    const identityMatrix: number[][] = [];
+    for (let i = 0; i < n; i++) {
+      identityMatrix.push(new Array(n).fill(0));
+      identityMatrix[i][i] = 1;
+    }
+
+    // Função auxiliar para trocar linhas na matriz
+    function swapRows(a: number[][], i: number, j: number): any {
+      const temp = a[i];
+      a[i] = a[j];
+      a[j] = temp;
+    }
+
+    // Função auxiliar para multiplicar uma linha da matriz por um escalar
+    function multiplyRow(row: number[], scalar: number): Matrix[0] {
+      return row.map((value) => value * scalar);
+    }
+
+    // Função auxiliar para somar linhas multiplicadas por um escalar
+    function addScaledRow(
+      row1: number[],
+      row2: number[],
+      scalar: number,
+    ): Matrix[0] {
+      return row1.map((value, index) => value + row2[index] * scalar);
+    }
+
+    // Cria uma cópia da matriz original para não modificar a original
+    const clonedMatrix = matrix.map((row) => [...row]);
+
+    // Aplica o método de eliminação de Gauss-Jordan
+    for (let i = 0; i < n; i++) {
+      // Encontra o pivô na linha i
+      let pivotRow = i;
+      for (let j = i + 1; j < n; j++) {
+        if (
+          Math.abs(clonedMatrix[j][i]) > Math.abs(clonedMatrix[pivotRow][i])
+        ) {
+          pivotRow = j;
+        }
+      }
+
+      // Troca linhas para garantir que o pivô seja não-zero
+      if (pivotRow !== i) {
+        swapRows(clonedMatrix, pivotRow, i);
+        swapRows(identityMatrix, pivotRow, i);
+      }
+
+      // Divide a linha pelo pivô para tornar o pivô igual a 1
+      const pivot = clonedMatrix[i][i];
+      if (pivot === 0) {
+        throw new Error('A matriz não é inversível.');
+      }
+      clonedMatrix[i] = multiplyRow(clonedMatrix[i], 1 / pivot);
+      identityMatrix[i] = multiplyRow(identityMatrix[i], 1 / pivot);
+
+      // Subtrai múltiplos da linha i de outras linhas para tornar todos os outros elementos na coluna i igual a zero
+      for (let j = 0; j < n; j++) {
+        if (j !== i) {
+          const factor = -clonedMatrix[j][i];
+          clonedMatrix[j] = addScaledRow(
+            clonedMatrix[j],
+            clonedMatrix[i],
+            factor,
+          );
+          identityMatrix[j] = addScaledRow(
+            identityMatrix[j],
+            identityMatrix[i],
+            factor,
+          );
+        }
+      }
+    }
+
+    return identityMatrix;
+  }
 }

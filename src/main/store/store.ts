@@ -5,6 +5,7 @@ import { dice } from './_dice';
 import { game } from './_game';
 import { centralFact } from './_landmark';
 import { player } from './_player';
+import { centralPulse } from './_pulse';
 import { round } from './_round';
 import { subject } from './_subject';
 
@@ -14,6 +15,7 @@ const reducer = combineReducers({
   game,
   centralFact,
   player,
+  centralPulse,
   round,
   subject,
 });

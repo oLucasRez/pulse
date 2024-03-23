@@ -1,4 +1,4 @@
-import { NotFoundError, OutOfBoundError } from '@domain/errors';
+import { NotFoundError } from '@domain/errors';
 import { CentralPulseModel } from '@domain/models';
 import {
   ChangeCentralPulseUsecase,
@@ -7,14 +7,17 @@ import {
 
 import { CentralPulseDAO } from '@data/dao';
 import { CentralPulseHydrator } from '@data/hydration';
+import { ChangeCentralPulseObserver } from '@data/observers';
 
 export class DAOChangeCentralPulseUsecase implements ChangeCentralPulseUsecase {
   private readonly getCentralPulse: GetCentralPulseUsecase;
   private readonly centralPulseDAO: CentralPulseDAO;
+  private readonly changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
 
   public constructor(deps: DAOChangeCentralPulseUsecase.Deps) {
     this.getCentralPulse = deps.getCentralPulse;
     this.centralPulseDAO = deps.centralPulseDAO;
+    this.changeCentralPulsePublisher = deps.changeCentralPulsePublisher;
   }
 
   public async execute(
@@ -22,33 +25,22 @@ export class DAOChangeCentralPulseUsecase implements ChangeCentralPulseUsecase {
   ): Promise<CentralPulseModel> {
     const { amount } = payload;
 
-    const centralPulse = await this.getCentralPulse.execute();
+    let centralPulse = await this.getCentralPulse.execute();
 
     if (!centralPulse)
       throw new NotFoundError({ metadata: { entity: 'CentralPulse' } });
 
-    this.amountShouldBeGreaterOrEqual(amount, centralPulse);
+    if (amount <= centralPulse.amount) return centralPulse;
 
-    const centralPulseDTO = await this.centralPulseDAO.update(centralPulse.id, {
+    const dto = await this.centralPulseDAO.update(centralPulse.id, {
       amount,
     });
 
-    return CentralPulseHydrator.hydrate(centralPulseDTO);
-  }
+    centralPulse = CentralPulseHydrator.hydrate(dto);
 
-  private amountShouldBeGreaterOrEqual(
-    amount: number,
-    centralPulse: CentralPulseModel,
-  ): void {
-    if (amount < centralPulse.amount)
-      throw new OutOfBoundError({
-        metadata: {
-          prop: 'amount',
-          value: amount,
-          bound: 'below',
-          limit: centralPulse.amount,
-        },
-      });
+    this.changeCentralPulsePublisher.notifyChangeCentralPulse(centralPulse);
+
+    return centralPulse;
   }
 }
 
@@ -56,5 +48,6 @@ export namespace DAOChangeCentralPulseUsecase {
   export type Deps = {
     getCentralPulse: GetCentralPulseUsecase;
     centralPulseDAO: CentralPulseDAO;
+    changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
   };
 }

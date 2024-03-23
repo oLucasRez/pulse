@@ -37,7 +37,7 @@ export class DAOCreateGameUsecase implements CreateGameUsecase {
       uid: me.uid,
       title,
       config,
-      state: 'initial:state',
+      state: ['initial:state'],
       roundID: null,
       lightSpotRoundID: null,
     });
