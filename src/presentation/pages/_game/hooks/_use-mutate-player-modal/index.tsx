@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useCallback } from 'react';
+import { MouseEvent, useCallback } from 'react';
 
 import { PlayerModel } from '@domain/models';
 import { getAvailableColors } from '@domain/utils';
@@ -50,9 +50,9 @@ export function useMutatePlayerModal(
       : 0,
     mutatingPlayer: false,
   });
-  const nextAvatar = (): any =>
+  const nextAvatar = () =>
     (s.avatarIndex = (s.avatarIndex + 1) % avatars.length);
-  const prevAvatar = (): any =>
+  const prevAvatar = () =>
     (s.avatarIndex =
       s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
 
@@ -71,7 +71,7 @@ export function useMutatePlayerModal(
     [s.open],
   );
 
-  const closeModal = (): any => {
+  const closeModal = () => {
     s.open = false;
     s.player = undefined;
     s.name = undefined;
@@ -81,7 +81,7 @@ export function useMutatePlayerModal(
 
   const avatar = avatars[s.avatarIndex];
 
-  function handleAvatarButtonClick(event: MouseEvent<HTMLDivElement>): any {
+  function handleAvatarButtonClick(event: MouseEvent<HTMLDivElement>) {
     const clickX = event.nativeEvent.offsetX;
     const divWidth = event.currentTarget.clientWidth;
     const splitThreshold = divWidth / 2;
@@ -92,7 +92,7 @@ export function useMutatePlayerModal(
 
   const submitDisabled = !s.name || !s.color || !avatar || s.mutatingPlayer;
 
-  function handleSubmitButtonClick(): any {
+  function handleSubmitButtonClick() {
     const { name, color } = s;
 
     if (!name || !color) return;
@@ -110,7 +110,7 @@ export function useMutatePlayerModal(
       .finally(set('mutatingPlayer', false));
   }
 
-  function renderColors(): ReactNode {
+  function renderColors() {
     const otherPlayers = players.filter((player) => player.id !== s.player?.id);
     const availableColors = getAvailableColors(otherPlayers);
 
@@ -128,7 +128,7 @@ export function useMutatePlayerModal(
                 borderBottomColor: darken(styledColor, 0.1),
                 opacity: !s.color || s.color === color ? 1 : 0.2,
               }}
-              onClick={(): any => {
+              onClick={() => {
                 if (s.color === color) s.color = undefined;
                 else s.color = color;
               }}
@@ -148,10 +148,7 @@ export function useMutatePlayerModal(
       <>
         {s.open && (
           <Container>
-            <article
-              className='modal'
-              onClick={(e): any => e.stopPropagation()}
-            >
+            <article className='modal' onClick={(e) => e.stopPropagation()}>
               <header>
                 <h2>{title}</h2>
                 {!unclosable && <button onClick={closeModal}>x</button>}
@@ -173,7 +170,7 @@ export function useMutatePlayerModal(
                   className='name'
                   placeholder='Name'
                   defaultValue={s.name}
-                  onChange={(e): any => (s.name = e.target.value)}
+                  onChange={(e) => (s.name = e.target.value)}
                 />
 
                 {renderColors()}

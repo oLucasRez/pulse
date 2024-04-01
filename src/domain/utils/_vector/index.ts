@@ -59,7 +59,7 @@ export class Vector {
   public static mod(u: Vector): number {
     return Math.sqrt(u.x * u.x + u.y * u.y);
   }
-  public mod(): number {
+  public mag(): number {
     return Vector.mod(this);
   }
 

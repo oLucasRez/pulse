@@ -1,3 +1,10 @@
 import { DiceModel } from '@domain/models';
 
-export type DiceProps = DiceModel;
+export interface DicesProps {
+  transparent?: boolean;
+  currentHidden?: boolean;
+}
+
+export type DiceProps = DiceModel & {
+  transparent?: boolean;
+};

@@ -47,7 +47,7 @@ export class DAOChangeSubjectUsecase implements ChangeSubjectUsecase {
       });
 
     const dto = await this.subjectDAO.update(id, {
-      position: position.toJSON(),
+      position: position?.toJSON(),
       description,
     });
 

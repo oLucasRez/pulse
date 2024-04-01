@@ -4,6 +4,7 @@ import { SubjectUsecasesContextProvider } from '@presentation/contexts';
 import { ContextProviderProps } from '@presentation/types';
 
 import {
+  makeChangeMySubjectUsecase,
   makeChangeSubjectUsecase,
   makeCreateMySubjectUsecase,
   makeCreateSubjectUsecase,
@@ -18,6 +19,7 @@ export function makeSubjectUsecasesContextProvider(
   const getMySubject = makeGetMySubjectUsecase();
   const createMySubject = makeCreateMySubjectUsecase();
   const createSubject = makeCreateSubjectUsecase();
+  const changeMySubject = makeChangeMySubjectUsecase();
   const changeSubject = makeChangeSubjectUsecase();
 
   return (
@@ -26,6 +28,7 @@ export function makeSubjectUsecasesContextProvider(
       getMySubject={getMySubject}
       createMySubject={createMySubject}
       createSubject={createSubject}
+      changeMySubject={changeMySubject}
       changeSubject={changeSubject}
       {...props}
     />

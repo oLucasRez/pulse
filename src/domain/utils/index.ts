@@ -1,3 +1,4 @@
+export * from './_circle';
 export * from './_enum-to-array';
 export * from './_get-available-colors';
 export * from './_is-integer';

@@ -33,7 +33,7 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
 
   const params = useParams();
 
-  async function handleAuth(): Promise<any> {
+  async function handleAuth() {
     if (!params.id) return;
 
     setCurrentGame(params.id).catch((error: DomainError) => {

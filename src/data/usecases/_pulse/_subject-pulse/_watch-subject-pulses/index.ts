@@ -1,0 +1,1 @@
+export { DAOWatchSubjectPulsesUsecase } from './dao';

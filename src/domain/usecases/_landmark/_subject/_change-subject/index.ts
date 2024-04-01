@@ -10,7 +10,7 @@ export interface ChangeSubjectUsecase {
 
 export namespace ChangeSubjectUsecase {
   export type Payload = {
-    position: Vector;
-    description: string;
+    position?: Vector;
+    description?: string;
   };
 }

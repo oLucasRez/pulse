@@ -10,12 +10,15 @@ import {
   useDiceUsecases,
   useGameUsecases,
   usePlayerUsecases,
+  useQuestionUsecases,
   useRoundUsecases,
+  useSubjectPulseUsecases,
   useSubjectUsecases,
 } from '@presentation/contexts';
 import { useNavigate, useStates, useWatch } from '@presentation/hooks';
 
 import {
+  CreatingAnswersState,
   CreatingCentralFactState,
   CreatingQuestionsState,
   CreatingSubjectsState,
@@ -38,6 +41,8 @@ const GamePage: FC = () => {
   const { watchCentralFact } = useCentralFactUsecases();
   const { watchDices } = useDiceUsecases();
   const { watchCentralPulse } = useCentralPulseUsecases();
+  const { watchSubjectPulses } = useSubjectPulseUsecases();
+  const { watchQuestions } = useQuestionUsecases();
 
   useWatch(async () => {
     const unsubscribes = await Promise.all([
@@ -48,6 +53,8 @@ const GamePage: FC = () => {
       watchCentralFact(),
       watchDices(),
       watchCentralPulse(),
+      watchSubjectPulses(),
+      watchQuestions(),
     ]).finally(set('watching', false));
 
     return () => unsubscribes.map((unsubscribe) => unsubscribe());
@@ -59,7 +66,7 @@ const GamePage: FC = () => {
 
   if (!me) return null;
 
-  function renderMain(): ReactNode {
+  function renderMain() {
     if (myPlayer?.banned)
       return (
         <Main>
@@ -76,7 +83,7 @@ const GamePage: FC = () => {
       'creating:subjects': <CreatingSubjectsState />,
       'creating:centralFact': <CreatingCentralFactState />,
       'creating:questions': <CreatingQuestionsState />,
-      'creating:answers': null,
+      'creating:answers': <CreatingAnswersState />,
       'creating:lightSpot': null,
       'final:state': null,
     };
@@ -102,7 +109,7 @@ const GamePage: FC = () => {
     );
   }
 
-  function renderMyHeader(): ReactNode {
+  function renderMyHeader() {
     return (
       <span className='greetings'>
         {myPlayer?.avatar} Hello

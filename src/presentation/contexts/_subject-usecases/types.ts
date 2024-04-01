@@ -1,5 +1,6 @@
 import { SubjectModel } from '@domain/models';
 import {
+  ChangeMySubjectUsecase,
   ChangeSubjectUsecase,
   CreateMySubjectUsecase,
   CreateSubjectUsecase,
@@ -18,6 +19,7 @@ export type SubjectUsecasesContextValue = {
   fetchMySubject: GetMySubjectUsecase['execute'];
   createMySubject: CreateMySubjectUsecase['execute'];
   createSubject: CreateSubjectUsecase['execute'];
+  changeMySubject: ChangeMySubjectUsecase['execute'];
   changeSubject: ChangeSubjectUsecase['execute'];
 };
 
@@ -27,5 +29,6 @@ export interface SubjectUsecasesContextProviderProps
   getMySubject: GetMySubjectUsecase;
   createMySubject: CreateMySubjectUsecase;
   createSubject: CreateSubjectUsecase;
+  changeMySubject: ChangeMySubjectUsecase;
   changeSubject: ChangeSubjectUsecase;
 }

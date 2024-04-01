@@ -37,7 +37,7 @@ export const RoundUsecasesContextProvider: FC<
 
   const watchRounds = useCallback(
     (callback?: WatchRoundsUsecase.Callback) =>
-      props.watchRounds.execute(callback ?? ((): any => {})),
+      props.watchRounds.execute(callback ?? (() => {})),
     [],
   );
 

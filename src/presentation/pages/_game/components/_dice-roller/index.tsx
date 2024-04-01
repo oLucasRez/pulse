@@ -1,19 +1,16 @@
-import { FC, MouseEventHandler, useEffect, useRef } from 'react';
+import { FC, useEffect } from 'react';
 
 import { Vector } from '@domain/utils';
 
-import { useDiceUsecases, useRoundUsecases } from '@presentation/contexts';
+import { useRoundUsecases } from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
-import { alertError } from '@presentation/utils';
-
-import { Container } from './styles';
 
 import { DiceRollerProps } from './types';
 
-import { Dice } from '..';
+import { Dice, useMapContext } from '..';
 
 export const DiceRoller: FC<DiceRollerProps> = (props) => {
-  const { onDiceRolled } = props;
+  const { onRollDice } = props;
 
   const [s] = useStates({
     origin: null as Vector | null,
@@ -23,35 +20,55 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     value: 0,
   });
 
-  const { rollDice } = useDiceUsecases();
-
-  const ref = useRef<SVGSVGElement>(null);
-  const container = ref.current;
-
   const { currentPlayer, currentDice } = useRoundUsecases();
 
-  const handleMouseDown: MouseEventHandler<SVGSVGElement> = (event) => {
-    if (s.vel) return;
+  const { mapSpace, bounds, onMouseMove, onMouseDown, onMouseUp } =
+    useMapContext();
 
-    const { x, y } = event.currentTarget.getBoundingClientRect();
+  useEffect(
+    () =>
+      onMouseDown((mouse) => {
+        if (s.vel) return;
 
-    const vector = new Vector([event.clientX - x, event.clientY - y]);
-    s.origin = vector;
-    s.target = vector;
-  };
-  const handleMouseMove: MouseEventHandler<SVGSVGElement> = (event) => {
-    if (s.vel) return;
+        s.origin = mouse;
+        s.target = mouse;
+      }),
+    [],
+  );
 
-    const { x, y } = event.currentTarget.getBoundingClientRect();
+  useEffect(
+    () =>
+      onMouseMove((mouse) => {
+        if (s.vel) return;
 
-    s.target = s.origin && new Vector([event.clientX - x, event.clientY - y]);
-  };
-  const handleMouseUp: MouseEventHandler<SVGSVGElement> = () => {
-    if (s.vel) return;
+        s.target = s.origin && mouse;
+      }),
+    [],
+  );
 
-    if (s.origin && s.target) s.vel = s.target.sub(s.origin);
-    s.origin = null;
-  };
+  useEffect(
+    () =>
+      onMouseUp(() => {
+        if (s.vel) return;
+
+        if (s.origin && s.target) {
+          const vel = s.target.sub(s.origin);
+
+          if (vel.mag() < 5) {
+            alert('Click and drag to roll the dice');
+
+            s.origin = null;
+            s.target = null;
+
+            return;
+          }
+
+          s.vel = vel;
+        }
+        s.origin = null;
+      }),
+    [],
+  );
 
   useEffect(() => {
     s.origin = null;
@@ -64,31 +81,22 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     if (!s.vel || !s.target) return;
 
     s.interval = setInterval(() => {
-      if (!s.vel || !s.target || !container) return;
+      if (!s.vel || !s.target) return;
 
-      const { left, top, right, bottom } = container.getBoundingClientRect();
-
-      const fixedLeft = 0;
-      const fixedRight = right - left;
-      const fixedTop = 0;
-      const fixedBottom = bottom - top;
+      const { left, right, top, bottom } = bounds;
 
       let newTarget = s.target.sum(s.vel);
       let newVel = s.vel.mult(0.9);
 
-      if (fixedLeft > newTarget.x || fixedRight < newTarget.x) {
+      if (left > newTarget.x || right < newTarget.x) {
         newVel = newVel.flip('x');
-        if (fixedLeft > newTarget.x)
-          newTarget = new Vector([fixedLeft, newTarget.y]);
-        if (fixedRight < newTarget.x)
-          newTarget = new Vector([fixedRight, newTarget.y]);
+        if (left > newTarget.x) newTarget = new Vector([left, newTarget.y]);
+        if (right < newTarget.x) newTarget = new Vector([right, newTarget.y]);
       }
-      if (fixedTop > newTarget.y || fixedBottom < newTarget.y) {
+      if (top > newTarget.y || bottom < newTarget.y) {
         newVel = newVel.flip('y');
-        if (fixedTop > newTarget.y)
-          newTarget = new Vector([newTarget.x, fixedTop]);
-        if (fixedBottom < newTarget.y)
-          newTarget = new Vector([newTarget.x, fixedBottom]);
+        if (top > newTarget.y) newTarget = new Vector([newTarget.x, top]);
+        if (bottom < newTarget.y) newTarget = new Vector([newTarget.x, bottom]);
       }
 
       s.target = newTarget;
@@ -101,29 +109,35 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
   }, [!!s.vel]);
 
   useEffect(() => {
-    if (s.vel && s.vel.mod() < 1) {
+    if (s.vel && s.vel.mag() < 0.01) {
       if (currentDice && s.target)
-        rollDice(currentDice.id, s.target)
-          .then((dice) => dice.value && onDiceRolled?.(dice.value, dice))
-          .catch(alertError);
+        onRollDice?.({ position: s.target, dice: currentDice });
+
       clearInterval(s.interval);
     }
   }, [s.vel]);
 
   if (!currentPlayer) return null;
 
+  const origin = s.origin && mapSpace.mult(s.origin);
+  const target = s.target && mapSpace.mult(s.target);
+
   return (
-    <Container
-      ref={ref}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      {s.origin && s.target && (
-        <line x1={s.origin.x} y1={s.origin.y} x2={s.target.x} y2={s.target.y} />
+    <>
+      {origin && target && (
+        <line
+          x1={origin.x}
+          y1={origin.y}
+          x2={target.x}
+          y2={target.y}
+          stroke='darkgray'
+          strokeDasharray='5 5'
+        />
       )}
 
-      {s.target && currentDice && <Dice {...currentDice} position={s.target} />}
-    </Container>
+      {target && currentDice && <Dice {...currentDice} position={s.target} />}
+    </>
   );
 };
+
+export { RollDiceEvent } from './types';

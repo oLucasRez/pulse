@@ -33,7 +33,7 @@ export const CentralFactUsecasesContextProvider: FC<
 
   const watchCentralFact = useCallback(
     (callback?: WatchCentralFactUsecase.Callback) =>
-      props.watchCentralFact.execute(callback ?? ((): any => {})),
+      props.watchCentralFact.execute(callback ?? (() => {})),
     [],
   );
 

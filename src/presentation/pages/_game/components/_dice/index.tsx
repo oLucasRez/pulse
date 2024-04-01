@@ -1,9 +1,13 @@
 import { FC, useMemo } from 'react';
 
-import { usePlayerUsecases } from '@presentation/contexts';
+import {
+  useDiceUsecases,
+  usePlayerUsecases,
+  useRoundUsecases,
+} from '@presentation/contexts';
 import { darken, getColor } from '@presentation/styles/mixins';
 
-import { DiceProps } from './types';
+import { DiceProps, DicesProps } from './types';
 
 import { useMapContext } from '..';
 
@@ -11,7 +15,7 @@ const d4Edge = 40;
 const d6Edge = 20;
 
 export const Dice: FC<DiceProps> = (props) => {
-  const { value, sides, ownerID } = props;
+  const { value, sides, ownerID, transparent = false } = props;
 
   const { mapSpace } = useMapContext();
 
@@ -29,14 +33,14 @@ export const Dice: FC<DiceProps> = (props) => {
 
   if (sides === 4)
     return (
-      <g>
+      <g opacity={transparent ? 0.5 : 1}>
         <path
           d={`M${position.x},${position.y} m-${d4Edge / 2},${
             (d4Edge * Math.sqrt(3)) / 6
           } h${d4Edge} l-${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 2} l-${
             d4Edge / 2
           },${(d4Edge * Math.sqrt(3)) / 2}`}
-          fill={getColor(color)}
+          fill={transparent ? 'none' : getColor(color)}
         />
         <path
           d={`M${position.x},${position.y} m-${d4Edge / 2},${
@@ -44,15 +48,22 @@ export const Dice: FC<DiceProps> = (props) => {
           } l${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 6} v-${
             (d4Edge * Math.sqrt(3)) / 3
           }`}
-          stroke={darken(getColor(color), 0.2)}
-          fill={getColor(color)}
+          stroke={transparent ? getColor(color) : darken(getColor(color), 0.2)}
+          fill='none'
         />
         <path
           d={`M${position.x},${position.y} l${d4Edge / 2},${
             (d4Edge * Math.sqrt(3)) / 6
           }`}
-          stroke={darken(getColor(color), 0.2)}
-          fill={getColor(color)}
+          stroke={transparent ? getColor(color) : darken(getColor(color), 0.2)}
+          fill='none'
+        />
+        <path
+          d={`M${position.x},${position.y} l${d4Edge / 2},${
+            (d4Edge * Math.sqrt(3)) / 6
+          } h-${d4Edge} z`}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
         />
         <path
           d={`M${position.x},${position.y} m-${d4Edge / 2},${
@@ -64,7 +75,7 @@ export const Dice: FC<DiceProps> = (props) => {
           fill='none'
         />
 
-        {value && (
+        {value && !transparent && (
           <text
             style={{
               textAnchor: 'middle',
@@ -82,28 +93,35 @@ export const Dice: FC<DiceProps> = (props) => {
 
   if (sides === 6)
     return (
-      <g>
+      <g opacity={transparent ? 0.5 : 1}>
         <path
           d={`M${position.x},${position.y} m0,${d6Edge} l${
             (d6Edge * Math.sqrt(3)) / 2
           },-${d6Edge / 2} v-${d6Edge} l-${(d6Edge * Math.sqrt(3)) / 2},-${
             d6Edge / 2
           } l-${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} v${d6Edge} z`}
-          fill={getColor(color)}
+          fill={transparent ? 'none' : getColor(color)}
         />
         <path
           d={`M${position.x},${position.y} m0,${d6Edge} v-${d6Edge} l-${
             (d6Edge * Math.sqrt(3)) / 2
           },-${d6Edge / 2}`}
           fill='none'
-          stroke={darken(getColor(color), 0.2)}
+          stroke={transparent ? getColor(color) : darken(getColor(color), 0.2)}
+        />
+        <path
+          d={`M${position.x},${position.y} m0,${d6Edge} v-${d6Edge} l-${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${d6Edge / 2} v${d6Edge} z`}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
         />
         <path
           d={`M${position.x},${position.y} l${(d6Edge * Math.sqrt(3)) / 2},-${
             d6Edge / 2
           }`}
           fill='none'
-          stroke={darken(getColor(color), 0.2)}
+          stroke={transparent ? getColor(color) : darken(getColor(color), 0.2)}
         />
         <path
           d={`M${position.x},${position.y} m0,${d6Edge} l${
@@ -115,7 +133,61 @@ export const Dice: FC<DiceProps> = (props) => {
           fill='none'
         />
 
-        {value && (
+        {value && !transparent && (
+          <text
+            style={{
+              textAnchor: 'middle',
+              alignmentBaseline: 'middle',
+              fill: 'white',
+            }}
+            x={position.x}
+            y={position.y}
+          >
+            {value}
+          </text>
+        )}
+      </g>
+    );
+
+  if (sides === 8)
+    return (
+      <g opacity={transparent ? 0.5 : 1}>
+        <path
+          d={`M${position.x},${position.y} m0,${d6Edge} l${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${d6Edge / 2} v-${d6Edge} l-${(d6Edge * Math.sqrt(3)) / 2},-${
+            d6Edge / 2
+          } l-${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} v${d6Edge} z`}
+          fill={transparent ? 'none' : getColor(color)}
+        />
+        <path
+          d={`M${position.x},${position.y} m0,-${d6Edge} l-${
+            (d6Edge * Math.sqrt(3)) / 2
+          },${(d6Edge * 3) / 2} h${d6Edge * Math.sqrt(3)} l-${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${(d6Edge * 3) / 2}`}
+          fill='none'
+          stroke={transparent ? getColor(color) : darken(getColor(color), 0.2)}
+        />
+        <path
+          d={`M${position.x},${position.y} m-${(d6Edge * Math.sqrt(3)) / 2},${
+            d6Edge / 2
+          } l${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} l${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${d6Edge / 2} z`}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
+        />
+        <path
+          d={`M${position.x},${position.y} m0,${d6Edge} l${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${d6Edge / 2} v-${d6Edge} l-${(d6Edge * Math.sqrt(3)) / 2},-${
+            d6Edge / 2
+          } l-${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} v${d6Edge} z`}
+          stroke={getColor(color)}
+          fill='none'
+        />
+        {value && !transparent && (
           <text
             style={{
               textAnchor: 'middle',
@@ -132,4 +204,21 @@ export const Dice: FC<DiceProps> = (props) => {
     );
 
   return null;
+};
+
+export const Dices: FC<DicesProps> = (props) => {
+  const { transparent, currentHidden } = props;
+
+  const { currentDice } = useRoundUsecases();
+  const { dices } = useDiceUsecases();
+
+  return (
+    <>
+      {dices.map((dice) => {
+        if (currentHidden && dice.id === currentDice?.id) return null;
+
+        return <Dice key={dice.id} transparent={transparent} {...dice} />;
+      })}
+    </>
+  );
 };

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 
 import { GameModel } from '@domain/models';
 
@@ -34,7 +34,7 @@ const HomePage: FC = () => {
 
   const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
-  function handleCreateGameButtonClick(): any {
+  function handleCreateGameButtonClick() {
     set('creatingGame')(true);
 
     createGame({
@@ -49,7 +49,7 @@ const HomePage: FC = () => {
       .catch(alertError);
   }
 
-  function handleDeleteGameButtonClick(game: GameModel): any {
+  function handleDeleteGameButtonClick(game: GameModel) {
     set('deletingGame')(game.id);
 
     deleteGame(game.id).catch(alertError).finally(set('deletingGame', null));
@@ -59,7 +59,7 @@ const HomePage: FC = () => {
 
   const { linkWithProvider } = useAuthUsecases();
 
-  function handleGoogleButtonClick(): any {
+  function handleGoogleButtonClick() {
     set('linking')(true);
 
     linkWithProvider('google')
@@ -68,7 +68,7 @@ const HomePage: FC = () => {
       .finally(set('linking', false));
   }
 
-  function handleGithubButtonClick(): any {
+  function handleGithubButtonClick() {
     set('linking')(true);
 
     linkWithProvider('github')
@@ -77,7 +77,7 @@ const HomePage: FC = () => {
       .finally(set('linking', false));
   }
 
-  function renderCreateGameButton(): ReactNode {
+  function renderCreateGameButton() {
     return (
       <button
         className='create'
@@ -95,7 +95,7 @@ const HomePage: FC = () => {
     );
   }
 
-  function renderGamesList(): ReactNode {
+  function renderGamesList() {
     if (s.fetchingGames && !myGames.length)
       return (
         <ul className='games'>
@@ -129,7 +129,7 @@ const HomePage: FC = () => {
 
               <button
                 className='select'
-                onClick={(): any => navigateToGame(game.id)}
+                onClick={() => navigateToGame(game.id)}
               >
                 <span className='emoji'>👁️</span>
               </button>
@@ -141,7 +141,7 @@ const HomePage: FC = () => {
               <button
                 className='delete'
                 disabled={deletingGame}
-                onClick={(): any => handleDeleteGameButtonClick(game)}
+                onClick={() => handleDeleteGameButtonClick(game)}
               >
                 {deletingGame ? (
                   <span className='emoji loading'>⏳</span>
@@ -217,11 +217,9 @@ const HomePage: FC = () => {
       {currentGame && !s.returnToGameBannerIsClosed && (
         <span id='return-to-game'>
           Return to the game {currentGame.title}
-          <button onClick={(): any => navigateToGame(currentGame.id)}>
-            Return
-          </button>
+          <button onClick={() => navigateToGame(currentGame.id)}>Return</button>
           <button
-            onClick={(): any => {
+            onClick={() => {
               setCurrentGame(null);
               s.returnToGameBannerIsClosed = true;
             }}

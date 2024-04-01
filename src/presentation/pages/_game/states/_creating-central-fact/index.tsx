@@ -9,11 +9,21 @@ import {
   useGameUsecases,
   usePlayerUsecases,
   useRoundUsecases,
+  useSubjectUsecases,
 } from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
-import { Dice, DiceRoller, Map, PlayersList } from '../../components';
+import {
+  Dice,
+  DiceRoller,
+  Dices,
+  Map,
+  PlayersList,
+  Pulses,
+  RollDiceEvent,
+  Subjects,
+} from '../../components';
 
 import { Container } from './styles';
 
@@ -27,7 +37,6 @@ export const CreatingCentralFactState: FC = () => {
   const [s, set] = useStates({
     description: centralFact?.description,
     changingCentralFact: false,
-    diceValue: null as number | null,
     dicePosition: currentDice?.position ?? null,
   });
 
@@ -37,19 +46,11 @@ export const CreatingCentralFactState: FC = () => {
 
   const { changeCentralPulse } = useCentralPulseUsecases();
 
-  useEffect(() => {
-    if (!s.diceValue) return;
-
-    changeCentralPulse({ amount: s.diceValue })
-      .then(nextGameState)
-      .catch(alertError);
-  }, [!s.diceValue]);
-
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
   const submitDisabled = s.description === centralFact?.description;
 
-  function handleSubmitButtonClick(): any {
+  function handleSubmitButtonClick() {
     if (!s.description) return;
 
     s.changingCentralFact = true;
@@ -62,17 +63,19 @@ export const CreatingCentralFactState: FC = () => {
 
   const { centralPulse } = useCentralPulseUsecases();
 
-  function handleMapMouseMove(vector: Vector): any {
+  function handleMapMouseMove(vector: Vector) {
     if (!isMyTurn) return;
     if (currentGame && currentGame.state[1] !== 'update:dice:position') return;
     if (!centralPulse) return;
+    if (!currentDice?.value) return;
 
-    s.dicePosition = vector.norm().mult(centralPulse.amount);
+    s.dicePosition = vector.norm().mult(currentDice.value);
   }
 
-  const { dices, setDicePosition } = useDiceUsecases();
+  const { setDicePosition } = useDiceUsecases();
+  const { changeMySubject } = useSubjectUsecases();
 
-  function handleMapClick(): any {
+  function handleMapClick() {
     if (!isMyTurn) return;
     if (currentGame && currentGame.state[1] !== 'update:dice:position') return;
     if (!currentDice) return;
@@ -82,8 +85,24 @@ export const CreatingCentralFactState: FC = () => {
 
     s.dicePosition = null;
 
-    setDicePosition(currentDice.id, dicePosition)
+    Promise.all([
+      setDicePosition(currentDice.id, dicePosition),
+      changeMySubject({ position: dicePosition }),
+    ])
       .then(nextGameState)
+      .catch(alertError);
+  }
+
+  const { rollDice } = useDiceUsecases();
+
+  function handleDiceRoll({ dice }: RollDiceEvent) {
+    rollDice(dice.id)
+      .then((dice) => {
+        if (dice.value)
+          changeCentralPulse({ amount: dice.value })
+            .then(nextGameState)
+            .catch(alertError);
+      })
       .catch(alertError);
   }
 
@@ -92,20 +111,19 @@ export const CreatingCentralFactState: FC = () => {
   return (
     <>
       <Map onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
-        {dices.map(
-          (dice) =>
-            dice.id !== currentDice?.id && <Dice key={dice.id} {...dice} />,
-        )}
+        <Pulses />
+        <Subjects />
+        <Dices currentHidden transparent />
 
         {isMyTurn &&
           currentGame.state[1] === 'update:dice:position' &&
           currentDice &&
           s.dicePosition && <Dice {...currentDice} position={s.dicePosition} />}
-      </Map>
 
-      {isMyTurn && currentGame.state[1] === 'roll:dice' && (
-        <DiceRoller onDiceRolled={set('diceValue')} />
-      )}
+        {isMyTurn && currentGame.state[1] === 'roll:dice' && (
+          <DiceRoller onRollDice={handleDiceRoll} />
+        )}
+      </Map>
 
       <PlayersList />
 
@@ -117,7 +135,7 @@ export const CreatingCentralFactState: FC = () => {
 
       {isMyTurn && currentGame.state[1] === 'change:centralFact' && (
         <Container>
-          <article className='modal' onClick={(e): any => e.stopPropagation()}>
+          <article className='modal' onClick={(e) => e.stopPropagation()}>
             <header>
               <h2>Change central fact</h2>
             </header>
@@ -126,7 +144,7 @@ export const CreatingCentralFactState: FC = () => {
               <textarea
                 autoFocus
                 defaultValue={s.description}
-                onChange={(e): any => (s.description = e.target.value)}
+                onChange={(e) => (s.description = e.target.value)}
               />
             </main>
 

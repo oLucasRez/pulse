@@ -36,7 +36,7 @@ export const Settings: FC<SettingsProps> = (props) => {
 
   const maxPlayers = watch('maxPlayers');
 
-  function onSubmit(data: SettingsFieldValues): any {
+  function onSubmit(data: SettingsFieldValues) {
     set('changingGame')(true);
 
     changeGame({

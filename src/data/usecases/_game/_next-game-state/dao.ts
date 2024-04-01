@@ -64,16 +64,27 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
         const round = await this.passTurn.execute(currentGame.roundID);
 
         if (round.finished) {
-          state = ['creating:questions'];
+          state = ['creating:questions', 'roll:dice'];
           await this.startRound.execute(currentGame.roundID, 'clockwise');
         } else state = ['creating:centralFact', 'change:centralFact'];
       }
     } else if (state[0] === 'creating:questions') {
-      const round = await this.passTurn.execute(currentGame.roundID);
+      if (state[1] === 'roll:dice') {
+        state = ['creating:questions', 'create:subjectPulse'];
+      } else if (state[1] === 'create:subjectPulse') {
+        state = ['creating:questions', 'update:dice:position'];
+      } else if (state[1] === 'update:dice:position') {
+        state = ['creating:questions', 'create:question'];
+      } else if (state[1] === 'create:question') {
+        const round = await this.passTurn.execute(currentGame.roundID);
 
-      if (round.finished) {
-        state = ['creating:answers'];
-        await this.startRound.execute(currentGame.roundID, 'counterclockwise');
+        if (round.finished) {
+          state = ['creating:answers'];
+          await this.startRound.execute(
+            currentGame.roundID,
+            'counterclockwise',
+          );
+        } else state = ['creating:questions', 'roll:dice'];
       }
     } else if (state[0] === 'creating:answers') {
       const round = await this.passTurn.execute(currentGame.roundID);
@@ -90,7 +101,7 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
       if (lightSpotRound.finished) {
         state = ['final:state'];
       } else {
-        state = ['creating:questions'];
+        state = ['creating:questions', 'roll:dice'];
         await this.startRound.execute(currentGame.roundID, 'clockwise');
       }
     }

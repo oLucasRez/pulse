@@ -25,7 +25,7 @@ export const DiceUsecasesContextProvider: FC<
   const dices = useSelector(dicesSelector);
 
   const watchDices = useCallback(
-    (callback: WatchDicesUsecase.Callback = (): any => {}) =>
+    (callback: WatchDicesUsecase.Callback = () => {}) =>
       props.watchDices.execute(callback),
     [],
   );

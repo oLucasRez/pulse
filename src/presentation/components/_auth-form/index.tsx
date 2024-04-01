@@ -30,10 +30,10 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     signInAnonymously,
   } = useAuthUsecases();
 
-  const handleAuth = (me: UserModel): any =>
+  const handleAuth = (me: UserModel) =>
     onAuth?.(me)?.finally(set('signing', false));
 
-  function onSubmit(data: AuthFieldValues): any {
+  function onSubmit(data: AuthFieldValues) {
     const { name, email, password } = data;
 
     set('signing')(true);
@@ -46,7 +46,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     promise?.then(handleAuth).catch(alertError).finally(set('signing', false));
   }
 
-  function handleAnonymousButtonClick(): any {
+  function handleAnonymousButtonClick() {
     set('signing')(true);
 
     signInAnonymously()
@@ -55,7 +55,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       .finally(set('signing', false));
   }
 
-  function handleGoogleButtonClick(): any {
+  function handleGoogleButtonClick() {
     set('signing')(true);
 
     signInWithProvider('google')
@@ -64,7 +64,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       .finally(set('signing', false));
   }
 
-  function handleGithubButtonClick(): any {
+  function handleGithubButtonClick() {
     set('signing')(true);
 
     signInWithProvider('github')

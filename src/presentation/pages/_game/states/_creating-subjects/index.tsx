@@ -9,7 +9,7 @@ import { logError } from '@presentation/utils';
 
 import { useMutateSubjectModal } from '../../hooks';
 
-import { Map, PlayersList } from '../../components';
+import { Map, PlayersList, Pulses } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
   const { currentPlayer } = useRoundUsecases();
@@ -18,7 +18,7 @@ export const CreatingSubjectsState: FC = () => {
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
-  function handleSuccessCreateSubject(): any {
+  function handleSuccessCreateSubject() {
     nextGameState().catch(logError);
   }
 
@@ -31,7 +31,9 @@ export const CreatingSubjectsState: FC = () => {
 
   return (
     <>
-      <Map />
+      <Map>
+        <Pulses />
+      </Map>
 
       <PlayersList />
 

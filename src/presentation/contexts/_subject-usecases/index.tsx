@@ -1,6 +1,7 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
+  ChangeMySubjectUsecase,
   ChangeSubjectUsecase,
   CreateSubjectUsecase,
   GetMySubjectUsecase,
@@ -30,7 +31,7 @@ export const SubjectUsecasesContextProvider: FC<
   const mySubject = useSelector(mySubjectSelector);
 
   const watchSubjects = useCallback(
-    (callback: WatchSubjectsUsecase.Callback = (): any => {}) =>
+    (callback: WatchSubjectsUsecase.Callback = () => {}) =>
       props.watchSubjects.execute(callback),
     [],
   );
@@ -41,20 +42,22 @@ export const SubjectUsecasesContextProvider: FC<
   );
 
   const createMySubject = useCallback<CreateSubjectUsecase['execute']>(
-    (payload: CreateSubjectUsecase.Payload) =>
-      props.createMySubject.execute(payload),
+    (payload) => props.createMySubject.execute(payload),
     [],
   );
 
   const createSubject = useCallback<CreateSubjectUsecase['execute']>(
-    (payload: CreateSubjectUsecase.Payload) =>
-      props.createSubject.execute(payload),
+    (payload) => props.createSubject.execute(payload),
+    [],
+  );
+
+  const changeMySubject = useCallback<ChangeMySubjectUsecase['execute']>(
+    (payload) => props.changeMySubject.execute(payload),
     [],
   );
 
   const changeSubject = useCallback<ChangeSubjectUsecase['execute']>(
-    (id: string, payload: ChangeSubjectUsecase.Payload) =>
-      props.changeSubject.execute(id, payload),
+    (id, payload) => props.changeSubject.execute(id, payload),
     [],
   );
 
@@ -67,6 +70,7 @@ export const SubjectUsecasesContextProvider: FC<
         fetchMySubject,
         createMySubject,
         createSubject,
+        changeMySubject,
         changeSubject,
       }}
     >

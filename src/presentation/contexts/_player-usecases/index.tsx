@@ -36,7 +36,7 @@ export const PlayerUsecasesContextProvider: FC<
   const myPlayer = useSelector(myPlayerSelector);
 
   const watchPlayers = useCallback(
-    (callback: WatchPlayersUsecase.Callback = (): any => {}) =>
+    (callback: WatchPlayersUsecase.Callback = () => {}) =>
       props.watchPlayers.execute(callback),
     [],
   );

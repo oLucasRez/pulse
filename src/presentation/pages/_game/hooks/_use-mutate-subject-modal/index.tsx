@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { Color } from '@domain/enums';
 import { UnknownError } from '@domain/errors';
@@ -63,7 +63,7 @@ export function useMutateSubjectModal(
     [s.isMyFirstSubject],
   );
 
-  const closeModal = (): any => {
+  const closeModal = () => {
     s.open = false;
     s.subject = undefined;
     s.description = '';
@@ -74,7 +74,7 @@ export function useMutateSubjectModal(
   const submitDisabled =
     !s.description || !s.color || !s.icon || s.mutatingSubject;
 
-  function handleSubmitButtonClick(): any {
+  function handleSubmitButtonClick() {
     const { description, color, icon } = s;
 
     if (!description || !color || !icon) return;
@@ -98,7 +98,7 @@ export function useMutateSubjectModal(
       .finally(set('mutatingSubject', false));
   }
 
-  function renderColors(): ReactNode {
+  function renderColors() {
     if (s.isMyFirstSubject) return;
 
     return (
@@ -115,7 +115,7 @@ export function useMutateSubjectModal(
                 borderBottomColor: darken(styledColor, 0.1),
                 opacity: !s.color || s.color === color ? 1 : 0.2,
               }}
-              onClick={(): any => {
+              onClick={() => {
                 if (s.color === color) s.color = undefined;
                 else s.color = color;
               }}
@@ -135,10 +135,7 @@ export function useMutateSubjectModal(
       <>
         {s.open && (
           <Container>
-            <article
-              className='modal'
-              onClick={(e): any => e.stopPropagation()}
-            >
+            <article className='modal' onClick={(e) => e.stopPropagation()}>
               <header>
                 <h2>{title}</h2>
                 {!unclosable && <button onClick={closeModal}>x</button>}
@@ -159,7 +156,7 @@ export function useMutateSubjectModal(
                   className='description'
                   placeholder='Description'
                   defaultValue={s.description}
-                  onChange={(e): any => (s.description = e.target.value)}
+                  onChange={(e) => (s.description = e.target.value)}
                 />
 
                 {renderColors()}

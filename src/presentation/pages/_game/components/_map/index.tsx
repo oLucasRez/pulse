@@ -10,23 +10,27 @@ import {
 import { Vector, VectorSpace } from '@domain/utils';
 
 import { ms } from '@presentation/constants';
-import { useCentralPulseUsecases } from '@presentation/contexts';
-import { useInterval, useStates } from '@presentation/hooks';
-
-import { Pulse } from './components';
+import { useEvent, useInterval, useStates } from '@presentation/hooks';
 
 import { Container, ViewBox } from './styles';
 
 import { MapContextValue, MapProps } from './types';
 
+const bounds = { top: -20, left: -20, right: 20, bottom: 20 };
+
 const Context = createContext<MapContextValue>({
   mapSpace: VectorSpace.identity,
+  bounds,
+  onMouseMove: () => () => {},
+  onMouseDown: () => () => {},
+  onMouseUp: () => () => {},
+  onClick: () => () => {},
 });
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map: FC<MapProps> = (props) => {
-  const { children, onMouseMove, onClick } = props;
+  const { children } = props;
 
   const [s] = useStates({
     width: 0,
@@ -35,45 +39,90 @@ export const Map: FC<MapProps> = (props) => {
 
   const divRef = useRef<HTMLDivElement>(null);
 
-  function updateSize(): any {
+  function updateSize() {
     s.width = divRef.current?.clientWidth ?? 0;
     s.height = divRef.current?.clientHeight ?? 0;
   }
 
-  const { centralPulse } = useCentralPulseUsecases();
-
-  useInterval(updateSize, 300 * ms, [divRef], { firstShot: true });
+  useInterval(updateSize, 100 * ms, [divRef], { firstShot: true });
 
   const mapSpace = useMemo(
     () =>
       new VectorSpace({
         translate: new Vector([s.width / 2, s.height / 2]),
-        scale: Math.max(s.width, s.height) / 40,
+        scale: Math.max(s.width, s.height) / (bounds.right - bounds.left),
       }),
     [s.width, s.height],
   );
 
+  const mouseMove = useEvent<(mouse: Vector) => void>();
+  const mouseDown = useEvent<(mouse: Vector) => void>();
+  const mouseUp = useEvent<(mouse: Vector) => void>();
+  const click = useEvent<(mouse: Vector) => void>();
+
   const handleMouseMove: MouseEventHandler<SVGSVGElement> = (event) => {
     const { x, y } = event.currentTarget.getBoundingClientRect();
 
-    onMouseMove?.(
-      mapSpace
-        .inverse()
-        .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace)),
-    );
+    const vector = mapSpace
+      .inverse()
+      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+
+    props.onMouseMove?.(vector);
+
+    mouseMove.notify(vector);
+  };
+
+  const handleMouseDown: MouseEventHandler<SVGSVGElement> = (event) => {
+    const { x, y } = event.currentTarget.getBoundingClientRect();
+
+    const vector = mapSpace
+      .inverse()
+      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+
+    mouseDown.notify(vector);
+  };
+
+  const handleMouseUp: MouseEventHandler<SVGSVGElement> = (event) => {
+    const { x, y } = event.currentTarget.getBoundingClientRect();
+
+    const vector = mapSpace
+      .inverse()
+      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+
+    mouseUp.notify(vector);
+  };
+
+  const handleClick: MouseEventHandler<SVGSVGElement> = (event) => {
+    const { x, y } = event.currentTarget.getBoundingClientRect();
+
+    const vector = mapSpace
+      .inverse()
+      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+
+    props.onClick?.();
+    click.notify(vector);
+  };
+
+  const contextValue: MapContextValue = {
+    mapSpace,
+    bounds,
+    onMouseMove: mouseMove.on,
+    onMouseDown: mouseDown.on,
+    onMouseUp: mouseUp.on,
+    onClick: click.on,
   };
 
   return (
-    <Context.Provider value={{ mapSpace }}>
+    <Context.Provider value={contextValue}>
       <Container ref={divRef}>
         <ViewBox
           size={[s.width, s.height]}
           onMouseMove={handleMouseMove}
-          onClick={onClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onClick={handleClick}
         >
-          {centralPulse && <Pulse pulse={centralPulse} />}
-
-          {typeof children === 'function' ? children({ mapSpace }) : children}
+          {typeof children === 'function' ? children(contextValue) : children}
         </ViewBox>
       </Container>
     </Context.Provider>

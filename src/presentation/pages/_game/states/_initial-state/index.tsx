@@ -1,4 +1,4 @@
-import { FC, FocusEvent, ReactNode, useRef } from 'react';
+import { FC, FocusEvent, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
@@ -28,31 +28,31 @@ export const InitialState: FC = () => {
 
   const imHost = me?.uid === currentGame?.uid;
 
-  function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>): any {
+  function handleLinkInputFocus(event: FocusEvent<HTMLInputElement>) {
     event.target.select();
     event.target.setSelectionRange(0, 99999);
 
     navigator.clipboard.writeText(event.target.value);
   }
 
-  function handleStartButtonClick(): any {
+  function handleStartButtonClick() {
     set('startingGame')(true);
 
     startGame().catch(alertError).finally(set('startingGame', false));
   }
 
-  function handleCopyLinkButtonClick(): any {
+  function handleCopyLinkButtonClick() {
     linkInputRef.current?.focus();
   }
 
   const { openMutatePlayerModal, renderMutatePlayerModal } =
     useMutatePlayerModal();
 
-  function handleEditPlayerButtonClick(player: PlayerModel): any {
+  function handleEditPlayerButtonClick(player: PlayerModel) {
     openMutatePlayerModal(player);
   }
 
-  function handleBanPlayerButtonClick(playerID: string): any {
+  function handleBanPlayerButtonClick(playerID: string) {
     set('banningPlayer')(true);
 
     banPlayer(playerID).catch(alertError).finally(set('banningPlayer', false));
@@ -60,7 +60,7 @@ export const InitialState: FC = () => {
 
   const linkInputRef = useRef<HTMLInputElement>(null);
 
-  function renderInvite(): ReactNode {
+  function renderInvite() {
     if (!imHost)
       return <p className='invite'>Wait until the host starts the game!</p>;
 
@@ -86,7 +86,7 @@ export const InitialState: FC = () => {
     );
   }
 
-  function renderPlayers(): ReactNode {
+  function renderPlayers() {
     return (
       <div className='players'>
         {players.map((player) => {
@@ -99,16 +99,12 @@ export const InitialState: FC = () => {
             <div key={player.id} className='player'>
               <div className='actions'>
                 {editable && (
-                  <button
-                    onClick={(): any => handleEditPlayerButtonClick(player)}
-                  >
+                  <button onClick={() => handleEditPlayerButtonClick(player)}>
                     ✏️
                   </button>
                 )}
                 {bannable && (
-                  <button
-                    onClick={(): any => handleBanPlayerButtonClick(player.id)}
-                  >
+                  <button onClick={() => handleBanPlayerButtonClick(player.id)}>
                     {s.banningPlayer ? (
                       <span className='emoji loading'>⏳</span>
                     ) : (

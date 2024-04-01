@@ -13,7 +13,9 @@ import {
   makeDiceUsecasesContextProvider,
   makeGameUsecasesContextProvider,
   makePlayerUsecasesContextProvider,
+  makeQuestionUsecasesContextProvider,
   makeRoundUsecasesContextProvider,
+  makeSubjectPulseUsecasesContextProvider,
   makeSubjectUsecasesContextProvider,
   makeUserUsecasesContextProvider,
 } from '@main/factories';
@@ -23,6 +25,8 @@ const GamePage = lazy(() => import('@presentation/pages/_game'));
 export function makeGamePage(): ReactElement {
   const page = [
     // inner
+    makeQuestionUsecasesContextProvider,
+    makeSubjectPulseUsecasesContextProvider,
     makeCentralFactUsecasesContextProvider,
     makeCentralPulseUsecasesContextProvider,
     makeSubjectUsecasesContextProvider,

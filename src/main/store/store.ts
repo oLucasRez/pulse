@@ -3,21 +3,22 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { auth } from './_auth';
 import { dice } from './_dice';
 import { game } from './_game';
-import { centralFact } from './_landmark';
+import { centralFact, question, subject } from './_landmark';
 import { player } from './_player';
-import { centralPulse } from './_pulse';
+import { centralPulse, subjectPulse } from './_pulse';
 import { round } from './_round';
-import { subject } from './_subject';
 
 const reducer = combineReducers({
   auth,
   dice,
   game,
   centralFact,
+  question,
+  subject,
   player,
   centralPulse,
+  subjectPulse,
   round,
-  subject,
 });
 
 export const store = configureStore({

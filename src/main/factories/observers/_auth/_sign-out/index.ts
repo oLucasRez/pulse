@@ -7,7 +7,9 @@ import {
   makeDiceStoreSignOutSubscriber,
   makeGameStoreSignOutSubscriber,
   makePlayerStoreSignOutSubscriber,
+  makeQuestionStoreSignOutSubscriber,
   makeRoundStoreSignOutSubscriber,
+  makeSubjectPulseStoreSignOutSubscriber,
   makeSubjectStoreSignOutSubscriber,
 } from '@main/factories';
 import { SignOutPublisher } from '@main/observers';
@@ -19,10 +21,12 @@ export function makeSignOutPublisher(): SignOutObserver.Publisher {
   publisher.subscribe(makeDiceStoreSignOutSubscriber());
   publisher.subscribe(makeGameStoreSignOutSubscriber());
   publisher.subscribe(makeCentralFactStoreSignOutSubscriber());
+  publisher.subscribe(makeQuestionStoreSignOutSubscriber());
+  publisher.subscribe(makeSubjectStoreSignOutSubscriber());
   publisher.subscribe(makePlayerStoreSignOutSubscriber());
   publisher.subscribe(makeCentralPulseStoreSignOutSubscriber());
+  publisher.subscribe(makeSubjectPulseStoreSignOutSubscriber());
   publisher.subscribe(makeRoundStoreSignOutSubscriber());
-  publisher.subscribe(makeSubjectStoreSignOutSubscriber());
 
   return publisher;
 }

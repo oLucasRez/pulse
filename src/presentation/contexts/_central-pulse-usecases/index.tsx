@@ -33,7 +33,7 @@ export const CentralPulseUsecasesContextProvider: FC<
 
   const watchCentralPulse = useCallback(
     (callback?: WatchCentralPulseUsecase.Callback) =>
-      props.watchCentralPulse.execute(callback ?? ((): any => {})),
+      props.watchCentralPulse.execute(callback ?? (() => {})),
     [],
   );
 

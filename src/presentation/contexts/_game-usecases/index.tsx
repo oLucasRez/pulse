@@ -34,7 +34,7 @@ export const GameUsecasesContextProvider: FC<
   const currentGame = useSelector(currentGameSelector);
 
   const watchCurrentGame = useCallback(
-    (callback: WatchCurrentGameUsecase.Callback = (): any => {}) =>
+    (callback: WatchCurrentGameUsecase.Callback = () => {}) =>
       props.watchCurrentGame.execute(callback),
     [],
   );

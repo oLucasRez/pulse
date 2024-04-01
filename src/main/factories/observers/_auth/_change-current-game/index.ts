@@ -7,7 +7,9 @@ import {
   makeDiceStoreChangeCurrentGameSubscriber,
   makeGameStoreChangeCurrentGameSubscriber,
   makePlayerStoreChangeCurrentGameSubscriber,
+  makeQuestionStoreChangeCurrentGameSubscriber,
   makeRoundStoreChangeCurrentGameSubscriber,
+  makeSubjectPulseStoreChangeCurrentGameSubscriber,
   makeSubjectStoreChangeCurrentGameSubscriber,
 } from '@main/factories';
 import { ChangeCurrentGamePublisher } from '@main/observers';
@@ -19,10 +21,12 @@ export function makeChangeCurrentGamePublisher(): ChangeCurrentGameObserver.Publ
   publisher.subscribe(makeDiceStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeGameStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeCentralFactStoreChangeCurrentGameSubscriber());
+  publisher.subscribe(makeQuestionStoreChangeCurrentGameSubscriber());
+  publisher.subscribe(makeSubjectStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makePlayerStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeCentralPulseStoreChangeCurrentGameSubscriber());
+  publisher.subscribe(makeSubjectPulseStoreChangeCurrentGameSubscriber());
   publisher.subscribe(makeRoundStoreChangeCurrentGameSubscriber());
-  publisher.subscribe(makeSubjectStoreChangeCurrentGameSubscriber());
 
   return publisher;
 }
