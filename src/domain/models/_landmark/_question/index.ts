@@ -11,3 +11,14 @@ export interface QuestionModel extends LandmarkModel {
   answerIDs: AnswerModel['id'][];
   factID: AnswerModel['id'] | null;
 }
+
+export namespace QuestionModel {
+  export interface DTO extends LandmarkModel.DTO {
+    position: Vector.JSON;
+    description: string;
+    subjectIDs: string[];
+    authorID: string;
+    answerIDs: string[];
+    factID: string | null;
+  }
+}

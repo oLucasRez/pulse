@@ -2,14 +2,14 @@ import { NotFoundError } from '@domain/errors';
 import { UserModel } from '@domain/models';
 import { ChangeMeUsecase, GetMeUsecase } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { ChangeMeObserver } from '@data/observers';
 
 export class DAOChangeMeUsecase implements ChangeMeUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: DAOChangeMeUsecase.Deps) {
     this.getMe = deps.getMe;
@@ -39,6 +39,6 @@ export namespace DAOChangeMeUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     changeMePublisher: ChangeMeObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

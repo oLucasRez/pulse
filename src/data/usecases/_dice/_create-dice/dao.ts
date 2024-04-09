@@ -2,12 +2,12 @@ import { ForbiddenError } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import { CreateDiceUsecase } from '@domain/usecases';
 
-import { DiceDAO } from '@data/dao';
+import { IDiceDAO } from '@data/dao';
 import { DiceHydrator } from '@data/hydration';
 import { CreateDiceObserver } from '@data/observers';
 
 export class DAOCreateDiceUsecase implements CreateDiceUsecase {
-  private readonly diceDAO: DiceDAO;
+  private readonly diceDAO: IDiceDAO;
   private readonly createDicePublisher: CreateDiceObserver.Publisher;
 
   public constructor(deps: DAOCreateDiceUsecase.Deps) {
@@ -41,7 +41,7 @@ export class DAOCreateDiceUsecase implements CreateDiceUsecase {
 
 export namespace DAOCreateDiceUsecase {
   export type Deps = {
-    diceDAO: DiceDAO;
+    diceDAO: IDiceDAO;
     createDicePublisher: CreateDiceObserver.Publisher;
   };
 }

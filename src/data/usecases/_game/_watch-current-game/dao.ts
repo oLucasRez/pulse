@@ -1,13 +1,13 @@
 import { ForbiddenError } from '@domain/errors';
 import { GetMeUsecase, WatchCurrentGameUsecase } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { FetchGameObserver } from '@data/observers';
 
 export class DAOWatchCurrentGameUsecase implements WatchCurrentGameUsecase {
   private readonly getMe: GetMeUsecase;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
   private readonly fetchGamePublisher: FetchGameObserver.Publisher;
 
   public constructor(deps: SocketWatchCurrentGameUsecase.Deps) {
@@ -44,7 +44,7 @@ export class DAOWatchCurrentGameUsecase implements WatchCurrentGameUsecase {
 export namespace SocketWatchCurrentGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
     fetchGamePublisher: FetchGameObserver.Publisher;
   };
 }

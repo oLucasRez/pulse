@@ -1,13 +1,13 @@
 import { SubjectModel } from '@domain/models';
 import { GetMyPlayerUsecase, GetMySubjectUsecase } from '@domain/usecases';
 
-import { SubjectDAO } from '@data/dao';
+import { ISubjectDAO } from '@data/dao';
 import { SubjectHydrator } from '@data/hydration';
 import { FetchSubjectObserver } from '@data/observers';
 
 export class DAOGetMySubjectUsecase implements GetMySubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly subjectDAO: SubjectDAO;
+  private readonly subjectDAO: ISubjectDAO;
   private readonly fetchSubjectPublisher: FetchSubjectObserver.Publisher;
 
   public constructor(deps: DAOGetMySubjectUsecase.Deps) {
@@ -21,7 +21,7 @@ export class DAOGetMySubjectUsecase implements GetMySubjectUsecase {
 
     if (!myPlayer?.subjectID) return null;
 
-    const dto = (await this.subjectDAO.read()).find(
+    const dto = (await this.subjectDAO.getAll()).find(
       (subject) => subject.id === myPlayer.subjectID,
     );
 
@@ -36,7 +36,7 @@ export class DAOGetMySubjectUsecase implements GetMySubjectUsecase {
 export namespace DAOGetMySubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
-    subjectDAO: SubjectDAO;
+    subjectDAO: ISubjectDAO;
     fetchSubjectPublisher: FetchSubjectObserver.Publisher;
   };
 }

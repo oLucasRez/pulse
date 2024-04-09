@@ -2,13 +2,13 @@ import { NotFoundError } from '@domain/errors';
 import { RoundModel } from '@domain/models';
 import { GetRoundUsecase, StartRoundUsecase } from '@domain/usecases';
 
-import { RoundDAO } from '@data/dao';
+import { IRoundDAO } from '@data/dao';
 import { RoundHydrator } from '@data/hydration/_round';
 import { ChangeRoundObserver } from '@data/observers';
 
 export class DAOStartRoundUsecase implements StartRoundUsecase {
   private readonly getRound: GetRoundUsecase;
-  private readonly roundDAO: RoundDAO;
+  private readonly roundDAO: IRoundDAO;
   private readonly changeRoundPublisher: ChangeRoundObserver.Publisher;
 
   public constructor(deps: DAOStartRoundUsecase.Deps) {
@@ -49,7 +49,7 @@ export class DAOStartRoundUsecase implements StartRoundUsecase {
 export namespace DAOStartRoundUsecase {
   export type Deps = {
     getRound: GetRoundUsecase;
-    roundDAO: RoundDAO;
+    roundDAO: IRoundDAO;
     changeRoundPublisher: ChangeRoundObserver.Publisher;
   };
 }

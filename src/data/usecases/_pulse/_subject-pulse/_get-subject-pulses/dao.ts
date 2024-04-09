@@ -1,12 +1,12 @@
 import { SubjectPulseModel } from '@domain/models';
 import { GetSubjectPulsesUsecase } from '@domain/usecases';
 
-import { SubjectPulseDAO } from '@data/dao';
+import { ISubjectPulseDAO } from '@data/dao';
 import { SubjectPulseHydrator } from '@data/hydration';
 import { FetchSubjectPulsesObserver } from '@data/observers';
 
 export class DAOGetSubjectPulsesUsecase implements GetSubjectPulsesUsecase {
-  private readonly subjectPulseDAO: SubjectPulseDAO;
+  private readonly subjectPulseDAO: ISubjectPulseDAO;
   private readonly fetchSubjectPulsesPublisher: FetchSubjectPulsesObserver.Publisher;
 
   public constructor(deps: DAOGetSubjectPulsesUsecase.Deps) {
@@ -15,7 +15,7 @@ export class DAOGetSubjectPulsesUsecase implements GetSubjectPulsesUsecase {
   }
 
   public async execute(): Promise<SubjectPulseModel[]> {
-    const dto = await this.subjectPulseDAO.read();
+    const dto = await this.subjectPulseDAO.getAll();
 
     const subjectPulses = dto.map(SubjectPulseHydrator.hydrate);
 
@@ -27,7 +27,7 @@ export class DAOGetSubjectPulsesUsecase implements GetSubjectPulsesUsecase {
 
 export namespace DAOGetSubjectPulsesUsecase {
   export type Deps = {
-    subjectPulseDAO: SubjectPulseDAO;
+    subjectPulseDAO: ISubjectPulseDAO;
     fetchSubjectPulsesPublisher: FetchSubjectPulsesObserver.Publisher;
   };
 }

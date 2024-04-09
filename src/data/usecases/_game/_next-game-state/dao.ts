@@ -7,7 +7,7 @@ import {
   StartRoundUsecase,
 } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { ChangeGameObserver } from '@data/observers';
 
@@ -16,7 +16,7 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
   private readonly passTurn: PassTurnUsecase;
   private readonly startRound: StartRoundUsecase;
   private readonly changeGamePublisher: ChangeGameObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAONextGameStateUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
@@ -125,6 +125,6 @@ export namespace DAONextGameStateUsecase {
     passTurn: PassTurnUsecase;
     startRound: StartRoundUsecase;
     changeGamePublisher: ChangeGameObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

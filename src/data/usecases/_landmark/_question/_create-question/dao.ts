@@ -6,14 +6,14 @@ import {
   GetMySubjectUsecase,
 } from '@domain/usecases';
 
-import { QuestionDAO } from '@data/dao';
+import { IQuestionDAO } from '@data/dao';
 import { QuestionHydrator } from '@data/hydration';
 import { CreateQuestionObserver } from '@data/observers';
 
 export class DAOCreateQuestionUsecase implements CreateQuestionUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly getMySubject: GetMySubjectUsecase;
-  private readonly questionDAO: QuestionDAO;
+  private readonly questionDAO: IQuestionDAO;
   private readonly createQuestionPublisher: CreateQuestionObserver.Publisher;
 
   public constructor(deps: DAOCreateQuestionUsecase.Deps) {
@@ -63,7 +63,7 @@ export namespace DAOCreateQuestionUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     getMySubject: GetMySubjectUsecase;
-    questionDAO: QuestionDAO;
+    questionDAO: IQuestionDAO;
     createQuestionPublisher: CreateQuestionObserver.Publisher;
   };
 }

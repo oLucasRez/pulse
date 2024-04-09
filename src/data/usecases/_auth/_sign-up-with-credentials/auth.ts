@@ -1,7 +1,7 @@
 import { UserModel } from '@domain/models';
 import { SignUpWithCredentialsUsecase } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
 import { AuthCredentialsProtocol } from '@data/protocols';
@@ -11,7 +11,7 @@ export class AuthSignUpWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: AuthSignUpWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
@@ -50,6 +50,6 @@ export namespace AuthSignUpWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

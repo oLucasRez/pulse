@@ -12,3 +12,16 @@ export interface PlayerModel extends Model {
   banned: boolean;
   order: number;
 }
+
+export namespace PlayerModel {
+  export interface DTO extends Model.DTO {
+    name: string;
+    color: Color;
+    avatar: string;
+    uid: string;
+    diceID: string | null;
+    subjectID: string | null;
+    banned: boolean;
+    order: number;
+  }
+}

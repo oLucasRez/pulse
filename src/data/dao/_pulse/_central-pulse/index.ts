@@ -1,23 +1,22 @@
+import { CentralPulseModel, Model } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
-import { PulseDAO } from '..';
-
-export interface CentralPulseDAO {
-  create(payload: CentralPulseDAO.CreatePayload): Promise<CentralPulseDAO.DTO>;
-  read(): Promise<CentralPulseDAO.DTO[]>;
-  read(id: string): Promise<CentralPulseDAO.DTO | null>;
+export interface ICentralPulseDAO {
+  getByID(id: string): Promise<CentralPulseModel.DTO | null>;
+  create(
+    payload: ICentralPulseDAO.CreatePayload,
+  ): Promise<CentralPulseModel.DTO>;
   update(
     id: string,
-    payload: CentralPulseDAO.UpdatePayload,
-  ): Promise<CentralPulseDAO.DTO>;
+    payload: ICentralPulseDAO.UpdatePayload,
+  ): Promise<CentralPulseModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: CentralPulseDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: CentralPulseModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace CentralPulseDAO {
-  type BaseDTO = PulseDAO.BaseDTO;
+export namespace ICentralPulseDAO {
+  type BaseDTO = Omit<CentralPulseModel.DTO, keyof Model.DTO>;
 
-  export type DTO = PulseDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

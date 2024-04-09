@@ -2,13 +2,13 @@ import { ForbiddenError } from '@domain/errors';
 import { SubjectModel } from '@domain/models';
 import { CreateSubjectUsecase, GetMyPlayerUsecase } from '@domain/usecases';
 
-import { SubjectDAO } from '@data/dao';
+import { ISubjectDAO } from '@data/dao';
 import { SubjectHydrator } from '@data/hydration';
 import { CreateSubjectObserver } from '@data/observers';
 
 export class DAOCreateSubjectUsecase implements CreateSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly subjectDAO: SubjectDAO;
+  private readonly subjectDAO: ISubjectDAO;
   private readonly createSubjectPublisher: CreateSubjectObserver.Publisher;
 
   public constructor(deps: DAOCreateSubjectUsecase.Deps) {
@@ -47,7 +47,7 @@ export class DAOCreateSubjectUsecase implements CreateSubjectUsecase {
 export namespace DAOCreateSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
-    subjectDAO: SubjectDAO;
+    subjectDAO: ISubjectDAO;
     createSubjectPublisher: CreateSubjectObserver.Publisher;
   };
 }

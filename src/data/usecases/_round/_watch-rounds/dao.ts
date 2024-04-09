@@ -1,11 +1,11 @@
 import { WatchRoundsUsecase } from '@domain/usecases';
 
-import { RoundDAO } from '@data/dao';
+import { IRoundDAO } from '@data/dao';
 import { RoundHydrator } from '@data/hydration';
 import { FetchRoundsObserver } from '@data/observers';
 
 export class DAOWatchRoundsUsecase implements WatchRoundsUsecase {
-  private readonly roundDAO: RoundDAO;
+  private readonly roundDAO: IRoundDAO;
   private readonly fetchRoundsPublisher: FetchRoundsObserver.Publisher;
 
   public constructor(deps: DAOWatchRoundsUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchRoundsUsecase implements WatchRoundsUsecase {
 
 export namespace DAOWatchRoundsUsecase {
   export type Deps = {
-    roundDAO: RoundDAO;
+    roundDAO: IRoundDAO;
     fetchRoundsPublisher: FetchRoundsObserver.Publisher;
   };
 }

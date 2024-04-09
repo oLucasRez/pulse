@@ -1,12 +1,10 @@
 import { LandmarkModel, Model } from '@domain/models';
 import { Vector } from '@domain/utils';
 
-import { LandmarkDAO } from '@data/dao';
-
 import { ModelHydrator } from '..';
 
 export class LandmarkHydrator {
-  public static hydrate(dto: LandmarkDAO.DTO): LandmarkModel {
+  public static hydrate(dto: LandmarkModel.DTO): LandmarkModel {
     const landmark: LandmarkModel = Object.assign<
       Model,
       Omit<LandmarkModel, keyof Model>

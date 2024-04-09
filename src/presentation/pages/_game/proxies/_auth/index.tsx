@@ -36,13 +36,8 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   async function handleAuth() {
     if (!params.id) return;
 
-    setCurrentGame(params.id).catch((error: DomainError) => {
-      logError(error);
-      navigateToHome();
-    });
-
-    fetchGame(params.id)
-      .then(set('currentGame'))
+    Promise.all([fetchGame(params.id), setCurrentGame(params.id)])
+      .then(([currentGame]) => set('currentGame')(currentGame))
       .catch((error: DomainError) => {
         logError(error);
         navigateToHome();

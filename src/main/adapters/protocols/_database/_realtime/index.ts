@@ -1,9 +1,9 @@
 import { child, get, ref, remove, set, update } from 'firebase/database';
 
 import { NotFoundError } from '@domain/errors';
+import { Model } from '@domain/models';
 import { isNonNullable, uuid } from '@domain/utils';
 
-import { ModelDAO } from '@data/dao';
 import { DatabaseProtocol } from '@data/protocols';
 import { FirebaseService } from '@data/services';
 
@@ -51,7 +51,7 @@ function parseSnapshot<M>(snapshot: Record<string, M>): (M & { id: string })[] {
 }
 
 export class RealtimeDatabase implements DatabaseProtocol {
-  public async select<M extends ModelDAO.DTO>(
+  public async select<M extends Model.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -72,9 +72,9 @@ export class RealtimeDatabase implements DatabaseProtocol {
     return data ?? [];
   }
 
-  public async insert<M extends ModelDAO.DTO>(
+  public async insert<M extends Model.DTO>(
     table: string,
-    data: Omit<M, keyof ModelDAO.DTO>,
+    data: Omit<M, keyof Model.DTO>,
   ): Promise<M> {
     const createdAt = Date.now();
 
@@ -98,10 +98,10 @@ export class RealtimeDatabase implements DatabaseProtocol {
     } as M;
   }
 
-  public async update<M extends ModelDAO.DTO>(
+  public async update<M extends Model.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof ModelDAO.DTO>>,
+    data: Partial<Omit<M, keyof Model.DTO>>,
   ): Promise<M> {
     const dbRef = ref(FirebaseService.realtimeDB);
 

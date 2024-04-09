@@ -19,5 +19,3 @@ export namespace makeDatabase {
     | 'multiple users read/write same data'
     | 'only 1 user read/write each data';
 }
-
-export * from './_table-generator';

@@ -1,12 +1,12 @@
 import { FailedError } from '@domain/errors';
 import { WatchSubjectsUsecase } from '@domain/usecases';
 
-import { SubjectDAO } from '@data/dao';
+import { ISubjectDAO } from '@data/dao';
 import { SubjectHydrator } from '@data/hydration';
 import { FetchSubjectsObserver } from '@data/observers';
 
 export class DAOWatchSubjectsUsecase implements WatchSubjectsUsecase {
-  private readonly subjectDAO: SubjectDAO;
+  private readonly subjectDAO: ISubjectDAO;
   private readonly fetchSubjectsPublisher: FetchSubjectsObserver.Publisher;
 
   public constructor(deps: DAOWatchSubjectsUsecase.Deps) {
@@ -37,7 +37,7 @@ export class DAOWatchSubjectsUsecase implements WatchSubjectsUsecase {
 
 export namespace DAOWatchSubjectsUsecase {
   export type Deps = {
-    subjectDAO: SubjectDAO;
+    subjectDAO: ISubjectDAO;
     fetchSubjectsPublisher: FetchSubjectsObserver.Publisher;
   };
 }

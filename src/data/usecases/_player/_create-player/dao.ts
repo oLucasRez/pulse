@@ -8,7 +8,7 @@ import {
   GetPlayersUsecase,
 } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { CreatePlayerObserver } from '@data/observers';
 
@@ -17,7 +17,7 @@ export class DAOCreatePlayerUsecase implements CreatePlayerUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly getPlayers: GetPlayersUsecase;
   private readonly createPlayerPublisher: CreatePlayerObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAOCreatePlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
@@ -117,6 +117,6 @@ export namespace DAOCreatePlayerUsecase {
     getMe: GetMeUsecase;
     getPlayers: GetPlayersUsecase;
     createPlayerPublisher: CreatePlayerObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

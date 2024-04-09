@@ -1,12 +1,12 @@
 import { SubjectPulseModel } from '@domain/models';
 import { CreateSubjectPulseUsecase } from '@domain/usecases';
 
-import { SubjectPulseDAO } from '@data/dao';
+import { ISubjectPulseDAO } from '@data/dao';
 import { SubjectPulseHydrator } from '@data/hydration';
 import { CreateSubjectPulseObserver } from '@data/observers';
 
 export class DAOCreateSubjectPulseUsecase implements CreateSubjectPulseUsecase {
-  private readonly subjectPulseDAO: SubjectPulseDAO;
+  private readonly subjectPulseDAO: ISubjectPulseDAO;
   private readonly createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
 
   public constructor(deps: DAOCreateSubjectPulseUsecase.Deps) {
@@ -36,7 +36,7 @@ export class DAOCreateSubjectPulseUsecase implements CreateSubjectPulseUsecase {
 
 export namespace DAOCreateSubjectPulseUsecase {
   export type Deps = {
-    subjectPulseDAO: SubjectPulseDAO;
+    subjectPulseDAO: ISubjectPulseDAO;
     createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
   };
 }

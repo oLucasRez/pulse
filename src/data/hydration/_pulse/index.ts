@@ -1,12 +1,10 @@
 import { LandmarkModel, Model, PulseModel } from '@domain/models';
 import { Vector } from '@domain/utils';
 
-import { PulseDAO } from '@data/dao';
-
 import { ModelHydrator } from '..';
 
 export class PulseHydrator {
-  public static hydrate(dto: PulseDAO.DTO): PulseModel<LandmarkModel> {
+  public static hydrate(dto: PulseModel.DTO): PulseModel<LandmarkModel> {
     const pulse: PulseModel<LandmarkModel> = Object.assign<
       Model,
       Omit<PulseModel<LandmarkModel>, keyof Model>

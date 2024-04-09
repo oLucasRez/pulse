@@ -2,13 +2,13 @@ import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { RoundModel } from '@domain/models';
 import { GetRoundUsecase, PassTurnUsecase } from '@domain/usecases';
 
-import { RoundDAO } from '@data/dao';
+import { IRoundDAO } from '@data/dao';
 import { RoundHydrator } from '@data/hydration/_round';
 import { ChangeRoundObserver } from '@data/observers';
 
 export class DAOPassTurnUsecase implements PassTurnUsecase {
   private readonly getRound: GetRoundUsecase;
-  private readonly roundDAO: RoundDAO;
+  private readonly roundDAO: IRoundDAO;
   private readonly changeRoundPublisher: ChangeRoundObserver.Publisher;
 
   public constructor(deps: DAOPassTurnUsecase.Deps) {
@@ -53,7 +53,7 @@ export class DAOPassTurnUsecase implements PassTurnUsecase {
 export namespace DAOPassTurnUsecase {
   export type Deps = {
     getRound: GetRoundUsecase;
-    roundDAO: RoundDAO;
+    roundDAO: IRoundDAO;
     changeRoundPublisher: ChangeRoundObserver.Publisher;
   };
 }

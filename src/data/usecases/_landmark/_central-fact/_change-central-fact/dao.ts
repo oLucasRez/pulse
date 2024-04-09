@@ -5,13 +5,13 @@ import {
   GetCentralFactUsecase,
 } from '@domain/usecases';
 
-import { CentralFactDAO } from '@data/dao';
+import { ICentralFactDAO } from '@data/dao';
 import { CentralFactHydrator } from '@data/hydration';
 import { ChangeCentralFactObserver } from '@data/observers';
 
 export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   private readonly getCentralFact: GetCentralFactUsecase;
-  private readonly centralFactDAO: CentralFactDAO;
+  private readonly centralFactDAO: ICentralFactDAO;
   private readonly changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
 
   public constructor(deps: DAOChangeCentralFactUsecase.Deps) {
@@ -45,7 +45,7 @@ export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
 export namespace DAOChangeCentralFactUsecase {
   export type Deps = {
     getCentralFact: GetCentralFactUsecase;
-    centralFactDAO: CentralFactDAO;
+    centralFactDAO: ICentralFactDAO;
     changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
   };
 }

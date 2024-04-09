@@ -6,14 +6,14 @@ import {
   GetSubjectUsecase,
 } from '@domain/usecases';
 
-import { SubjectDAO } from '@data/dao';
+import { ISubjectDAO } from '@data/dao';
 import { SubjectHydrator } from '@data/hydration';
 import { ChangeSubjectObserver } from '@data/observers';
 
 export class DAOChangeSubjectUsecase implements ChangeSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly getSubject: GetSubjectUsecase;
-  private readonly subjectDAO: SubjectDAO;
+  private readonly subjectDAO: ISubjectDAO;
   private readonly changeSubjectPublisher: ChangeSubjectObserver.Publisher;
 
   public constructor(deps: DAOChangeSubjectUsecase.Deps) {
@@ -63,7 +63,7 @@ export namespace DAOChangeSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     getSubject: GetSubjectUsecase;
-    subjectDAO: SubjectDAO;
+    subjectDAO: ISubjectDAO;
     changeSubjectPublisher: ChangeSubjectObserver.Publisher;
   };
 }

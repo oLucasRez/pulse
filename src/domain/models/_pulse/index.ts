@@ -9,6 +9,15 @@ export interface PulseModel<L extends LandmarkModel> extends Model {
   landmarkID: L['id'];
 }
 
+export namespace PulseModel {
+  export interface DTO extends Model.DTO {
+    origin: Vector.JSON;
+    gap: number;
+    amount: number;
+    landmarkID: string;
+  }
+}
+
 export * from './_central-pulse';
 export * from './_light-spot';
 export * from './_subject-pulse';

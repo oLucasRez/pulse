@@ -1,12 +1,12 @@
 import { RoundModel } from '@domain/models';
 import { GetRoundUsecase } from '@domain/usecases';
 
-import { RoundDAO } from '@data/dao';
+import { IRoundDAO } from '@data/dao';
 import { RoundHydrator } from '@data/hydration/_round';
 import { FetchRoundObserver } from '@data/observers';
 
 export class DAOGetRoundUsecase implements GetRoundUsecase {
-  private readonly roundDAO: RoundDAO;
+  private readonly roundDAO: IRoundDAO;
   private readonly fetchRoundPublisher: FetchRoundObserver.Publisher;
 
   public constructor(deps: DAOGetRoundUsecase.Deps) {
@@ -15,7 +15,7 @@ export class DAOGetRoundUsecase implements GetRoundUsecase {
   }
 
   public async execute(id: string): Promise<RoundModel | null> {
-    const dto = await this.roundDAO.read(id);
+    const dto = await this.roundDAO.getByID(id);
 
     const round = dto ? RoundHydrator.hydrate(dto) : null;
 
@@ -27,7 +27,7 @@ export class DAOGetRoundUsecase implements GetRoundUsecase {
 
 export namespace DAOGetRoundUsecase {
   export type Deps = {
-    roundDAO: RoundDAO;
+    roundDAO: IRoundDAO;
     fetchRoundPublisher: FetchRoundObserver.Publisher;
   };
 }

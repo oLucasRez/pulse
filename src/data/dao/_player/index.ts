@@ -1,30 +1,23 @@
-import { Color } from '@domain/enums';
+import { Model, PlayerModel } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
-import { ModelDAO } from '..';
-
-export interface PlayerDAO {
-  create(payload: PlayerDAO.CreatePayload): Promise<PlayerDAO.DTO>;
-  read(): Promise<PlayerDAO.DTO[]>;
-  read(id: string): Promise<PlayerDAO.DTO | null>;
-  update(id: string, payload: PlayerDAO.UpdatePayload): Promise<PlayerDAO.DTO>;
+export interface IPlayerDAO {
+  getAll(): Promise<PlayerModel.DTO[]>;
+  getUnbanned(): Promise<PlayerModel.DTO[]>;
+  getByID(id: string): Promise<PlayerModel.DTO | null>;
+  getByUID(uid: string): Promise<PlayerModel.DTO | null>;
+  create(payload: IPlayerDAO.CreatePayload): Promise<PlayerModel.DTO>;
+  update(
+    id: string,
+    payload: IPlayerDAO.UpdatePayload,
+  ): Promise<PlayerModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: PlayerDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: PlayerModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace PlayerDAO {
-  type BaseDTO = {
-    name: string;
-    color: Color;
-    avatar: string;
-    uid: string;
-    diceID: string | null;
-    subjectID: string | null;
-    banned: boolean;
-    order: number;
-  };
+export namespace IPlayerDAO {
+  type BaseDTO = Omit<PlayerModel.DTO, keyof Model.DTO>;
 
-  export type DTO = ModelDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

@@ -1,14 +1,14 @@
 import { GameModel } from '@domain/models';
 import { GetCurrentGameUsecase, GetMeUsecase } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { FetchGameObserver } from '@data/observers';
 
 export class DAOGetCurrentGameUsecase implements GetCurrentGameUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly fetchGamePublisher: FetchGameObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAOGetCurrentGameUsecase.Deps) {
     this.getMe = deps.getMe;
@@ -21,7 +21,7 @@ export class DAOGetCurrentGameUsecase implements GetCurrentGameUsecase {
 
     if (!me?.currentGameID) return null;
 
-    const dto = await this.gameDAO.read(me.currentGameID);
+    const dto = await this.gameDAO.getByID(me.currentGameID);
 
     const game = dto ? GameHydrator.hydrate(dto) : null;
 
@@ -35,6 +35,6 @@ export namespace DAOGetCurrentGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     fetchGamePublisher: FetchGameObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

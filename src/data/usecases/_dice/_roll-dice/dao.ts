@@ -1,8 +1,8 @@
 import { NotFoundError } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import {
-  ChangeDiceUsecase,
   GetDiceUsecase,
+  IChangeDiceUsecase,
   RollDiceUsecase,
 } from '@domain/usecases';
 import { Vector } from '@domain/utils';
@@ -10,7 +10,7 @@ import { Vector } from '@domain/utils';
 import { ChangeDiceObserver } from '@data/observers';
 
 export class DAORollDiceUsecase implements RollDiceUsecase {
-  private readonly changeDice: ChangeDiceUsecase;
+  private readonly changeDice: IChangeDiceUsecase;
   private readonly getDice: GetDiceUsecase;
   private readonly changeDicePublisher: ChangeDiceObserver.Publisher;
 
@@ -40,7 +40,7 @@ export class DAORollDiceUsecase implements RollDiceUsecase {
 
 export namespace DAORollDiceUsecase {
   export type Deps = {
-    changeDice: ChangeDiceUsecase;
+    changeDice: IChangeDiceUsecase;
     getDice: GetDiceUsecase;
     changeDicePublisher: ChangeDiceObserver.Publisher;
   };

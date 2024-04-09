@@ -1,21 +1,34 @@
 import { CentralFactModel } from '@domain/models';
-import { GetCentralFactUsecase } from '@domain/usecases';
+import {
+  GetCentralFactUsecase,
+  GetCentralPulseUsecase,
+} from '@domain/usecases';
 
-import { CentralFactDAO } from '@data/dao';
+import { ICentralFactDAO } from '@data/dao';
 import { CentralFactHydrator } from '@data/hydration';
 import { FetchCentralFactObserver } from '@data/observers';
 
 export class DAOGetCentralFactUsecase implements GetCentralFactUsecase {
-  private readonly centralFactDAO: CentralFactDAO;
+  private readonly getCentralPulse: GetCentralPulseUsecase;
+  private readonly centralFactDAO: ICentralFactDAO;
   private readonly fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
 
-  public constructor(deps: DAOGetCentralFactUsecase.Deps) {
-    this.centralFactDAO = deps.centralFactDAO;
-    this.fetchCentralFactPublisher = deps.fetchCentralFactPublisher;
+  public constructor({
+    getCentralPulse,
+    centralFactDAO,
+    fetchCentralFactPublisher,
+  }: DAOGetCentralFactUsecase.Deps) {
+    this.getCentralPulse = getCentralPulse;
+    this.centralFactDAO = centralFactDAO;
+    this.fetchCentralFactPublisher = fetchCentralFactPublisher;
   }
 
   public async execute(): Promise<CentralFactModel | null> {
-    const [dto] = await this.centralFactDAO.read();
+    const centralPulse = await this.getCentralPulse.execute();
+
+    if (!centralPulse?.landmarkID) return null;
+
+    const dto = await this.centralFactDAO.getByID(centralPulse.landmarkID);
 
     const centralFact = dto ? CentralFactHydrator.hydrate(dto) : null;
 
@@ -27,7 +40,8 @@ export class DAOGetCentralFactUsecase implements GetCentralFactUsecase {
 
 export namespace DAOGetCentralFactUsecase {
   export type Deps = {
-    centralFactDAO: CentralFactDAO;
+    getCentralPulse: GetCentralPulseUsecase;
+    centralFactDAO: ICentralFactDAO;
     fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
   };
 }

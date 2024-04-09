@@ -1,30 +1,21 @@
-import { Color } from '@domain/enums';
+import { Model, SubjectModel } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
-import { LandmarkDAO } from '..';
-
-export interface SubjectDAO {
-  create(payload: SubjectDAO.CreatePayload): Promise<SubjectDAO.DTO>;
-  read(): Promise<SubjectDAO.DTO[]>;
-  read(id: string): Promise<SubjectDAO.DTO | null>;
+export interface ISubjectDAO {
+  getAll(): Promise<SubjectModel.DTO[]>;
+  getByID(id: string): Promise<SubjectModel.DTO | null>;
+  create(payload: ISubjectDAO.CreatePayload): Promise<SubjectModel.DTO>;
   update(
     id: string,
-    payload: SubjectDAO.UpdatePayload,
-  ): Promise<SubjectDAO.DTO>;
+    payload: ISubjectDAO.UpdatePayload,
+  ): Promise<SubjectModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: SubjectDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: SubjectModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace SubjectDAO {
-  type BaseDTO = LandmarkDAO.BaseDTO & {
-    description: string;
-    color: Color;
-    icon: string;
-    authorID: string;
-    pathIDs: string[];
-  };
+export namespace ISubjectDAO {
+  type BaseDTO = Omit<SubjectModel.DTO, keyof Model.DTO>;
 
-  export type DTO = LandmarkDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

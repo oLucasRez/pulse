@@ -1,13 +1,13 @@
 import { PlayerModel } from '@domain/models';
 import { GetPlayersUsecase } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { FetchPlayersObserver } from '@data/observers';
 
 export class DAOGetPlayersUsecase implements GetPlayersUsecase {
   private readonly fetchPlayersPublisher: FetchPlayersObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAOGetPlayersUsecase.Deps) {
     this.fetchPlayersPublisher = deps.fetchPlayersPublisher;
@@ -19,7 +19,9 @@ export class DAOGetPlayersUsecase implements GetPlayersUsecase {
   ): Promise<PlayerModel[]> {
     const { includeBanned = false } = options;
 
-    const dto = await this.playerDAO.read();
+    const dto = includeBanned
+      ? await this.playerDAO.getAll()
+      : await this.playerDAO.getUnbanned();
 
     const players = dto.map(PlayerHydrator.hydrate);
 
@@ -34,6 +36,6 @@ export class DAOGetPlayersUsecase implements GetPlayersUsecase {
 export namespace DAOGetPlayersUsecase {
   export type Deps = {
     fetchPlayersPublisher: FetchPlayersObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

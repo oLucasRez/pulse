@@ -7,14 +7,14 @@ import { GameModel } from '@domain/models';
 import { CreateGameUsecase, GetMeUsecase } from '@domain/usecases';
 import { isInteger } from '@domain/utils';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { CreateGameObserver } from '@data/observers';
 
 export class DAOCreateGameUsecase implements CreateGameUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly createGamePublisher: CreateGameObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAOCreateGameUsecase.Deps) {
     this.getMe = deps.getMe;
@@ -38,6 +38,7 @@ export class DAOCreateGameUsecase implements CreateGameUsecase {
       title,
       config,
       state: ['initial:state'],
+      centralPulseID: null,
       roundID: null,
       lightSpotRoundID: null,
     });
@@ -72,6 +73,6 @@ export namespace DAOCreateGameUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     createGamePublisher: CreateGameObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

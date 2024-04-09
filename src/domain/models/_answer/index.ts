@@ -5,3 +5,11 @@ export interface AnswerModel extends Model {
   questionID: QuestionModel['id'];
   authorID: PlayerModel['id'];
 }
+
+export namespace AnswerModel {
+  export interface DTO extends Model.DTO {
+    description: string;
+    questionID: string;
+    authorID: string;
+  }
+}

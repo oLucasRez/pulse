@@ -1,11 +1,11 @@
 import { DeletePlayerUsecase } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { DeletePlayerObserver } from '@data/observers';
 
 export class DAODeletePlayerUsecase implements DeletePlayerUsecase {
   private readonly deletePlayerPublisher: DeletePlayerObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAODeletePlayerUsecase.Deps) {
     this.deletePlayerPublisher = deps.deletePlayerPublisher;
@@ -22,6 +22,6 @@ export class DAODeletePlayerUsecase implements DeletePlayerUsecase {
 export namespace DAODeletePlayerUsecase {
   export type Deps = {
     deletePlayerPublisher: DeletePlayerObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

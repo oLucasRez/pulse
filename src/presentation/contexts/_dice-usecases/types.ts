@@ -1,6 +1,6 @@
 import { DiceModel } from '@domain/models';
 import {
-  ChangeDiceUsecase,
+  IChangeDiceUsecase,
   RollDiceUsecase,
   WatchDicesUsecase,
 } from '@domain/usecases';
@@ -20,5 +20,5 @@ export type DiceUsecasesContextValue = {
 export interface DiceUsecasesContextProviderProps extends ContextProviderProps {
   watchDices: WatchDicesUsecase;
   rollDice: RollDiceUsecase;
-  changeDice: ChangeDiceUsecase;
+  changeDice: IChangeDiceUsecase;
 }

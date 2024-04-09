@@ -1,11 +1,11 @@
 import { WatchCentralPulseUsecase } from '@domain/usecases';
 
-import { CentralPulseDAO } from '@data/dao';
+import { ICentralPulseDAO } from '@data/dao';
 import { CentralPulseHydrator } from '@data/hydration';
 import { FetchCentralPulseObserver } from '@data/observers';
 
 export class DAOWatchCentralPulseUsecase implements WatchCentralPulseUsecase {
-  private readonly centralPulseDAO: CentralPulseDAO;
+  private readonly centralPulseDAO: ICentralPulseDAO;
   private readonly fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
 
   public constructor(deps: DAOWatchCentralPulseUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchCentralPulseUsecase implements WatchCentralPulseUsecase {
 
 export namespace DAOWatchCentralPulseUsecase {
   export type Deps = {
-    centralPulseDAO: CentralPulseDAO;
+    centralPulseDAO: ICentralPulseDAO;
     fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
   };
 }

@@ -1,5 +1,6 @@
 import { FC, useMemo } from 'react';
 
+import { DomainError } from '@domain/errors';
 import { Circle, Vector } from '@domain/utils';
 
 import {
@@ -39,7 +40,7 @@ export const CreatingQuestionsState: FC = () => {
 
   const { currentPlayer, currentDice } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
-  const { rollDice } = useDiceUsecases();
+  const { rollDice, setDicePosition } = useDiceUsecases();
   const { currentGame, nextGameState } = useGameUsecases();
   const { mySubject, changeSubject } = useSubjectUsecases();
   const { subjectPulses, createSubjectPulse } = useSubjectPulseUsecases();
@@ -69,16 +70,26 @@ export const CreatingQuestionsState: FC = () => {
 
   const { createQuestion } = useQuestionUsecases();
 
-  function handleSubmitButtonClick() {
-    if (!s.description) return;
+  async function handleSubmitButtonClick() {
+    if (!s.description || !currentDice) return;
 
     s.creatingQuestion = true;
 
-    // @todo: fill subjectIDs
-    createQuestion({ description: s.description, subjectIDs: [] })
-      .then(nextGameState)
-      .catch(alertError)
-      .finally(set('creatingQuestion', false));
+    try {
+      // @todo: fill subjectIDs
+      const question = await createQuestion({
+        description: s.description,
+        subjectIDs: [],
+      });
+
+      await setDicePosition(currentDice.id, question.position);
+
+      await nextGameState();
+    } catch (error) {
+      alertError(error as DomainError);
+    } finally {
+      set('creatingQuestion', false);
+    }
   }
 
   function handleRollDice({ dice }: RollDiceEvent) {

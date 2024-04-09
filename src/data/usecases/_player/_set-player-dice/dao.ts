@@ -1,13 +1,13 @@
 import { PlayerModel } from '@domain/models';
 import { SetPlayerDiceUsecase } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { ChangePlayerObserver } from '@data/observers';
 
 export class DAOSetPlayerDiceUsecase implements SetPlayerDiceUsecase {
   private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAOSetPlayerDiceUsecase.Deps) {
     this.changePlayerPublisher = deps.changePlayerPublisher;
@@ -30,6 +30,6 @@ export class DAOSetPlayerDiceUsecase implements SetPlayerDiceUsecase {
 export namespace DAOSetPlayerDiceUsecase {
   export type Deps = {
     changePlayerPublisher: ChangePlayerObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

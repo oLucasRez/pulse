@@ -2,7 +2,7 @@ import { NotFoundError } from '@domain/errors';
 import { UserModel } from '@domain/models';
 import { SignInWithCredentialsUsecase } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
 import { AuthCredentialsProtocol } from '@data/protocols';
@@ -12,7 +12,7 @@ export class AuthSignInWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: AuthSignInWithCredentialsUsecase.Deps) {
     this.authCredentials = deps.authCredentials;
@@ -30,14 +30,14 @@ export class AuthSignInWithCredentialsUsecase
       password,
     });
 
-    const userDTO = await this.userDAO.read(uid);
+    const dto = await this.userDAO.getByUID(uid);
 
-    if (!userDTO)
+    if (!dto)
       throw new NotFoundError({
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    const user = UserHydrator.hydrate(userDTO);
+    const user = UserHydrator.hydrate(dto);
 
     this.signInPublisher.notifySignIn(user);
 
@@ -49,6 +49,6 @@ export namespace AuthSignInWithCredentialsUsecase {
   export type Deps = {
     authCredentials: AuthCredentialsProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

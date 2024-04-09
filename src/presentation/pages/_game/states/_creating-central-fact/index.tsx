@@ -32,6 +32,10 @@ export const CreatingCentralFactState: FC = () => {
   const { myPlayer } = usePlayerUsecases();
   const { currentGame, nextGameState } = useGameUsecases();
 
+  const {
+    state: [, state],
+  } = currentGame ?? { state: [] };
+
   const { centralFact, changeCentralFact } = useCentralFactUsecases();
 
   const [s, set] = useStates({
@@ -65,7 +69,7 @@ export const CreatingCentralFactState: FC = () => {
 
   function handleMapMouseMove(vector: Vector) {
     if (!isMyTurn) return;
-    if (currentGame && currentGame.state[1] !== 'update:dice:position') return;
+    if (currentGame && state !== 'update:dice:position') return;
     if (!centralPulse) return;
     if (!currentDice?.value) return;
 
@@ -77,7 +81,7 @@ export const CreatingCentralFactState: FC = () => {
 
   function handleMapClick() {
     if (!isMyTurn) return;
-    if (currentGame && currentGame.state[1] !== 'update:dice:position') return;
+    if (currentGame && state !== 'update:dice:position') return;
     if (!currentDice) return;
     if (!s.dicePosition) return;
 
@@ -116,11 +120,11 @@ export const CreatingCentralFactState: FC = () => {
         <Dices currentHidden transparent />
 
         {isMyTurn &&
-          currentGame.state[1] === 'update:dice:position' &&
+          state === 'update:dice:position' &&
           currentDice &&
           s.dicePosition && <Dice {...currentDice} position={s.dicePosition} />}
 
-        {isMyTurn && currentGame.state[1] === 'roll:dice' && (
+        {isMyTurn && state === 'roll:dice' && (
           <DiceRoller onRollDice={handleDiceRoll} />
         )}
       </Map>
@@ -133,7 +137,7 @@ export const CreatingCentralFactState: FC = () => {
         </p>
       )}
 
-      {isMyTurn && currentGame.state[1] === 'change:centralFact' && (
+      {isMyTurn && state === 'change:centralFact' && (
         <Container>
           <article className='modal' onClick={(e) => e.stopPropagation()}>
             <header>

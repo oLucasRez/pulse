@@ -1,27 +1,20 @@
+import { CentralFactModel, Model } from '@domain/models';
 import { DeepPartial } from '@domain/types';
-import { Vector } from '@domain/utils';
 
-import { LandmarkDAO } from '..';
-
-export interface CentralFactDAO {
-  create(payload: CentralFactDAO.CreatePayload): Promise<CentralFactDAO.DTO>;
-  read(): Promise<CentralFactDAO.DTO[]>;
-  read(id: string): Promise<CentralFactDAO.DTO | null>;
+export interface ICentralFactDAO {
+  getByID(id: string): Promise<CentralFactModel.DTO | null>;
+  create(payload: ICentralFactDAO.CreatePayload): Promise<CentralFactModel.DTO>;
   update(
     id: string,
-    payload: CentralFactDAO.UpdatePayload,
-  ): Promise<CentralFactDAO.DTO>;
+    payload: ICentralFactDAO.UpdatePayload,
+  ): Promise<CentralFactModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: CentralFactDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: CentralFactModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace CentralFactDAO {
-  type BaseDTO = LandmarkDAO.BaseDTO & {
-    position: Vector.JSON;
-    description: string;
-  };
+export namespace ICentralFactDAO {
+  type BaseDTO = Omit<CentralFactModel.DTO, keyof Model.DTO>;
 
-  export type DTO = LandmarkDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

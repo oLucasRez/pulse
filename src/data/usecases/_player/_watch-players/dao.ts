@@ -1,11 +1,11 @@
 import { WatchPlayersUsecase } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { FetchPlayersObserver } from '@data/observers';
 
 export class DAOWatchPlayersUsecase implements WatchPlayersUsecase {
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
   private readonly fetchPlayersPublisher: FetchPlayersObserver.Publisher;
 
   public constructor(deps: DAOWatchPlayersUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchPlayersUsecase implements WatchPlayersUsecase {
 
 export namespace DAOWatchPlayersUsecase {
   export type Deps = {
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
     fetchPlayersPublisher: FetchPlayersObserver.Publisher;
   };
 }

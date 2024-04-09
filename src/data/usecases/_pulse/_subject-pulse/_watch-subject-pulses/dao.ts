@@ -1,11 +1,11 @@
 import { WatchSubjectPulsesUsecase } from '@domain/usecases';
 
-import { SubjectPulseDAO } from '@data/dao';
+import { ISubjectPulseDAO } from '@data/dao';
 import { SubjectPulseHydrator } from '@data/hydration';
 import { FetchSubjectPulsesObserver } from '@data/observers';
 
 export class DAOWatchSubjectPulsesUsecase implements WatchSubjectPulsesUsecase {
-  private readonly subjectPulseDAO: SubjectPulseDAO;
+  private readonly subjectPulseDAO: ISubjectPulseDAO;
   private readonly fetchSubjectPulsesPublisher: FetchSubjectPulsesObserver.Publisher;
 
   public constructor(deps: DAOWatchSubjectPulsesUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchSubjectPulsesUsecase implements WatchSubjectPulsesUsecase {
 
 export namespace DAOWatchSubjectPulsesUsecase {
   export type Deps = {
-    subjectPulseDAO: SubjectPulseDAO;
+    subjectPulseDAO: ISubjectPulseDAO;
     fetchSubjectPulsesPublisher: FetchSubjectPulsesObserver.Publisher;
   };
 }

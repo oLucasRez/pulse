@@ -2,14 +2,14 @@ import { NotFoundError } from '@domain/errors';
 import { GameModel } from '@domain/models';
 import { ChangeGameUsecase, GetCurrentGameUsecase } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { ChangeGameObserver } from '@data/observers';
 
 export class DAOChangeGameUsecase implements ChangeGameUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly changeGamePublisher: ChangeGameObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAOChangeGameUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
@@ -42,6 +42,6 @@ export namespace DAOChangeGameUsecase {
   export type Deps = {
     getCurrentGame: GetCurrentGameUsecase;
     changeGamePublisher: ChangeGameObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

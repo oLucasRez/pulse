@@ -11,7 +11,7 @@ import {
   StartGameUsecase,
 } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { StartGameObserver } from '@data/observers';
 
 export class DAOStartGameUsecase implements StartGameUsecase {
@@ -23,7 +23,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
   private readonly nextGameState: NextGameStateUsecase;
   private readonly setPlayerDice: SetPlayerDiceUsecase;
   private readonly startGamePublisher: StartGameObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAOStartGameUsecase.Deps) {
     this.createCentralPulse = deps.createCentralPulse;
@@ -43,7 +43,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    await this.createCentralPulse.execute();
+    const centralPulse = await this.createCentralPulse.execute();
 
     const playerIDs = (await this.getPlayers.execute())
       .sort((a, b) => a.order - b.order)
@@ -78,6 +78,7 @@ export class DAOStartGameUsecase implements StartGameUsecase {
     ]);
 
     await this.gameDAO.update(currentGame.id, {
+      centralPulseID: centralPulse.id,
       roundID: round.id,
       lightSpotRoundID: lightSpotRound.id,
     });
@@ -100,6 +101,6 @@ export namespace DAOStartGameUsecase {
     nextGameState: NextGameStateUsecase;
     setPlayerDice: SetPlayerDiceUsecase;
     startGamePublisher: StartGameObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

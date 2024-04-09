@@ -5,7 +5,7 @@ import {
   GetMeUsecase,
 } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { BanPlayerObserver } from '@data/observers';
 
@@ -13,7 +13,7 @@ export class DAOBanPlayerUsecase implements BanPlayerUsecase {
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly banPlayerPublisher: BanPlayerObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAOBanPlayerUsecase.Deps) {
     this.getCurrentGame = deps.getCurrentGame;
@@ -55,6 +55,6 @@ export namespace DAOBanPlayerUsecase {
     getCurrentGame: GetCurrentGameUsecase;
     getMe: GetMeUsecase;
     banPlayerPublisher: BanPlayerObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

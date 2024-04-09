@@ -9,8 +9,8 @@ import {
 } from 'firebase/firestore';
 
 import { FailedError } from '@domain/errors';
+import { Model } from '@domain/models';
 
-import { ModelDAO } from '@data/dao';
 import { DatabaseProtocol } from '@data/protocols';
 import { FirebaseService } from '@data/services';
 
@@ -27,7 +27,7 @@ function asyncletonKey(table: string): string {
 }
 
 export class FirestoreDatabase implements DatabaseProtocol {
-  public async select<M extends ModelDAO.DTO>(
+  public async select<M extends Model.DTO>(
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
@@ -54,9 +54,9 @@ export class FirestoreDatabase implements DatabaseProtocol {
     }
   }
 
-  public async insert<M extends ModelDAO.DTO>(
+  public async insert<M extends Model.DTO>(
     table: string,
-    data: Omit<M, keyof ModelDAO.DTO>,
+    data: Omit<M, keyof Model.DTO>,
   ): Promise<M> {
     try {
       Asyncleton.clear(asyncletonKey(table));
@@ -80,10 +80,10 @@ export class FirestoreDatabase implements DatabaseProtocol {
     }
   }
 
-  public async update<M extends ModelDAO.DTO>(
+  public async update<M extends Model.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof ModelDAO.DTO>>,
+    data: Partial<Omit<M, keyof Model.DTO>>,
   ): Promise<M> {
     try {
       Asyncleton.clear(asyncletonKey(table));

@@ -1,7 +1,7 @@
 import { UserModel } from '@domain/models';
 import { GetMeUsecase } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { FetchMeObserver } from '@data/observers';
 import { SessionGetterProtocol } from '@data/protocols';
@@ -9,7 +9,7 @@ import { SessionGetterProtocol } from '@data/protocols';
 export class DAOGetMeUsecase implements GetMeUsecase {
   private readonly sessionGetter: SessionGetterProtocol;
   private readonly fetchMePublisher: FetchMeObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: DAOGetMeUsecase.Deps) {
     this.sessionGetter = deps.sessionGetter;
@@ -23,7 +23,7 @@ export class DAOGetMeUsecase implements GetMeUsecase {
 
     if (!uid) return null;
 
-    const dto = await this.userDAO.read(uid);
+    const dto = await this.userDAO.getByUID(uid);
 
     if (dto) {
       dto.isAnonymous = isAnonymous;
@@ -42,6 +42,6 @@ export namespace DAOGetMeUsecase {
   export type Deps = {
     sessionGetter: SessionGetterProtocol;
     fetchMePublisher: FetchMeObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

@@ -1,23 +1,23 @@
+import { Model, SubjectPulseModel } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
-import { PulseDAO } from '..';
-
-export interface SubjectPulseDAO {
-  create(payload: SubjectPulseDAO.CreatePayload): Promise<SubjectPulseDAO.DTO>;
-  read(): Promise<SubjectPulseDAO.DTO[]>;
-  read(id: string): Promise<SubjectPulseDAO.DTO | null>;
+export interface ISubjectPulseDAO {
+  getAll(): Promise<SubjectPulseModel.DTO[]>;
+  getByID(id: string): Promise<SubjectPulseModel.DTO | null>;
+  create(
+    payload: ISubjectPulseDAO.CreatePayload,
+  ): Promise<SubjectPulseModel.DTO>;
   update(
     id: string,
-    payload: SubjectPulseDAO.UpdatePayload,
-  ): Promise<SubjectPulseDAO.DTO>;
+    payload: ISubjectPulseDAO.UpdatePayload,
+  ): Promise<SubjectPulseModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: SubjectPulseDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: SubjectPulseModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace SubjectPulseDAO {
-  type BaseDTO = PulseDAO.BaseDTO;
+export namespace ISubjectPulseDAO {
+  type BaseDTO = Omit<SubjectPulseModel.DTO, keyof Model.DTO>;
 
-  export type DTO = PulseDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }

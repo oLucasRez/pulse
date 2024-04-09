@@ -1,11 +1,9 @@
 import { Model, PlayerModel } from '@domain/models';
 
-import { PlayerDAO } from '@data/dao';
-
 import { ModelHydrator } from '..';
 
 export class PlayerHydrator {
-  public static hydrate(dto: PlayerDAO.DTO): PlayerModel {
+  public static hydrate(dto: PlayerModel.DTO): PlayerModel {
     const player: PlayerModel = Object.assign<
       Model,
       Omit<PlayerModel, keyof Model>

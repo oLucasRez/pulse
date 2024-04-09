@@ -1,12 +1,12 @@
 import { RoundModel } from '@domain/models';
 import { CreateRoundUsecase } from '@domain/usecases';
 
-import { RoundDAO } from '@data/dao';
+import { IRoundDAO } from '@data/dao';
 import { RoundHydrator } from '@data/hydration/_round';
 import { CreateRoundObserver } from '@data/observers';
 
 export class DAOCreateRoundUsecase implements CreateRoundUsecase {
-  private readonly roundDAO: RoundDAO;
+  private readonly roundDAO: IRoundDAO;
   private readonly createRoundPublisher: CreateRoundObserver.Publisher;
 
   public constructor(deps: DAOCreateRoundUsecase.Deps) {
@@ -37,7 +37,7 @@ export class DAOCreateRoundUsecase implements CreateRoundUsecase {
 
 export namespace DAOCreateRoundUsecase {
   export type Deps = {
-    roundDAO: RoundDAO;
+    roundDAO: IRoundDAO;
     createRoundPublisher: CreateRoundObserver.Publisher;
   };
 }

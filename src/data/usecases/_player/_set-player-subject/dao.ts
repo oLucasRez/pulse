@@ -2,14 +2,14 @@ import { NotFoundError } from '@domain/errors';
 import { PlayerModel } from '@domain/models';
 import { GetMyPlayerUsecase, SetPlayerSubjectUsecase } from '@domain/usecases';
 
-import { PlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { PlayerHydrator } from '@data/hydration';
 import { ChangePlayerObserver } from '@data/observers';
 
 export class DAOSetPlayerSubjectUsecase implements SetPlayerSubjectUsecase {
   private readonly getMyPlayer: GetMyPlayerUsecase;
   private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
-  private readonly playerDAO: PlayerDAO;
+  private readonly playerDAO: IPlayerDAO;
 
   public constructor(deps: DAOSetPlayerSubjectUsecase.Deps) {
     this.getMyPlayer = deps.getMyPlayer;
@@ -39,6 +39,6 @@ export namespace DAOSetPlayerSubjectUsecase {
   export type Deps = {
     getMyPlayer: GetMyPlayerUsecase;
     changePlayerPublisher: ChangePlayerObserver.Publisher;
-    playerDAO: PlayerDAO;
+    playerDAO: IPlayerDAO;
   };
 }

@@ -1,11 +1,11 @@
 import { WatchDicesUsecase } from '@domain/usecases';
 
-import { DiceDAO } from '@data/dao';
+import { IDiceDAO } from '@data/dao';
 import { DiceHydrator } from '@data/hydration';
 import { FetchDicesObserver } from '@data/observers';
 
 export class DAOWatchDicesUsecase implements WatchDicesUsecase {
-  private readonly diceDAO: DiceDAO;
+  private readonly diceDAO: IDiceDAO;
   private readonly fetchDicesPublisher: FetchDicesObserver.Publisher;
 
   public constructor(deps: DAOWatchDicesUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchDicesUsecase implements WatchDicesUsecase {
 
 export namespace DAOWatchDicesUsecase {
   export type Deps = {
-    diceDAO: DiceDAO;
+    diceDAO: IDiceDAO;
     fetchDicesPublisher: FetchDicesObserver.Publisher;
   };
 }

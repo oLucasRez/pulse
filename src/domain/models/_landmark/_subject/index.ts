@@ -10,3 +10,13 @@ export interface SubjectModel extends LandmarkModel {
   authorID: PlayerModel['id'];
   pathIDs: SubjectPulseModel['id'][];
 }
+
+export namespace SubjectModel {
+  export interface DTO extends LandmarkModel.DTO {
+    description: string;
+    color: Color;
+    icon: string;
+    authorID: string;
+    pathIDs: string[];
+  }
+}

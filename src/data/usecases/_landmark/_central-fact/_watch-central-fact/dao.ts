@@ -1,11 +1,11 @@
 import { WatchCentralFactUsecase } from '@domain/usecases';
 
-import { CentralFactDAO } from '@data/dao';
+import { ICentralFactDAO } from '@data/dao';
 import { CentralFactHydrator } from '@data/hydration';
 import { FetchCentralFactObserver } from '@data/observers';
 
 export class DAOWatchCentralFactUsecase implements WatchCentralFactUsecase {
-  private readonly centralFactDAO: CentralFactDAO;
+  private readonly centralFactDAO: ICentralFactDAO;
   private readonly fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
 
   public constructor(deps: DAOWatchCentralFactUsecase.Deps) {
@@ -30,7 +30,7 @@ export class DAOWatchCentralFactUsecase implements WatchCentralFactUsecase {
 
 export namespace DAOWatchCentralFactUsecase {
   export type Deps = {
-    centralFactDAO: CentralFactDAO;
+    centralFactDAO: ICentralFactDAO;
     fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
   };
 }

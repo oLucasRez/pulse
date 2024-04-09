@@ -1,12 +1,12 @@
 import { DiceModel } from '@domain/models';
 import { GetDicesUsecase } from '@domain/usecases';
 
-import { DiceDAO } from '@data/dao';
+import { IDiceDAO } from '@data/dao';
 import { DiceHydrator } from '@data/hydration';
 import { FetchDicesObserver } from '@data/observers';
 
 export class DAOGetDicesUsecase implements GetDicesUsecase {
-  private readonly diceDAO: DiceDAO;
+  private readonly diceDAO: IDiceDAO;
   private readonly fetchDicesPublisher: FetchDicesObserver.Publisher;
 
   public constructor(deps: DAOGetDicesUsecase.Deps) {
@@ -15,7 +15,7 @@ export class DAOGetDicesUsecase implements GetDicesUsecase {
   }
 
   public async execute(): Promise<DiceModel[]> {
-    const dto = await this.diceDAO.read();
+    const dto = await this.diceDAO.getAll();
 
     const dices = dto.map(DiceHydrator.hydrate);
 
@@ -27,7 +27,7 @@ export class DAOGetDicesUsecase implements GetDicesUsecase {
 
 export namespace DAOGetDicesUsecase {
   export type Deps = {
-    diceDAO: DiceDAO;
+    diceDAO: IDiceDAO;
     fetchDicesPublisher: FetchDicesObserver.Publisher;
   };
 }

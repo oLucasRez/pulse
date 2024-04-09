@@ -1,10 +1,11 @@
-import { Model, RoundModel, UserModel } from '..';
+import { CentralPulseModel, Model, RoundModel, UserModel } from '..';
 
 export interface GameModel extends Model {
   uid: UserModel['uid'];
   title: string | null;
   config: GameModel.Config;
   state: GameModel.State;
+  centralPulseID: CentralPulseModel['id'] | null;
   roundID: RoundModel['id'] | null;
   lightSpotRoundID: RoundModel['id'] | null;
 }
@@ -37,4 +38,14 @@ export namespace GameModel {
     withLightSpot: boolean;
     dicesMode: DicesMode;
   };
+
+  export interface DTO extends Model.DTO {
+    uid: string;
+    title: string | null;
+    config: GameModel.Config;
+    state: GameModel.State;
+    centralPulseID: string | null;
+    roundID: string | null;
+    lightSpotRoundID: string | null;
+  }
 }

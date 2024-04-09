@@ -7,7 +7,7 @@ import {
   SignInWithProviderUsecase,
 } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { ChangeMeObserver } from '@data/observers';
 import { AuthProviderProtocol } from '@data/protocols';
@@ -18,7 +18,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
   private readonly signInWithProvider: SignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
   private readonly changeMePublisher: ChangeMeObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: AuthLinkWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
@@ -45,14 +45,14 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       } else throw e;
     }
 
-    let userDTO = await this.userDAO.read(uid);
+    let dto = await this.userDAO.getByUID(uid);
 
-    if (userDTO) {
+    if (dto) {
       await dontThrow(async () => {
         if (name) await this.changeMe.execute({ name });
       });
     } else {
-      userDTO = await this.userDAO.update(uid, {
+      dto = await this.userDAO.update(uid, {
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -62,7 +62,7 @@ export class AuthLinkWithProviderUsecase implements LinkWithProviderUsecase {
       });
     }
 
-    const user = UserHydrator.hydrate(userDTO);
+    const user = UserHydrator.hydrate(dto);
 
     this.changeMePublisher.notifyChangeMe(user);
 
@@ -76,6 +76,6 @@ export namespace AuthLinkWithProviderUsecase {
     signInWithProvider: SignInWithProviderUsecase;
     authProvider: AuthProviderProtocol;
     changeMePublisher: ChangeMeObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

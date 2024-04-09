@@ -2,14 +2,14 @@ import { ForbiddenError } from '@domain/errors';
 import { GameModel } from '@domain/models';
 import { GetGamesUsecase, GetMeUsecase } from '@domain/usecases';
 
-import { GameDAO } from '@data/dao';
+import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { FetchGamesObserver } from '@data/observers';
 
 export class DAOGetGamesUsecase implements GetGamesUsecase {
   private readonly getMe: GetMeUsecase;
   private readonly fetchGamesPublisher: FetchGamesObserver.Publisher;
-  private readonly gameDAO: GameDAO;
+  private readonly gameDAO: IGameDAO;
 
   public constructor(deps: DAOGetGamesUsecase.Deps) {
     this.getMe = deps.getMe;
@@ -24,7 +24,7 @@ export class DAOGetGamesUsecase implements GetGamesUsecase {
         metadata: { tried: 'get games without session' },
       });
 
-    const dto = (await this.gameDAO.read()).filter(
+    const dto = (await this.gameDAO.getAll()).filter(
       (value) => value.uid === me.uid,
     );
 
@@ -40,6 +40,6 @@ export namespace DAOGetGamesUsecase {
   export type Deps = {
     getMe: GetMeUsecase;
     fetchGamesPublisher: FetchGamesObserver.Publisher;
-    gameDAO: GameDAO;
+    gameDAO: IGameDAO;
   };
 }

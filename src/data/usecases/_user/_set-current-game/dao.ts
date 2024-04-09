@@ -6,7 +6,7 @@ import {
   SetCurrentGameUsecase,
 } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { ChangeCurrentGameObserver } from '@data/observers';
 
@@ -14,7 +14,7 @@ export class DAOSetCurrentGameUsecase implements SetCurrentGameUsecase {
   private readonly getGame: GetGameUsecase;
   private readonly getMe: GetMeUsecase;
   private readonly changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: DAOSetCurrentGameUsecase.Deps) {
     this.getGame = deps.getGame;
@@ -52,6 +52,6 @@ export namespace DAOSetCurrentGameUsecase {
     getGame: GetGameUsecase;
     getMe: GetMeUsecase;
     changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

@@ -9,3 +9,13 @@ export interface UserModel extends Model {
   isAnonymous: boolean;
   providers: Provider[];
 }
+
+export namespace UserModel {
+  export interface DTO extends Model.DTO {
+    uid: string;
+    name: string | null;
+    currentGameID: string | null;
+    isAnonymous: boolean;
+    providers: Provider[];
+  }
+}

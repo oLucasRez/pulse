@@ -2,7 +2,7 @@ import { UserModel } from '@domain/models';
 import { Provider } from '@domain/types';
 import { ChangeMeUsecase, SignInWithProviderUsecase } from '@domain/usecases';
 
-import { UserDAO } from '@data/dao';
+import { IUserDAO } from '@data/dao';
 import { UserHydrator } from '@data/hydration';
 import { SignInObserver } from '@data/observers';
 import { AuthProviderProtocol } from '@data/protocols';
@@ -14,7 +14,7 @@ export class AuthSignInWithProviderUsecase
   private readonly changeMe: ChangeMeUsecase;
   private readonly authProvider: AuthProviderProtocol;
   private readonly signInPublisher: SignInObserver.Publisher;
-  private readonly userDAO: UserDAO;
+  private readonly userDAO: IUserDAO;
 
   public constructor(deps: AuthSignInWithProviderUsecase.Deps) {
     this.changeMe = deps.changeMe;
@@ -26,15 +26,15 @@ export class AuthSignInWithProviderUsecase
   public async execute(provider: Provider): Promise<UserModel> {
     const { uid, name } = await this.authProvider.signInWith(provider);
 
-    let userDTO = await this.userDAO.read(uid);
+    let dto = await this.userDAO.getByUID(uid);
 
-    if (userDTO) {
+    if (dto) {
       await dontThrow(async () => {
-        if (userDTO && name && name !== userDTO.name)
+        if (dto && name && name !== dto.name)
           await this.changeMe.execute({ name });
       });
     } else {
-      userDTO = await this.userDAO.create({
+      dto = await this.userDAO.create({
         uid,
         name: name ?? '',
         currentGameID: null,
@@ -44,7 +44,7 @@ export class AuthSignInWithProviderUsecase
       });
     }
 
-    const user = UserHydrator.hydrate(userDTO);
+    const user = UserHydrator.hydrate(dto);
 
     this.signInPublisher.notifySignIn(user);
 
@@ -57,6 +57,6 @@ export namespace AuthSignInWithProviderUsecase {
     changeMe: ChangeMeUsecase;
     authProvider: AuthProviderProtocol;
     signInPublisher: SignInObserver.Publisher;
-    userDAO: UserDAO;
+    userDAO: IUserDAO;
   };
 }

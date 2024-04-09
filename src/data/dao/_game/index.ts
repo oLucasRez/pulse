@@ -1,32 +1,18 @@
-import { GameModel } from '@domain/models';
+import { GameModel, Model } from '@domain/models';
 import { DeepPartial } from '@domain/types';
 
-import { ModelDAO } from '..';
-
-export interface GameDAO {
-  create(payload: GameDAO.CreatePayload): Promise<GameDAO.DTO>;
-  read(): Promise<GameDAO.DTO[]>;
-  read(id: string): Promise<GameDAO.DTO | null>;
-  update(id: string, payload: GameDAO.UpdatePayload): Promise<GameDAO.DTO>;
+export interface IGameDAO {
+  getAll(): Promise<GameModel.DTO[]>;
+  getByID(id: string): Promise<GameModel.DTO | null>;
+  create(payload: IGameDAO.CreatePayload): Promise<GameModel.DTO>;
+  update(id: string, payload: IGameDAO.UpdatePayload): Promise<GameModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: GameDAO.DTO[]) => void): Promise<() => void>;
+  watch(callback: (dtos: GameModel.DTO[]) => void): Promise<() => void>;
 }
 
-export namespace GameDAO {
-  type BaseDTO = {
-    uid: string;
-    title: string | null;
-    config: {
-      maxPlayers: number;
-      withLightSpot: boolean;
-      dicesMode: GameModel.DicesMode;
-    };
-    state: GameModel.State;
-    roundID: string | null;
-    lightSpotRoundID: string | null;
-  };
+export namespace IGameDAO {
+  type BaseDTO = Omit<GameModel.DTO, keyof Model.DTO>;
 
-  export type DTO = ModelDAO.DTO & BaseDTO;
   export type CreatePayload = BaseDTO;
   export type UpdatePayload = DeepPartial<BaseDTO>;
 }
