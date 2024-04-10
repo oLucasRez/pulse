@@ -25,7 +25,7 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
       cx={c.x}
       cy={c.y}
       r={2}
-      fill={landmark ? getColor(landmark.color) : '#555'}
+      fill={landmark ? getColor(landmark.color) : '#757575'}
       stroke='none'
     />,
   ];
@@ -40,7 +40,7 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
         cy={c.y}
         r={r}
         fill='none'
-        stroke={landmark ? getColor(landmark.color) : '#555'}
+        stroke={landmark ? getColor(landmark.color) : '#757575'}
       />,
     );
   }

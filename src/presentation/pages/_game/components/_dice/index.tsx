@@ -66,6 +66,14 @@ export const Dice: FC<DiceProps> = (props) => {
           fill={transparent ? getColor(color) : 'none'}
         />
         <path
+          d={`M${position.x},${position.y} l${d4Edge / 2},${
+            (d4Edge * Math.sqrt(3)) / 6
+          } l-${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 2}`}
+          opacity={0.5}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
+        />
+        <path
           d={`M${position.x},${position.y} m-${d4Edge / 2},${
             (d4Edge * Math.sqrt(3)) / 6
           } h${d4Edge} l-${d4Edge / 2},-${(d4Edge * Math.sqrt(3)) / 2} l-${
@@ -113,6 +121,14 @@ export const Dice: FC<DiceProps> = (props) => {
           d={`M${position.x},${position.y} m0,${d6Edge} v-${d6Edge} l-${
             (d6Edge * Math.sqrt(3)) / 2
           },-${d6Edge / 2} v${d6Edge} z`}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
+        />
+        <path
+          d={`M${position.x},${position.y} v${d6Edge} l${
+            (d6Edge * Math.sqrt(3)) / 2
+          },-${d6Edge / 2} v-${d6Edge}`}
+          opacity={0.5}
           stroke='none'
           fill={transparent ? getColor(color) : 'none'}
         />
@@ -175,6 +191,22 @@ export const Dice: FC<DiceProps> = (props) => {
           } l${(d6Edge * Math.sqrt(3)) / 2},${d6Edge / 2} l${
             (d6Edge * Math.sqrt(3)) / 2
           },-${d6Edge / 2} z`}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
+        />
+        <path
+          d={`M${position.x},${position.y} m0,-${d6Edge} l${
+            (d6Edge * Math.sqrt(3)) / 2
+          },${(d6Edge * 3) / 2} v-${d6Edge}`}
+          opacity={0.5}
+          stroke='none'
+          fill={transparent ? getColor(color) : 'none'}
+        />
+        <path
+          d={`M${position.x},${position.y} m0,-${d6Edge} l-${
+            (d6Edge * Math.sqrt(3)) / 2
+          },${(d6Edge * 3) / 2} h${d6Edge * Math.sqrt(3)}`}
+          opacity={0.25}
           stroke='none'
           fill={transparent ? getColor(color) : 'none'}
         />

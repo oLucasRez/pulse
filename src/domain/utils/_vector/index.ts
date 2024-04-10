@@ -49,11 +49,17 @@ export class Vector {
     return Vector.sub(this, v);
   }
 
-  public static mult(u: Vector, a: number): Vector {
-    return new Vector([u.x * a, u.y * a]);
+  public static mult(u: Vector, a: Vector): Vector;
+  public static mult(u: Vector, a: number): Vector;
+  public static mult(u: Vector, a: Vector | number): Vector {
+    if (typeof a === 'number') return new Vector([u.x * a, u.y * a]);
+    else return new Vector([u.x * a.x, u.y * a.y]);
   }
-  public mult(a: number): Vector {
-    return Vector.mult(this, a);
+  public mult(a: Vector): Vector;
+  public mult(a: number): Vector;
+  public mult(a: Vector | number): Vector {
+    if (typeof a === 'number') return Vector.mult(this, a);
+    else return Vector.mult(this, a);
   }
 
   public static mod(u: Vector): number {
@@ -80,6 +86,14 @@ export class Vector {
 
   public flip(axis: 'x' | 'y'): Vector {
     return Vector.flip(this, axis);
+  }
+
+  public projX(): Vector {
+    return new Vector([this.x, 0]);
+  }
+
+  public projY(): Vector {
+    return new Vector([0, this.y]);
   }
 }
 

@@ -9,6 +9,8 @@ export type MapContextValue = {
   onMouseDown(callback: (mouse: Vector) => void): () => void;
   onMouseUp(callback: (mouse: Vector) => void): () => void;
   onClick(callback: (mouse: Vector) => void): () => void;
+  openPortal(children: ReactNode): void;
+  closePortal(): void;
 };
 
 export interface MapProps {

@@ -3,6 +3,7 @@ import { FC, useMemo } from 'react';
 import { DomainError } from '@domain/errors';
 import { Circle, Vector } from '@domain/utils';
 
+import { P } from '@presentation/components';
 import {
   useDiceUsecases,
   useGameUsecases,
@@ -149,9 +150,9 @@ export const CreatingQuestionsState: FC = () => {
       <PlayersList />
 
       {!isMyTurn && currentPlayer && (
-        <p className='legend handwriting'>
+        <P className='legend handwriting'>
           {currentPlayer.name} is writing a question...
-        </p>
+        </P>
       )}
 
       {isMyTurn && state === 'create:question' && (

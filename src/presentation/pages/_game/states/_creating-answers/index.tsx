@@ -1,6 +1,10 @@
 import { FC } from 'react';
 
-import { useGameUsecases } from '@presentation/contexts';
+import {
+  useGameUsecases,
+  usePlayerUsecases,
+  useRoundUsecases,
+} from '@presentation/contexts';
 
 import {
   Dices,
@@ -13,6 +17,10 @@ import {
 
 export const CreatingAnswersState: FC = () => {
   const { currentGame } = useGameUsecases();
+  const { currentPlayer } = useRoundUsecases();
+  const { myPlayer } = usePlayerUsecases();
+
+  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
   if (!currentGame) return null;
 
@@ -20,12 +28,18 @@ export const CreatingAnswersState: FC = () => {
     <>
       <Map>
         <Pulses />
-        <Subjects />
         <Dices transparent />
+        <Subjects />
         <Questions />
       </Map>
 
       <PlayersList />
+
+      {!isMyTurn && currentPlayer && (
+        <p className='legend handwriting'>
+          {currentPlayer.name} is writing an answer...
+        </p>
+      )}
     </>
   );
 };

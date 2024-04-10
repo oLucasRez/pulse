@@ -2,6 +2,7 @@ import {
   createContext,
   FC,
   MouseEventHandler,
+  ReactNode,
   useContext,
   useMemo,
   useRef,
@@ -9,6 +10,7 @@ import {
 
 import { Vector, VectorSpace } from '@domain/utils';
 
+import { Transition } from '@presentation/components';
 import { ms } from '@presentation/constants';
 import { useEvent, useInterval, useStates } from '@presentation/hooks';
 
@@ -25,6 +27,8 @@ const Context = createContext<MapContextValue>({
   onMouseDown: () => () => {},
   onMouseUp: () => () => {},
   onClick: () => () => {},
+  openPortal: () => {},
+  closePortal: () => {},
 });
 
 export const useMapContext = (): MapContextValue => useContext(Context);
@@ -32,9 +36,10 @@ export const useMapContext = (): MapContextValue => useContext(Context);
 export const Map: FC<MapProps> = (props) => {
   const { children } = props;
 
-  const [s] = useStates({
+  const [s, set] = useStates({
     width: 0,
     height: 0,
+    portal: null as ReactNode,
   });
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -110,6 +115,8 @@ export const Map: FC<MapProps> = (props) => {
     onMouseDown: mouseDown.on,
     onMouseUp: mouseUp.on,
     onClick: click.on,
+    openPortal: set('portal'),
+    closePortal: set('portal', null),
   };
 
   return (
@@ -124,6 +131,22 @@ export const Map: FC<MapProps> = (props) => {
         >
           {typeof children === 'function' ? children(contextValue) : children}
         </ViewBox>
+
+        <Transition.Fade active={!!s.portal} ms={200}>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: s.width,
+              height: s.height,
+              backdropFilter: 'blur(7px)',
+              pointerEvents: s.portal ? undefined : 'none',
+            }}
+          >
+            {s.portal}
+          </div>
+        </Transition.Fade>
       </Container>
     </Context.Provider>
   );

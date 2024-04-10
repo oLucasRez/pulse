@@ -1,5 +1,6 @@
 import { FC } from 'react';
 
+import { Text } from '@presentation/components';
 import { useSubjectUsecases } from '@presentation/contexts';
 import { getColor } from '@presentation/styles/mixins';
 
@@ -18,29 +19,29 @@ export const Subject: FC<SubjectProps> = (props) => {
 
   return (
     <>
-      <circle cx={position.x} cy={position.y} r={3} fill={getColor(color)}>
+      <circle
+        // style
+        fill={getColor(color)}
+        // params
+        cx={position.x}
+        cy={position.y}
+        r={3}
+      >
         {icon}
       </circle>
-      <text
-        className='handwriting'
-        alignmentBaseline='middle'
-        fill='white'
-        stroke='white'
-        strokeWidth={4}
-        x={position.x + 7}
-        y={position.y}
-      >
-        {description}
-      </text>
-      <text
+      <Text
+        // style
         className='handwriting'
         alignmentBaseline='middle'
         fill={getColor(color)}
+        stroke='white'
+        strokeWidth={3}
+        // params
         x={position.x + 7}
         y={position.y}
       >
         {description}
-      </text>
+      </Text>
     </>
   );
 };
