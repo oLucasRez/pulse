@@ -3,6 +3,7 @@ import { CentralFactModel } from '@domain/models';
 import {
   ChangeCentralFactUsecase,
   GetCentralFactUsecase,
+  NextGameStateUsecase,
 } from '@domain/usecases';
 
 import { ICentralFactDAO } from '@data/dao';
@@ -11,13 +12,20 @@ import { ChangeCentralFactObserver } from '@data/observers';
 
 export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
   private readonly getCentralFact: GetCentralFactUsecase;
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly centralFactDAO: ICentralFactDAO;
   private readonly changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
 
-  public constructor(deps: DAOChangeCentralFactUsecase.Deps) {
-    this.getCentralFact = deps.getCentralFact;
-    this.centralFactDAO = deps.centralFactDAO;
-    this.changeCentralFactPublisher = deps.changeCentralFactPublisher;
+  public constructor({
+    getCentralFact,
+    nextGameState,
+    centralFactDAO,
+    changeCentralFactPublisher,
+  }: DAOChangeCentralFactUsecase.Deps) {
+    this.getCentralFact = getCentralFact;
+    this.nextGameState = nextGameState;
+    this.centralFactDAO = centralFactDAO;
+    this.changeCentralFactPublisher = changeCentralFactPublisher;
   }
 
   public async execute(
@@ -38,6 +46,8 @@ export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
 
     this.changeCentralFactPublisher.notifyChangeCentralFact(centralFact);
 
+    await this.nextGameState.execute();
+
     return centralFact;
   }
 }
@@ -45,6 +55,7 @@ export class DAOChangeCentralFactUsecase implements ChangeCentralFactUsecase {
 export namespace DAOChangeCentralFactUsecase {
   export type Deps = {
     getCentralFact: GetCentralFactUsecase;
+    nextGameState: NextGameStateUsecase;
     centralFactDAO: ICentralFactDAO;
     changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
   };

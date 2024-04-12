@@ -6,7 +6,7 @@ import {
   DeleteGameUsecase,
   GetGamesUsecase,
   GetGameUsecase,
-  NextGameStateUsecase,
+  IVoteUsecase,
   StartGameUsecase,
   WatchCurrentGameUsecase,
 } from '@domain/usecases';
@@ -69,8 +69,8 @@ export const GameUsecasesContextProvider: FC<
     [],
   );
 
-  const nextGameState = useCallback<NextGameStateUsecase['execute']>(
-    () => props.nextGameState.execute(),
+  const vote = useCallback<IVoteUsecase['execute']>(
+    (playerID: string, value: boolean) => props.vote.execute(playerID, value),
     [],
   );
 
@@ -86,7 +86,7 @@ export const GameUsecasesContextProvider: FC<
         changeGame,
         deleteGame,
         startGame,
-        nextGameState,
+        vote,
       }}
     >
       {children}

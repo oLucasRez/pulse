@@ -1,12 +1,27 @@
 import { forwardRef } from 'react';
 
-import { Container } from './styles';
+import { InputContainer, TextareaContainer } from './styles';
 
 import { InputProps } from './types';
 
-export const Input = forwardRef<HTMLTextAreaElement, InputProps>(function Input(
-  props,
-  ref,
-) {
-  return <Container ref={ref} {...props} />;
+export const Input = forwardRef<
+  HTMLTextAreaElement & HTMLInputElement,
+  InputProps
+>(function Input({ onChange, multiline, ...props }, ref) {
+  if (multiline)
+    return (
+      <TextareaContainer
+        ref={ref}
+        onChange={(e) => onChange?.(e.target.value, e)}
+        {...props}
+      />
+    );
+
+  return (
+    <InputContainer
+      ref={ref}
+      onChange={(e) => onChange?.(e.target.value, e)}
+      {...props}
+    />
+  );
 });

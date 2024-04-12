@@ -1,16 +1,14 @@
 import { SubjectModel } from '@domain/models';
-import { Vector } from '@domain/utils';
 
-export interface ChangeSubjectUsecase {
+export interface IChangeSubjectUsecase {
   execute(
     id: string,
-    payload: ChangeSubjectUsecase.Payload,
+    payload: IChangeSubjectUsecase.Payload,
   ): Promise<SubjectModel>;
 }
 
-export namespace ChangeSubjectUsecase {
+export namespace IChangeSubjectUsecase {
   export type Payload = {
-    position?: Vector;
     description?: string;
   };
 }

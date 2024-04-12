@@ -18,6 +18,8 @@ import {
   RoundUsecasesContextValue,
 } from './types';
 
+import { usePlayerUsecases } from '../_player-usecases';
+
 const Context = createContext({} as RoundUsecasesContextValue);
 
 export const useRoundUsecases = (): RoundUsecasesContextValue =>
@@ -41,10 +43,15 @@ export const RoundUsecasesContextProvider: FC<
     [],
   );
 
+  const { myPlayer } = usePlayerUsecases();
+
+  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
+
   return (
     <Context.Provider
       value={{
         round,
+        isMyTurn,
         currentPlayer,
         currentDice,
         lightSpotRound,

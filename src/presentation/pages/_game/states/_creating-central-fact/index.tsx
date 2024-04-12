@@ -15,6 +15,7 @@ import { useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import {
+  CentralFact,
   Dice,
   DiceRoller,
   Dices,
@@ -30,7 +31,8 @@ import { Container } from './styles';
 export const CreatingCentralFactState: FC = () => {
   const { currentPlayer, currentDice } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
-  const { currentGame, nextGameState } = useGameUsecases();
+  const { currentGame } = useGameUsecases();
+  const { mySubject, changeMySubjectPosition } = useSubjectUsecases();
 
   const {
     state: [, state],
@@ -41,14 +43,12 @@ export const CreatingCentralFactState: FC = () => {
   const [s, set] = useStates({
     description: centralFact?.description,
     changingCentralFact: false,
-    dicePosition: currentDice?.position ?? null,
+    dicePosition: mySubject?.position ?? null,
   });
 
   useEffect(() => {
     s.description = centralFact?.description;
   }, [centralFact?.description]);
-
-  const { changeCentralPulse } = useCentralPulseUsecases();
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
@@ -60,7 +60,6 @@ export const CreatingCentralFactState: FC = () => {
     s.changingCentralFact = true;
 
     changeCentralFact({ description: s.description })
-      .then(nextGameState)
       .catch(alertError)
       .finally(set('changingCentralFact', false));
   }
@@ -76,9 +75,6 @@ export const CreatingCentralFactState: FC = () => {
     s.dicePosition = vector.norm().mult(currentDice.value);
   }
 
-  const { setDicePosition } = useDiceUsecases();
-  const { changeMySubject } = useSubjectUsecases();
-
   function handleMapClick() {
     if (!isMyTurn) return;
     if (currentGame && state !== 'update:dice:position') return;
@@ -89,25 +85,13 @@ export const CreatingCentralFactState: FC = () => {
 
     s.dicePosition = null;
 
-    Promise.all([
-      setDicePosition(currentDice.id, dicePosition),
-      changeMySubject({ position: dicePosition }),
-    ])
-      .then(nextGameState)
-      .catch(alertError);
+    changeMySubjectPosition(dicePosition).catch(alertError);
   }
 
   const { rollDice } = useDiceUsecases();
 
   function handleDiceRoll({ dice }: RollDiceEvent) {
-    rollDice(dice.id)
-      .then((dice) => {
-        if (dice.value)
-          changeCentralPulse({ amount: dice.value })
-            .then(nextGameState)
-            .catch(alertError);
-      })
-      .catch(alertError);
+    rollDice(dice.id).catch(alertError);
   }
 
   if (!currentGame) return null;
@@ -118,6 +102,7 @@ export const CreatingCentralFactState: FC = () => {
         <Pulses />
         <Subjects />
         <Dices currentHidden transparent />
+        <CentralFact />
 
         {isMyTurn &&
           state === 'update:dice:position' &&

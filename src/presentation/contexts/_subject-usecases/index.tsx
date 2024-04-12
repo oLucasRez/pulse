@@ -1,10 +1,10 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  ChangeMySubjectUsecase,
-  ChangeSubjectUsecase,
   CreateSubjectUsecase,
   GetMySubjectUsecase,
+  IChangeMySubjectPositionUsecase,
+  IChangeSubjectUsecase,
   WatchSubjectsUsecase,
 } from '@domain/usecases';
 
@@ -51,15 +51,14 @@ export const SubjectUsecasesContextProvider: FC<
     [],
   );
 
-  const changeMySubject = useCallback<ChangeMySubjectUsecase['execute']>(
-    (payload) => props.changeMySubject.execute(payload),
-    [],
-  );
-
-  const changeSubject = useCallback<ChangeSubjectUsecase['execute']>(
+  const changeSubject = useCallback<IChangeSubjectUsecase['execute']>(
     (id, payload) => props.changeSubject.execute(id, payload),
     [],
   );
+
+  const changeMySubjectPosition = useCallback<
+    IChangeMySubjectPositionUsecase['execute']
+  >((position) => props.changeMySubjectPosition.execute(position), []);
 
   return (
     <Context.Provider
@@ -70,8 +69,8 @@ export const SubjectUsecasesContextProvider: FC<
         fetchMySubject,
         createMySubject,
         createSubject,
-        changeMySubject,
         changeSubject,
+        changeMySubjectPosition,
       }}
     >
       {children}

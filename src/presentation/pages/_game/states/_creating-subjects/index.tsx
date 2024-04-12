@@ -1,11 +1,6 @@
 import { FC, useEffect } from 'react';
 
-import {
-  useGameUsecases,
-  usePlayerUsecases,
-  useRoundUsecases,
-} from '@presentation/contexts';
-import { logError } from '@presentation/utils';
+import { usePlayerUsecases, useRoundUsecases } from '@presentation/contexts';
 
 import { useMutateSubjectModal } from '../../hooks';
 
@@ -14,16 +9,11 @@ import { Map, PlayersList, Pulses } from '../../components';
 export const CreatingSubjectsState: FC = () => {
   const { currentPlayer } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
-  const { nextGameState } = useGameUsecases();
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
-  function handleSuccessCreateSubject() {
-    nextGameState().catch(logError);
-  }
-
   const { renderMutateSubjectModal, openMutateSubjectModal } =
-    useMutateSubjectModal({ onSuccess: handleSuccessCreateSubject });
+    useMutateSubjectModal();
 
   useEffect(() => {
     if (isMyTurn) openMutateSubjectModal();

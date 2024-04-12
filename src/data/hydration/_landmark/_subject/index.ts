@@ -8,7 +8,6 @@ export class SubjectHydrator {
       LandmarkModel,
       Omit<SubjectModel, keyof LandmarkModel>
     >(LandmarkHydrator.hydrate(dto), {
-      description: dto.description,
       color: dto.color,
       icon: dto.icon,
       authorID: dto.authorID,

@@ -8,6 +8,7 @@ import {
 } from '@presentation/pages/_game/proxies';
 
 import {
+  makeAnswerUsecasesContextProvider,
   makeCentralFactUsecasesContextProvider,
   makeCentralPulseUsecasesContextProvider,
   makeDiceUsecasesContextProvider,
@@ -25,6 +26,7 @@ const GamePage = lazy(() => import('@presentation/pages/_game'));
 export function makeGamePage(): ReactElement {
   const page = [
     // inner
+    makeAnswerUsecasesContextProvider,
     makeQuestionUsecasesContextProvider,
     makeSubjectPulseUsecasesContextProvider,
     makeCentralFactUsecasesContextProvider,

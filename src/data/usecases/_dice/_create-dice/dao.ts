@@ -27,7 +27,6 @@ export class DAOCreateDiceUsecase implements CreateDiceUsecase {
     const dto = await this.diceDAO.create({
       sides,
       value: null,
-      position: null,
       ownerID,
     });
 

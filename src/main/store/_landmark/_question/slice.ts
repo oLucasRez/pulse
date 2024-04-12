@@ -4,6 +4,7 @@ import { QuestionState } from './types';
 
 import {
   changeCurrentGameReducers,
+  changeQuestionReducers,
   createQuestionReducers,
   fetchQuestionsReducers,
   signOutReducers,
@@ -20,6 +21,7 @@ const questionSlice: Slice<QuestionState> = createSlice({
   extraReducers: (builder) => {
     changeCurrentGameReducers(builder);
     createQuestionReducers(builder);
+    changeQuestionReducers(builder);
     fetchQuestionsReducers(builder);
     signOutReducers(builder);
   },

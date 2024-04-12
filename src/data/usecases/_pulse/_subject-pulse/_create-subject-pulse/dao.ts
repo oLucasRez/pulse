@@ -1,17 +1,26 @@
 import { SubjectPulseModel } from '@domain/models';
-import { CreateSubjectPulseUsecase } from '@domain/usecases';
+import {
+  CreateSubjectPulseUsecase,
+  NextGameStateUsecase,
+} from '@domain/usecases';
 
 import { ISubjectPulseDAO } from '@data/dao';
 import { SubjectPulseHydrator } from '@data/hydration';
 import { CreateSubjectPulseObserver } from '@data/observers';
 
 export class DAOCreateSubjectPulseUsecase implements CreateSubjectPulseUsecase {
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly subjectPulseDAO: ISubjectPulseDAO;
   private readonly createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
 
-  public constructor(deps: DAOCreateSubjectPulseUsecase.Deps) {
-    this.subjectPulseDAO = deps.subjectPulseDAO;
-    this.createSubjectPulsePublisher = deps.createSubjectPulsePublisher;
+  public constructor({
+    nextGameState,
+    subjectPulseDAO,
+    createSubjectPulsePublisher,
+  }: DAOCreateSubjectPulseUsecase.Deps) {
+    this.nextGameState = nextGameState;
+    this.subjectPulseDAO = subjectPulseDAO;
+    this.createSubjectPulsePublisher = createSubjectPulsePublisher;
   }
 
   public async execute(
@@ -30,12 +39,15 @@ export class DAOCreateSubjectPulseUsecase implements CreateSubjectPulseUsecase {
 
     this.createSubjectPulsePublisher.notifyCreateSubjectPulse(subjectPulse);
 
+    await this.nextGameState.execute();
+
     return subjectPulse;
   }
 }
 
 export namespace DAOCreateSubjectPulseUsecase {
   export type Deps = {
+    nextGameState: NextGameStateUsecase;
     subjectPulseDAO: ISubjectPulseDAO;
     createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
   };

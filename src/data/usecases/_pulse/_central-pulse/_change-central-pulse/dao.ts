@@ -3,6 +3,7 @@ import { CentralPulseModel } from '@domain/models';
 import {
   ChangeCentralPulseUsecase,
   GetCentralPulseUsecase,
+  NextGameStateUsecase,
 } from '@domain/usecases';
 
 import { ICentralPulseDAO } from '@data/dao';
@@ -11,13 +12,20 @@ import { ChangeCentralPulseObserver } from '@data/observers';
 
 export class DAOChangeCentralPulseUsecase implements ChangeCentralPulseUsecase {
   private readonly getCentralPulse: GetCentralPulseUsecase;
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly centralPulseDAO: ICentralPulseDAO;
   private readonly changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
 
-  public constructor(deps: DAOChangeCentralPulseUsecase.Deps) {
-    this.getCentralPulse = deps.getCentralPulse;
-    this.centralPulseDAO = deps.centralPulseDAO;
-    this.changeCentralPulsePublisher = deps.changeCentralPulsePublisher;
+  public constructor({
+    getCentralPulse,
+    nextGameState,
+    centralPulseDAO,
+    changeCentralPulsePublisher,
+  }: Deps) {
+    this.getCentralPulse = getCentralPulse;
+    this.nextGameState = nextGameState;
+    this.centralPulseDAO = centralPulseDAO;
+    this.changeCentralPulsePublisher = changeCentralPulsePublisher;
   }
 
   public async execute(
@@ -40,14 +48,15 @@ export class DAOChangeCentralPulseUsecase implements ChangeCentralPulseUsecase {
 
     this.changeCentralPulsePublisher.notifyChangeCentralPulse(centralPulse);
 
+    await this.nextGameState.execute();
+
     return centralPulse;
   }
 }
 
-export namespace DAOChangeCentralPulseUsecase {
-  export type Deps = {
-    getCentralPulse: GetCentralPulseUsecase;
-    centralPulseDAO: ICentralPulseDAO;
-    changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
-  };
-}
+type Deps = {
+  getCentralPulse: GetCentralPulseUsecase;
+  nextGameState: NextGameStateUsecase;
+  centralPulseDAO: ICentralPulseDAO;
+  changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
+};

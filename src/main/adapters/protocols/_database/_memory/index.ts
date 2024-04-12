@@ -1,4 +1,5 @@
 import { Model } from '@domain/models';
+import { DeepPartial } from '@domain/types';
 import { uuid } from '@domain/utils';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -78,7 +79,7 @@ export class MemoryDatabase implements DatabaseProtocol {
   public async update<M extends Model.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof Model>>,
+    data: DeepPartial<Omit<M, keyof Model>>,
   ): Promise<M> {
     await delay(100);
 

@@ -1,29 +1,32 @@
-import { FC, useMemo } from 'react';
+import { FC, KeyboardEvent, useMemo } from 'react';
 
-import { AnswerModel } from '@domain/models';
-import { Vector } from '@domain/utils';
-
-import { Input, P, Text, Transition } from '@presentation/components';
-import { usePlayerUsecases, useQuestionUsecases } from '@presentation/contexts';
+import { Input, P } from '@presentation/components';
+import {
+  useAnswerUsecases,
+  usePlayerUsecases,
+  useQuestionUsecases,
+  useRoundUsecases,
+} from '@presentation/contexts';
 import { useStates } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
-import { beginPath } from '@presentation/utils';
 
-import { QuestionProps } from './types';
+import { QuestionProps, QuestionsProps } from './types';
 
-import { useMapContext } from '..';
-
-const descriptionOffset = new Vector([-50, -50]);
+import { Landmark, useMapContext } from '..';
 
 export const Question: FC<QuestionProps> = (props) => {
-  const { description, authorID } = props;
+  const { id, description, authorID, position, onAnswer } = props;
 
   const [s, set] = useStates({
     active: false,
+    answerDescription: '',
+    creatingAnswer: false,
   });
 
-  const { mapSpace, openPortal, closePortal } = useMapContext();
+  const { openBakingPaper, closeBakingPaper } = useMapContext();
   const { players, myPlayer } = usePlayerUsecases();
+  const { currentPlayer } = useRoundUsecases();
+  const { answers } = useAnswerUsecases();
 
   const color = useMemo(
     () =>
@@ -32,167 +35,127 @@ export const Question: FC<QuestionProps> = (props) => {
     [authorID, players],
   );
 
-  const answers = useMemo<AnswerModel[]>(() => [], []);
+  function handleInputKeyDown(event: KeyboardEvent) {
+    if (event.key !== 'Enter' || event.shiftKey) return;
+    if (!currentPlayer) return;
+    if (!s.answerDescription) return;
+
+    onAnswer?.({ question: props, description: s.answerDescription });
+  }
 
   if (!color) return null;
 
-  const position = mapSpace.mult(props.position);
-  const descriptionPosition = position.sum(descriptionOffset);
+  function renderAnswers() {
+    return answers
+      .filter(({ questionID }) => questionID === id)
+      .map((answer) => {
+        const color = players.find(
+          (player) => player.id === answer.authorID,
+        )?.color;
 
-  return (
-    <>
-      <Transition.Fade active={s.active} ms={200}>
-        <g>
-          <path
-            // style
-            fill='none'
-            stroke={getColor(color)}
-            strokeWidth={2}
-            strokeLinecap='round'
-            // params
-            d={beginPath()
-              .moveTo(position)
-              .bezierCurveTo(
-                descriptionOffset.projX().mult(0.5),
-                descriptionOffset.mult(new Vector([1, 0.5])),
-                descriptionOffset,
-              )
-              .toString()}
-          />
-          <circle
-            // style
-            fill={getColor(color)}
-            // params
-            cx={descriptionPosition.x}
-            cy={descriptionPosition.y}
-            r={3}
-          />
+        return (
           <P
+            key={answer.id}
             // style
             className='handwriting'
-            strokeWidth={3}
-            stroke='white'
-            style={{
-              position: 'absolute',
-              left: descriptionPosition.x,
-              top: descriptionPosition.y,
-              color: getColor(color),
-              maxWidth: '17.5ch',
-              lineHeight: 1.2,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              transform: 'translateY(-100%)',
-            }}
+            style={{ color: color ? getColor(color) : undefined }}
           >
-            {description}
+            {answer.description}
           </P>
-        </g>
-      </Transition.Fade>
+        );
+      });
+  }
 
-      <Transition.Scale active={s.active} activeFactor={1.3} ms={100}>
-        <Text
-          // style
-          className='handwriting'
-          textAnchor='middle'
-          alignmentBaseline='middle'
-          cursor='pointer'
-          fill={getColor(color)}
-          stroke='white'
-          strokeWidth={3}
-          // params
-          x={position.x}
-          y={position.y}
-          // handle
-          onMouseEnter={set('active', true)}
-          onMouseOut={set('active', false)}
-          onClick={() =>
-            openPortal(
-              <div
+  function renderAnswerInput() {
+    if (!onAnswer) return null;
+    if (!myPlayer) return null;
+
+    return (
+      <Input
+        // style
+        multiline
+        className='handwriting'
+        placeholderColor={getColor(myPlayer.color)}
+        placeholderOpacity={0.6}
+        style={{
+          color: getColor(myPlayer.color),
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          width: '30rem',
+          outline: 'none',
+          borderRadius: 0,
+        }}
+        disabled={s.creatingAnswer}
+        // params
+        placeholder='Answer...'
+        // handle
+        onChange={set('answerDescription')}
+        onKeyDown={handleInputKeyDown}
+      />
+    );
+  }
+
+  return (
+    <Landmark
+      description={description}
+      position={position}
+      symbol='?'
+      color={color}
+      onClick={() =>
+        openBakingPaper(
+          <div
+            // style
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            // handle
+            onClick={closeBakingPaper}
+          >
+            <div
+              // style
+              style={{
+                padding: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                maxWidth: '30rem',
+                lineHeight: 1.1,
+                gap: '0.6rem',
+              }}
+              // handle
+              onClick={(e) => e.stopPropagation()}
+            >
+              <P
                 // style
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                // handle
-                onClick={closePortal}
+                className='handwriting'
+                style={{ color: getColor(color), fontSize: '1.5rem' }}
               >
-                <div
-                  // style
-                  style={{
-                    padding: '2rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    maxWidth: '30rem',
-                    lineHeight: 1.1,
-                    gap: '0.6rem',
-                  }}
-                  // handle
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <P
-                    // style
-                    className='handwriting'
-                    style={{ color: getColor(color), fontSize: '1.5rem' }}
-                  >
-                    {description}
-                  </P>
-                  {answers.map((answer) => {
-                    const color = players.find(
-                      (player) => player.id === answer.authorID,
-                    )?.color;
-
-                    return (
-                      <P
-                        key={answer.id}
-                        // style
-                        className='handwriting'
-                        style={{ color: color ? getColor(color) : undefined }}
-                      >
-                        {answer.description}
-                      </P>
-                    );
-                  })}
-                  <Input
-                    className='handwriting'
-                    placeholder='Responder...'
-                    placeholderColor={
-                      myPlayer ? getColor(myPlayer.color) : undefined
-                    }
-                    placeholderOpacity={0.6}
-                    style={{
-                      color: myPlayer ? getColor(myPlayer.color) : undefined,
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      outline: 'none',
-                    }}
-                  />
-                </div>
-              </div>,
-            )
-          }
-        >
-          ?
-        </Text>
-      </Transition.Scale>
-    </>
+                {description}
+              </P>
+              {renderAnswers()}
+              {renderAnswerInput()}
+            </div>
+          </div>,
+        )
+      }
+    />
   );
 };
 
-export const Questions: FC = () => {
+export const Questions: FC<QuestionsProps> = (props) => {
   const { questions } = useQuestionUsecases();
 
   return (
     <>
       {questions.map((question) => (
-        <Question key={question.id} {...question} />
+        <Question key={question.id} {...question} {...props} />
       ))}
     </>
   );
 };
+
+export { AnswerEvent, VoteEvent } from './types';

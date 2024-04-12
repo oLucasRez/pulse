@@ -1,10 +1,11 @@
-import { FailedError, ForbiddenError, NotFoundError } from '@domain/errors';
+import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { SubjectModel } from '@domain/models';
 import {
   CreateMySubjectUsecase,
   CreateSubjectUsecase,
   GetCurrentGameUsecase,
   GetMyPlayerUsecase,
+  NextGameStateUsecase,
   SetPlayerSubjectUsecase,
 } from '@domain/usecases';
 
@@ -14,15 +15,24 @@ export class DAOCreateMySubjectUsecase implements CreateMySubjectUsecase {
   private readonly createSubject: CreateSubjectUsecase;
   private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getMyPlayer: GetMyPlayerUsecase;
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly setPlayerSubject: SetPlayerSubjectUsecase;
   private readonly createSubjectPublisher: CreateSubjectObserver.Publisher;
 
-  public constructor(deps: DAOCreateMySubjectUsecase.Deps) {
-    this.createSubject = deps.createSubject;
-    this.getCurrentGame = deps.getCurrentGame;
-    this.getMyPlayer = deps.getMyPlayer;
-    this.setPlayerSubject = deps.setPlayerSubject;
-    this.createSubjectPublisher = deps.createSubjectPublisher;
+  public constructor({
+    createSubject,
+    getCurrentGame,
+    getMyPlayer,
+    nextGameState,
+    setPlayerSubject,
+    createSubjectPublisher,
+  }: DAOCreateMySubjectUsecase.Deps) {
+    this.createSubject = createSubject;
+    this.getCurrentGame = getCurrentGame;
+    this.getMyPlayer = getMyPlayer;
+    this.nextGameState = nextGameState;
+    this.setPlayerSubject = setPlayerSubject;
+    this.createSubjectPublisher = createSubjectPublisher;
   }
 
   public async execute(
@@ -43,22 +53,20 @@ export class DAOCreateMySubjectUsecase implements CreateMySubjectUsecase {
     if (!myPlayer)
       throw new ForbiddenError({ metadata: { tried: 'create my subject' } });
 
-    try {
-      const mySubject = await this.createSubject.execute({
-        position: null,
-        description,
-        icon,
-        color: myPlayer.color,
-      });
+    const mySubject = await this.createSubject.execute({
+      position: null,
+      description,
+      icon,
+      color: myPlayer.color,
+    });
 
-      await this.setPlayerSubject.execute(mySubject.id);
+    await this.setPlayerSubject.execute(mySubject.id);
 
-      this.createSubjectPublisher.notifyCreateSubject(mySubject);
+    await this.nextGameState.execute();
 
-      return mySubject;
-    } catch {
-      throw new FailedError({ metadata: { tried: 'create my subject' } });
-    }
+    this.createSubjectPublisher.notifyCreateSubject(mySubject);
+
+    return mySubject;
   }
 }
 
@@ -67,6 +75,7 @@ export namespace DAOCreateMySubjectUsecase {
     createSubject: CreateSubjectUsecase;
     getCurrentGame: GetCurrentGameUsecase;
     getMyPlayer: GetMyPlayerUsecase;
+    nextGameState: NextGameStateUsecase;
     setPlayerSubject: SetPlayerSubjectUsecase;
     createSubjectPublisher: CreateSubjectObserver.Publisher;
   };

@@ -1,26 +1,41 @@
 import { NotFoundError } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import {
+  ChangeCentralPulseUsecase,
+  GetCurrentGameUsecase,
   GetDiceUsecase,
   IChangeDiceUsecase,
+  NextGameStateUsecase,
   RollDiceUsecase,
 } from '@domain/usecases';
-import { Vector } from '@domain/utils';
 
 import { ChangeDiceObserver } from '@data/observers';
 
 export class DAORollDiceUsecase implements RollDiceUsecase {
-  private readonly changeDice: IChangeDiceUsecase;
+  private readonly changeCentralPulse: ChangeCentralPulseUsecase;
+  private readonly getCurrentGame: GetCurrentGameUsecase;
   private readonly getDice: GetDiceUsecase;
+  private readonly changeDice: IChangeDiceUsecase;
+  private readonly nextGameState: NextGameStateUsecase;
   private readonly changeDicePublisher: ChangeDiceObserver.Publisher;
 
-  public constructor(deps: DAORollDiceUsecase.Deps) {
-    this.changeDice = deps.changeDice;
-    this.getDice = deps.getDice;
-    this.changeDicePublisher = deps.changeDicePublisher;
+  public constructor({
+    changeCentralPulse,
+    getCurrentGame,
+    getDice,
+    changeDice,
+    nextGameState,
+    changeDicePublisher,
+  }: DAORollDiceUsecase.Deps) {
+    this.changeCentralPulse = changeCentralPulse;
+    this.getCurrentGame = getCurrentGame;
+    this.getDice = getDice;
+    this.changeDice = changeDice;
+    this.nextGameState = nextGameState;
+    this.changeDicePublisher = changeDicePublisher;
   }
 
-  public async execute(id: string, position?: Vector): Promise<DiceModel> {
+  public async execute(id: string): Promise<DiceModel> {
     let dice = await this.getDice.execute(id);
 
     if (!dice)
@@ -30,9 +45,22 @@ export class DAORollDiceUsecase implements RollDiceUsecase {
 
     const value = Math.ceil(Math.random() * dice.sides);
 
-    dice = await this.changeDice.execute(id, { value, position });
+    dice = await this.changeDice.execute(id, { value });
 
     this.changeDicePublisher.notifyChangeDice(dice);
+
+    const currentGame = await this.getCurrentGame.execute();
+
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
+
+    const state = currentGame.state[0];
+
+    if (state === 'creating:centralFact') {
+      await this.changeCentralPulse.execute({ amount: value });
+    } else if (state === 'creating:questions') {
+      await this.nextGameState.execute();
+    }
 
     return dice;
   }
@@ -40,8 +68,11 @@ export class DAORollDiceUsecase implements RollDiceUsecase {
 
 export namespace DAORollDiceUsecase {
   export type Deps = {
-    changeDice: IChangeDiceUsecase;
+    changeCentralPulse: ChangeCentralPulseUsecase;
+    getCurrentGame: GetCurrentGameUsecase;
     getDice: GetDiceUsecase;
+    changeDice: IChangeDiceUsecase;
+    nextGameState: NextGameStateUsecase;
     changeDicePublisher: ChangeDiceObserver.Publisher;
   };
 }

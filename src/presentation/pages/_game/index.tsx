@@ -4,6 +4,7 @@ import { GameModel } from '@domain/models';
 
 import { GlobalLoading, Navigate } from '@presentation/components';
 import {
+  useAnswerUsecases,
   useAuthUsecases,
   useCentralFactUsecases,
   useCentralPulseUsecases,
@@ -43,6 +44,7 @@ const GamePage: FC = () => {
   const { watchCentralPulse } = useCentralPulseUsecases();
   const { watchSubjectPulses } = useSubjectPulseUsecases();
   const { watchQuestions } = useQuestionUsecases();
+  const { watchAnswers } = useAnswerUsecases();
 
   useWatch(async () => {
     const unsubscribes = await Promise.all([
@@ -55,6 +57,7 @@ const GamePage: FC = () => {
       watchCentralPulse(),
       watchSubjectPulses(),
       watchQuestions(),
+      watchAnswers(),
     ]).finally(set('watching', false));
 
     return () => unsubscribes.map((unsubscribe) => unsubscribe());

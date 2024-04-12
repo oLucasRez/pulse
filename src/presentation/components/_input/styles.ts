@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import { InputProps } from './types';
+import { StyledContaienr } from './types';
 
-export const Container = styled.textarea<InputProps>`
+const containerStyle = css<StyledContaienr>`
   &::placeholder {
     color: ${({ placeholderColor }) => placeholderColor};
     opacity: ${({ placeholderOpacity }) => placeholderOpacity ?? 1};
@@ -12,4 +12,12 @@ export const Container = styled.textarea<InputProps>`
     color: ${({ placeholderColor }) => placeholderColor};
     opacity: ${({ placeholderOpacity }) => placeholderOpacity};
   }
+`;
+
+export const InputContainer = styled.input<StyledContaienr>`
+  ${containerStyle}
+`;
+
+export const TextareaContainer = styled.textarea<StyledContaienr>`
+  ${containerStyle}
 `;

@@ -1,9 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import {
-  ChangeCentralPulseUsecase,
-  WatchCentralPulseUsecase,
-} from '@domain/usecases';
+import { WatchCentralPulseUsecase } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -26,11 +23,6 @@ export const CentralPulseUsecasesContextProvider: FC<
 
   const centralPulse = useSelector(centralPulseSelector);
 
-  const changeCentralPulse = useCallback<ChangeCentralPulseUsecase['execute']>(
-    (payload) => props.changeCentralPulse.execute(payload),
-    [],
-  );
-
   const watchCentralPulse = useCallback(
     (callback?: WatchCentralPulseUsecase.Callback) =>
       props.watchCentralPulse.execute(callback ?? (() => {})),
@@ -42,7 +34,6 @@ export const CentralPulseUsecasesContextProvider: FC<
       value={{
         centralPulse,
         watchCentralPulse,
-        changeCentralPulse,
       }}
     >
       {children}

@@ -11,7 +11,6 @@ export class CentralFactHydrator {
         Pick<CentralFactModel, 'position'>
     >(LandmarkHydrator.hydrate(dto), {
       position: Vector.fromJSON(dto.position),
-      description: dto.description,
     });
 
     return centralFact;

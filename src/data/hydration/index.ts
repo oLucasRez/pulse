@@ -12,6 +12,7 @@ export class ModelHydrator {
   }
 }
 
+export * from './_answer';
 export * from './_dice';
 export * from './_game';
 export * from './_landmark';

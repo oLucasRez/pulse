@@ -1,12 +1,16 @@
 import { FC } from 'react';
 
 import {
+  useAnswerUsecases,
   useGameUsecases,
-  usePlayerUsecases,
   useRoundUsecases,
 } from '@presentation/contexts';
+import { useStates } from '@presentation/hooks';
+import { alertError } from '@presentation/utils';
 
 import {
+  AnswerEvent,
+  CentralFact,
   Dices,
   Map,
   PlayersList,
@@ -16,11 +20,33 @@ import {
 } from '../../components';
 
 export const CreatingAnswersState: FC = () => {
-  const { currentGame } = useGameUsecases();
-  const { currentPlayer } = useRoundUsecases();
-  const { myPlayer } = usePlayerUsecases();
+  const [s, set] = useStates({
+    creatingAnswer: false,
+  });
 
-  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
+  const { currentGame } = useGameUsecases();
+  const { isMyTurn, currentPlayer } = useRoundUsecases();
+  const { createAnswer } = useAnswerUsecases();
+
+  const {
+    state: [, state],
+  } = currentGame ?? { state: [] };
+
+  function handleAnswer(event: AnswerEvent) {
+    if (!currentPlayer) return;
+
+    s.creatingAnswer = true;
+    createAnswer({
+      description: event.description,
+      questionID: event.question.id,
+      authorID: currentPlayer.id,
+    })
+      .catch(alertError)
+      .finally(set('creatingAnswer', false));
+  }
+
+  const onAnswer =
+    state === 'create:answer' && isMyTurn ? handleAnswer : undefined;
 
   if (!currentGame) return null;
 
@@ -30,7 +56,8 @@ export const CreatingAnswersState: FC = () => {
         <Pulses />
         <Dices transparent />
         <Subjects />
-        <Questions />
+        <CentralFact />
+        <Questions onAnswer={onAnswer} />
       </Map>
 
       <PlayersList />

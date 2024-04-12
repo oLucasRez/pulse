@@ -15,6 +15,7 @@ export class GameHydrator {
           dicesMode: dto.config.dicesMode,
         },
         state: dto.state,
+        voting: dto.voting,
         centralPulseID: dto.centralPulseID,
         roundID: dto.roundID,
         lightSpotRoundID: dto.lightSpotRoundID,

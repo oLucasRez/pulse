@@ -83,8 +83,7 @@ export function useMutateSubjectModal(
 
     let promise: Promise<SubjectModel>;
 
-    if (s.subject && position)
-      promise = changeSubject(s.subject.id, { description, position });
+    if (s.subject) promise = changeSubject(s.subject.id, { description });
     else if (!s.isMyFirstSubject && position)
       promise = createSubject({ color, description, icon, position });
     else if (s.isMyFirstSubject)

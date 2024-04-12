@@ -1,4 +1,5 @@
 export * from './_';
+export * from './_answer';
 export * from './_auth';
 export * from './_dice';
 export * from './_game';

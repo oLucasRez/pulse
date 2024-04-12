@@ -10,6 +10,7 @@ import {
 
 import { FailedError } from '@domain/errors';
 import { Model } from '@domain/models';
+import { DeepPartial } from '@domain/types';
 
 import { DatabaseProtocol } from '@data/protocols';
 import { FirebaseService } from '@data/services';
@@ -83,7 +84,7 @@ export class FirestoreDatabase implements DatabaseProtocol {
   public async update<M extends Model.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof Model.DTO>>,
+    data: DeepPartial<Omit<M, keyof Model.DTO>>,
   ): Promise<M> {
     try {
       Asyncleton.clear(asyncletonKey(table));

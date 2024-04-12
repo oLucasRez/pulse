@@ -10,10 +10,8 @@ export class QuestionHydrator {
       Omit<QuestionModel, keyof LandmarkModel> & Pick<QuestionModel, 'position'>
     >(LandmarkHydrator.hydrate(dto), {
       position: Vector.fromJSON(dto.position),
-      description: dto.description,
       subjectIDs: dto.subjectIDs,
       authorID: dto.authorID,
-      answerIDs: dto.answerIDs,
       factID: dto.factID,
     });
 

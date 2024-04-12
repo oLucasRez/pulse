@@ -4,10 +4,10 @@ import { BasePublisher } from '@data/observers';
 
 export namespace FetchDicesObserver {
   export interface Subscriber {
-    onFetchDices(players: DiceModel[]): void;
+    onFetchDices(dices: DiceModel[]): void;
   }
 
   export interface Publisher extends BasePublisher<Subscriber> {
-    notifyFetchDices(players: DiceModel[]): void;
+    notifyFetchDices(dices: DiceModel[]): void;
   }
 }

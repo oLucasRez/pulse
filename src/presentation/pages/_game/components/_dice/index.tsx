@@ -4,6 +4,7 @@ import {
   useDiceUsecases,
   usePlayerUsecases,
   useRoundUsecases,
+  useSubjectUsecases,
 } from '@presentation/contexts';
 import { darken, getColor } from '@presentation/styles/mixins';
 
@@ -20,6 +21,7 @@ export const Dice: FC<DiceProps> = (props) => {
   const { mapSpace } = useMapContext();
 
   const { players } = usePlayerUsecases();
+  const { subjects } = useSubjectUsecases();
 
   const color = useMemo(
     () =>
@@ -27,7 +29,17 @@ export const Dice: FC<DiceProps> = (props) => {
     [ownerID, players],
   );
 
-  const position = props.position && mapSpace.mult(props.position);
+  const position = useMemo(() => {
+    if (props.position) return mapSpace.mult(props.position);
+
+    const player = players.find((player) => player.id === ownerID);
+
+    if (!player) return null;
+
+    const subject = subjects.find((subject) => subject.id === player.subjectID);
+
+    return subject?.position ? mapSpace.mult(subject.position) : null;
+  }, [mapSpace, props.position, players, subjects]);
 
   if (!position || !color) return null;
 
@@ -239,7 +251,7 @@ export const Dice: FC<DiceProps> = (props) => {
 };
 
 export const Dices: FC<DicesProps> = (props) => {
-  const { transparent, currentHidden } = props;
+  const { position, transparent, currentHidden } = props;
 
   const { currentDice } = useRoundUsecases();
   const { dices } = useDiceUsecases();
@@ -249,7 +261,14 @@ export const Dices: FC<DicesProps> = (props) => {
       {dices.map((dice) => {
         if (currentHidden && dice.id === currentDice?.id) return null;
 
-        return <Dice key={dice.id} transparent={transparent} {...dice} />;
+        return (
+          <Dice
+            key={dice.id}
+            transparent={transparent}
+            position={position}
+            {...dice}
+          />
+        );
       })}
     </>
   );

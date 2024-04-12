@@ -23,16 +23,16 @@ function calcCrossings(c1: Circle, c2: Circle): Vector[] {
 
   if (isNaN(h)) return [];
 
-  return [
-    new Vector([
-      p3.x + ((c2.c.y - c1.c.y) * h) / d,
-      p3.y - ((c2.c.x - c1.c.x) * h) / d,
-    ]),
-    new Vector([
-      p3.x - ((c2.c.y - c1.c.y) * h) / d,
-      p3.y + ((c2.c.x - c1.c.x) * h) / d,
-    ]),
-  ];
+  const crossing1 = new Vector([
+    p3.x + ((c2.c.y - c1.c.y) * h) / d,
+    p3.y - ((c2.c.x - c1.c.x) * h) / d,
+  ]);
+  const crossing2 = new Vector([
+    p3.x - ((c2.c.y - c1.c.y) * h) / d,
+    p3.y + ((c2.c.x - c1.c.x) * h) / d,
+  ]);
+
+  return [crossing1, crossing2];
 }
 
 function getCircles(pulse: PulseModel<LandmarkModel>): Circle[] {

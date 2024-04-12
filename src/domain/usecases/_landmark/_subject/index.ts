@@ -1,4 +1,4 @@
-export * from './_change-my-subject';
+export * from './_change-my-subject-position';
 export * from './_change-subject';
 export * from './_create-my-subject';
 export * from './_create-subject';

@@ -7,6 +7,7 @@ import {
   makeCreateSubjectUsecase,
   makeGetCurrentGameUsecase,
   makeGetMyPlayerUsecase,
+  makeNextGameStateUsecase,
   makeSetPlayerSubjectUsecase,
 } from '@main/factories';
 
@@ -15,6 +16,7 @@ export function makeDAOCreateMySubjectUsecase(): CreateMySubjectUsecase {
   const createSubjectPublisher = makeCreateSubjectPublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
+  const nextGameState = makeNextGameStateUsecase();
   const setPlayerSubject = makeSetPlayerSubjectUsecase();
 
   return new DAOCreateMySubjectUsecase({
@@ -22,6 +24,7 @@ export function makeDAOCreateMySubjectUsecase(): CreateMySubjectUsecase {
     createSubjectPublisher,
     getCurrentGame,
     getMyPlayer,
+    nextGameState,
     setPlayerSubject,
   });
 }

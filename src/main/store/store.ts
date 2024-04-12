@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
+import { answer } from './_answer';
 import { auth } from './_auth';
 import { dice } from './_dice';
 import { game } from './_game';
@@ -9,6 +10,7 @@ import { centralPulse, subjectPulse } from './_pulse';
 import { round } from './_round';
 
 const reducer = combineReducers({
+  answer,
   auth,
   dice,
   game,

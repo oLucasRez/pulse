@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
 
-import { DomainError } from '@domain/errors';
 import { Circle, Vector } from '@domain/utils';
 
 import { P } from '@presentation/components';
@@ -17,6 +16,7 @@ import { useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import {
+  CentralFact,
   CreatePulseEvent,
   Crossings,
   DiceRoller,
@@ -41,9 +41,9 @@ export const CreatingQuestionsState: FC = () => {
 
   const { currentPlayer, currentDice } = useRoundUsecases();
   const { myPlayer } = usePlayerUsecases();
-  const { rollDice, setDicePosition } = useDiceUsecases();
-  const { currentGame, nextGameState } = useGameUsecases();
-  const { mySubject, changeSubject } = useSubjectUsecases();
+  const { rollDice } = useDiceUsecases();
+  const { currentGame } = useGameUsecases();
+  const { mySubject, changeMySubjectPosition } = useSubjectUsecases();
   const { subjectPulses, createSubjectPulse } = useSubjectPulseUsecases();
 
   const {
@@ -76,33 +76,25 @@ export const CreatingQuestionsState: FC = () => {
 
     s.creatingQuestion = true;
 
-    try {
-      // @todo: fill subjectIDs
-      const question = await createQuestion({
-        description: s.description,
-        subjectIDs: [],
-      });
-
-      await setDicePosition(currentDice.id, question.position);
-
-      await nextGameState();
-    } catch (error) {
-      alertError(error as DomainError);
-    } finally {
-      set('creatingQuestion', false);
-    }
+    // @todo: fill subjectIDs
+    createQuestion({
+      description: s.description,
+      subjectIDs: [],
+    })
+      .catch(alertError)
+      .finally(set('creatingQuestion', false));
   }
 
   function handleRollDice({ dice }: RollDiceEvent) {
-    rollDice(dice.id).then(nextGameState).catch(alertError);
+    rollDice(dice.id).catch(alertError);
   }
 
   function handleCreatePulse({ amount, gap, origin }: CreatePulseEvent) {
     if (!mySubject) return;
 
-    createSubjectPulse({ amount, gap, landmarkID: mySubject.id, origin })
-      .then(nextGameState)
-      .catch(alertError);
+    createSubjectPulse({ amount, gap, landmarkID: mySubject.id, origin }).catch(
+      alertError,
+    );
   }
 
   if (!currentGame) return null;
@@ -110,17 +102,15 @@ export const CreatingQuestionsState: FC = () => {
   return (
     <>
       <Map
-        onClick={() => {
-          if (!s.selectedCrossing || !mySubject) return;
-
-          changeSubject(mySubject.id, { position: s.selectedCrossing })
-            .then(nextGameState)
-            .catch(alertError);
-        }}
+        onClick={() =>
+          s.selectedCrossing &&
+          changeMySubjectPosition(s.selectedCrossing).catch(alertError)
+        }
       >
         <Pulses />
         <Subjects />
         <Dices transparent />
+        <CentralFact />
         <Questions />
 
         {isMyTurn && state === 'roll:dice' && (

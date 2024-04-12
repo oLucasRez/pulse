@@ -9,6 +9,7 @@ export class LandmarkHydrator {
       Model,
       Omit<LandmarkModel, keyof Model>
     >(ModelHydrator.hydrate(dto), {
+      description: dto.description,
       position: dto.position ? Vector.fromJSON(dto.position) : null,
     });
 

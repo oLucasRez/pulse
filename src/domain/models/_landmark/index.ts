@@ -4,11 +4,13 @@ import { Model } from '..';
 
 export interface LandmarkModel extends Model {
   position: Vector | null;
+  description: string;
 }
 
 export namespace LandmarkModel {
   export interface DTO extends Model.DTO {
     position: Vector.JSON | null;
+    description: string;
   }
 }
 

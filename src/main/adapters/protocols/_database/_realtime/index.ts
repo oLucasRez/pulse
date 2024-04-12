@@ -2,6 +2,7 @@ import { child, get, ref, remove, set, update } from 'firebase/database';
 
 import { NotFoundError } from '@domain/errors';
 import { Model } from '@domain/models';
+import { DeepPartial } from '@domain/types';
 import { isNonNullable, uuid } from '@domain/utils';
 
 import { DatabaseProtocol } from '@data/protocols';
@@ -101,7 +102,7 @@ export class RealtimeDatabase implements DatabaseProtocol {
   public async update<M extends Model.DTO>(
     table: string,
     id: string,
-    data: Partial<Omit<M, keyof Model.DTO>>,
+    data: DeepPartial<Omit<M, keyof Model.DTO>>,
   ): Promise<M> {
     const dbRef = ref(FirebaseService.realtimeDB);
 

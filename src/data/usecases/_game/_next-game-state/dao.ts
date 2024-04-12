@@ -43,6 +43,7 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
       });
 
     let state = currentGame.state;
+    let voting: null | undefined = undefined;
 
     if (state[0] === 'initial:state') {
       state = ['creating:subjects'];
@@ -79,7 +80,7 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
         const round = await this.passTurn.execute(currentGame.roundID);
 
         if (round.finished) {
-          state = ['creating:answers'];
+          state = ['creating:answers', 'create:answer'];
           await this.startRound.execute(
             currentGame.roundID,
             'counterclockwise',
@@ -87,11 +88,16 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
         } else state = ['creating:questions', 'roll:dice'];
       }
     } else if (state[0] === 'creating:answers') {
-      const round = await this.passTurn.execute(currentGame.roundID);
+      if (state[1] === 'create:answer') {
+        state = ['creating:answers', 'vote:answer'];
+      } else if (state[1] === 'vote:answer') {
+        const round = await this.passTurn.execute(currentGame.roundID);
+        voting = null;
 
-      if (round.finished) {
-        state = ['creating:lightSpot'];
-        await this.startRound.execute(currentGame.roundID, 'clockwise');
+        if (round.finished) {
+          state = ['creating:lightSpot'];
+          await this.startRound.execute(currentGame.roundID, 'clockwise');
+        }
       }
     } else if (state[0] === 'creating:lightSpot') {
       const lightSpotRound = await this.passTurn.execute(
@@ -109,7 +115,7 @@ export class DAONextGameStateUsecase implements NextGameStateUsecase {
     // initial:state -> creating:subjects -> creating:centralFact ┬> creating:questions -> creating:answers -> creating:lightSpot ┐
     //                                                            └---------------------------------------------------------------┘
 
-    const dto = await this.gameDAO.update(currentGame.id, { state });
+    const dto = await this.gameDAO.update(currentGame.id, { state, voting });
 
     const game = GameHydrator.hydrate(dto);
 

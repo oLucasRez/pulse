@@ -1,7 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import { RollDiceUsecase, WatchDicesUsecase } from '@domain/usecases';
-import { Vector } from '@domain/utils';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -31,19 +30,12 @@ export const DiceUsecasesContextProvider: FC<
   );
 
   const rollDice = useCallback<RollDiceUsecase['execute']>(
-    (id: string, position?: Vector | undefined) =>
-      props.rollDice.execute(id, position),
-    [],
-  );
-
-  const setDicePosition = useCallback(
-    (id: string, position: Vector | null) =>
-      props.changeDice.execute(id, { position }),
+    (id) => props.rollDice.execute(id),
     [],
   );
 
   return (
-    <Context.Provider value={{ dices, watchDices, rollDice, setDicePosition }}>
+    <Context.Provider value={{ dices, watchDices, rollDice }}>
       {children}
     </Context.Provider>
   );

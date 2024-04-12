@@ -27,8 +27,8 @@ const Context = createContext<MapContextValue>({
   onMouseDown: () => () => {},
   onMouseUp: () => () => {},
   onClick: () => () => {},
-  openPortal: () => {},
-  closePortal: () => {},
+  openBakingPaper: () => {},
+  closeBakingPaper: () => {},
 });
 
 export const useMapContext = (): MapContextValue => useContext(Context);
@@ -115,8 +115,8 @@ export const Map: FC<MapProps> = (props) => {
     onMouseDown: mouseDown.on,
     onMouseUp: mouseUp.on,
     onClick: click.on,
-    openPortal: set('portal'),
-    closePortal: set('portal', null),
+    openBakingPaper: set('portal'),
+    closeBakingPaper: set('portal', null),
   };
 
   return (

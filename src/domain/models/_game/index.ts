@@ -5,6 +5,7 @@ export interface GameModel extends Model {
   title: string | null;
   config: GameModel.Config;
   state: GameModel.State;
+  voting: GameModel.Voting | null;
   centralPulseID: CentralPulseModel['id'] | null;
   roundID: RoundModel['id'] | null;
   lightSpotRoundID: RoundModel['id'] | null;
@@ -29,7 +30,7 @@ export namespace GameModel {
           | 'create:question'
         ),
       ]
-    | ['creating:answers']
+    | ['creating:answers', 'create:answer' | 'vote:answer']
     | ['creating:lightSpot']
     | ['final:state'];
 
@@ -39,11 +40,17 @@ export namespace GameModel {
     dicesMode: DicesMode;
   };
 
+  export type Voting = {
+    answerID: string;
+    votes: Record<string, boolean>;
+  };
+
   export interface DTO extends Model.DTO {
     uid: string;
     title: string | null;
     config: GameModel.Config;
     state: GameModel.State;
+    voting: GameModel.Voting | null;
     centralPulseID: string | null;
     roundID: string | null;
     lightSpotRoundID: string | null;

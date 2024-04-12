@@ -5,7 +5,7 @@ import {
   DeleteGameUsecase,
   GetGamesUsecase,
   GetGameUsecase,
-  NextGameStateUsecase,
+  IVoteUsecase,
   StartGameUsecase,
   WatchCurrentGameUsecase,
 } from '@domain/usecases';
@@ -24,7 +24,7 @@ export type GameUsecasesContextValue = {
   changeGame: ChangeGameUsecase['execute'];
   deleteGame: DeleteGameUsecase['execute'];
   startGame: StartGameUsecase['execute'];
-  nextGameState: NextGameStateUsecase['execute'];
+  vote: IVoteUsecase['execute'];
 };
 
 export interface GameUsecasesContextProviderProps extends ContextProviderProps {
@@ -35,5 +35,5 @@ export interface GameUsecasesContextProviderProps extends ContextProviderProps {
   changeGame: ChangeGameUsecase;
   deleteGame: DeleteGameUsecase;
   startGame: StartGameUsecase;
-  nextGameState: NextGameStateUsecase;
+  vote: IVoteUsecase;
 }
