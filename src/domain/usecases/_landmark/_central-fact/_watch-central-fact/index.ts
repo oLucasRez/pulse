@@ -1,12 +1,12 @@
 import { CentralFactModel } from '@domain/models';
 
-export interface WatchCentralFactUsecase {
+export interface IWatchCentralFactUsecase {
   execute(
-    callback: WatchCentralFactUsecase.Callback,
-  ): Promise<WatchCentralFactUsecase.Response>;
+    callback: IWatchCentralFactUsecase.Callback,
+  ): Promise<IWatchCentralFactUsecase.Response>;
 }
 
-export namespace WatchCentralFactUsecase {
+export namespace IWatchCentralFactUsecase {
   export type Callback = (centralFact: CentralFactModel | null) => void;
   export type Response = () => void;
 }

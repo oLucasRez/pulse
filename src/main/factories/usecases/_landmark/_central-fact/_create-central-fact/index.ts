@@ -1,7 +1,18 @@
-import { CreateCentralFactUsecase } from '@domain/usecases';
+import { ICreateCentralFactUsecase } from '@domain/usecases';
 
-import { makeDAOCreateCentralFactUsecase } from './dao';
+import { CreateCentralFactUsecase } from '@data/usecases';
 
-export function makeCreateCentralFactUsecase(): CreateCentralFactUsecase {
-  return makeDAOCreateCentralFactUsecase();
+import {
+  makeCentralFactDAO,
+  makeCreateCentralFactPublisher,
+} from '@main/factories';
+
+export function makeCreateCentralFactUsecase(): ICreateCentralFactUsecase {
+  const centralFactDAO = makeCentralFactDAO();
+  const createCentralFactPublisher = makeCreateCentralFactPublisher();
+
+  return new CreateCentralFactUsecase({
+    centralFactDAO,
+    createCentralFactPublisher,
+  });
 }

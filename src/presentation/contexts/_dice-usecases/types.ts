@@ -1,8 +1,8 @@
 import { DiceModel } from '@domain/models';
 import {
   IChangeDiceUsecase,
-  RollDiceUsecase,
-  WatchDicesUsecase,
+  IRollDiceUsecase,
+  IWatchDicesUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -10,13 +10,13 @@ import { ContextProviderProps } from '@presentation/types';
 export type DiceUsecasesContextValue = {
   dices: DiceModel[];
   watchDices(
-    callback?: WatchDicesUsecase.Callback,
-  ): Promise<WatchDicesUsecase.Response>;
-  rollDice: RollDiceUsecase['execute'];
+    callback?: IWatchDicesUsecase.Callback,
+  ): Promise<IWatchDicesUsecase.Response>;
+  rollDice: IRollDiceUsecase['execute'];
 };
 
 export interface DiceUsecasesContextProviderProps extends ContextProviderProps {
-  watchDices: WatchDicesUsecase;
-  rollDice: RollDiceUsecase;
+  watchDices: IWatchDicesUsecase;
+  rollDice: IRollDiceUsecase;
   changeDice: IChangeDiceUsecase;
 }

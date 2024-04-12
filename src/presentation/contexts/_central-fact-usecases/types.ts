@@ -1,7 +1,7 @@
 import { CentralFactModel } from '@domain/models';
 import {
-  ChangeCentralFactUsecase,
-  WatchCentralFactUsecase,
+  IChangeCentralFactUsecase,
+  IWatchCentralFactUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -9,13 +9,13 @@ import { ContextProviderProps } from '@presentation/types';
 export type CentralFactUsecasesContextValue = {
   centralFact: CentralFactModel | null;
   watchCentralFact(
-    callback?: WatchCentralFactUsecase.Callback,
-  ): Promise<WatchCentralFactUsecase.Response>;
-  changeCentralFact: ChangeCentralFactUsecase['execute'];
+    callback?: IWatchCentralFactUsecase.Callback,
+  ): Promise<IWatchCentralFactUsecase.Response>;
+  changeCentralFact: IChangeCentralFactUsecase['execute'];
 };
 
 export interface CentralFactUsecasesContextProviderProps
   extends ContextProviderProps {
-  watchCentralFact: WatchCentralFactUsecase;
-  changeCentralFact: ChangeCentralFactUsecase;
+  watchCentralFact: IWatchCentralFactUsecase;
+  changeCentralFact: IChangeCentralFactUsecase;
 }

@@ -1,6 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { WatchRoundsUsecase } from '@domain/usecases';
+import { IWatchRoundsUsecase } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -38,7 +38,7 @@ export const RoundUsecasesContextProvider: FC<
   const currentLightSpotDice = useSelector(currentLightSpotDiceSelector);
 
   const watchRounds = useCallback(
-    (callback?: WatchRoundsUsecase.Callback) =>
+    (callback?: IWatchRoundsUsecase.Callback) =>
       props.watchRounds.execute(callback ?? (() => {})),
     [],
   );

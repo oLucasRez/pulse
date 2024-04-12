@@ -1,10 +1,10 @@
 import { GameModel } from '@domain/models';
 
-export interface ChangeGameUsecase {
-  execute(payload: ChangeGameUsecase.Payload): Promise<GameModel>;
+export interface IChangeGameUsecase {
+  execute(payload: IChangeGameUsecase.Payload): Promise<GameModel>;
 }
 
-export namespace ChangeGameUsecase {
+export namespace IChangeGameUsecase {
   export type Payload = {
     title?: string;
     config?: {

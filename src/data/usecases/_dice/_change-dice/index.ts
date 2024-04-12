@@ -6,9 +6,9 @@ import {
 } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import {
-  GetDiceUsecase,
-  GetPlayerUsecase,
   IChangeDiceUsecase,
+  IGetDiceUsecase,
+  IGetPlayerUsecase,
 } from '@domain/usecases';
 import { isInteger, isNonNullable } from '@domain/utils';
 
@@ -17,16 +17,21 @@ import { DiceHydrator } from '@data/hydration';
 import { ChangeDiceObserver } from '@data/observers';
 
 export class ChangeDiceUsecase implements IChangeDiceUsecase {
-  private readonly getDice: GetDiceUsecase;
-  private readonly getPlayer: GetPlayerUsecase;
+  private readonly getDice: IGetDiceUsecase;
+  private readonly getPlayer: IGetPlayerUsecase;
   private readonly diceDAO: IDiceDAO;
   private readonly changeDicePublisher: ChangeDiceObserver.Publisher;
 
-  public constructor(deps: ChangeDiceUsecase.Deps) {
-    this.getDice = deps.getDice;
-    this.getPlayer = deps.getPlayer;
-    this.diceDAO = deps.diceDAO;
-    this.changeDicePublisher = deps.changeDicePublisher;
+  public constructor({
+    getDice,
+    getPlayer,
+    diceDAO,
+    changeDicePublisher,
+  }: Deps) {
+    this.getDice = getDice;
+    this.getPlayer = getPlayer;
+    this.diceDAO = diceDAO;
+    this.changeDicePublisher = changeDicePublisher;
   }
 
   public async execute(
@@ -93,11 +98,9 @@ export class ChangeDiceUsecase implements IChangeDiceUsecase {
   }
 }
 
-export namespace ChangeDiceUsecase {
-  export type Deps = {
-    getDice: GetDiceUsecase;
-    getPlayer: GetPlayerUsecase;
-    diceDAO: IDiceDAO;
-    changeDicePublisher: ChangeDiceObserver.Publisher;
-  };
-}
+type Deps = {
+  getDice: IGetDiceUsecase;
+  getPlayer: IGetPlayerUsecase;
+  diceDAO: IDiceDAO;
+  changeDicePublisher: ChangeDiceObserver.Publisher;
+};

@@ -1,5 +1,5 @@
 import { DiceModel } from '@domain/models';
 
-export interface GetCurrentDiceUsecase {
+export interface IGetCurrentDiceUsecase {
   execute(roundID: string): Promise<DiceModel | null>;
 }

@@ -1,8 +1,8 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  ChangeCentralFactUsecase,
-  WatchCentralFactUsecase,
+  IChangeCentralFactUsecase,
+  IWatchCentralFactUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -26,13 +26,13 @@ export const CentralFactUsecasesContextProvider: FC<
 
   const centralFact = useSelector(centralFactSelector);
 
-  const changeCentralFact = useCallback<ChangeCentralFactUsecase['execute']>(
+  const changeCentralFact = useCallback<IChangeCentralFactUsecase['execute']>(
     (payload) => props.changeCentralFact.execute(payload),
     [],
   );
 
   const watchCentralFact = useCallback(
-    (callback?: WatchCentralFactUsecase.Callback) =>
+    (callback?: IWatchCentralFactUsecase.Callback) =>
       props.watchCentralFact.execute(callback ?? (() => {})),
     [],
   );

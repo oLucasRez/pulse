@@ -1,11 +1,11 @@
 import { SubjectModel } from '@domain/models';
 import {
-  CreateMySubjectUsecase,
-  CreateSubjectUsecase,
-  GetMySubjectUsecase,
   IChangeMySubjectPositionUsecase,
   IChangeSubjectUsecase,
-  WatchSubjectsUsecase,
+  ICreateMySubjectUsecase,
+  ICreateSubjectUsecase,
+  IGetMySubjectUsecase,
+  IWatchSubjectsUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -14,21 +14,21 @@ export type SubjectUsecasesContextValue = {
   subjects: SubjectModel[];
   mySubject: SubjectModel | null;
   watchSubjects(
-    callback?: WatchSubjectsUsecase.Callback,
-  ): Promise<WatchSubjectsUsecase.Response>;
-  fetchMySubject: GetMySubjectUsecase['execute'];
-  createMySubject: CreateMySubjectUsecase['execute'];
-  createSubject: CreateSubjectUsecase['execute'];
+    callback?: IWatchSubjectsUsecase.Callback,
+  ): Promise<IWatchSubjectsUsecase.Response>;
+  fetchMySubject: IGetMySubjectUsecase['execute'];
+  createMySubject: ICreateMySubjectUsecase['execute'];
+  createSubject: ICreateSubjectUsecase['execute'];
   changeSubject: IChangeSubjectUsecase['execute'];
   changeMySubjectPosition: IChangeMySubjectPositionUsecase['execute'];
 };
 
 export interface SubjectUsecasesContextProviderProps
   extends ContextProviderProps {
-  watchSubjects: WatchSubjectsUsecase;
-  getMySubject: GetMySubjectUsecase;
-  createMySubject: CreateMySubjectUsecase;
-  createSubject: CreateSubjectUsecase;
+  watchSubjects: IWatchSubjectsUsecase;
+  getMySubject: IGetMySubjectUsecase;
+  createMySubject: ICreateMySubjectUsecase;
+  createSubject: ICreateSubjectUsecase;
   changeSubject: IChangeSubjectUsecase;
   changeMySubjectPosition: IChangeMySubjectPositionUsecase;
 }

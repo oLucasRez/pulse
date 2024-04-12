@@ -1,7 +1,12 @@
-import { DeleteGameUsecase } from '@domain/usecases';
+import { IDeleteGameUsecase } from '@domain/usecases';
 
-import { makeDAODeleteGameUsecase } from './dao';
+import { DeleteGameUsecase } from '@data/usecases';
 
-export function makeDeleteGameUsecase(): DeleteGameUsecase {
-  return makeDAODeleteGameUsecase();
+import { makeDeleteGamePublisher, makeGameDAO } from '@main/factories';
+
+export function makeDeleteGameUsecase(): IDeleteGameUsecase {
+  const gameDAO = makeGameDAO();
+  const deleteGamePublisher = makeDeleteGamePublisher();
+
+  return new DeleteGameUsecase({ gameDAO, deleteGamePublisher });
 }

@@ -1,7 +1,21 @@
-import { ChangePlayerUsecase } from '@domain/usecases';
+import { IChangePlayerUsecase } from '@domain/usecases';
 
-import { makeDAOChangePlayerUsecase } from './dao';
+import { ChangePlayerUsecase } from '@data/usecases';
 
-export function makeChangePlayerUsecase(): ChangePlayerUsecase {
-  return makeDAOChangePlayerUsecase();
+import {
+  makeChangePlayerPublisher,
+  makeGetMyPlayerUsecase,
+  makePlayerDAO,
+} from '@main/factories';
+
+export function makeChangePlayerUsecase(): IChangePlayerUsecase {
+  const getMyPlayer = makeGetMyPlayerUsecase();
+  const playerDAO = makePlayerDAO();
+  const changePlayerPublisher = makeChangePlayerPublisher();
+
+  return new ChangePlayerUsecase({
+    getMyPlayer,
+    playerDAO,
+    changePlayerPublisher,
+  });
 }

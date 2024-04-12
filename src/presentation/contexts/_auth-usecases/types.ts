@@ -1,33 +1,33 @@
 import { UserModel } from '@domain/models';
 import {
-  GetMeUsecase,
-  LinkWithProviderUsecase,
-  SignInAnonymouslyUsecase,
-  SignInWithCredentialsUsecase,
-  SignInWithProviderUsecase,
-  SignOutUsecase,
-  SignUpWithCredentialsUsecase,
+  IGetMeUsecase,
+  ILinkWithProviderUsecase,
+  ISignInAnonymouslyUsecase,
+  ISignInWithCredentialsUsecase,
+  ISignInWithProviderUsecase,
+  ISignOutUsecase,
+  ISignUpWithCredentialsUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type AuthUsecasesContextValue = {
   me: UserModel | null;
-  fetchMe: GetMeUsecase['execute'];
-  signUpWithCredentials: SignUpWithCredentialsUsecase['execute'];
-  signInWithCredentials: SignInWithCredentialsUsecase['execute'];
-  signInWithProvider: SignInWithProviderUsecase['execute'];
-  linkWithProvider: LinkWithProviderUsecase['execute'];
-  signInAnonymously: SignInAnonymouslyUsecase['execute'];
-  signOut: SignOutUsecase['execute'];
+  fetchMe: IGetMeUsecase['execute'];
+  signUpWithCredentials: ISignUpWithCredentialsUsecase['execute'];
+  signInWithCredentials: ISignInWithCredentialsUsecase['execute'];
+  signInWithProvider: ISignInWithProviderUsecase['execute'];
+  linkWithProvider: ILinkWithProviderUsecase['execute'];
+  signInAnonymously: ISignInAnonymouslyUsecase['execute'];
+  signOut: ISignOutUsecase['execute'];
 };
 
 export interface AuthUsecasesContextProviderProps extends ContextProviderProps {
-  getMe: GetMeUsecase;
-  signUpWithCredentials: SignUpWithCredentialsUsecase;
-  signInWithCredentials: SignInWithCredentialsUsecase;
-  signInWithProvider: SignInWithProviderUsecase;
-  linkWithProvider: LinkWithProviderUsecase;
-  signInAnonymously: SignInAnonymouslyUsecase;
-  signOut: SignOutUsecase;
+  getMe: IGetMeUsecase;
+  signUpWithCredentials: ISignUpWithCredentialsUsecase;
+  signInWithCredentials: ISignInWithCredentialsUsecase;
+  signInWithProvider: ISignInWithProviderUsecase;
+  linkWithProvider: ILinkWithProviderUsecase;
+  signInAnonymously: ISignInAnonymouslyUsecase;
+  signOut: ISignOutUsecase;
 }

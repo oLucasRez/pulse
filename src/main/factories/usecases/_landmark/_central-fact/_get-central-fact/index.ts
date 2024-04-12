@@ -1,7 +1,21 @@
-import { GetCentralFactUsecase } from '@domain/usecases';
+import { IGetCentralFactUsecase } from '@domain/usecases';
 
-import { makeDAOGetCentralFactUsecase } from './dao';
+import { GetCentralFactUsecase } from '@data/usecases';
 
-export function makeGetCentralFactUsecase(): GetCentralFactUsecase {
-  return makeDAOGetCentralFactUsecase();
+import {
+  makeCentralFactDAO,
+  makeFetchCentralFactPublisher,
+  makeGetCentralPulseUsecase,
+} from '@main/factories';
+
+export function makeGetCentralFactUsecase(): IGetCentralFactUsecase {
+  const centralFactDAO = makeCentralFactDAO();
+  const fetchCentralFactPublisher = makeFetchCentralFactPublisher();
+  const getCentralPulse = makeGetCentralPulseUsecase();
+
+  return new GetCentralFactUsecase({
+    centralFactDAO,
+    fetchCentralFactPublisher,
+    getCentralPulse,
+  });
 }

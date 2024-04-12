@@ -1,7 +1,27 @@
-import { LinkWithProviderUsecase } from '@domain/usecases';
+import { ILinkWithProviderUsecase } from '@domain/usecases';
 
-import { makeAuthLinkWithProviderUsecase } from './auth';
+import { LinkWithProviderUsecase } from '@data/usecases';
 
-export function makeLinkWithProviderUsecase(): LinkWithProviderUsecase {
-  return makeAuthLinkWithProviderUsecase();
+import {
+  makeAuthProvider,
+  makeChangeMePublisher,
+  makeChangeMeUsecase,
+  makeSignInWithProviderUsecase,
+  makeUserDAO,
+} from '@main/factories';
+
+export function makeLinkWithProviderUsecase(): ILinkWithProviderUsecase {
+  const authProvider = makeAuthProvider();
+  const changeMePublisher = makeChangeMePublisher();
+  const changeMe = makeChangeMeUsecase();
+  const signInWithProvider = makeSignInWithProviderUsecase();
+  const userDAO = makeUserDAO();
+
+  return new LinkWithProviderUsecase({
+    authProvider,
+    changeMePublisher,
+    changeMe,
+    signInWithProvider,
+    userDAO,
+  });
 }

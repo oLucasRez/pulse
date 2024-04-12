@@ -1,5 +1,5 @@
 import { CentralPulseModel } from '@domain/models';
 
-export interface GetCentralPulseUsecase {
+export interface IGetCentralPulseUsecase {
   execute(): Promise<CentralPulseModel | null>;
 }

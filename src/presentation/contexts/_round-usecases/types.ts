@@ -1,8 +1,8 @@
 import { DiceModel, PlayerModel, RoundModel } from '@domain/models';
 import {
-  GetRoundUsecase,
-  PassTurnUsecase,
-  WatchRoundsUsecase,
+  IGetRoundUsecase,
+  IPassTurnUsecase,
+  IWatchRoundsUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -16,13 +16,13 @@ export type RoundUsecasesContextValue = {
   currentLightSpotDice: DiceModel | null;
   isMyTurn: boolean;
   watchRounds(
-    callback?: WatchRoundsUsecase.Callback,
-  ): Promise<WatchRoundsUsecase.Response>;
+    callback?: IWatchRoundsUsecase.Callback,
+  ): Promise<IWatchRoundsUsecase.Response>;
 };
 
 export interface RoundUsecasesContextProviderProps
   extends ContextProviderProps {
-  getRound: GetRoundUsecase;
-  passTurn: PassTurnUsecase;
-  watchRounds: WatchRoundsUsecase;
+  getRound: IGetRoundUsecase;
+  passTurn: IPassTurnUsecase;
+  watchRounds: IWatchRoundsUsecase;
 }

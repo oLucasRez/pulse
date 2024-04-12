@@ -1,10 +1,10 @@
 import { UserModel } from '@domain/models';
 
-export interface SignInWithCredentialsUsecase {
-  execute(payload: SignInWithCredentialsUsecase.Payload): Promise<UserModel>;
+export interface ISignInWithCredentialsUsecase {
+  execute(payload: ISignInWithCredentialsUsecase.Payload): Promise<UserModel>;
 }
 
-export namespace SignInWithCredentialsUsecase {
+export namespace ISignInWithCredentialsUsecase {
   export type Payload = {
     email: string;
     password: string;

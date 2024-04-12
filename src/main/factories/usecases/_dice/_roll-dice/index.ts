@@ -1,7 +1,30 @@
-import { RollDiceUsecase } from '@domain/usecases';
+import { IRollDiceUsecase } from '@domain/usecases';
 
-import { makeDAORollDiceUsecase } from './dao';
+import { RollDiceUsecase } from '@data/usecases';
 
-export function makeRollDiceUsecase(): RollDiceUsecase {
-  return makeDAORollDiceUsecase();
+import {
+  makeChangeCentralPulseUsecase,
+  makeChangeDicePublisher,
+  makeChangeDiceUsecase,
+  makeGetCurrentGameUsecase,
+  makeGetDiceUsecase,
+  makeNextGameStateUsecase,
+} from '@main/factories';
+
+export function makeRollDiceUsecase(): IRollDiceUsecase {
+  const changeCentralPulse = makeChangeCentralPulseUsecase();
+  const changeDice = makeChangeDiceUsecase();
+  const changeDicePublisher = makeChangeDicePublisher();
+  const getCurrentGame = makeGetCurrentGameUsecase();
+  const getDice = makeGetDiceUsecase();
+  const nextGameState = makeNextGameStateUsecase();
+
+  return new RollDiceUsecase({
+    changeCentralPulse,
+    changeDice,
+    changeDicePublisher,
+    getCurrentGame,
+    getDice,
+    nextGameState,
+  });
 }

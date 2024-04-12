@@ -1,5 +1,5 @@
 import { SubjectModel } from '@domain/models';
 
-export interface GetSubjectsUsecase {
+export interface IGetSubjectsUsecase {
   execute(): Promise<SubjectModel[]>;
 }

@@ -1,5 +1,5 @@
 import { UserModel } from '@domain/models';
 
-export interface SignInAnonymouslyUsecase {
+export interface ISignInAnonymouslyUsecase {
   execute(): Promise<UserModel>;
 }

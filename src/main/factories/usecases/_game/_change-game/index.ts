@@ -1,7 +1,21 @@
-import { ChangeGameUsecase } from '@domain/usecases';
+import { IChangeGameUsecase } from '@domain/usecases';
 
-import { makeDAOChangeGameUsecase } from './dao';
+import { ChangeGameUsecase } from '@data/usecases';
 
-export function makeChangeGameUsecase(): ChangeGameUsecase {
-  return makeDAOChangeGameUsecase();
+import {
+  makeChangeGamePublisher,
+  makeGameDAO,
+  makeGetCurrentGameUsecase,
+} from '@main/factories';
+
+export function makeChangeGameUsecase(): IChangeGameUsecase {
+  const gameDAO = makeGameDAO();
+  const changeGamePublisher = makeChangeGamePublisher();
+  const getCurrentGame = makeGetCurrentGameUsecase();
+
+  return new ChangeGameUsecase({
+    gameDAO,
+    changeGamePublisher,
+    getCurrentGame,
+  });
 }

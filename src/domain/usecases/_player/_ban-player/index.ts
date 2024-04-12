@@ -1,3 +1,3 @@
-export interface BanPlayerUsecase {
+export interface IBanPlayerUsecase {
   execute(id: string): Promise<void>;
 }

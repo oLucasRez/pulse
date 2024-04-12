@@ -1,7 +1,12 @@
-import { WatchDicesUsecase } from '@domain/usecases';
+import { IWatchDicesUsecase } from '@domain/usecases';
 
-import { makeDAOWatchDicesUsecase } from './dao';
+import { WatchDicesUsecase } from '@data/usecases';
 
-export function makeWatchDicesUsecase(): WatchDicesUsecase {
-  return makeDAOWatchDicesUsecase();
+import { makeDiceDAO, makeFetchDicesPublisher } from '@main/factories';
+
+export function makeWatchDicesUsecase(): IWatchDicesUsecase {
+  const diceDAO = makeDiceDAO();
+  const fetchDicesPublisher = makeFetchDicesPublisher();
+
+  return new WatchDicesUsecase({ diceDAO, fetchDicesPublisher });
 }

@@ -1,8 +1,8 @@
 import { AnswerModel } from '@domain/models';
 import {
   ICreateAnswerUsecase,
+  INextGameStateUsecase,
   IStartVotingUsecase,
-  NextGameStateUsecase,
 } from '@domain/usecases';
 
 import { IAnswerDAO } from '@data/dao';
@@ -11,7 +11,7 @@ import { CreateAnswerObserver } from '@data/observers';
 
 export class CreateAnswerUsecase implements ICreateAnswerUsecase {
   private readonly startVoting: IStartVotingUsecase;
-  private readonly nextGameState: NextGameStateUsecase;
+  private readonly nextGameState: INextGameStateUsecase;
   private readonly answerDAO: IAnswerDAO;
   private readonly createAnswerPublisher: CreateAnswerObserver.Publisher;
 
@@ -52,7 +52,7 @@ export class CreateAnswerUsecase implements ICreateAnswerUsecase {
 
 type Deps = {
   startVoting: IStartVotingUsecase;
-  nextGameState: NextGameStateUsecase;
+  nextGameState: INextGameStateUsecase;
   answerDAO: IAnswerDAO;
   createAnswerPublisher: CreateAnswerObserver.Publisher;
 };

@@ -1,7 +1,21 @@
-import { CreateSubjectPulseUsecase } from '@domain/usecases';
+import { ICreateSubjectPulseUsecase } from '@domain/usecases';
 
-import { makeDAOCreateSubjectPulseUsecase } from './dao';
+import { CreateSubjectPulseUsecase } from '@data/usecases';
 
-export function makeCreateSubjectPulseUsecase(): CreateSubjectPulseUsecase {
-  return makeDAOCreateSubjectPulseUsecase();
+import {
+  makeCreateSubjectPulsePublisher,
+  makeNextGameStateUsecase,
+  makeSubjectPulseDAO,
+} from '@main/factories';
+
+export function makeCreateSubjectPulseUsecase(): ICreateSubjectPulseUsecase {
+  const createSubjectPulsePublisher = makeCreateSubjectPulsePublisher();
+  const nextGameState = makeNextGameStateUsecase();
+  const subjectPulseDAO = makeSubjectPulseDAO();
+
+  return new CreateSubjectPulseUsecase({
+    createSubjectPulsePublisher,
+    nextGameState,
+    subjectPulseDAO,
+  });
 }

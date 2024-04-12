@@ -1,12 +1,12 @@
 import { GameModel } from '@domain/models';
 
-export interface WatchCurrentGameUsecase {
+export interface IWatchCurrentGameUsecase {
   execute(
-    callback: WatchCurrentGameUsecase.Callback,
-  ): Promise<WatchCurrentGameUsecase.Response>;
+    callback: IWatchCurrentGameUsecase.Callback,
+  ): Promise<IWatchCurrentGameUsecase.Response>;
 }
 
-export namespace WatchCurrentGameUsecase {
+export namespace IWatchCurrentGameUsecase {
   export type Callback = (currentGame: GameModel | null) => void;
   export type Response = () => void;
 }

@@ -1,7 +1,21 @@
-import { SignInAnonymouslyUsecase } from '@domain/usecases';
+import { ISignInAnonymouslyUsecase } from '@domain/usecases';
 
-import { makeAuthSignInAnonymouslyUsecase } from './auth';
+import { SignInAnonymouslyUsecase } from '@data/usecases';
 
-export function makeSignInAnonymouslyUsecase(): SignInAnonymouslyUsecase {
-  return makeAuthSignInAnonymouslyUsecase();
+import {
+  makeAuthAnonymous,
+  makeSignInPublisher,
+  makeUserDAO,
+} from '@main/factories';
+
+export function makeSignInAnonymouslyUsecase(): ISignInAnonymouslyUsecase {
+  const authAnonymous = makeAuthAnonymous();
+  const signInPublisher = makeSignInPublisher();
+  const userDAO = makeUserDAO();
+
+  return new SignInAnonymouslyUsecase({
+    authAnonymous,
+    signInPublisher,
+    userDAO,
+  });
 }

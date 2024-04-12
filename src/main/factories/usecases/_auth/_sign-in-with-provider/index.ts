@@ -1,7 +1,24 @@
-import { SignInWithProviderUsecase } from '@domain/usecases';
+import { ISignInWithProviderUsecase } from '@domain/usecases';
 
-import { makeAuthSignInWithProviderUsecase } from './auth';
+import { SignInWithProviderUsecase } from '@data/usecases';
 
-export function makeSignInWithProviderUsecase(): SignInWithProviderUsecase {
-  return makeAuthSignInWithProviderUsecase();
+import {
+  makeAuthProvider,
+  makeChangeMeUsecase,
+  makeSignInPublisher,
+  makeUserDAO,
+} from '@main/factories';
+
+export function makeSignInWithProviderUsecase(): ISignInWithProviderUsecase {
+  const authProvider = makeAuthProvider();
+  const signInPublisher = makeSignInPublisher();
+  const changeMe = makeChangeMeUsecase();
+  const userDAO = makeUserDAO();
+
+  return new SignInWithProviderUsecase({
+    authProvider,
+    signInPublisher,
+    changeMe,
+    userDAO,
+  });
 }

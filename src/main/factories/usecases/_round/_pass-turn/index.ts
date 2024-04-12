@@ -1,7 +1,21 @@
-import { PassTurnUsecase } from '@domain/usecases';
+import { IPassTurnUsecase } from '@domain/usecases';
 
-import { makeDAOPassTurnUsecase } from './dao';
+import { PassTurnUsecase } from '@data/usecases';
 
-export function makePassTurnUsecase(): PassTurnUsecase {
-  return makeDAOPassTurnUsecase();
+import {
+  makeChangeRoundPublisher,
+  makeGetRoundUsecase,
+  makeRoundDAO,
+} from '@main/factories';
+
+export function makePassTurnUsecase(): IPassTurnUsecase {
+  const changeRoundPublisher = makeChangeRoundPublisher();
+  const getRound = makeGetRoundUsecase();
+  const roundDAO = makeRoundDAO();
+
+  return new PassTurnUsecase({
+    changeRoundPublisher,
+    getRound,
+    roundDAO,
+  });
 }

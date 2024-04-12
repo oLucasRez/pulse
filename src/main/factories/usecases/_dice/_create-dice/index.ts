@@ -1,7 +1,12 @@
-import { CreateDiceUsecase } from '@domain/usecases';
+import { ICreateDiceUsecase } from '@domain/usecases';
 
-import { makeDAOCreateDiceUsecase } from './dao';
+import { CreateDiceUsecase } from '@data/usecases';
 
-export function makeCreateDiceUsecase(): CreateDiceUsecase {
-  return makeDAOCreateDiceUsecase();
+import { makeCreateDicePublisher, makeDiceDAO } from '@main/factories';
+
+export function makeCreateDiceUsecase(): ICreateDiceUsecase {
+  const createDicePublisher = makeCreateDicePublisher();
+  const diceDAO = makeDiceDAO();
+
+  return new CreateDiceUsecase({ createDicePublisher, diceDAO });
 }

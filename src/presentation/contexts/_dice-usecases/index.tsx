@@ -1,6 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { RollDiceUsecase, WatchDicesUsecase } from '@domain/usecases';
+import { IRollDiceUsecase, IWatchDicesUsecase } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -24,12 +24,12 @@ export const DiceUsecasesContextProvider: FC<
   const dices = useSelector(dicesSelector);
 
   const watchDices = useCallback(
-    (callback: WatchDicesUsecase.Callback = () => {}) =>
+    (callback: IWatchDicesUsecase.Callback = () => {}) =>
       props.watchDices.execute(callback),
     [],
   );
 
-  const rollDice = useCallback<RollDiceUsecase['execute']>(
+  const rollDice = useCallback<IRollDiceUsecase['execute']>(
     (id) => props.rollDice.execute(id),
     [],
   );

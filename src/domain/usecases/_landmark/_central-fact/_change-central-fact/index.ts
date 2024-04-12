@@ -1,10 +1,12 @@
 import { CentralFactModel } from '@domain/models';
 
-export interface ChangeCentralFactUsecase {
-  execute(payload: ChangeCentralFactUsecase.Payload): Promise<CentralFactModel>;
+export interface IChangeCentralFactUsecase {
+  execute(
+    payload: IChangeCentralFactUsecase.Payload,
+  ): Promise<CentralFactModel>;
 }
 
-export namespace ChangeCentralFactUsecase {
+export namespace IChangeCentralFactUsecase {
   export type Payload = {
     description: string;
   };

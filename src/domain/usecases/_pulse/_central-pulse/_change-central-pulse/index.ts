@@ -1,12 +1,12 @@
 import { CentralPulseModel } from '@domain/models';
 
-export interface ChangeCentralPulseUsecase {
+export interface IChangeCentralPulseUsecase {
   execute(
-    payload: ChangeCentralPulseUsecase.Payload,
+    payload: IChangeCentralPulseUsecase.Payload,
   ): Promise<CentralPulseModel>;
 }
 
-export namespace ChangeCentralPulseUsecase {
+export namespace IChangeCentralPulseUsecase {
   export type Payload = {
     amount: number;
   };

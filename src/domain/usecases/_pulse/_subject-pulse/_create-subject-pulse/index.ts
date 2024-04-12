@@ -1,13 +1,13 @@
 import { SubjectPulseModel } from '@domain/models';
 import { Vector } from '@domain/utils';
 
-export interface CreateSubjectPulseUsecase {
+export interface ICreateSubjectPulseUsecase {
   execute(
-    payload: CreateSubjectPulseUsecase.Payload,
+    payload: ICreateSubjectPulseUsecase.Payload,
   ): Promise<SubjectPulseModel>;
 }
 
-export namespace CreateSubjectPulseUsecase {
+export namespace ICreateSubjectPulseUsecase {
   export type Payload = {
     origin: Vector;
     gap: number;

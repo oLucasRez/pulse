@@ -1,7 +1,21 @@
-import { CreateSubjectUsecase } from '@domain/usecases';
+import { ICreateSubjectUsecase } from '@domain/usecases';
 
-import { makeDAOCreateSubjectUsecase } from './dao';
+import { CreateSubjectUsecase } from '@data/usecases';
 
-export function makeCreateSubjectUsecase(): CreateSubjectUsecase {
-  return makeDAOCreateSubjectUsecase();
+import {
+  makeCreateSubjectPublisher,
+  makeGetMyPlayerUsecase,
+  makeSubjectDAO,
+} from '@main/factories';
+
+export function makeCreateSubjectUsecase(): ICreateSubjectUsecase {
+  const createSubjectPublisher = makeCreateSubjectPublisher();
+  const getMyPlayer = makeGetMyPlayerUsecase();
+  const subjectDAO = makeSubjectDAO();
+
+  return new CreateSubjectUsecase({
+    createSubjectPublisher,
+    getMyPlayer,
+    subjectDAO,
+  });
 }

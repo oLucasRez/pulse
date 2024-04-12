@@ -1,16 +1,16 @@
 import { CentralPulseModel } from '@domain/models';
-import { WatchCentralPulseUsecase } from '@domain/usecases';
+import { IWatchCentralPulseUsecase } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type CentralPulseUsecasesContextValue = {
   centralPulse: CentralPulseModel | null;
   watchCentralPulse(
-    callback?: WatchCentralPulseUsecase.Callback,
-  ): Promise<WatchCentralPulseUsecase.Response>;
+    callback?: IWatchCentralPulseUsecase.Callback,
+  ): Promise<IWatchCentralPulseUsecase.Response>;
 };
 
 export interface CentralPulseUsecasesContextProviderProps
   extends ContextProviderProps {
-  watchCentralPulse: WatchCentralPulseUsecase;
+  watchCentralPulse: IWatchCentralPulseUsecase;
 }

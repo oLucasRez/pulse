@@ -1,7 +1,12 @@
-import { GetDiceUsecase } from '@domain/usecases';
+import { IGetDiceUsecase } from '@domain/usecases';
 
-import { makeDAOGetDiceUsecase } from './dao';
+import { GetDiceUsecase } from '@data/usecases';
 
-export function makeGetDiceUsecase(): GetDiceUsecase {
-  return makeDAOGetDiceUsecase();
+import { makeDiceDAO, makeFetchDicePublisher } from '@main/factories';
+
+export function makeGetDiceUsecase(): IGetDiceUsecase {
+  const diceDAO = makeDiceDAO();
+  const fetchDicePublisher = makeFetchDicePublisher();
+
+  return new GetDiceUsecase({ diceDAO, fetchDicePublisher });
 }

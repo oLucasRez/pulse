@@ -1,12 +1,12 @@
 import { CentralPulseModel } from '@domain/models';
 
-export interface WatchCentralPulseUsecase {
+export interface IWatchCentralPulseUsecase {
   execute(
-    callback: WatchCentralPulseUsecase.Callback,
-  ): Promise<WatchCentralPulseUsecase.Response>;
+    callback: IWatchCentralPulseUsecase.Callback,
+  ): Promise<IWatchCentralPulseUsecase.Response>;
 }
 
-export namespace WatchCentralPulseUsecase {
+export namespace IWatchCentralPulseUsecase {
   export type Callback = (centralPulse: CentralPulseModel | null) => void;
   export type Response = () => void;
 }

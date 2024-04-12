@@ -1,10 +1,10 @@
 import { LoaderFunctionArgs } from 'react-router-dom';
 
 import { GameModel } from '@domain/models';
-import { GetGameUsecase } from '@domain/usecases';
+import { IGetGameUsecase } from '@domain/usecases';
 
 export interface GameLoaderArgs extends LoaderFunctionArgs {
-  getGame: GetGameUsecase;
+  getGame: IGetGameUsecase;
 }
 
 export type GameLoaderData = GameModel;

@@ -1,5 +1,5 @@
 import { PlayerModel } from '@domain/models';
 
-export interface GetCurrentPlayerUsecase {
+export interface IGetCurrentPlayerUsecase {
   execute(roundID: string): Promise<PlayerModel | null>;
 }

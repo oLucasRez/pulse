@@ -1,8 +1,8 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  CreateSubjectPulseUsecase,
-  WatchSubjectPulsesUsecase,
+  ICreateSubjectPulseUsecase,
+  IWatchSubjectPulsesUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -27,13 +27,13 @@ export const SubjectPulseUsecasesContextProvider: FC<
   const subjectPulses = useSelector(subjectPulsesSelector);
 
   const watchSubjectPulses = useCallback(
-    (callback: WatchSubjectPulsesUsecase.Callback = () => {}) =>
+    (callback: IWatchSubjectPulsesUsecase.Callback = () => {}) =>
       props.watchSubjectPulses.execute(callback),
     [],
   );
 
   const createSubjectPulse = useCallback(
-    (payload: CreateSubjectPulseUsecase.Payload) =>
+    (payload: ICreateSubjectPulseUsecase.Payload) =>
       props.createSubjectPulse.execute(payload),
     [],
   );

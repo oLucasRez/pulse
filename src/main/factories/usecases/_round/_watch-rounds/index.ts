@@ -1,7 +1,12 @@
-import { WatchRoundsUsecase } from '@domain/usecases';
+import { IWatchRoundsUsecase } from '@domain/usecases';
 
-import { makeDAOWatchRoundsUsecase } from './dao';
+import { WatchRoundsUsecase } from '@data/usecases';
 
-export function makeWatchRoundsUsecase(): WatchRoundsUsecase {
-  return makeDAOWatchRoundsUsecase();
+import { makeFetchRoundsPublisher, makeRoundDAO } from '@main/factories';
+
+export function makeWatchRoundsUsecase(): IWatchRoundsUsecase {
+  const fetchRoundsPublisher = makeFetchRoundsPublisher();
+  const roundDAO = makeRoundDAO();
+
+  return new WatchRoundsUsecase({ fetchRoundsPublisher, roundDAO });
 }

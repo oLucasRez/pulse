@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from 'react-router-dom';
 
-import { GetMeUsecase } from '@domain/usecases';
+import { IGetMeUsecase } from '@domain/usecases';
 
 export interface RegisterLoaderArgs extends LoaderFunctionArgs {
-  getMe: GetMeUsecase;
+  getMe: IGetMeUsecase;
 }

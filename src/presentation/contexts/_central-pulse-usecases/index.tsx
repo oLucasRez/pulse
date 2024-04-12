@@ -1,6 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { WatchCentralPulseUsecase } from '@domain/usecases';
+import { IWatchCentralPulseUsecase } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -24,7 +24,7 @@ export const CentralPulseUsecasesContextProvider: FC<
   const centralPulse = useSelector(centralPulseSelector);
 
   const watchCentralPulse = useCallback(
-    (callback?: WatchCentralPulseUsecase.Callback) =>
+    (callback?: IWatchCentralPulseUsecase.Callback) =>
       props.watchCentralPulse.execute(callback ?? (() => {})),
     [],
   );

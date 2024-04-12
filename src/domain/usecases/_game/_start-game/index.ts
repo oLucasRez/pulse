@@ -1,5 +1,5 @@
 import { GameModel } from '@domain/models';
 
-export interface StartGameUsecase {
+export interface IStartGameUsecase {
   execute(): Promise<GameModel>;
 }

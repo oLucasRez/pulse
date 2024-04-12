@@ -1,12 +1,12 @@
 import { PlayerModel } from '@domain/models';
 
-export interface WatchPlayersUsecase {
+export interface IWatchPlayersUsecase {
   execute(
-    callback: WatchPlayersUsecase.Callback,
-  ): Promise<WatchPlayersUsecase.Response>;
+    callback: IWatchPlayersUsecase.Callback,
+  ): Promise<IWatchPlayersUsecase.Response>;
 }
 
-export namespace WatchPlayersUsecase {
+export namespace IWatchPlayersUsecase {
   export type Callback = (players: PlayerModel[]) => void;
   export type Response = () => void;
 }

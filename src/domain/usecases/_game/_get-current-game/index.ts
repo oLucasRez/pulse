@@ -1,5 +1,5 @@
 import { GameModel } from '@domain/models';
 
-export interface GetCurrentGameUsecase {
+export interface IGetCurrentGameUsecase {
   execute(): Promise<GameModel | null>;
 }

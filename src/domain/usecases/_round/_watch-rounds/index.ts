@@ -1,12 +1,12 @@
 import { RoundModel } from '@domain/models';
 
-export interface WatchRoundsUsecase {
+export interface IWatchRoundsUsecase {
   execute(
-    callback: WatchRoundsUsecase.Callback,
-  ): Promise<WatchRoundsUsecase.Response>;
+    callback: IWatchRoundsUsecase.Callback,
+  ): Promise<IWatchRoundsUsecase.Response>;
 }
 
-export namespace WatchRoundsUsecase {
+export namespace IWatchRoundsUsecase {
   export type Callback = (rounds: RoundModel[]) => void;
   export type Response = () => void;
 }

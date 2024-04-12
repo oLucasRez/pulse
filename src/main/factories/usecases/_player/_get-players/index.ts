@@ -1,7 +1,12 @@
-import { GetPlayersUsecase } from '@domain/usecases';
+import { IGetPlayersUsecase } from '@domain/usecases';
 
-import { makeDAOGetPlayersUsecase } from './dao';
+import { GetPlayersUsecase } from '@data/usecases';
 
-export function makeGetPlayersUsecase(): GetPlayersUsecase {
-  return makeDAOGetPlayersUsecase();
+import { makeFetchPlayersPublisher, makePlayerDAO } from '@main/factories';
+
+export function makeGetPlayersUsecase(): IGetPlayersUsecase {
+  const playerDAO = makePlayerDAO();
+  const fetchPlayersPublisher = makeFetchPlayersPublisher();
+
+  return new GetPlayersUsecase({ playerDAO, fetchPlayersPublisher });
 }

@@ -1,7 +1,18 @@
-import { GetSubjectPulseUsecase } from '@domain/usecases';
+import { IGetSubjectPulseUsecase } from '@domain/usecases';
 
-import { makeDAOGetSubjectPulseUsecase } from './dao';
+import { GetSubjectPulseUsecase } from '@data/usecases';
 
-export function makeGetSubjectPulseUsecase(): GetSubjectPulseUsecase {
-  return makeDAOGetSubjectPulseUsecase();
+import {
+  makeFetchSubjectPulsePublisher,
+  makeSubjectPulseDAO,
+} from '@main/factories';
+
+export function makeGetSubjectPulseUsecase(): IGetSubjectPulseUsecase {
+  const fetchSubjectPulsePublisher = makeFetchSubjectPulsePublisher();
+  const subjectPulseDAO = makeSubjectPulseDAO();
+
+  return new GetSubjectPulseUsecase({
+    fetchSubjectPulsePublisher,
+    subjectPulseDAO,
+  });
 }

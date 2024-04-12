@@ -1,14 +1,14 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  ChangeGameUsecase,
-  CreateGameUsecase,
-  DeleteGameUsecase,
-  GetGamesUsecase,
-  GetGameUsecase,
+  IChangeGameUsecase,
+  ICreateGameUsecase,
+  IDeleteGameUsecase,
+  IGetGamesUsecase,
+  IGetGameUsecase,
+  IStartGameUsecase,
   IVoteUsecase,
-  StartGameUsecase,
-  WatchCurrentGameUsecase,
+  IWatchCurrentGameUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -34,37 +34,37 @@ export const GameUsecasesContextProvider: FC<
   const currentGame = useSelector(currentGameSelector);
 
   const watchCurrentGame = useCallback(
-    (callback: WatchCurrentGameUsecase.Callback = () => {}) =>
+    (callback: IWatchCurrentGameUsecase.Callback = () => {}) =>
       props.watchCurrentGame.execute(callback),
     [],
   );
 
-  const fetchGames = useCallback<GetGamesUsecase['execute']>(
+  const fetchGames = useCallback<IGetGamesUsecase['execute']>(
     () => props.getGames.execute(),
     [],
   );
 
-  const fetchGame = useCallback<GetGameUsecase['execute']>(
+  const fetchGame = useCallback<IGetGameUsecase['execute']>(
     (id: string) => props.getGame.execute(id),
     [],
   );
 
-  const createGame = useCallback<CreateGameUsecase['execute']>(
-    (payload: CreateGameUsecase.Payload) => props.createGame.execute(payload),
+  const createGame = useCallback<ICreateGameUsecase['execute']>(
+    (payload: ICreateGameUsecase.Payload) => props.createGame.execute(payload),
     [],
   );
 
-  const changeGame = useCallback<ChangeGameUsecase['execute']>(
-    (payload: ChangeGameUsecase.Payload) => props.changeGame.execute(payload),
+  const changeGame = useCallback<IChangeGameUsecase['execute']>(
+    (payload: IChangeGameUsecase.Payload) => props.changeGame.execute(payload),
     [],
   );
 
-  const deleteGame = useCallback<DeleteGameUsecase['execute']>(
+  const deleteGame = useCallback<IDeleteGameUsecase['execute']>(
     (id: string) => props.deleteGame.execute(id),
     [],
   );
 
-  const startGame = useCallback<StartGameUsecase['execute']>(
+  const startGame = useCallback<IStartGameUsecase['execute']>(
     () => props.startGame.execute(),
     [],
   );

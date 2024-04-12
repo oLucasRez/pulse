@@ -8,9 +8,9 @@ export class WatchAnswersUsecase implements IWatchAnswersUsecase {
   private readonly answerDAO: IAnswerDAO;
   private readonly fetchAnswersPublisher: FetchAnswersObserver.Publisher;
 
-  public constructor(deps: WatchAnswersUsecase.Deps) {
-    this.answerDAO = deps.answerDAO;
-    this.fetchAnswersPublisher = deps.fetchAnswersPublisher;
+  public constructor({ answerDAO, fetchAnswersPublisher }: Deps) {
+    this.answerDAO = answerDAO;
+    this.fetchAnswersPublisher = fetchAnswersPublisher;
   }
 
   public async execute(
@@ -28,9 +28,7 @@ export class WatchAnswersUsecase implements IWatchAnswersUsecase {
   }
 }
 
-export namespace WatchAnswersUsecase {
-  export type Deps = {
-    answerDAO: IAnswerDAO;
-    fetchAnswersPublisher: FetchAnswersObserver.Publisher;
-  };
-}
+type Deps = {
+  answerDAO: IAnswerDAO;
+  fetchAnswersPublisher: FetchAnswersObserver.Publisher;
+};

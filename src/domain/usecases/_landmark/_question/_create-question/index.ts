@@ -1,10 +1,10 @@
 import { QuestionModel } from '@domain/models';
 
-export interface CreateQuestionUsecase {
-  execute(payload: CreateQuestionUsecase.Payload): Promise<QuestionModel>;
+export interface ICreateQuestionUsecase {
+  execute(payload: ICreateQuestionUsecase.Payload): Promise<QuestionModel>;
 }
 
-export namespace CreateQuestionUsecase {
+export namespace ICreateQuestionUsecase {
   export type Payload = {
     description: string;
     subjectIDs: string[];

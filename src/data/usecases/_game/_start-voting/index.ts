@@ -1,13 +1,13 @@
 import { NotFoundError } from '@domain/errors';
 import { GameModel } from '@domain/models';
-import { GetCurrentGameUsecase, IStartVotingUsecase } from '@domain/usecases';
+import { IGetCurrentGameUsecase, IStartVotingUsecase } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
 import { GameHydrator } from '@data/hydration';
 import { ChangeGameObserver } from '@data/observers';
 
 export class StartVotingUsecase implements IStartVotingUsecase {
-  private readonly getCurrentGame: GetCurrentGameUsecase;
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly changeGamePublisher: ChangeGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
 
@@ -39,7 +39,7 @@ export class StartVotingUsecase implements IStartVotingUsecase {
 }
 
 type Deps = {
-  getCurrentGame: GetCurrentGameUsecase;
+  getCurrentGame: IGetCurrentGameUsecase;
   changeGamePublisher: ChangeGameObserver.Publisher;
   gameDAO: IGameDAO;
 };

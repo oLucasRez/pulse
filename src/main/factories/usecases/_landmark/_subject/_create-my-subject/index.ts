@@ -1,7 +1,30 @@
-import { CreateMySubjectUsecase } from '@domain/usecases';
+import { ICreateMySubjectUsecase } from '@domain/usecases';
 
-import { makeDAOCreateMySubjectUsecase } from './dao';
+import { CreateMySubjectUsecase } from '@data/usecases';
 
-export function makeCreateMySubjectUsecase(): CreateMySubjectUsecase {
-  return makeDAOCreateMySubjectUsecase();
+import {
+  makeCreateSubjectPublisher,
+  makeCreateSubjectUsecase,
+  makeGetCurrentGameUsecase,
+  makeGetMyPlayerUsecase,
+  makeNextGameStateUsecase,
+  makeSetPlayerSubjectUsecase,
+} from '@main/factories';
+
+export function makeCreateMySubjectUsecase(): ICreateMySubjectUsecase {
+  const createSubject = makeCreateSubjectUsecase();
+  const createSubjectPublisher = makeCreateSubjectPublisher();
+  const getCurrentGame = makeGetCurrentGameUsecase();
+  const getMyPlayer = makeGetMyPlayerUsecase();
+  const nextGameState = makeNextGameStateUsecase();
+  const setPlayerSubject = makeSetPlayerSubjectUsecase();
+
+  return new CreateMySubjectUsecase({
+    createSubject,
+    createSubjectPublisher,
+    getCurrentGame,
+    getMyPlayer,
+    nextGameState,
+    setPlayerSubject,
+  });
 }

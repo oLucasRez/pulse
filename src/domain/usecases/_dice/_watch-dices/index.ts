@@ -1,12 +1,12 @@
 import { DiceModel } from '@domain/models';
 
-export interface WatchDicesUsecase {
+export interface IWatchDicesUsecase {
   execute(
-    callback: WatchDicesUsecase.Callback,
-  ): Promise<WatchDicesUsecase.Response>;
+    callback: IWatchDicesUsecase.Callback,
+  ): Promise<IWatchDicesUsecase.Response>;
 }
 
-export namespace WatchDicesUsecase {
+export namespace IWatchDicesUsecase {
   export type Callback = (dices: DiceModel[]) => void;
   export type Response = () => void;
 }

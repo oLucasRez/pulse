@@ -1,11 +1,11 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  BanPlayerUsecase,
-  ChangePlayerUsecase,
-  CreatePlayerUsecase,
-  GetMyPlayerUsecase,
-  WatchPlayersUsecase,
+  IBanPlayerUsecase,
+  IChangePlayerUsecase,
+  ICreatePlayerUsecase,
+  IGetMyPlayerUsecase,
+  IWatchPlayersUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -36,29 +36,29 @@ export const PlayerUsecasesContextProvider: FC<
   const myPlayer = useSelector(myPlayerSelector);
 
   const watchPlayers = useCallback(
-    (callback: WatchPlayersUsecase.Callback = () => {}) =>
+    (callback: IWatchPlayersUsecase.Callback = () => {}) =>
       props.watchPlayers.execute(callback),
     [],
   );
 
-  const fetchMyPlayer = useCallback<GetMyPlayerUsecase['execute']>(
+  const fetchMyPlayer = useCallback<IGetMyPlayerUsecase['execute']>(
     () => props.getMyPlayer.execute(),
     [],
   );
 
-  const createPlayer = useCallback<CreatePlayerUsecase['execute']>(
-    (payload: CreatePlayerUsecase.Payload) =>
+  const createPlayer = useCallback<ICreatePlayerUsecase['execute']>(
+    (payload: ICreatePlayerUsecase.Payload) =>
       props.createPlayer.execute(payload),
     [],
   );
 
-  const changePlayer = useCallback<ChangePlayerUsecase['execute']>(
-    (payload: ChangePlayerUsecase.Payload) =>
+  const changePlayer = useCallback<IChangePlayerUsecase['execute']>(
+    (payload: IChangePlayerUsecase.Payload) =>
       props.changePlayer.execute(payload),
     [],
   );
 
-  const banPlayer = useCallback<BanPlayerUsecase['execute']>(
+  const banPlayer = useCallback<IBanPlayerUsecase['execute']>(
     (id: string) => props.banPlayer.execute(id),
     [],
   );

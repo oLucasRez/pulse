@@ -1,5 +1,5 @@
 import { DiceModel } from '@domain/models';
 
-export interface RollDiceUsecase {
+export interface IRollDiceUsecase {
   execute(id: string): Promise<DiceModel>;
 }

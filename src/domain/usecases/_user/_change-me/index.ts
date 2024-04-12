@@ -1,10 +1,10 @@
 import { UserModel } from '@domain/models';
 
-export interface ChangeMeUsecase {
-  execute(payload: ChangeMeUsecase.Payload): Promise<UserModel>;
+export interface IChangeMeUsecase {
+  execute(payload: IChangeMeUsecase.Payload): Promise<UserModel>;
 }
 
-export namespace ChangeMeUsecase {
+export namespace IChangeMeUsecase {
   export type Payload = {
     name?: string;
   };

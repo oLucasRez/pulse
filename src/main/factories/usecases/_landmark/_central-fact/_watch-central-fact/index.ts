@@ -1,7 +1,18 @@
-import { WatchCentralFactUsecase } from '@domain/usecases';
+import { IWatchCentralFactUsecase } from '@domain/usecases';
 
-import { makeDAOWatchCentralFactUsecase } from './dao';
+import { WatchCentralFactUsecase } from '@data/usecases';
 
-export function makeWatchCentralFactUsecase(): WatchCentralFactUsecase {
-  return makeDAOWatchCentralFactUsecase();
+import {
+  makeCentralFactDAO,
+  makeFetchCentralFactPublisher,
+} from '@main/factories';
+
+export function makeWatchCentralFactUsecase(): IWatchCentralFactUsecase {
+  const centralFactDAO = makeCentralFactDAO();
+  const fetchCentralFactPublisher = makeFetchCentralFactPublisher();
+
+  return new WatchCentralFactUsecase({
+    centralFactDAO,
+    fetchCentralFactPublisher,
+  });
 }

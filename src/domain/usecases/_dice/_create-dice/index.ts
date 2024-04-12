@@ -1,10 +1,10 @@
 import { DiceModel } from '@domain/models';
 
-export interface CreateDiceUsecase {
-  execute(payload: CreateDiceUsecase.Payload): Promise<DiceModel>;
+export interface ICreateDiceUsecase {
+  execute(payload: ICreateDiceUsecase.Payload): Promise<DiceModel>;
 }
 
-export namespace CreateDiceUsecase {
+export namespace ICreateDiceUsecase {
   export type Payload = {
     sides: number;
     ownerID: string;

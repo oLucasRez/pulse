@@ -1,13 +1,13 @@
 import { GameModel } from '@domain/models';
 import {
-  ChangeGameUsecase,
-  CreateGameUsecase,
-  DeleteGameUsecase,
-  GetGamesUsecase,
-  GetGameUsecase,
+  IChangeGameUsecase,
+  ICreateGameUsecase,
+  IDeleteGameUsecase,
+  IGetGamesUsecase,
+  IGetGameUsecase,
+  IStartGameUsecase,
   IVoteUsecase,
-  StartGameUsecase,
-  WatchCurrentGameUsecase,
+  IWatchCurrentGameUsecase,
 } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
@@ -16,24 +16,24 @@ export type GameUsecasesContextValue = {
   myGames: GameModel[];
   currentGame: GameModel | null;
   watchCurrentGame(
-    callback?: WatchCurrentGameUsecase.Callback,
-  ): Promise<WatchCurrentGameUsecase.Response>;
-  fetchGame: GetGameUsecase['execute'];
-  fetchGames: GetGamesUsecase['execute'];
-  createGame: CreateGameUsecase['execute'];
-  changeGame: ChangeGameUsecase['execute'];
-  deleteGame: DeleteGameUsecase['execute'];
-  startGame: StartGameUsecase['execute'];
+    callback?: IWatchCurrentGameUsecase.Callback,
+  ): Promise<IWatchCurrentGameUsecase.Response>;
+  fetchGame: IGetGameUsecase['execute'];
+  fetchGames: IGetGamesUsecase['execute'];
+  createGame: ICreateGameUsecase['execute'];
+  changeGame: IChangeGameUsecase['execute'];
+  deleteGame: IDeleteGameUsecase['execute'];
+  startGame: IStartGameUsecase['execute'];
   vote: IVoteUsecase['execute'];
 };
 
 export interface GameUsecasesContextProviderProps extends ContextProviderProps {
-  watchCurrentGame: WatchCurrentGameUsecase;
-  getGame: GetGameUsecase;
-  getGames: GetGamesUsecase;
-  createGame: CreateGameUsecase;
-  changeGame: ChangeGameUsecase;
-  deleteGame: DeleteGameUsecase;
-  startGame: StartGameUsecase;
+  watchCurrentGame: IWatchCurrentGameUsecase;
+  getGame: IGetGameUsecase;
+  getGames: IGetGamesUsecase;
+  createGame: ICreateGameUsecase;
+  changeGame: IChangeGameUsecase;
+  deleteGame: IDeleteGameUsecase;
+  startGame: IStartGameUsecase;
   vote: IVoteUsecase;
 }

@@ -1,11 +1,11 @@
 import { ForbiddenError, NotFoundError } from '@domain/errors';
 import {
-  GetCurrentGameUsecase,
-  GetPlayersUsecase,
   IGetAnswerUsecase,
+  IGetCurrentGameUsecase,
+  IGetPlayersUsecase,
+  INextGameStateUsecase,
   ISetQuestionFactUsecase,
   IVoteUsecase,
-  NextGameStateUsecase,
 } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
@@ -13,11 +13,11 @@ import { GameHydrator } from '@data/hydration';
 import { ChangeGameObserver } from '@data/observers';
 
 export class VoteUsecase implements IVoteUsecase {
-  private readonly getCurrentGame: GetCurrentGameUsecase;
-  private readonly getPlayers: GetPlayersUsecase;
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
+  private readonly getPlayers: IGetPlayersUsecase;
   private readonly getAnswer: IGetAnswerUsecase;
   private readonly setQuestionFact: ISetQuestionFactUsecase;
-  private readonly nextGameState: NextGameStateUsecase;
+  private readonly nextGameState: INextGameStateUsecase;
   private readonly changeGamePublisher: ChangeGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
 
@@ -84,11 +84,11 @@ export class VoteUsecase implements IVoteUsecase {
 }
 
 type Deps = {
-  getCurrentGame: GetCurrentGameUsecase;
-  getPlayers: GetPlayersUsecase;
+  getCurrentGame: IGetCurrentGameUsecase;
+  getPlayers: IGetPlayersUsecase;
   getAnswer: IGetAnswerUsecase;
   setQuestionFact: ISetQuestionFactUsecase;
-  nextGameState: NextGameStateUsecase;
+  nextGameState: INextGameStateUsecase;
   changeGamePublisher: ChangeGameObserver.Publisher;
   gameDAO: IGameDAO;
 };

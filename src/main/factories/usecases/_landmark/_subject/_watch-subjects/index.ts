@@ -1,7 +1,15 @@
-import { WatchSubjectsUsecase } from '@domain/usecases';
+import { IWatchSubjectsUsecase } from '@domain/usecases';
 
-import { makeDAOWatchSubjectsUsecase } from './dao';
+import { WatchSubjectsUsecase } from '@data/usecases';
 
-export function makeWatchSubjectsUsecase(): WatchSubjectsUsecase {
-  return makeDAOWatchSubjectsUsecase();
+import { makeFetchSubjectsPublisher, makeSubjectDAO } from '@main/factories';
+
+export function makeWatchSubjectsUsecase(): IWatchSubjectsUsecase {
+  const fetchSubjectsPublisher = makeFetchSubjectsPublisher();
+  const subjectDAO = makeSubjectDAO();
+
+  return new WatchSubjectsUsecase({
+    fetchSubjectsPublisher,
+    subjectDAO,
+  });
 }

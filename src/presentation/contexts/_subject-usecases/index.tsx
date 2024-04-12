@@ -1,11 +1,11 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
 import {
-  CreateSubjectUsecase,
-  GetMySubjectUsecase,
   IChangeMySubjectPositionUsecase,
   IChangeSubjectUsecase,
-  WatchSubjectsUsecase,
+  ICreateSubjectUsecase,
+  IGetMySubjectUsecase,
+  IWatchSubjectsUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -31,22 +31,22 @@ export const SubjectUsecasesContextProvider: FC<
   const mySubject = useSelector(mySubjectSelector);
 
   const watchSubjects = useCallback(
-    (callback: WatchSubjectsUsecase.Callback = () => {}) =>
+    (callback: IWatchSubjectsUsecase.Callback = () => {}) =>
       props.watchSubjects.execute(callback),
     [],
   );
 
-  const fetchMySubject = useCallback<GetMySubjectUsecase['execute']>(
+  const fetchMySubject = useCallback<IGetMySubjectUsecase['execute']>(
     () => props.getMySubject.execute(),
     [],
   );
 
-  const createMySubject = useCallback<CreateSubjectUsecase['execute']>(
+  const createMySubject = useCallback<ICreateSubjectUsecase['execute']>(
     (payload) => props.createMySubject.execute(payload),
     [],
   );
 
-  const createSubject = useCallback<CreateSubjectUsecase['execute']>(
+  const createSubject = useCallback<ICreateSubjectUsecase['execute']>(
     (payload) => props.createSubject.execute(payload),
     [],
   );

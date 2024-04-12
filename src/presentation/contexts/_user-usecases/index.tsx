@@ -1,6 +1,6 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { ChangeMeUsecase, SetCurrentGameUsecase } from '@domain/usecases';
+import { IChangeMeUsecase, ISetCurrentGameUsecase } from '@domain/usecases';
 
 import {
   UserUsecasesContextProviderProps,
@@ -17,12 +17,13 @@ export const UserUsecasesContextProvider: FC<
 > = (props) => {
   const { children } = props;
 
-  const changeMe = useCallback<ChangeMeUsecase['execute']>(
-    async (payload: ChangeMeUsecase.Payload) => props.changeMe.execute(payload),
+  const changeMe = useCallback<IChangeMeUsecase['execute']>(
+    async (payload: IChangeMeUsecase.Payload) =>
+      props.changeMe.execute(payload),
     [],
   );
 
-  const setCurrentGame = useCallback<SetCurrentGameUsecase['execute']>(
+  const setCurrentGame = useCallback<ISetCurrentGameUsecase['execute']>(
     (gameID: string | null) => props.setCurrentGame.execute(gameID),
     [],
   );

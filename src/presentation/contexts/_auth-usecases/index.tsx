@@ -2,13 +2,13 @@ import { createContext, FC, useCallback, useContext } from 'react';
 
 import { Provider } from '@domain/types';
 import {
-  GetMeUsecase,
-  LinkWithProviderUsecase,
-  SignInAnonymouslyUsecase,
-  SignInWithCredentialsUsecase,
-  SignInWithProviderUsecase,
-  SignOutUsecase,
-  SignUpWithCredentialsUsecase,
+  IGetMeUsecase,
+  ILinkWithProviderUsecase,
+  ISignInAnonymouslyUsecase,
+  ISignInWithCredentialsUsecase,
+  ISignInWithProviderUsecase,
+  ISignOutUsecase,
+  ISignUpWithCredentialsUsecase,
 } from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
@@ -32,43 +32,43 @@ export const AuthUsecasesContextProvider: FC<
 
   const me = useSelector(meSelector);
 
-  const fetchMe = useCallback<GetMeUsecase['execute']>(
+  const fetchMe = useCallback<IGetMeUsecase['execute']>(
     () => props.getMe.execute(),
     [],
   );
 
   const signUpWithCredentials = useCallback<
-    SignUpWithCredentialsUsecase['execute']
+    ISignUpWithCredentialsUsecase['execute']
   >(
-    (payload: SignUpWithCredentialsUsecase.Payload) =>
+    (payload: ISignUpWithCredentialsUsecase.Payload) =>
       props.signUpWithCredentials.execute(payload),
     [],
   );
 
   const signInWithCredentials = useCallback<
-    SignInWithCredentialsUsecase['execute']
+    ISignInWithCredentialsUsecase['execute']
   >(
-    (payload: SignInWithCredentialsUsecase.Payload) =>
+    (payload: ISignInWithCredentialsUsecase.Payload) =>
       props.signInWithCredentials.execute(payload),
     [],
   );
 
-  const signInWithProvider = useCallback<SignInWithProviderUsecase['execute']>(
+  const signInWithProvider = useCallback<ISignInWithProviderUsecase['execute']>(
     (provider: Provider) => props.signInWithProvider.execute(provider),
     [],
   );
 
-  const linkWithProvider = useCallback<LinkWithProviderUsecase['execute']>(
+  const linkWithProvider = useCallback<ILinkWithProviderUsecase['execute']>(
     (provider: Provider) => props.linkWithProvider.execute(provider),
     [],
   );
 
-  const signInAnonymously = useCallback<SignInAnonymouslyUsecase['execute']>(
+  const signInAnonymously = useCallback<ISignInAnonymouslyUsecase['execute']>(
     () => props.signInAnonymously.execute(),
     [],
   );
 
-  const signOut = useCallback<SignOutUsecase['execute']>(
+  const signOut = useCallback<ISignOutUsecase['execute']>(
     () => props.signOut.execute(),
     [],
   );

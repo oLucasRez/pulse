@@ -1,7 +1,21 @@
-import { ChangeMeUsecase } from '@domain/usecases';
+import { IChangeMeUsecase } from '@domain/usecases';
 
-import { makeDAOChangeMeUsecase } from './dao';
+import { ChangeMeUsecase } from '@data/usecases';
 
-export function makeChangeMeUsecase(): ChangeMeUsecase {
-  return makeDAOChangeMeUsecase();
+import {
+  makeChangeMePublisher,
+  makeGetMeUsecase,
+  makeUserDAO,
+} from '@main/factories';
+
+export function makeChangeMeUsecase(): IChangeMeUsecase {
+  const changeMePublisher = makeChangeMePublisher();
+  const getMe = makeGetMeUsecase();
+  const userDAO = makeUserDAO();
+
+  return new ChangeMeUsecase({
+    changeMePublisher,
+    getMe,
+    userDAO,
+  });
 }

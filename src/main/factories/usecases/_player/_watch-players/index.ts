@@ -1,7 +1,15 @@
-import { WatchPlayersUsecase } from '@domain/usecases';
+import { IWatchPlayersUsecase } from '@domain/usecases';
 
-import { makeDAOWatchPlayersUsecase } from './dao';
+import { WatchPlayersUsecase } from '@data/usecases';
 
-export function makeWatchPlayersUsecase(): WatchPlayersUsecase {
-  return makeDAOWatchPlayersUsecase();
+import { makeFetchPlayersPublisher, makePlayerDAO } from '@main/factories';
+
+export function makeWatchPlayersUsecase(): IWatchPlayersUsecase {
+  const fetchPlayersPublisher = makeFetchPlayersPublisher();
+  const playerDAO = makePlayerDAO();
+
+  return new WatchPlayersUsecase({
+    fetchPlayersPublisher,
+    playerDAO,
+  });
 }

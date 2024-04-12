@@ -1,7 +1,17 @@
-import { StartRoundUsecase } from '@domain/usecases';
+import { IStartRoundUsecase } from '@domain/usecases';
 
-import { makeDAOStartRoundUsecase } from './dao';
+import { StartRoundUsecase } from '@data/usecases';
 
-export function makeStartRoundUsecase(): StartRoundUsecase {
-  return makeDAOStartRoundUsecase();
+import {
+  makeChangeRoundPublisher,
+  makeGetRoundUsecase,
+  makeRoundDAO,
+} from '@main/factories';
+
+export function makeStartRoundUsecase(): IStartRoundUsecase {
+  const changeRoundPublisher = makeChangeRoundPublisher();
+  const getRound = makeGetRoundUsecase();
+  const roundDAO = makeRoundDAO();
+
+  return new StartRoundUsecase({ changeRoundPublisher, getRound, roundDAO });
 }

@@ -1,5 +1,5 @@
 import { RoundModel } from '@domain/models';
 
-export interface PassTurnUsecase {
+export interface IPassTurnUsecase {
   execute(id: string): Promise<RoundModel>;
 }

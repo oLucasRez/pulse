@@ -1,3 +1,3 @@
-export interface SignOutUsecase {
+export interface ISignOutUsecase {
   execute(): Promise<void>;
 }

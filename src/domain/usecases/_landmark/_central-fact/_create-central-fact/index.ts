@@ -1,5 +1,5 @@
 import { CentralFactModel } from '@domain/models';
 
-export interface CreateCentralFactUsecase {
+export interface ICreateCentralFactUsecase {
   execute(): Promise<CentralFactModel>;
 }

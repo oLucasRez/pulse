@@ -1,10 +1,10 @@
 import { RoundModel } from '@domain/models';
 
-export interface CreateRoundUsecase {
-  execute(payload: CreateRoundUsecase.Payload): Promise<RoundModel>;
+export interface ICreateRoundUsecase {
+  execute(payload: ICreateRoundUsecase.Payload): Promise<RoundModel>;
 }
 
-export namespace CreateRoundUsecase {
+export namespace ICreateRoundUsecase {
   export type Payload = {
     playerIDs: string[];
   };

@@ -1,5 +1,5 @@
 import { GameModel } from '@domain/models';
 
-export interface NextGameStateUsecase {
+export interface INextGameStateUsecase {
   execute(): Promise<GameModel>;
 }

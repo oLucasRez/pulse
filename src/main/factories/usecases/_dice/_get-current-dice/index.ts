@@ -1,7 +1,21 @@
-import { GetCurrentDiceUsecase } from '@domain/usecases';
+import { IGetCurrentDiceUsecase } from '@domain/usecases';
 
-import { makeDAOGetCurrentDiceUsecase } from './dao';
+import { GetCurrentDiceUsecase } from '@data/usecases';
 
-export function makeGetCurrentDiceUsecase(): GetCurrentDiceUsecase {
-  return makeDAOGetCurrentDiceUsecase();
+import {
+  makeFetchDicePublisher,
+  makeGetCurrentPlayerUsecase,
+  makeGetDiceUsecase,
+} from '@main/factories';
+
+export function makeGetCurrentDiceUsecase(): IGetCurrentDiceUsecase {
+  const fetchDicePublisher = makeFetchDicePublisher();
+  const getCurrentPlayer = makeGetCurrentPlayerUsecase();
+  const getDice = makeGetDiceUsecase();
+
+  return new GetCurrentDiceUsecase({
+    fetchDicePublisher,
+    getCurrentPlayer,
+    getDice,
+  });
 }

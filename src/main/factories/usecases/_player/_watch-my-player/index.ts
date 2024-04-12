@@ -1,7 +1,15 @@
-import { WatchMyPlayerUsecase } from '@domain/usecases';
+import { IWatchMyPlayerUsecase } from '@domain/usecases';
 
-import { makeDAOWatchMyPlayerUsecase } from './dao';
+import { WatchMyPlayerUsecase } from '@data/usecases';
 
-export function makeWatchMyPlayerUsecase(): WatchMyPlayerUsecase {
-  return makeDAOWatchMyPlayerUsecase();
+import {
+  makeGetMyPlayerUsecase,
+  makeWatchPlayersUsecase,
+} from '@main/factories';
+
+export function makeWatchMyPlayerUsecase(): IWatchMyPlayerUsecase {
+  const getMyPlayer = makeGetMyPlayerUsecase();
+  const watchPlayers = makeWatchPlayersUsecase();
+
+  return new WatchMyPlayerUsecase({ getMyPlayer, watchPlayers });
 }

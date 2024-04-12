@@ -1,5 +1,5 @@
 import { DiceModel } from '@domain/models';
 
-export interface GetDicesUsecase {
+export interface IGetDicesUsecase {
   execute(): Promise<DiceModel[]>;
 }

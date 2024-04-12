@@ -1,9 +1,9 @@
 import { NotFoundError } from '@domain/errors';
 import { SubjectModel } from '@domain/models';
 import {
-  GetMyPlayerUsecase,
   IChangeMySubjectPositionUsecase,
-  NextGameStateUsecase,
+  IGetMyPlayerUsecase,
+  INextGameStateUsecase,
 } from '@domain/usecases';
 import { Vector } from '@domain/utils';
 
@@ -14,8 +14,8 @@ import { ChangeSubjectObserver } from '@data/observers';
 export class ChangeMySubjectPositionUsecase
   implements IChangeMySubjectPositionUsecase
 {
-  private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly nextGameState: NextGameStateUsecase;
+  private readonly getMyPlayer: IGetMyPlayerUsecase;
+  private readonly nextGameState: INextGameStateUsecase;
   private readonly subjectDAO: ISubjectDAO;
   private readonly changeSubjectPublisher: ChangeSubjectObserver.Publisher;
 
@@ -55,8 +55,8 @@ export class ChangeMySubjectPositionUsecase
 }
 
 type Deps = {
-  getMyPlayer: GetMyPlayerUsecase;
-  nextGameState: NextGameStateUsecase;
+  getMyPlayer: IGetMyPlayerUsecase;
+  nextGameState: INextGameStateUsecase;
   subjectDAO: ISubjectDAO;
   changeSubjectPublisher: ChangeSubjectObserver.Publisher;
 };

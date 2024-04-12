@@ -1,12 +1,12 @@
 import { QuestionModel } from '@domain/models';
 
-export interface WatchQuestionsUsecase {
+export interface IWatchQuestionsUsecase {
   execute(
-    callback: WatchQuestionsUsecase.Callback,
-  ): Promise<WatchQuestionsUsecase.Response>;
+    callback: IWatchQuestionsUsecase.Callback,
+  ): Promise<IWatchQuestionsUsecase.Response>;
 }
 
-export namespace WatchQuestionsUsecase {
+export namespace IWatchQuestionsUsecase {
   export type Callback = (questions: QuestionModel[]) => void;
   export type Response = () => void;
 }

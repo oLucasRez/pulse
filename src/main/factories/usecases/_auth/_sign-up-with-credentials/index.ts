@@ -1,7 +1,21 @@
-import { SignUpWithCredentialsUsecase } from '@domain/usecases';
+import { ISignUpWithCredentialsUsecase } from '@domain/usecases';
 
-import { makeAuthSignUpWithCredentialsUsecase } from './auth';
+import { SignUpWithCredentialsUsecase } from '@data/usecases';
 
-export function makeSignUpWithCredentialsUsecase(): SignUpWithCredentialsUsecase {
-  return makeAuthSignUpWithCredentialsUsecase();
+import {
+  makeAuthCredentials,
+  makeSignInPublisher,
+  makeUserDAO,
+} from '@main/factories';
+
+export function makeSignUpWithCredentialsUsecase(): ISignUpWithCredentialsUsecase {
+  const authCredentials = makeAuthCredentials();
+  const signInPublisher = makeSignInPublisher();
+  const userDAO = makeUserDAO();
+
+  return new SignUpWithCredentialsUsecase({
+    authCredentials,
+    signInPublisher,
+    userDAO,
+  });
 }

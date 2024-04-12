@@ -1,5 +1,5 @@
 import { SubjectPulseModel } from '@domain/models';
 
-export interface GetSubjectPulsesUsecase {
+export interface IGetSubjectPulsesUsecase {
   execute(): Promise<SubjectPulseModel[]>;
 }

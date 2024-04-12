@@ -1,7 +1,24 @@
-import { ChangeCentralPulseUsecase } from '@domain/usecases';
+import { IChangeCentralPulseUsecase } from '@domain/usecases';
 
-import { makeDAOChangeCentralPulseUsecase } from './dao';
+import { ChangeCentralPulseUsecase } from '@data/usecases';
 
-export function makeChangeCentralPulseUsecase(): ChangeCentralPulseUsecase {
-  return makeDAOChangeCentralPulseUsecase();
+import {
+  makeCentralPulseDAO,
+  makeChangeCentralPulsePublisher,
+  makeGetCentralPulseUsecase,
+  makeNextGameStateUsecase,
+} from '@main/factories';
+
+export function makeChangeCentralPulseUsecase(): IChangeCentralPulseUsecase {
+  const centralPulseDAO = makeCentralPulseDAO();
+  const changeCentralPulsePublisher = makeChangeCentralPulsePublisher();
+  const getCentralPulse = makeGetCentralPulseUsecase();
+  const nextGameState = makeNextGameStateUsecase();
+
+  return new ChangeCentralPulseUsecase({
+    centralPulseDAO,
+    changeCentralPulsePublisher,
+    getCentralPulse,
+    nextGameState,
+  });
 }

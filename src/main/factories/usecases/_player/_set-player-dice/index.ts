@@ -1,7 +1,15 @@
-import { SetPlayerDiceUsecase } from '@domain/usecases';
+import { ISetPlayerDiceUsecase } from '@domain/usecases';
 
-import { makeDAOSetPlayerDiceUsecase } from './dao';
+import { SetPlayerDiceUsecase } from '@data/usecases';
 
-export function makeSetPlayerDiceUsecase(): SetPlayerDiceUsecase {
-  return makeDAOSetPlayerDiceUsecase();
+import { makeChangePlayerPublisher, makePlayerDAO } from '@main/factories';
+
+export function makeSetPlayerDiceUsecase(): ISetPlayerDiceUsecase {
+  const playerDAO = makePlayerDAO();
+  const changePlayerPublisher = makeChangePlayerPublisher();
+
+  return new SetPlayerDiceUsecase({
+    playerDAO,
+    changePlayerPublisher,
+  });
 }

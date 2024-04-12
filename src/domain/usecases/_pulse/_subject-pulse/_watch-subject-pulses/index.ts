@@ -1,12 +1,12 @@
 import { SubjectPulseModel } from '@domain/models';
 
-export interface WatchSubjectPulsesUsecase {
+export interface IWatchSubjectPulsesUsecase {
   execute(
-    callback: WatchSubjectPulsesUsecase.Callback,
-  ): Promise<WatchSubjectPulsesUsecase.Response>;
+    callback: IWatchSubjectPulsesUsecase.Callback,
+  ): Promise<IWatchSubjectPulsesUsecase.Response>;
 }
 
-export namespace WatchSubjectPulsesUsecase {
+export namespace IWatchSubjectPulsesUsecase {
   export type Callback = (subjectPulses: SubjectPulseModel[]) => void;
   export type Response = () => void;
 }

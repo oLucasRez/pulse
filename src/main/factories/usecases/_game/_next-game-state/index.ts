@@ -1,7 +1,27 @@
-import { NextGameStateUsecase } from '@domain/usecases';
+import { INextGameStateUsecase } from '@domain/usecases';
 
-import { makeDAONextGameStateUsecase } from './dao';
+import { NextGameStateUsecase } from '@data/usecases';
 
-export function makeNextGameStateUsecase(): NextGameStateUsecase {
-  return makeDAONextGameStateUsecase();
+import {
+  makeChangeGamePublisher,
+  makeGameDAO,
+  makeGetCurrentGameUsecase,
+  makePassTurnUsecase,
+  makeStartRoundUsecase,
+} from '@main/factories';
+
+export function makeNextGameStateUsecase(): INextGameStateUsecase {
+  const changeGamePublisher = makeChangeGamePublisher();
+  const gameDAO = makeGameDAO();
+  const getCurrentGame = makeGetCurrentGameUsecase();
+  const passTurn = makePassTurnUsecase();
+  const startRound = makeStartRoundUsecase();
+
+  return new NextGameStateUsecase({
+    changeGamePublisher,
+    gameDAO,
+    getCurrentGame,
+    passTurn,
+    startRound,
+  });
 }

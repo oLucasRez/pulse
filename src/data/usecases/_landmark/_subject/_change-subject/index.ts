@@ -1,9 +1,9 @@
 import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { SubjectModel } from '@domain/models';
 import {
-  GetMyPlayerUsecase,
-  GetSubjectUsecase,
   IChangeSubjectUsecase,
+  IGetMyPlayerUsecase,
+  IGetSubjectUsecase,
 } from '@domain/usecases';
 
 import { ISubjectDAO } from '@data/dao';
@@ -11,16 +11,21 @@ import { SubjectHydrator } from '@data/hydration';
 import { ChangeSubjectObserver } from '@data/observers';
 
 export class ChangeSubjectUsecase implements IChangeSubjectUsecase {
-  private readonly getMyPlayer: GetMyPlayerUsecase;
-  private readonly getSubject: GetSubjectUsecase;
+  private readonly getMyPlayer: IGetMyPlayerUsecase;
+  private readonly getSubject: IGetSubjectUsecase;
   private readonly subjectDAO: ISubjectDAO;
   private readonly changeSubjectPublisher: ChangeSubjectObserver.Publisher;
 
-  public constructor(deps: Deps) {
-    this.getMyPlayer = deps.getMyPlayer;
-    this.getSubject = deps.getSubject;
-    this.subjectDAO = deps.subjectDAO;
-    this.changeSubjectPublisher = deps.changeSubjectPublisher;
+  public constructor({
+    getMyPlayer,
+    getSubject,
+    subjectDAO,
+    changeSubjectPublisher,
+  }: Deps) {
+    this.getMyPlayer = getMyPlayer;
+    this.getSubject = getSubject;
+    this.subjectDAO = subjectDAO;
+    this.changeSubjectPublisher = changeSubjectPublisher;
   }
 
   public async execute(
@@ -59,8 +64,8 @@ export class ChangeSubjectUsecase implements IChangeSubjectUsecase {
 }
 
 type Deps = {
-  getMyPlayer: GetMyPlayerUsecase;
-  getSubject: GetSubjectUsecase;
+  getMyPlayer: IGetMyPlayerUsecase;
+  getSubject: IGetSubjectUsecase;
   subjectDAO: ISubjectDAO;
   changeSubjectPublisher: ChangeSubjectObserver.Publisher;
 };

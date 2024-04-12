@@ -1,13 +1,13 @@
-import { ChangeMeUsecase, SetCurrentGameUsecase } from '@domain/usecases';
+import { IChangeMeUsecase, ISetCurrentGameUsecase } from '@domain/usecases';
 
 import { ContextProviderProps } from '@presentation/types';
 
 export type UserUsecasesContextValue = {
-  changeMe: ChangeMeUsecase['execute'];
-  setCurrentGame: SetCurrentGameUsecase['execute'];
+  changeMe: IChangeMeUsecase['execute'];
+  setCurrentGame: ISetCurrentGameUsecase['execute'];
 };
 
 export interface UserUsecasesContextProviderProps extends ContextProviderProps {
-  changeMe: ChangeMeUsecase;
-  setCurrentGame: SetCurrentGameUsecase;
+  changeMe: IChangeMeUsecase;
+  setCurrentGame: ISetCurrentGameUsecase;
 }

@@ -1,6 +1,9 @@
 import { createContext, FC, useCallback, useContext } from 'react';
 
-import { CreateQuestionUsecase, WatchQuestionsUsecase } from '@domain/usecases';
+import {
+  ICreateQuestionUsecase,
+  IWatchQuestionsUsecase,
+} from '@domain/usecases';
 
 import { useSelector } from '@presentation/hooks';
 
@@ -24,12 +27,12 @@ export const QuestionUsecasesContextProvider: FC<
   const questions = useSelector(questionsSelector);
 
   const watchQuestions = useCallback(
-    (callback: WatchQuestionsUsecase.Callback = () => {}) =>
+    (callback: IWatchQuestionsUsecase.Callback = () => {}) =>
       props.watchQuestions.execute(callback),
     [],
   );
 
-  const createQuestion = useCallback<CreateQuestionUsecase['execute']>(
+  const createQuestion = useCallback<ICreateQuestionUsecase['execute']>(
     (payload) => props.createQuestion.execute(payload),
     [],
   );

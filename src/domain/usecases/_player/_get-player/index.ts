@@ -1,5 +1,5 @@
 import { PlayerModel } from '@domain/models';
 
-export interface GetPlayerUsecase {
+export interface IGetPlayerUsecase {
   execute(id: string): Promise<PlayerModel | null>;
 }
