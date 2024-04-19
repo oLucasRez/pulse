@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class SubjectDAO implements ISubjectDAO {
   private currentGameID: string | null;
   private subjectsByID: Map<string, SubjectModel.DTO>;
@@ -42,31 +44,33 @@ export class SubjectDAO implements ISubjectDAO {
   }
 
   private async fetchSubjects(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access subjects without session' },
-      });
+    await Asyncleton.run('SubjectDAO.fetchSubjects', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access subjects without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access subjects without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access subjects without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const subjects = await this.database.select<SubjectModel.DTO>(table);
+      const subjects = await this.database.select<SubjectModel.DTO>(table);
 
-    this.fillCache(subjects);
+      this.fillCache(subjects);
+    });
   }
 
   public async getAll(): Promise<SubjectModel.DTO[]> {

@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class RoundDAO implements IRoundDAO {
   private currentGameID: string | null;
   private roundsByID: Map<string, RoundModel.DTO>;
@@ -42,31 +44,33 @@ export class RoundDAO implements IRoundDAO {
   }
 
   private async fetchRounds(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access rounds without session' },
-      });
+    await Asyncleton.run('RoundDAO.fetchRounds', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access rounds without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access rounds without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access rounds without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const rounds = await this.database.select<RoundModel.DTO>(table);
+      const rounds = await this.database.select<RoundModel.DTO>(table);
 
-    this.fillCache(rounds);
+      this.fillCache(rounds);
+    });
   }
 
   public async getAll(): Promise<RoundModel.DTO[]> {

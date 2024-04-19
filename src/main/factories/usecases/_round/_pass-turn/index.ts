@@ -3,19 +3,19 @@ import { IPassTurnUsecase } from '@domain/usecases';
 import { PassTurnUsecase } from '@data/usecases';
 
 import {
-  makeChangeRoundPublisher,
   makeGetRoundUsecase,
   makeRoundDAO,
+  makeRoundHydrator,
 } from '@main/factories';
 
 export function makePassTurnUsecase(): IPassTurnUsecase {
-  const changeRoundPublisher = makeChangeRoundPublisher();
   const getRound = makeGetRoundUsecase();
   const roundDAO = makeRoundDAO();
+  const roundHydrator = makeRoundHydrator();
 
   return new PassTurnUsecase({
-    changeRoundPublisher,
     getRound,
     roundDAO,
+    roundHydrator,
   });
 }

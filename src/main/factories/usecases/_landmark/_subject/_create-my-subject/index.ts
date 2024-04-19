@@ -3,7 +3,6 @@ import { ICreateMySubjectUsecase } from '@domain/usecases';
 import { CreateMySubjectUsecase } from '@data/usecases';
 
 import {
-  makeCreateSubjectPublisher,
   makeCreateSubjectUsecase,
   makeGetCurrentGameUsecase,
   makeGetMyPlayerUsecase,
@@ -13,7 +12,6 @@ import {
 
 export function makeCreateMySubjectUsecase(): ICreateMySubjectUsecase {
   const createSubject = makeCreateSubjectUsecase();
-  const createSubjectPublisher = makeCreateSubjectPublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const nextGameState = makeNextGameStateUsecase();
@@ -21,7 +19,6 @@ export function makeCreateMySubjectUsecase(): ICreateMySubjectUsecase {
 
   return new CreateMySubjectUsecase({
     createSubject,
-    createSubjectPublisher,
     getCurrentGame,
     getMyPlayer,
     nextGameState,

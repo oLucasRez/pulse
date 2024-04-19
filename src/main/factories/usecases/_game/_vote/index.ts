@@ -3,9 +3,8 @@ import { IVoteUsecase } from '@domain/usecases';
 import { VoteUsecase } from '@data/usecases';
 
 import {
-  makeChangeGamePublisher,
   makeGameDAO,
-  makeGetAnswerUsecase,
+  makeGameHydrator,
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
   makeNextGameStateUsecase,
@@ -13,18 +12,16 @@ import {
 } from '@main/factories';
 
 export function makeVoteUsecase(): IVoteUsecase {
-  const changeGamePublisher = makeChangeGamePublisher();
   const gameDAO = makeGameDAO();
-  const getAnswer = makeGetAnswerUsecase();
+  const gameHydrator = makeGameHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const nextGameState = makeNextGameStateUsecase();
   const setQuestionFact = makeSetQuestionFactUsecase();
 
   return new VoteUsecase({
-    changeGamePublisher,
     gameDAO,
-    getAnswer,
+    gameHydrator,
     getCurrentGame,
     getPlayers,
     nextGameState,

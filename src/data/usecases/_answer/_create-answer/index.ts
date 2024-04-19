@@ -6,25 +6,23 @@ import {
 } from '@domain/usecases';
 
 import { IAnswerDAO } from '@data/dao';
-import { AnswerHydrator } from '@data/hydration';
-import { CreateAnswerObserver } from '@data/observers';
+import { IAnswerHydrator } from '@data/hydration';
 
 export class CreateAnswerUsecase implements ICreateAnswerUsecase {
   private readonly startVoting: IStartVotingUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly answerDAO: IAnswerDAO;
-  private readonly createAnswerPublisher: CreateAnswerObserver.Publisher;
-
+  private readonly answerHydrator: IAnswerHydrator;
   public constructor({
     startVoting,
     nextGameState,
     answerDAO,
-    createAnswerPublisher,
+    answerHydrator,
   }: Deps) {
     this.startVoting = startVoting;
     this.nextGameState = nextGameState;
     this.answerDAO = answerDAO;
-    this.createAnswerPublisher = createAnswerPublisher;
+    this.answerHydrator = answerHydrator;
   }
 
   public async execute(
@@ -38,13 +36,11 @@ export class CreateAnswerUsecase implements ICreateAnswerUsecase {
       authorID,
     });
 
-    const answer = AnswerHydrator.hydrate(dto);
-
-    this.createAnswerPublisher.notifyCreateAnswer(answer);
-
-    await this.nextGameState.execute();
+    const answer = await this.answerHydrator.hydrate(dto);
 
     await this.startVoting.execute(dto.id);
+
+    await this.nextGameState.execute();
 
     return answer;
   }
@@ -54,5 +50,5 @@ type Deps = {
   startVoting: IStartVotingUsecase;
   nextGameState: INextGameStateUsecase;
   answerDAO: IAnswerDAO;
-  createAnswerPublisher: CreateAnswerObserver.Publisher;
+  answerHydrator: IAnswerHydrator;
 };

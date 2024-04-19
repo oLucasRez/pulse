@@ -4,20 +4,20 @@ import { ChangeCentralPulseUsecase } from '@data/usecases';
 
 import {
   makeCentralPulseDAO,
-  makeChangeCentralPulsePublisher,
+  makeCentralPulseHydrator,
   makeGetCentralPulseUsecase,
   makeNextGameStateUsecase,
 } from '@main/factories';
 
 export function makeChangeCentralPulseUsecase(): IChangeCentralPulseUsecase {
   const centralPulseDAO = makeCentralPulseDAO();
-  const changeCentralPulsePublisher = makeChangeCentralPulsePublisher();
+  const centralPulseHydrator = makeCentralPulseHydrator();
   const getCentralPulse = makeGetCentralPulseUsecase();
   const nextGameState = makeNextGameStateUsecase();
 
   return new ChangeCentralPulseUsecase({
     centralPulseDAO,
-    changeCentralPulsePublisher,
+    centralPulseHydrator,
     getCentralPulse,
     nextGameState,
   });

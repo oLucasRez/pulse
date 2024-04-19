@@ -5,17 +5,12 @@ import {
   IGetDiceUsecase,
 } from '@domain/usecases';
 
-import { FetchDiceObserver } from '@data/observers';
-
 export class GetCurrentDiceUsecase implements IGetCurrentDiceUsecase {
   private readonly getCurrentPlayer: IGetCurrentPlayerUsecase;
   private readonly getDice: IGetDiceUsecase;
-  private readonly fetchDicePublisher: FetchDiceObserver.Publisher;
-
-  public constructor({ getCurrentPlayer, getDice, fetchDicePublisher }: Deps) {
+  public constructor({ getCurrentPlayer, getDice }: Deps) {
     this.getCurrentPlayer = getCurrentPlayer;
     this.getDice = getDice;
-    this.fetchDicePublisher = fetchDicePublisher;
   }
 
   public async execute(roundID: string): Promise<DiceModel | null> {
@@ -25,8 +20,6 @@ export class GetCurrentDiceUsecase implements IGetCurrentDiceUsecase {
 
     const dice = await this.getDice.execute(currentPlayer.diceID);
 
-    this.fetchDicePublisher.notifyFetchDice(currentPlayer.diceID, dice);
-
     return dice;
   }
 }
@@ -34,5 +27,4 @@ export class GetCurrentDiceUsecase implements IGetCurrentDiceUsecase {
 type Deps = {
   getCurrentPlayer: IGetCurrentPlayerUsecase;
   getDice: IGetDiceUsecase;
-  fetchDicePublisher: FetchDiceObserver.Publisher;
 };

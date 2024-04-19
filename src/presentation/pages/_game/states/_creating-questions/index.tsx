@@ -4,15 +4,14 @@ import { Circle, Vector } from '@domain/utils';
 
 import { P } from '@presentation/components';
 import {
-  useDiceUsecases,
-  useGameUsecases,
-  usePlayerUsecases,
-  useQuestionUsecases,
-  useRoundUsecases,
-  useSubjectPulseUsecases,
-  useSubjectUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+  useDice,
+  useGame,
+  usePlayer,
+  useQuestion,
+  useStates,
+  useSubject,
+  useSubjectPulse,
+} from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import {
@@ -39,12 +38,11 @@ export const CreatingQuestionsState: FC = () => {
     selectedCrossing: null as Vector | null,
   });
 
-  const { currentPlayer, currentDice } = useRoundUsecases();
-  const { myPlayer } = usePlayerUsecases();
-  const { rollDice } = useDiceUsecases();
-  const { currentGame } = useGameUsecases();
-  const { mySubject, changeMySubjectPosition } = useSubjectUsecases();
-  const { subjectPulses, createSubjectPulse } = useSubjectPulseUsecases();
+  const { myPlayer, currentPlayer } = usePlayer();
+  const { currentDice, rollDice } = useDice();
+  const { currentGame } = useGame();
+  const { mySubject, changeMySubjectPosition } = useSubject();
+  const { subjectPulses, createSubjectPulse } = useSubjectPulse();
 
   const {
     state: [, state],
@@ -69,7 +67,7 @@ export const CreatingQuestionsState: FC = () => {
     [currentSubjectPulse],
   );
 
-  const { createQuestion } = useQuestionUsecases();
+  const { createQuestion } = useQuestion();
 
   async function handleSubmitButtonClick() {
     if (!s.description || !currentDice) return;

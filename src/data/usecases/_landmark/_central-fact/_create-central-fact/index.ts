@@ -2,16 +2,14 @@ import { CentralFactModel } from '@domain/models';
 import { ICreateCentralFactUsecase } from '@domain/usecases';
 
 import { ICentralFactDAO } from '@data/dao';
-import { CentralFactHydrator } from '@data/hydration';
-import { CreateCentralFactObserver } from '@data/observers';
+import { ICentralFactHydrator } from '@data/hydration';
 
 export class CreateCentralFactUsecase implements ICreateCentralFactUsecase {
   private readonly centralFactDAO: ICentralFactDAO;
-  private readonly createCentralFactPublisher: CreateCentralFactObserver.Publisher;
-
-  public constructor({ centralFactDAO, createCentralFactPublisher }: Deps) {
+  private readonly centralFactHydrator: ICentralFactHydrator;
+  public constructor({ centralFactDAO, centralFactHydrator }: Deps) {
     this.centralFactDAO = centralFactDAO;
-    this.createCentralFactPublisher = createCentralFactPublisher;
+    this.centralFactHydrator = centralFactHydrator;
   }
 
   public async execute(): Promise<CentralFactModel> {
@@ -20,9 +18,7 @@ export class CreateCentralFactUsecase implements ICreateCentralFactUsecase {
       description: '',
     });
 
-    const centralFact = CentralFactHydrator.hydrate(dto);
-
-    this.createCentralFactPublisher.notifyCreateCentralFact(centralFact);
+    const centralFact = await this.centralFactHydrator.hydrate(dto);
 
     return centralFact;
   }
@@ -30,5 +26,5 @@ export class CreateCentralFactUsecase implements ICreateCentralFactUsecase {
 
 type Deps = {
   centralFactDAO: ICentralFactDAO;
-  createCentralFactPublisher: CreateCentralFactObserver.Publisher;
+  centralFactHydrator: ICentralFactHydrator;
 };

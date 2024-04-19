@@ -8,17 +8,17 @@ import {
 } from '@presentation/pages/_game/proxies';
 
 import {
-  makeAnswerUsecasesContextProvider,
-  makeCentralFactUsecasesContextProvider,
-  makeCentralPulseUsecasesContextProvider,
-  makeDiceUsecasesContextProvider,
-  makeGameUsecasesContextProvider,
-  makePlayerUsecasesContextProvider,
-  makeQuestionUsecasesContextProvider,
-  makeRoundUsecasesContextProvider,
-  makeSubjectPulseUsecasesContextProvider,
-  makeSubjectUsecasesContextProvider,
-  makeUserUsecasesContextProvider,
+  makeAnswerContextProvider,
+  makeCentralFactContextProvider,
+  makeCentralPulseContextProvider,
+  makeDiceContextProvider,
+  makeGameContextProvider,
+  makePlayerContextProvider,
+  makeQuestionContextProvider,
+  makeRoundContextProvider,
+  makeSubjectContextProvider,
+  makeSubjectPulseContextProvider,
+  makeUserContextProvider,
 } from '@main/factories';
 
 const GamePage = lazy(() => import('@presentation/pages/_game'));
@@ -26,28 +26,28 @@ const GamePage = lazy(() => import('@presentation/pages/_game'));
 export function makeGamePage(): ReactElement {
   const page = [
     // inner
-    makeAnswerUsecasesContextProvider,
-    makeQuestionUsecasesContextProvider,
-    makeSubjectPulseUsecasesContextProvider,
-    makeCentralFactUsecasesContextProvider,
-    makeCentralPulseUsecasesContextProvider,
-    makeSubjectUsecasesContextProvider,
-    makeRoundUsecasesContextProvider,
-    makePlayerUsecasesContextProvider,
-    makeDiceUsecasesContextProvider,
-    makeGameUsecasesContextProvider,
-    makeUserUsecasesContextProvider,
+    makeAnswerContextProvider,
+    makeQuestionContextProvider,
+    makeSubjectPulseContextProvider,
+    makeCentralFactContextProvider,
+    makeCentralPulseContextProvider,
+    makeSubjectContextProvider,
+    makeDiceContextProvider,
+    makePlayerContextProvider,
+    makeRoundContextProvider,
+    makeGameContextProvider,
+    makeUserContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),
     <Suspense fallback={<GlobalLoading />}>
-      <GameExistsProxy>
-        <AuthProxy>
+      <AuthProxy>
+        <GameExistsProxy>
           <CreatePlayerProxy>
             <GamePage />
           </CreatePlayerProxy>
-        </AuthProxy>
-      </GameExistsProxy>
+        </GameExistsProxy>
+      </AuthProxy>
     </Suspense>,
   );
 

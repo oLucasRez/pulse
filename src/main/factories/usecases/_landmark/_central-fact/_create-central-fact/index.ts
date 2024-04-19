@@ -2,17 +2,14 @@ import { ICreateCentralFactUsecase } from '@domain/usecases';
 
 import { CreateCentralFactUsecase } from '@data/usecases';
 
-import {
-  makeCentralFactDAO,
-  makeCreateCentralFactPublisher,
-} from '@main/factories';
+import { makeCentralFactDAO, makeCentralFactHydrator } from '@main/factories';
 
 export function makeCreateCentralFactUsecase(): ICreateCentralFactUsecase {
   const centralFactDAO = makeCentralFactDAO();
-  const createCentralFactPublisher = makeCreateCentralFactPublisher();
+  const centralFactHydrator = makeCentralFactHydrator();
 
   return new CreateCentralFactUsecase({
     centralFactDAO,
-    createCentralFactPublisher,
+    centralFactHydrator,
   });
 }

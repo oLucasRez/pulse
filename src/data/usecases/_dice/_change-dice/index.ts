@@ -13,25 +13,18 @@ import {
 import { isInteger, isNonNullable } from '@domain/utils';
 
 import { IDiceDAO } from '@data/dao';
-import { DiceHydrator } from '@data/hydration';
-import { ChangeDiceObserver } from '@data/observers';
+import { IDiceHydrator } from '@data/hydration';
 
 export class ChangeDiceUsecase implements IChangeDiceUsecase {
   private readonly getDice: IGetDiceUsecase;
   private readonly getPlayer: IGetPlayerUsecase;
   private readonly diceDAO: IDiceDAO;
-  private readonly changeDicePublisher: ChangeDiceObserver.Publisher;
-
-  public constructor({
-    getDice,
-    getPlayer,
-    diceDAO,
-    changeDicePublisher,
-  }: Deps) {
+  private readonly diceHydrator: IDiceHydrator;
+  public constructor({ getDice, getPlayer, diceDAO, diceHydrator }: Deps) {
     this.getDice = getDice;
     this.getPlayer = getPlayer;
     this.diceDAO = diceDAO;
-    this.changeDicePublisher = changeDicePublisher;
+    this.diceHydrator = diceHydrator;
   }
 
   public async execute(
@@ -62,9 +55,7 @@ export class ChangeDiceUsecase implements IChangeDiceUsecase {
       ownerID,
     });
 
-    dice = DiceHydrator.hydrate(dto);
-
-    this.changeDicePublisher.notifyChangeDice(dice);
+    dice = await this.diceHydrator.hydrate(dto);
 
     return dice;
   }
@@ -102,5 +93,5 @@ type Deps = {
   getDice: IGetDiceUsecase;
   getPlayer: IGetPlayerUsecase;
   diceDAO: IDiceDAO;
-  changeDicePublisher: ChangeDiceObserver.Publisher;
+  diceHydrator: IDiceHydrator;
 };

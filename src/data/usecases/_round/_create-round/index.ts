@@ -2,16 +2,14 @@ import { RoundModel } from '@domain/models';
 import { ICreateRoundUsecase } from '@domain/usecases';
 
 import { IRoundDAO } from '@data/dao';
-import { RoundHydrator } from '@data/hydration/_round';
-import { CreateRoundObserver } from '@data/observers';
+import { IRoundHydrator } from '@data/hydration';
 
 export class CreateRoundUsecase implements ICreateRoundUsecase {
   private readonly roundDAO: IRoundDAO;
-  private readonly createRoundPublisher: CreateRoundObserver.Publisher;
-
-  public constructor({ roundDAO, createRoundPublisher }: Deps) {
+  private readonly roundHydrator: IRoundHydrator;
+  public constructor({ roundDAO, roundHydrator }: Deps) {
     this.roundDAO = roundDAO;
-    this.createRoundPublisher = createRoundPublisher;
+    this.roundHydrator = roundHydrator;
   }
 
   public async execute(
@@ -27,9 +25,7 @@ export class CreateRoundUsecase implements ICreateRoundUsecase {
       finished: false,
     });
 
-    const round = RoundHydrator.hydrate(dto);
-
-    this.createRoundPublisher.notifyCreateRound(round);
+    const round = await this.roundHydrator.hydrate(dto);
 
     return round;
   }
@@ -37,5 +33,5 @@ export class CreateRoundUsecase implements ICreateRoundUsecase {
 
 type Deps = {
   roundDAO: IRoundDAO;
-  createRoundPublisher: CreateRoundObserver.Publisher;
+  roundHydrator: IRoundHydrator;
 };

@@ -1,34 +1,30 @@
 import { IWatchAnswersUsecase } from '@domain/usecases';
 
 import { IAnswerDAO } from '@data/dao';
-import { AnswerHydrator } from '@data/hydration';
-import { FetchAnswersObserver } from '@data/observers';
+import { IAnswerHydrator } from '@data/hydration';
 
 export class WatchAnswersUsecase implements IWatchAnswersUsecase {
   private readonly answerDAO: IAnswerDAO;
-  private readonly fetchAnswersPublisher: FetchAnswersObserver.Publisher;
-
-  public constructor({ answerDAO, fetchAnswersPublisher }: Deps) {
+  private readonly answerHydrator: IAnswerHydrator;
+  public constructor({ answerDAO, answerHydrator }: Deps) {
     this.answerDAO = answerDAO;
-    this.fetchAnswersPublisher = fetchAnswersPublisher;
+    this.answerHydrator = answerHydrator;
   }
 
   public async execute(
     callback: IWatchAnswersUsecase.Callback,
   ): Promise<IWatchAnswersUsecase.Response> {
-    const unsubscribe = this.answerDAO.watch((dtos) => {
-      const answers = dtos.map(AnswerHydrator.hydrate);
-
-      this.fetchAnswersPublisher.notifyFetchAnswers(answers);
+    return this.answerDAO.watch(async (dtos) => {
+      const answers = await Promise.all(
+        dtos.map((dto) => this.answerHydrator.hydrate(dto)),
+      );
 
       callback(answers);
     });
-
-    return unsubscribe;
   }
 }
 
 type Deps = {
   answerDAO: IAnswerDAO;
-  fetchAnswersPublisher: FetchAnswersObserver.Publisher;
+  answerHydrator: IAnswerHydrator;
 };

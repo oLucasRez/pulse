@@ -8,4 +8,4 @@ export * from './_next-game-state';
 export * from './_start-game';
 export * from './_start-voting';
 export * from './_vote';
-export * from './_watch-current-game';
+export * from './_watch-games';

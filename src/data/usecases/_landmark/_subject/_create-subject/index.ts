@@ -3,22 +3,16 @@ import { SubjectModel } from '@domain/models';
 import { ICreateSubjectUsecase, IGetMyPlayerUsecase } from '@domain/usecases';
 
 import { ISubjectDAO } from '@data/dao';
-import { SubjectHydrator } from '@data/hydration';
-import { CreateSubjectObserver } from '@data/observers';
+import { ISubjectHydrator } from '@data/hydration';
 
 export class CreateSubjectUsecase implements ICreateSubjectUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly subjectDAO: ISubjectDAO;
-  private readonly createSubjectPublisher: CreateSubjectObserver.Publisher;
-
-  public constructor({
-    getMyPlayer,
-    subjectDAO,
-    createSubjectPublisher,
-  }: Deps) {
+  private readonly subjectHydrator: ISubjectHydrator;
+  public constructor({ getMyPlayer, subjectDAO, subjectHydrator }: Deps) {
     this.getMyPlayer = getMyPlayer;
     this.subjectDAO = subjectDAO;
-    this.createSubjectPublisher = createSubjectPublisher;
+    this.subjectHydrator = subjectHydrator;
   }
 
   public async execute(
@@ -40,9 +34,7 @@ export class CreateSubjectUsecase implements ICreateSubjectUsecase {
       pathIDs: [],
     });
 
-    const subject = SubjectHydrator.hydrate(dto);
-
-    this.createSubjectPublisher.notifyCreateSubject(subject);
+    const subject = await this.subjectHydrator.hydrate(dto);
 
     return subject;
   }
@@ -51,5 +43,5 @@ export class CreateSubjectUsecase implements ICreateSubjectUsecase {
 type Deps = {
   getMyPlayer: IGetMyPlayerUsecase;
   subjectDAO: ISubjectDAO;
-  createSubjectPublisher: CreateSubjectObserver.Publisher;
+  subjectHydrator: ISubjectHydrator;
 };

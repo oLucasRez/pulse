@@ -8,28 +8,26 @@ import {
 } from '@domain/usecases';
 
 import { IQuestionDAO } from '@data/dao';
-import { QuestionHydrator } from '@data/hydration';
-import { CreateQuestionObserver } from '@data/observers';
+import { IQuestionHydrator } from '@data/hydration';
 
 export class CreateQuestionUsecase implements ICreateQuestionUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly getMySubject: IGetMySubjectUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly questionDAO: IQuestionDAO;
-  private readonly createQuestionPublisher: CreateQuestionObserver.Publisher;
-
+  private readonly questionHydrator: IQuestionHydrator;
   public constructor({
     getMyPlayer,
     getMySubject,
     nextGameState,
     questionDAO,
-    createQuestionPublisher,
+    questionHydrator,
   }: Deps) {
     this.getMyPlayer = getMyPlayer;
     this.getMySubject = getMySubject;
     this.nextGameState = nextGameState;
     this.questionDAO = questionDAO;
-    this.createQuestionPublisher = createQuestionPublisher;
+    this.questionHydrator = questionHydrator;
   }
 
   public async execute(
@@ -61,9 +59,7 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
 
     await this.nextGameState.execute();
 
-    const question = QuestionHydrator.hydrate(dto);
-
-    this.createQuestionPublisher.notifyCreateQuestion(question);
+    const question = await this.questionHydrator.hydrate(dto);
 
     return question;
   }
@@ -74,5 +70,5 @@ type Deps = {
   getMySubject: IGetMySubjectUsecase;
   nextGameState: INextGameStateUsecase;
   questionDAO: IQuestionDAO;
-  createQuestionPublisher: CreateQuestionObserver.Publisher;
+  questionHydrator: IQuestionHydrator;
 };

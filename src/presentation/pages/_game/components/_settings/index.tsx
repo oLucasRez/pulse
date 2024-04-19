@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useGameUsecases } from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { useGame, useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
@@ -16,7 +15,7 @@ export const Settings: FC<SettingsProps> = (props) => {
     changingGame: false,
   });
 
-  const { currentGame, changeGame } = useGameUsecases();
+  const { currentGame, changeGame } = useGame();
 
   const {
     register,

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { Text } from '@presentation/components';
-import { useSubjectUsecases } from '@presentation/contexts';
+import { useSubject } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 import { SubjectProps } from './types';
@@ -47,7 +47,7 @@ export const Subject: FC<SubjectProps> = (props) => {
 };
 
 export const Subjects: FC = () => {
-  const { subjects } = useSubjectUsecases();
+  const { subjects } = useSubject();
 
   return (
     <>

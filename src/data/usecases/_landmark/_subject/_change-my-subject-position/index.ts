@@ -8,8 +8,7 @@ import {
 import { Vector } from '@domain/utils';
 
 import { ISubjectDAO } from '@data/dao';
-import { SubjectHydrator } from '@data/hydration';
-import { ChangeSubjectObserver } from '@data/observers';
+import { ISubjectHydrator } from '@data/hydration';
 
 export class ChangeMySubjectPositionUsecase
   implements IChangeMySubjectPositionUsecase
@@ -17,18 +16,17 @@ export class ChangeMySubjectPositionUsecase
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly subjectDAO: ISubjectDAO;
-  private readonly changeSubjectPublisher: ChangeSubjectObserver.Publisher;
-
+  private readonly subjectHydrator: ISubjectHydrator;
   public constructor({
     getMyPlayer,
     nextGameState,
     subjectDAO,
-    changeSubjectPublisher,
+    subjectHydrator,
   }: Deps) {
     this.nextGameState = nextGameState;
     this.getMyPlayer = getMyPlayer;
     this.subjectDAO = subjectDAO;
-    this.changeSubjectPublisher = changeSubjectPublisher;
+    this.subjectHydrator = subjectHydrator;
   }
 
   public async execute(position: Vector): Promise<SubjectModel> {
@@ -44,9 +42,7 @@ export class ChangeMySubjectPositionUsecase
       position: position.toJSON(),
     });
 
-    const subject = SubjectHydrator.hydrate(dto);
-
-    this.changeSubjectPublisher.notifyChangeSubject(subject);
+    const subject = await this.subjectHydrator.hydrate(dto);
 
     await this.nextGameState.execute();
 
@@ -58,5 +54,5 @@ type Deps = {
   getMyPlayer: IGetMyPlayerUsecase;
   nextGameState: INextGameStateUsecase;
   subjectDAO: ISubjectDAO;
-  changeSubjectPublisher: ChangeSubjectObserver.Publisher;
+  subjectHydrator: ISubjectHydrator;
 };

@@ -3,27 +3,20 @@ import { Provider } from '@domain/types';
 import { IChangeMeUsecase, ISignInWithProviderUsecase } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { SignInObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 import { AuthProviderProtocol } from '@data/protocols';
 import { dontThrow } from '@data/utils';
 
 export class SignInWithProviderUsecase implements ISignInWithProviderUsecase {
   private readonly changeMe: IChangeMeUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly signInPublisher: SignInObserver.Publisher;
   private readonly userDAO: IUserDAO;
-
-  public constructor({
-    changeMe,
-    authProvider,
-    signInPublisher,
-    userDAO,
-  }: Deps) {
+  private readonly userHydrator: IUserHydrator;
+  public constructor({ changeMe, authProvider, userDAO, userHydrator }: Deps) {
     this.changeMe = changeMe;
     this.authProvider = authProvider;
-    this.signInPublisher = signInPublisher;
     this.userDAO = userDAO;
+    this.userHydrator = userHydrator;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
@@ -47,9 +40,7 @@ export class SignInWithProviderUsecase implements ISignInWithProviderUsecase {
       });
     }
 
-    const user = UserHydrator.hydrate(dto);
-
-    this.signInPublisher.notifySignIn(user);
+    const user = await this.userHydrator.hydrate(dto);
 
     return user;
   }
@@ -58,6 +49,6 @@ export class SignInWithProviderUsecase implements ISignInWithProviderUsecase {
 type Deps = {
   changeMe: IChangeMeUsecase;
   authProvider: AuthProviderProtocol;
-  signInPublisher: SignInObserver.Publisher;
   userDAO: IUserDAO;
+  userHydrator: IUserHydrator;
 };

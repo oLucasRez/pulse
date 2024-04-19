@@ -18,14 +18,12 @@
     "(.*)/enums$",
     "(.*)/models$",
     "(.*)/errors$",
-    "(.*)/collections$",
-    "(.*)/hydration$",
     "(.*)/usecases$",
 
     "(.*)/constants$",
     "(.*)/protocols$",
-    "(.*)/observers$",
     "(.*)/dao$",
+    "(.*)/hydration$",
     "(.*)/services$",
 
     "(.*)/hooks$",
@@ -38,13 +36,11 @@
     "(.*)/styles$",
     "(.*)/mixins$",
     "(.*)/assets$",
-    "(.*)/utils$",
 
-    "(.*)/decorators$",
     "(.*)/adapters$",
-    "(.*)/store$",
     "(.*)/factories$",
 
+    "(.*)/utils$",
     "(.*)/types$",
 
     "^[../]",

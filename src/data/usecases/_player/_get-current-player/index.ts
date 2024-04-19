@@ -6,17 +6,12 @@ import {
   IGetRoundUsecase,
 } from '@domain/usecases';
 
-import { FetchPlayerObserver } from '@data/observers';
-
 export class GetCurrentPlayerUsecase implements IGetCurrentPlayerUsecase {
   private readonly getPlayer: IGetPlayerUsecase;
   private readonly getRound: IGetRoundUsecase;
-  private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
-
-  public constructor({ getPlayer, getRound, fetchPlayerPublisher }: Deps) {
+  public constructor({ getPlayer, getRound }: Deps) {
     this.getPlayer = getPlayer;
     this.getRound = getRound;
-    this.fetchPlayerPublisher = fetchPlayerPublisher;
   }
 
   public async execute(roundID: string): Promise<PlayerModel | null> {
@@ -34,8 +29,6 @@ export class GetCurrentPlayerUsecase implements IGetCurrentPlayerUsecase {
 
     const currentPlayer = await this.getPlayer.execute(currentPlayerID);
 
-    this.fetchPlayerPublisher.notifyFetchPlayer(currentPlayerID, currentPlayer);
-
     return currentPlayer;
   }
 }
@@ -43,5 +36,4 @@ export class GetCurrentPlayerUsecase implements IGetCurrentPlayerUsecase {
 type Deps = {
   getPlayer: IGetPlayerUsecase;
   getRound: IGetRoundUsecase;
-  fetchPlayerPublisher: FetchPlayerObserver.Publisher;
 };

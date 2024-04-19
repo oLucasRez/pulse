@@ -2,11 +2,14 @@ import { IGetAnswerUsecase } from '@domain/usecases';
 
 import { GetAnswerUsecase } from '@data/usecases';
 
-import { makeAnswerDAO, makeFetchAnswerPublisher } from '@main/factories';
+import { makeAnswerDAO, makeAnswerHydrator } from '@main/factories';
 
 export function makeGetAnswerUsecase(): IGetAnswerUsecase {
-  const fetchAnswerPublisher = makeFetchAnswerPublisher();
   const answerDAO = makeAnswerDAO();
+  const answerHydrator = makeAnswerHydrator();
 
-  return new GetAnswerUsecase({ answerDAO, fetchAnswerPublisher });
+  return new GetAnswerUsecase({
+    answerDAO,
+    answerHydrator,
+  });
 }

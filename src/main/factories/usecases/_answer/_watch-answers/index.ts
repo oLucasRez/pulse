@@ -2,11 +2,14 @@ import { IWatchAnswersUsecase } from '@domain/usecases';
 
 import { WatchAnswersUsecase } from '@data/usecases';
 
-import { makeAnswerDAO, makeFetchAnswersPublisher } from '@main/factories';
+import { makeAnswerDAO, makeAnswerHydrator } from '@main/factories';
 
 export function makeWatchAnswersUsecase(): IWatchAnswersUsecase {
   const answerDAO = makeAnswerDAO();
-  const fetchAnswersPublisher = makeFetchAnswersPublisher();
+  const answerHydrator = makeAnswerHydrator();
 
-  return new WatchAnswersUsecase({ answerDAO, fetchAnswersPublisher });
+  return new WatchAnswersUsecase({
+    answerDAO,
+    answerHydrator,
+  });
 }

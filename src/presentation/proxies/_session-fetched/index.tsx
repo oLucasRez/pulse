@@ -1,25 +1,18 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
-import { GlobalLoading } from '@presentation/components';
-import { useAuthUsecases } from '@presentation/contexts';
-import { useNavigate, useStates } from '@presentation/hooks';
+import { GlobalLoading, Navigate } from '@presentation/components';
+import { useUser } from '@presentation/hooks';
 
 import { SessionFetchedProxyProps } from './types';
 
 export const SessionFetchedProxy: FC<SessionFetchedProxyProps> = (props) => {
   const { children } = props;
 
-  const [s, set] = useStates({ fetchingMe: true });
+  const { fetchingMe, error } = useUser();
 
-  const { navigateToLogin } = useNavigate();
+  if (fetchingMe) return <GlobalLoading />;
 
-  const { fetchMe } = useAuthUsecases();
-
-  useEffect(() => {
-    fetchMe().catch(navigateToLogin).finally(set('fetchingMe', false));
-  }, []);
-
-  if (s.fetchingMe) return <GlobalLoading />;
+  if (error) return <Navigate.toLogin />;
 
   return children;
 };

@@ -2,14 +2,14 @@ import { IWatchPlayersUsecase } from '@domain/usecases';
 
 import { WatchPlayersUsecase } from '@data/usecases';
 
-import { makeFetchPlayersPublisher, makePlayerDAO } from '@main/factories';
+import { makePlayerDAO, makePlayerHydrator } from '@main/factories';
 
 export function makeWatchPlayersUsecase(): IWatchPlayersUsecase {
-  const fetchPlayersPublisher = makeFetchPlayersPublisher();
   const playerDAO = makePlayerDAO();
+  const playerHydrator = makePlayerHydrator();
 
   return new WatchPlayersUsecase({
-    fetchPlayersPublisher,
     playerDAO,
+    playerHydrator,
   });
 }

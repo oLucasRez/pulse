@@ -3,16 +3,14 @@ import { DiceModel } from '@domain/models';
 import { ICreateDiceUsecase } from '@domain/usecases';
 
 import { IDiceDAO } from '@data/dao';
-import { DiceHydrator } from '@data/hydration';
-import { CreateDiceObserver } from '@data/observers';
+import { IDiceHydrator } from '@data/hydration';
 
 export class CreateDiceUsecase implements ICreateDiceUsecase {
   private readonly diceDAO: IDiceDAO;
-  private readonly createDicePublisher: CreateDiceObserver.Publisher;
-
-  public constructor({ diceDAO, createDicePublisher }: Deps) {
+  private readonly diceHydrator: IDiceHydrator;
+  public constructor({ diceDAO, diceHydrator }: Deps) {
     this.diceDAO = diceDAO;
-    this.createDicePublisher = createDicePublisher;
+    this.diceHydrator = diceHydrator;
   }
 
   public async execute(
@@ -32,9 +30,7 @@ export class CreateDiceUsecase implements ICreateDiceUsecase {
       ownerID,
     });
 
-    const dice = DiceHydrator.hydrate(dto);
-
-    this.createDicePublisher.notifyCreateDice(dice);
+    const dice = await this.diceHydrator.hydrate(dto);
 
     return dice;
   }
@@ -42,5 +38,5 @@ export class CreateDiceUsecase implements ICreateDiceUsecase {
 
 type Deps = {
   diceDAO: IDiceDAO;
-  createDicePublisher: CreateDiceObserver.Publisher;
+  diceHydrator: IDiceHydrator;
 };

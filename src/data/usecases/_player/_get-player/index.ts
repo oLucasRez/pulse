@@ -2,30 +2,26 @@ import { PlayerModel } from '@domain/models';
 import { IGetPlayerUsecase } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { FetchPlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class GetPlayerUsecase implements IGetPlayerUsecase {
-  private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
-  public constructor({ fetchPlayerPublisher, playerDAO }: Deps) {
-    this.fetchPlayerPublisher = fetchPlayerPublisher;
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ playerDAO, playerHydrator }: Deps) {
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(id: string): Promise<PlayerModel | null> {
     const dto = await this.playerDAO.getByID(id);
 
-    const player = dto ? PlayerHydrator.hydrate(dto) : null;
-
-    this.fetchPlayerPublisher.notifyFetchPlayer(id, player);
+    const player = dto ? await this.playerHydrator.hydrate(dto) : null;
 
     return player;
   }
 }
 
 type Deps = {
-  fetchPlayerPublisher: FetchPlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

@@ -2,24 +2,20 @@ import { SubjectModel } from '@domain/models';
 import { IGetSubjectUsecase } from '@domain/usecases';
 
 import { ISubjectDAO } from '@data/dao';
-import { SubjectHydrator } from '@data/hydration';
-import { FetchSubjectObserver } from '@data/observers';
+import { ISubjectHydrator } from '@data/hydration';
 
 export class GetSubjectUsecase implements IGetSubjectUsecase {
   private readonly subjectDAO: ISubjectDAO;
-  private readonly fetchSubjectPublisher: FetchSubjectObserver.Publisher;
-
-  public constructor({ subjectDAO, fetchSubjectPublisher }: Deps) {
+  private readonly subjectHydrator: ISubjectHydrator;
+  public constructor({ subjectDAO, subjectHydrator }: Deps) {
     this.subjectDAO = subjectDAO;
-    this.fetchSubjectPublisher = fetchSubjectPublisher;
+    this.subjectHydrator = subjectHydrator;
   }
 
   public async execute(id: string): Promise<SubjectModel | null> {
     const dto = await this.subjectDAO.getByID(id);
 
-    const subject = dto ? SubjectHydrator.hydrate(dto) : null;
-
-    this.fetchSubjectPublisher.notifyFetchSubject(id, subject);
+    const subject = dto ? await this.subjectHydrator.hydrate(dto) : null;
 
     return subject;
   }
@@ -27,5 +23,5 @@ export class GetSubjectUsecase implements IGetSubjectUsecase {
 
 type Deps = {
   subjectDAO: ISubjectDAO;
-  fetchSubjectPublisher: FetchSubjectObserver.Publisher;
+  subjectHydrator: ISubjectHydrator;
 };

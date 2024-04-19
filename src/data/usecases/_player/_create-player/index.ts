@@ -9,28 +9,26 @@ import {
 } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { CreatePlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class CreatePlayerUsecase implements ICreatePlayerUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getMe: IGetMeUsecase;
   private readonly getPlayers: IGetPlayersUsecase;
-  private readonly createPlayerPublisher: CreatePlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
+  private readonly playerHydrator: IPlayerHydrator;
   public constructor({
     getCurrentGame,
     getMe,
     getPlayers,
-    createPlayerPublisher,
     playerDAO,
+    playerHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
     this.getMe = getMe;
     this.getPlayers = getPlayers;
-    this.createPlayerPublisher = createPlayerPublisher;
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(
@@ -69,9 +67,7 @@ export class CreatePlayerUsecase implements ICreatePlayerUsecase {
       order: notBannedPlayers.length,
     });
 
-    const player = PlayerHydrator.hydrate(dto);
-
-    this.createPlayerPublisher.notifyCreatePlayer(player);
+    const player = await this.playerHydrator.hydrate(dto);
 
     return player;
   }
@@ -121,6 +117,6 @@ type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   getMe: IGetMeUsecase;
   getPlayers: IGetPlayersUsecase;
-  createPlayerPublisher: CreatePlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

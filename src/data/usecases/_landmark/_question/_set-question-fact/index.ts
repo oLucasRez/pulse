@@ -3,22 +3,16 @@ import { QuestionModel } from '@domain/models';
 import { IGetAnswerUsecase, ISetQuestionFactUsecase } from '@domain/usecases';
 
 import { IQuestionDAO } from '@data/dao';
-import { QuestionHydrator } from '@data/hydration';
-import { ChangeQuestionObserver } from '@data/observers';
+import { IQuestionHydrator } from '@data/hydration';
 
 export class SetQuestionFactUsecase implements ISetQuestionFactUsecase {
   private readonly getAnswer: IGetAnswerUsecase;
   private readonly questionDAO: IQuestionDAO;
-  private readonly changeQuestionPublisher: ChangeQuestionObserver.Publisher;
-
-  public constructor({
-    getAnswer,
-    changeQuestionPublisher,
-    questionDAO,
-  }: Deps) {
+  private readonly questionHydrator: IQuestionHydrator;
+  public constructor({ getAnswer, questionDAO, questionHydrator }: Deps) {
     this.getAnswer = getAnswer;
     this.questionDAO = questionDAO;
-    this.changeQuestionPublisher = changeQuestionPublisher;
+    this.questionHydrator = questionHydrator;
   }
 
   public async execute(answerID: string): Promise<QuestionModel> {
@@ -32,9 +26,7 @@ export class SetQuestionFactUsecase implements ISetQuestionFactUsecase {
       factID: answerID,
     });
 
-    const question = QuestionHydrator.hydrate(dto);
-
-    this.changeQuestionPublisher.notifyChangeQuestion(question);
+    const question = await this.questionHydrator.hydrate(dto);
 
     return question;
   }
@@ -43,5 +35,5 @@ export class SetQuestionFactUsecase implements ISetQuestionFactUsecase {
 type Deps = {
   getAnswer: IGetAnswerUsecase;
   questionDAO: IQuestionDAO;
-  changeQuestionPublisher: ChangeQuestionObserver.Publisher;
+  questionHydrator: IQuestionHydrator;
 };

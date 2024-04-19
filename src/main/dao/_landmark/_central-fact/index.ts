@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class CentralFactDAO implements ICentralFactDAO {
   private currentGameID: string | null;
   private centralFactsByID: Map<string, CentralFactModel.DTO>;
@@ -44,33 +46,35 @@ export class CentralFactDAO implements ICentralFactDAO {
   }
 
   private async fetchCentralFacts(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access centralFacts without session' },
-      });
+    await Asyncleton.run('CentralFactDAO.fetchCentralFacts', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access centralFacts without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access centralFacts without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access centralFacts without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const centralFacts = await this.database.select<CentralFactModel.DTO>(
-      table,
-    );
+      const centralFacts = await this.database.select<CentralFactModel.DTO>(
+        table,
+      );
 
-    this.fillCache(centralFacts);
+      this.fillCache(centralFacts);
+    });
   }
 
   public async getAll(): Promise<CentralFactModel.DTO[]> {

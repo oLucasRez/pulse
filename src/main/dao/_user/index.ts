@@ -4,6 +4,8 @@ import { UserModel } from '@domain/models';
 import { IUserDAO } from '@data/dao';
 import { DatabaseProtocol } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class UserDAO implements IUserDAO {
   private user: UserModel.DTO | null;
 
@@ -16,11 +18,13 @@ export class UserDAO implements IUserDAO {
   }
 
   private async fetchUser(uid: string): Promise<void> {
-    if (this.user && this.user.uid === uid) return;
+    await Asyncleton.run('UserDAO.fetchUsers', async () => {
+      if (this.user && this.user.uid === uid) return;
 
-    const users = await this.database.select<UserModel.DTO>('users');
+      const users = await this.database.select<UserModel.DTO>('users');
 
-    this.user = users.find((user) => user.uid === uid) ?? null;
+      this.user = users.find((user) => user.uid === uid) ?? null;
+    });
   }
 
   public async getByUID(uid: string): Promise<UserModel.DTO | null> {

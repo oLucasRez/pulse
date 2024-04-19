@@ -2,11 +2,14 @@ import { IWatchRoundsUsecase } from '@domain/usecases';
 
 import { WatchRoundsUsecase } from '@data/usecases';
 
-import { makeFetchRoundsPublisher, makeRoundDAO } from '@main/factories';
+import { makeRoundDAO, makeRoundHydrator } from '@main/factories';
 
 export function makeWatchRoundsUsecase(): IWatchRoundsUsecase {
-  const fetchRoundsPublisher = makeFetchRoundsPublisher();
   const roundDAO = makeRoundDAO();
+  const roundHydrator = makeRoundHydrator();
 
-  return new WatchRoundsUsecase({ fetchRoundsPublisher, roundDAO });
+  return new WatchRoundsUsecase({
+    roundDAO,
+    roundHydrator,
+  });
 }

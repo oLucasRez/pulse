@@ -7,7 +7,6 @@ import {
 export class WatchMyPlayerUsecase implements IWatchMyPlayerUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly watchPlayers: IWatchPlayersUsecase;
-
   public constructor({ getMyPlayer, watchPlayers }: Deps) {
     this.getMyPlayer = getMyPlayer;
     this.watchPlayers = watchPlayers;

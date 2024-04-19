@@ -8,8 +8,7 @@ import {
 } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { ChangeMeObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 import { AuthProviderProtocol } from '@data/protocols';
 import { dontThrow } from '@data/utils';
 
@@ -17,15 +16,20 @@ export class LinkWithProviderUsecase implements ILinkWithProviderUsecase {
   private readonly changeMe: IChangeMeUsecase;
   private readonly signInWithProvider: ISignInWithProviderUsecase;
   private readonly authProvider: AuthProviderProtocol;
-  private readonly changeMePublisher: ChangeMeObserver.Publisher;
   private readonly userDAO: IUserDAO;
-
-  public constructor(deps: Deps) {
-    this.changeMe = deps.changeMe;
-    this.signInWithProvider = deps.signInWithProvider;
-    this.authProvider = deps.authProvider;
-    this.changeMePublisher = deps.changeMePublisher;
-    this.userDAO = deps.userDAO;
+  private readonly userHydrator: IUserHydrator;
+  public constructor({
+    changeMe,
+    signInWithProvider,
+    authProvider,
+    userDAO,
+    userHydrator,
+  }: Deps) {
+    this.changeMe = changeMe;
+    this.signInWithProvider = signInWithProvider;
+    this.authProvider = authProvider;
+    this.userDAO = userDAO;
+    this.userHydrator = userHydrator;
   }
 
   public async execute(provider: Provider): Promise<UserModel> {
@@ -62,9 +66,7 @@ export class LinkWithProviderUsecase implements ILinkWithProviderUsecase {
       });
     }
 
-    const user = UserHydrator.hydrate(dto);
-
-    this.changeMePublisher.notifyChangeMe(user);
+    const user = await this.userHydrator.hydrate(dto);
 
     return user;
   }
@@ -74,6 +76,6 @@ type Deps = {
   changeMe: IChangeMeUsecase;
   signInWithProvider: ISignInWithProviderUsecase;
   authProvider: AuthProviderProtocol;
-  changeMePublisher: ChangeMeObserver.Publisher;
   userDAO: IUserDAO;
+  userHydrator: IUserHydrator;
 };

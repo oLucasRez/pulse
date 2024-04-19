@@ -6,18 +6,16 @@ import {
 } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { ChangePlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class SetPlayerSubjectUsecase implements ISetPlayerSubjectUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
-  private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
-  public constructor({ getMyPlayer, changePlayerPublisher, playerDAO }: Deps) {
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ getMyPlayer, playerDAO, playerHydrator }: Deps) {
     this.getMyPlayer = getMyPlayer;
-    this.changePlayerPublisher = changePlayerPublisher;
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(subjectID: string): Promise<PlayerModel> {
@@ -30,9 +28,7 @@ export class SetPlayerSubjectUsecase implements ISetPlayerSubjectUsecase {
       subjectID,
     });
 
-    const player = PlayerHydrator.hydrate(dto);
-
-    this.changePlayerPublisher.notifyChangePlayer(player);
+    const player = await this.playerHydrator.hydrate(dto);
 
     return player;
   }
@@ -40,6 +36,6 @@ export class SetPlayerSubjectUsecase implements ISetPlayerSubjectUsecase {
 
 type Deps = {
   getMyPlayer: IGetMyPlayerUsecase;
-  changePlayerPublisher: ChangePlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

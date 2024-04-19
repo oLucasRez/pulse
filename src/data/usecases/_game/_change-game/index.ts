@@ -3,18 +3,16 @@ import { GameModel } from '@domain/models';
 import { IChangeGameUsecase, IGetCurrentGameUsecase } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { ChangeGameObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class ChangeGameUsecase implements IChangeGameUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
-  private readonly changeGamePublisher: ChangeGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
-  public constructor({ getCurrentGame, changeGamePublisher, gameDAO }: Deps) {
+  private readonly gameHydrator: IGameHydrator;
+  public constructor({ getCurrentGame, gameDAO, gameHydrator }: Deps) {
     this.getCurrentGame = getCurrentGame;
-    this.changeGamePublisher = changeGamePublisher;
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
   public async execute(
@@ -32,9 +30,7 @@ export class ChangeGameUsecase implements IChangeGameUsecase {
       config,
     });
 
-    const game = GameHydrator.hydrate(dto);
-
-    this.changeGamePublisher.notifyChangeGame(game);
+    const game = await this.gameHydrator.hydrate(dto);
 
     return game;
   }
@@ -42,6 +38,6 @@ export class ChangeGameUsecase implements IChangeGameUsecase {
 
 type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
-  changeGamePublisher: ChangeGameObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

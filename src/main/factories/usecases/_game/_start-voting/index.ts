@@ -3,19 +3,22 @@ import { IStartVotingUsecase } from '@domain/usecases';
 import { StartVotingUsecase } from '@data/usecases';
 
 import {
-  makeChangeGamePublisher,
   makeGameDAO,
+  makeGameHydrator,
   makeGetCurrentGameUsecase,
+  makeGetCurrentPlayerUsecase,
 } from '@main/factories';
 
 export function makeStartVotingUsecase(): IStartVotingUsecase {
-  const changeGamePublisher = makeChangeGamePublisher();
   const gameDAO = makeGameDAO();
+  const gameHydrator = makeGameHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
+  const getCurrentPlayer = makeGetCurrentPlayerUsecase();
 
   return new StartVotingUsecase({
-    changeGamePublisher,
     gameDAO,
+    gameHydrator,
     getCurrentGame,
+    getCurrentPlayer,
   });
 }

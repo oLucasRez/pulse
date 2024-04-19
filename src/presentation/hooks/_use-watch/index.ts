@@ -1,13 +1,17 @@
-import { useEffect } from 'react';
+import { DependencyList, useEffect } from 'react';
 
 import { logError } from '@presentation/utils';
 
-export function useWatch(callback: () => Promise<() => void>): void {
+export function useWatch(
+  callback: () => Promise<(() => void) | undefined>,
+  deps: DependencyList,
+): void {
   useEffect(() => {
-    const unsubscribe = callback().catch(logError);
+    const unsubscribe: Promise<(() => void) | undefined> =
+      callback().catch(logError);
 
     return () => {
-      unsubscribe.then((_) => _);
+      unsubscribe.then((_) => _?.());
     };
-  }, []);
+  }, deps);
 }

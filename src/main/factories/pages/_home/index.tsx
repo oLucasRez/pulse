@@ -4,8 +4,8 @@ import { GlobalLoading } from '@presentation/components';
 import { WithSessionProxy } from '@presentation/pages/_home/proxies';
 
 import {
-  makeGameUsecasesContextProvider,
-  makeUserUsecasesContextProvider,
+  makeGameContextProvider,
+  makeUserContextProvider,
 } from '@main/factories';
 
 const HomePage = lazy(() => import('@presentation/pages/_home'));
@@ -13,8 +13,8 @@ const HomePage = lazy(() => import('@presentation/pages/_home'));
 export function makeHomePage(): ReactElement {
   const page = [
     // inner
-    makeGameUsecasesContextProvider,
-    makeUserUsecasesContextProvider,
+    makeGameContextProvider,
+    makeUserContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),

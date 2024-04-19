@@ -7,25 +7,23 @@ import {
 } from '@domain/usecases';
 
 import { ISubjectDAO } from '@data/dao';
-import { SubjectHydrator } from '@data/hydration';
-import { ChangeSubjectObserver } from '@data/observers';
+import { ISubjectHydrator } from '@data/hydration';
 
 export class ChangeSubjectUsecase implements IChangeSubjectUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly getSubject: IGetSubjectUsecase;
   private readonly subjectDAO: ISubjectDAO;
-  private readonly changeSubjectPublisher: ChangeSubjectObserver.Publisher;
-
+  private readonly subjectHydrator: ISubjectHydrator;
   public constructor({
     getMyPlayer,
     getSubject,
     subjectDAO,
-    changeSubjectPublisher,
+    subjectHydrator,
   }: Deps) {
     this.getMyPlayer = getMyPlayer;
     this.getSubject = getSubject;
     this.subjectDAO = subjectDAO;
-    this.changeSubjectPublisher = changeSubjectPublisher;
+    this.subjectHydrator = subjectHydrator;
   }
 
   public async execute(
@@ -55,9 +53,7 @@ export class ChangeSubjectUsecase implements IChangeSubjectUsecase {
       description,
     });
 
-    subject = SubjectHydrator.hydrate(dto);
-
-    this.changeSubjectPublisher.notifyChangeSubject(subject);
+    subject = await this.subjectHydrator.hydrate(dto);
 
     return subject;
   }
@@ -67,5 +63,5 @@ type Deps = {
   getMyPlayer: IGetMyPlayerUsecase;
   getSubject: IGetSubjectUsecase;
   subjectDAO: ISubjectDAO;
-  changeSubjectPublisher: ChangeSubjectObserver.Publisher;
+  subjectHydrator: ISubjectHydrator;
 };

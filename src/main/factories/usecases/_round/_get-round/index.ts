@@ -2,11 +2,11 @@ import { IGetRoundUsecase } from '@domain/usecases';
 
 import { GetRoundUsecase } from '@data/usecases';
 
-import { makeFetchRoundPublisher, makeRoundDAO } from '@main/factories';
+import { makeRoundDAO, makeRoundHydrator } from '@main/factories';
 
 export function makeGetRoundUsecase(): IGetRoundUsecase {
-  const fetchRoundPublisher = makeFetchRoundPublisher();
   const roundDAO = makeRoundDAO();
+  const roundHydrator = makeRoundHydrator();
 
-  return new GetRoundUsecase({ fetchRoundPublisher, roundDAO });
+  return new GetRoundUsecase({ roundDAO, roundHydrator });
 }

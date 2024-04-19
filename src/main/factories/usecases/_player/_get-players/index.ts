@@ -2,11 +2,14 @@ import { IGetPlayersUsecase } from '@domain/usecases';
 
 import { GetPlayersUsecase } from '@data/usecases';
 
-import { makeFetchPlayersPublisher, makePlayerDAO } from '@main/factories';
+import { makePlayerDAO, makePlayerHydrator } from '@main/factories';
 
 export function makeGetPlayersUsecase(): IGetPlayersUsecase {
   const playerDAO = makePlayerDAO();
-  const fetchPlayersPublisher = makeFetchPlayersPublisher();
+  const playerHydrator = makePlayerHydrator();
 
-  return new GetPlayersUsecase({ playerDAO, fetchPlayersPublisher });
+  return new GetPlayersUsecase({
+    playerDAO,
+    playerHydrator,
+  });
 }

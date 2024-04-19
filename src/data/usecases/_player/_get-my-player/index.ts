@@ -3,18 +3,16 @@ import { PlayerModel } from '@domain/models';
 import { IGetMeUsecase, IGetMyPlayerUsecase } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { FetchPlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class GetMyPlayerUsecase implements IGetMyPlayerUsecase {
   private readonly getMe: IGetMeUsecase;
-  private readonly fetchPlayerPublisher: FetchPlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
-  public constructor({ getMe, fetchPlayerPublisher, playerDAO }: Deps) {
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ getMe, playerDAO, playerHydrator }: Deps) {
     this.getMe = getMe;
-    this.fetchPlayerPublisher = fetchPlayerPublisher;
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(): Promise<PlayerModel | null> {
@@ -23,9 +21,7 @@ export class GetMyPlayerUsecase implements IGetMyPlayerUsecase {
 
     const dto = await this.playerDAO.getByUID(me.uid);
 
-    const player = dto ? PlayerHydrator.hydrate(dto) : null;
-
-    if (player) this.fetchPlayerPublisher.notifyFetchPlayer(player.id, player);
+    const player = dto ? await this.playerHydrator.hydrate(dto) : null;
 
     return player;
   }
@@ -33,6 +29,6 @@ export class GetMyPlayerUsecase implements IGetMyPlayerUsecase {
 
 type Deps = {
   getMe: IGetMeUsecase;
-  fetchPlayerPublisher: FetchPlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

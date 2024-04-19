@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class DiceDAO implements IDiceDAO {
   private currentGameID: string | null;
   private dicesByID: Map<string, DiceModel.DTO>;
@@ -36,37 +38,48 @@ export class DiceDAO implements IDiceDAO {
     return `games/${this.currentGameID}/dices`;
   }
 
+  private compareWithCache(dices: DiceModel.DTO[]): boolean {
+    if (dices.length !== this.dicesByID.size) return false;
+
+    return dices.every(
+      (dice) =>
+        JSON.stringify(dice) === JSON.stringify(this.dicesByID.get(dice.id)),
+    );
+  }
+
   private fillCache(dices: DiceModel.DTO[]): void {
     this.dicesByID.clear();
     dices.map((dice) => this.dicesByID.set(dice.id, dice));
   }
 
   private async fetchDices(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access dices without session' },
-      });
+    await Asyncleton.run('DiceDAO.fetchDices', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access dices without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access dices without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access dices without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const dices = await this.database.select<DiceModel.DTO>(table);
+      const dices = await this.database.select<DiceModel.DTO>(table);
 
-    this.fillCache(dices);
+      this.fillCache(dices);
+    });
   }
 
   public async getAll(): Promise<DiceModel.DTO[]> {
@@ -119,13 +132,16 @@ export class DiceDAO implements IDiceDAO {
   }
 
   public async watch(
-    callback: (dtos: DiceModel.DTO[]) => void,
+    callback: (dtos: DiceModel.DTO[]) => Promise<void> | void,
   ): Promise<() => void> {
     await this.fetchDices();
 
     const table = await this.getTable();
 
     return this.socket.watch<DiceModel.DTO>(table, (dices) => {
+      const areEqual = this.compareWithCache(dices);
+      if (areEqual) return;
+
       this.fillCache(dices);
 
       callback(dices);

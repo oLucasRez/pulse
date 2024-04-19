@@ -7,25 +7,23 @@ import {
 } from '@domain/usecases';
 
 import { ICentralPulseDAO } from '@data/dao';
-import { CentralPulseHydrator } from '@data/hydration';
-import { ChangeCentralPulseObserver } from '@data/observers';
+import { ICentralPulseHydrator } from '@data/hydration';
 
 export class ChangeCentralPulseUsecase implements IChangeCentralPulseUsecase {
   private readonly getCentralPulse: IGetCentralPulseUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly centralPulseDAO: ICentralPulseDAO;
-  private readonly changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
-
+  private readonly centralPulseHydrator: ICentralPulseHydrator;
   public constructor({
     getCentralPulse,
     nextGameState,
     centralPulseDAO,
-    changeCentralPulsePublisher,
+    centralPulseHydrator,
   }: Deps) {
     this.getCentralPulse = getCentralPulse;
     this.nextGameState = nextGameState;
     this.centralPulseDAO = centralPulseDAO;
-    this.changeCentralPulsePublisher = changeCentralPulsePublisher;
+    this.centralPulseHydrator = centralPulseHydrator;
   }
 
   public async execute(
@@ -38,15 +36,17 @@ export class ChangeCentralPulseUsecase implements IChangeCentralPulseUsecase {
     if (!centralPulse)
       throw new NotFoundError({ metadata: { entity: 'CentralPulse' } });
 
-    if (amount <= centralPulse.amount) return centralPulse;
+    if (amount <= centralPulse.amount) {
+      await this.nextGameState.execute();
+
+      return centralPulse;
+    }
 
     const dto = await this.centralPulseDAO.update(centralPulse.id, {
       amount,
     });
 
-    centralPulse = CentralPulseHydrator.hydrate(dto);
-
-    this.changeCentralPulsePublisher.notifyChangeCentralPulse(centralPulse);
+    centralPulse = await this.centralPulseHydrator.hydrate(dto);
 
     await this.nextGameState.execute();
 
@@ -58,5 +58,5 @@ type Deps = {
   getCentralPulse: IGetCentralPulseUsecase;
   nextGameState: INextGameStateUsecase;
   centralPulseDAO: ICentralPulseDAO;
-  changeCentralPulsePublisher: ChangeCentralPulseObserver.Publisher;
+  centralPulseHydrator: ICentralPulseHydrator;
 };

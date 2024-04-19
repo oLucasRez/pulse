@@ -7,25 +7,23 @@ import {
 } from '@domain/usecases';
 
 import { ICentralFactDAO } from '@data/dao';
-import { CentralFactHydrator } from '@data/hydration';
-import { ChangeCentralFactObserver } from '@data/observers';
+import { ICentralFactHydrator } from '@data/hydration';
 
 export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
   private readonly getCentralFact: IGetCentralFactUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly centralFactDAO: ICentralFactDAO;
-  private readonly changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
-
+  private readonly centralFactHydrator: ICentralFactHydrator;
   public constructor({
     getCentralFact,
     nextGameState,
     centralFactDAO,
-    changeCentralFactPublisher,
+    centralFactHydrator,
   }: Deps) {
     this.getCentralFact = getCentralFact;
     this.nextGameState = nextGameState;
     this.centralFactDAO = centralFactDAO;
-    this.changeCentralFactPublisher = changeCentralFactPublisher;
+    this.centralFactHydrator = centralFactHydrator;
   }
 
   public async execute(
@@ -42,9 +40,7 @@ export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
       description,
     });
 
-    centralFact = CentralFactHydrator.hydrate(dto);
-
-    this.changeCentralFactPublisher.notifyChangeCentralFact(centralFact);
+    centralFact = await this.centralFactHydrator.hydrate(dto);
 
     await this.nextGameState.execute();
 
@@ -56,5 +52,5 @@ type Deps = {
   getCentralFact: IGetCentralFactUsecase;
   nextGameState: INextGameStateUsecase;
   centralFactDAO: ICentralFactDAO;
-  changeCentralFactPublisher: ChangeCentralFactObserver.Publisher;
+  centralFactHydrator: ICentralFactHydrator;
 };

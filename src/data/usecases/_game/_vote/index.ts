@@ -1,6 +1,6 @@
 import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { GameModel } from '@domain/models';
 import {
-  IGetAnswerUsecase,
   IGetCurrentGameUsecase,
   IGetPlayersUsecase,
   INextGameStateUsecase,
@@ -9,37 +9,32 @@ import {
 } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { ChangeGameObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class VoteUsecase implements IVoteUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getPlayers: IGetPlayersUsecase;
-  private readonly getAnswer: IGetAnswerUsecase;
   private readonly setQuestionFact: ISetQuestionFactUsecase;
   private readonly nextGameState: INextGameStateUsecase;
-  private readonly changeGamePublisher: ChangeGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
+  private readonly gameHydrator: IGameHydrator;
   public constructor({
     getCurrentGame,
     getPlayers,
-    getAnswer,
     setQuestionFact,
     nextGameState,
-    changeGamePublisher,
     gameDAO,
+    gameHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
     this.getPlayers = getPlayers;
-    this.getAnswer = getAnswer;
     this.setQuestionFact = setQuestionFact;
     this.nextGameState = nextGameState;
-    this.changeGamePublisher = changeGamePublisher;
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
-  public async execute(playerID: string, value: boolean): Promise<void> {
+  public async execute(playerID: string, value: boolean): Promise<GameModel> {
     const currentGame = await this.getCurrentGame.execute();
 
     if (!currentGame)
@@ -54,15 +49,10 @@ export class VoteUsecase implements IVoteUsecase {
 
     const players = await this.getPlayers.execute();
 
-    const answer = await this.getAnswer.execute(currentGame.voting.answerID);
-
     const finished = players.every((player) => {
       if (!currentGame.voting) return false;
-      if (!answer) return false;
 
-      const isAuthor = answer.authorID === player.id;
-
-      return isAuthor || player.id in currentGame.voting.votes;
+      return player.id in currentGame.voting.votes;
     });
 
     const mustBeFact = finished && value;
@@ -70,15 +60,18 @@ export class VoteUsecase implements IVoteUsecase {
     if (mustBeFact)
       await this.setQuestionFact.execute(currentGame.voting.answerID);
 
-    if (finished) await this.nextGameState.execute();
-    else {
+    if (finished) {
+      await this.nextGameState.execute();
+
+      return currentGame;
+    } else {
       const dto = await this.gameDAO.update(currentGame.id, {
         voting: { votes },
       });
 
-      const game = GameHydrator.hydrate(dto);
+      const game = await this.gameHydrator.hydrate(dto);
 
-      this.changeGamePublisher.notifyChangeGame(game);
+      return game;
     }
   }
 }
@@ -86,9 +79,8 @@ export class VoteUsecase implements IVoteUsecase {
 type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   getPlayers: IGetPlayersUsecase;
-  getAnswer: IGetAnswerUsecase;
   setQuestionFact: ISetQuestionFactUsecase;
   nextGameState: INextGameStateUsecase;
-  changeGamePublisher: ChangeGameObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

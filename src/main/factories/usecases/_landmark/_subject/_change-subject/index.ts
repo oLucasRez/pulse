@@ -3,22 +3,22 @@ import { IChangeSubjectUsecase } from '@domain/usecases';
 import { ChangeSubjectUsecase } from '@data/usecases';
 
 import {
-  makeChangeSubjectPublisher,
   makeGetMyPlayerUsecase,
   makeGetSubjectUsecase,
   makeSubjectDAO,
+  makeSubjectHydrator,
 } from '@main/factories';
 
 export function makeChangeSubjectUsecase(): IChangeSubjectUsecase {
-  const changeSubjectPublisher = makeChangeSubjectPublisher();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const getSubject = makeGetSubjectUsecase();
   const subjectDAO = makeSubjectDAO();
+  const subjectHydrator = makeSubjectHydrator();
 
   return new ChangeSubjectUsecase({
-    changeSubjectPublisher,
     getMyPlayer,
     getSubject,
     subjectDAO,
+    subjectHydrator,
   });
 }

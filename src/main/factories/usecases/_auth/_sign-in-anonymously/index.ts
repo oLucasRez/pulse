@@ -4,18 +4,18 @@ import { SignInAnonymouslyUsecase } from '@data/usecases';
 
 import {
   makeAuthAnonymous,
-  makeSignInPublisher,
   makeUserDAO,
+  makeUserHydrator,
 } from '@main/factories';
 
 export function makeSignInAnonymouslyUsecase(): ISignInAnonymouslyUsecase {
   const authAnonymous = makeAuthAnonymous();
-  const signInPublisher = makeSignInPublisher();
   const userDAO = makeUserDAO();
+  const userHydrator = makeUserHydrator();
 
   return new SignInAnonymouslyUsecase({
     authAnonymous,
-    signInPublisher,
     userDAO,
+    userHydrator,
   });
 }

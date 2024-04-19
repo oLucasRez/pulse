@@ -1,9 +1,13 @@
+import { Color } from '@domain/enums';
+import { Vector } from '@domain/utils';
+
 import { Model, PlayerModel } from '..';
 
 export interface DiceModel extends Model {
   sides: number;
   value: number | null;
-  // position: Vector | null; @todo: position é sempre igual à posição do subject do player
+  position: Vector | null;
+  color: Color | null;
   ownerID: PlayerModel['id'] | null;
 }
 

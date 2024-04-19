@@ -2,11 +2,11 @@ import { IWatchDicesUsecase } from '@domain/usecases';
 
 import { WatchDicesUsecase } from '@data/usecases';
 
-import { makeDiceDAO, makeFetchDicesPublisher } from '@main/factories';
+import { makeDiceDAO, makeDiceHydrator } from '@main/factories';
 
 export function makeWatchDicesUsecase(): IWatchDicesUsecase {
   const diceDAO = makeDiceDAO();
-  const fetchDicesPublisher = makeFetchDicesPublisher();
+  const diceHydrator = makeDiceHydrator();
 
-  return new WatchDicesUsecase({ diceDAO, fetchDicesPublisher });
+  return new WatchDicesUsecase({ diceDAO, diceHydrator });
 }

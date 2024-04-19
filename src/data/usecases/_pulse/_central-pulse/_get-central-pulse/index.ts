@@ -6,22 +6,20 @@ import {
 } from '@domain/usecases';
 
 import { ICentralPulseDAO } from '@data/dao';
-import { CentralPulseHydrator } from '@data/hydration';
-import { FetchCentralPulseObserver } from '@data/observers';
+import { ICentralPulseHydrator } from '@data/hydration';
 
 export class GetCentralPulseUsecase implements IGetCentralPulseUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly centralPulseDAO: ICentralPulseDAO;
-  private readonly fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
-
+  private readonly centralPulseHydrator: ICentralPulseHydrator;
   public constructor({
     getCurrentGame,
     centralPulseDAO,
-    fetchCentralPulsePublisher,
+    centralPulseHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
     this.centralPulseDAO = centralPulseDAO;
-    this.fetchCentralPulsePublisher = fetchCentralPulsePublisher;
+    this.centralPulseHydrator = centralPulseHydrator;
   }
 
   public async execute(): Promise<CentralPulseModel | null> {
@@ -34,9 +32,9 @@ export class GetCentralPulseUsecase implements IGetCentralPulseUsecase {
 
     const dto = await this.centralPulseDAO.getByID(currentGame.centralPulseID);
 
-    const centralPulse = dto ? CentralPulseHydrator.hydrate(dto) : null;
-
-    this.fetchCentralPulsePublisher.notifyFetchCentralPulse(centralPulse);
+    const centralPulse = dto
+      ? await this.centralPulseHydrator.hydrate(dto)
+      : null;
 
     return centralPulse;
   }
@@ -45,5 +43,5 @@ export class GetCentralPulseUsecase implements IGetCentralPulseUsecase {
 type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   centralPulseDAO: ICentralPulseDAO;
-  fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
+  centralPulseHydrator: ICentralPulseHydrator;
 };

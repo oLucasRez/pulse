@@ -2,24 +2,20 @@ import { DiceModel } from '@domain/models';
 import { IGetDiceUsecase } from '@domain/usecases';
 
 import { IDiceDAO } from '@data/dao';
-import { DiceHydrator } from '@data/hydration';
-import { FetchDiceObserver } from '@data/observers';
+import { IDiceHydrator } from '@data/hydration';
 
 export class GetDiceUsecase implements IGetDiceUsecase {
   private readonly diceDAO: IDiceDAO;
-  private readonly fetchDicePublisher: FetchDiceObserver.Publisher;
-
-  public constructor({ diceDAO, fetchDicePublisher }: Deps) {
+  private readonly diceHydrator: IDiceHydrator;
+  public constructor({ diceDAO, diceHydrator }: Deps) {
     this.diceDAO = diceDAO;
-    this.fetchDicePublisher = fetchDicePublisher;
+    this.diceHydrator = diceHydrator;
   }
 
   public async execute(id: string): Promise<DiceModel | null> {
     const dto = await this.diceDAO.getByID(id);
 
-    const dice = dto ? DiceHydrator.hydrate(dto) : null;
-
-    this.fetchDicePublisher.notifyFetchDice(id, dice);
+    const dice = dto ? await this.diceHydrator.hydrate(dto) : null;
 
     return dice;
   }
@@ -27,5 +23,5 @@ export class GetDiceUsecase implements IGetDiceUsecase {
 
 type Deps = {
   diceDAO: IDiceDAO;
-  fetchDicePublisher: FetchDiceObserver.Publisher;
+  diceHydrator: IDiceHydrator;
 };

@@ -1,4 +1,5 @@
 import { ForbiddenError, NotFoundError } from '@domain/errors';
+import { PlayerModel } from '@domain/models';
 import {
   IBanPlayerUsecase,
   IGetCurrentGameUsecase,
@@ -6,28 +7,26 @@ import {
 } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { BanPlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class BanPlayerUsecase implements IBanPlayerUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getMe: IGetMeUsecase;
-  private readonly banPlayerPublisher: BanPlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
+  private readonly playerHydrator: IPlayerHydrator;
   public constructor({
     getCurrentGame,
     getMe,
-    banPlayerPublisher,
     playerDAO,
+    playerHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
     this.getMe = getMe;
-    this.banPlayerPublisher = banPlayerPublisher;
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
-  public async execute(id: string): Promise<void> {
+  public async execute(id: string): Promise<PlayerModel> {
     const currentGame = await this.getCurrentGame.execute();
 
     if (!currentGame)
@@ -49,15 +48,15 @@ export class BanPlayerUsecase implements IBanPlayerUsecase {
       banned: true,
     });
 
-    const player = PlayerHydrator.hydrate(dto);
+    const player = await this.playerHydrator.hydrate(dto);
 
-    this.banPlayerPublisher.notifyBanPlayer(player);
+    return player;
   }
 }
 
 type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   getMe: IGetMeUsecase;
-  banPlayerPublisher: BanPlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

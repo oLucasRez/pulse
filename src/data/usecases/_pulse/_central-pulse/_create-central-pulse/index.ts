@@ -5,22 +5,20 @@ import {
 } from '@domain/usecases';
 
 import { ICentralPulseDAO } from '@data/dao';
-import { CentralPulseHydrator } from '@data/hydration';
-import { CreateCentralPulseObserver } from '@data/observers';
+import { ICentralPulseHydrator } from '@data/hydration';
 
 export class CreateCentralPulseUsecase implements ICreateCentralPulseUsecase {
   private readonly createCentralFact: ICreateCentralFactUsecase;
   private readonly centralPulseDAO: ICentralPulseDAO;
-  private readonly createCentralPulsePublisher: CreateCentralPulseObserver.Publisher;
-
+  private readonly centralPulseHydrator: ICentralPulseHydrator;
   public constructor({
     createCentralFact,
     centralPulseDAO,
-    createCentralPulsePublisher,
+    centralPulseHydrator,
   }: Deps) {
     this.createCentralFact = createCentralFact;
     this.centralPulseDAO = centralPulseDAO;
-    this.createCentralPulsePublisher = createCentralPulsePublisher;
+    this.centralPulseHydrator = centralPulseHydrator;
   }
 
   public async execute(): Promise<CentralPulseModel> {
@@ -33,9 +31,7 @@ export class CreateCentralPulseUsecase implements ICreateCentralPulseUsecase {
       landmarkID: centralFact.id,
     });
 
-    const centralPulse = CentralPulseHydrator.hydrate(dto);
-
-    this.createCentralPulsePublisher.notifyCreateCentralPulse(centralPulse);
+    const centralPulse = await this.centralPulseHydrator.hydrate(dto);
 
     return centralPulse;
   }
@@ -44,5 +40,5 @@ export class CreateCentralPulseUsecase implements ICreateCentralPulseUsecase {
 type Deps = {
   createCentralFact: ICreateCentralFactUsecase;
   centralPulseDAO: ICentralPulseDAO;
-  createCentralPulsePublisher: CreateCentralPulseObserver.Publisher;
+  centralPulseHydrator: ICentralPulseHydrator;
 };

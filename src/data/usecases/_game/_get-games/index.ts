@@ -3,18 +3,16 @@ import { GameModel } from '@domain/models';
 import { IGetGamesUsecase, IGetMeUsecase } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { FetchGamesObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class GetGamesUsecase implements IGetGamesUsecase {
   private readonly getMe: IGetMeUsecase;
-  private readonly fetchGamesPublisher: FetchGamesObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
-  public constructor({ getMe, fetchGamesPublisher, gameDAO }: Deps) {
+  private readonly gameHydrator: IGameHydrator;
+  public constructor({ getMe, gameDAO, gameHydrator }: Deps) {
     this.getMe = getMe;
-    this.fetchGamesPublisher = fetchGamesPublisher;
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
   public async execute(): Promise<GameModel[]> {
@@ -24,13 +22,13 @@ export class GetGamesUsecase implements IGetGamesUsecase {
         metadata: { tried: 'get games without session' },
       });
 
-    const dto = (await this.gameDAO.getAll()).filter(
-      (value) => value.uid === me.uid,
+    const dtos = (await this.gameDAO.getAll()).filter(
+      (value) => value.uid === me.uid || value.id === me.currentGameID,
     );
 
-    const games = dto.map(GameHydrator.hydrate);
-
-    this.fetchGamesPublisher.notifyFetchGames(games);
+    const games = await Promise.all(
+      dtos.map((dto) => this.gameHydrator.hydrate(dto)),
+    );
 
     return games;
   }
@@ -38,6 +36,6 @@ export class GetGamesUsecase implements IGetGamesUsecase {
 
 type Deps = {
   getMe: IGetMeUsecase;
-  fetchGamesPublisher: FetchGamesObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

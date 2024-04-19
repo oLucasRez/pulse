@@ -2,21 +2,8 @@ import { FC, ReactNode } from 'react';
 
 import { GameModel } from '@domain/models';
 
-import { GlobalLoading, Navigate } from '@presentation/components';
-import {
-  useAnswerUsecases,
-  useAuthUsecases,
-  useCentralFactUsecases,
-  useCentralPulseUsecases,
-  useDiceUsecases,
-  useGameUsecases,
-  usePlayerUsecases,
-  useQuestionUsecases,
-  useRoundUsecases,
-  useSubjectPulseUsecases,
-  useSubjectUsecases,
-} from '@presentation/contexts';
-import { useNavigate, useStates, useWatch } from '@presentation/hooks';
+import { Navigate } from '@presentation/components';
+import { useGame, useNavigate, usePlayer, useUser } from '@presentation/hooks';
 
 import {
   CreatingAnswersState,
@@ -29,43 +16,13 @@ import {
 import { Container, Main } from './styles';
 
 const GamePage: FC = () => {
-  const [s, set] = useStates({
-    watching: true,
-  });
+  const { currentGame } = useGame();
 
-  const { currentGame, watchCurrentGame } = useGameUsecases();
-
-  const { myPlayer, watchPlayers } = usePlayerUsecases();
-
-  const { watchRounds } = useRoundUsecases();
-  const { watchSubjects } = useSubjectUsecases();
-  const { watchCentralFact } = useCentralFactUsecases();
-  const { watchDices } = useDiceUsecases();
-  const { watchCentralPulse } = useCentralPulseUsecases();
-  const { watchSubjectPulses } = useSubjectPulseUsecases();
-  const { watchQuestions } = useQuestionUsecases();
-  const { watchAnswers } = useAnswerUsecases();
-
-  useWatch(async () => {
-    const unsubscribes = await Promise.all([
-      watchPlayers(),
-      watchCurrentGame(),
-      watchRounds(),
-      watchSubjects(),
-      watchCentralFact(),
-      watchDices(),
-      watchCentralPulse(),
-      watchSubjectPulses(),
-      watchQuestions(),
-      watchAnswers(),
-    ]).finally(set('watching', false));
-
-    return () => unsubscribes.map((unsubscribe) => unsubscribe());
-  });
+  const { myPlayer } = usePlayer();
 
   const { navigateToHome, navigateToLogout } = useNavigate();
 
-  const { me } = useAuthUsecases();
+  const { me } = useUser();
 
   if (!me) return null;
 
@@ -127,8 +84,6 @@ const GamePage: FC = () => {
       </span>
     );
   }
-
-  if (s.watching) return <GlobalLoading />;
 
   if (!currentGame) return <Navigate.toHome />;
 

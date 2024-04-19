@@ -5,22 +5,20 @@ import {
 } from '@domain/usecases';
 
 import { ICentralFactDAO } from '@data/dao';
-import { CentralFactHydrator } from '@data/hydration';
-import { FetchCentralFactObserver } from '@data/observers';
+import { ICentralFactHydrator } from '@data/hydration';
 
 export class GetCentralFactUsecase implements IGetCentralFactUsecase {
   private readonly getCentralPulse: IGetCentralPulseUsecase;
   private readonly centralFactDAO: ICentralFactDAO;
-  private readonly fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
-
+  private readonly centralFactHydrator: ICentralFactHydrator;
   public constructor({
     getCentralPulse,
     centralFactDAO,
-    fetchCentralFactPublisher,
+    centralFactHydrator,
   }: Deps) {
     this.getCentralPulse = getCentralPulse;
     this.centralFactDAO = centralFactDAO;
-    this.fetchCentralFactPublisher = fetchCentralFactPublisher;
+    this.centralFactHydrator = centralFactHydrator;
   }
 
   public async execute(): Promise<CentralFactModel | null> {
@@ -30,9 +28,9 @@ export class GetCentralFactUsecase implements IGetCentralFactUsecase {
 
     const dto = await this.centralFactDAO.getByID(centralPulse.landmarkID);
 
-    const centralFact = dto ? CentralFactHydrator.hydrate(dto) : null;
-
-    this.fetchCentralFactPublisher.notifyFetchCentralFact(centralFact);
+    const centralFact = dto
+      ? await this.centralFactHydrator.hydrate(dto)
+      : null;
 
     return centralFact;
   }
@@ -41,5 +39,5 @@ export class GetCentralFactUsecase implements IGetCentralFactUsecase {
 type Deps = {
   getCentralPulse: IGetCentralPulseUsecase;
   centralFactDAO: ICentralFactDAO;
-  fetchCentralFactPublisher: FetchCentralFactObserver.Publisher;
+  centralFactHydrator: ICentralFactHydrator;
 };

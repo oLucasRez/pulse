@@ -2,8 +2,7 @@ import { FC, useEffect } from 'react';
 
 import { Vector } from '@domain/utils';
 
-import { useRoundUsecases } from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { useDice, usePlayer, useStates } from '@presentation/hooks';
 
 import { DiceRollerProps } from './types';
 
@@ -20,7 +19,8 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     value: 0,
   });
 
-  const { currentPlayer, currentDice } = useRoundUsecases();
+  const { currentPlayer } = usePlayer();
+  const { currentDice } = useDice();
 
   const { mapSpace, bounds, onMouseMove, onMouseDown, onMouseUp } =
     useMapContext();

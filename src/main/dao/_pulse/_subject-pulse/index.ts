@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class SubjectPulseDAO implements ISubjectPulseDAO {
   private currentGameID: string | null;
   private subjectPulsesByID: Map<string, SubjectPulseModel.DTO>;
@@ -44,33 +46,35 @@ export class SubjectPulseDAO implements ISubjectPulseDAO {
   }
 
   private async fetchSubjectPulses(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access subject-pulses without session' },
-      });
+    await Asyncleton.run('SubjectPulseDAO.fetchSubjectPulses', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access subject-pulses without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access subject-pulses without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access subject-pulses without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const subjectPulses = await this.database.select<SubjectPulseModel.DTO>(
-      table,
-    );
+      const subjectPulses = await this.database.select<SubjectPulseModel.DTO>(
+        table,
+      );
 
-    this.fillCache(subjectPulses);
+      this.fillCache(subjectPulses);
+    });
   }
 
   public async getAll(): Promise<SubjectPulseModel.DTO[]> {

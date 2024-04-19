@@ -3,18 +3,16 @@ import { RoundModel } from '@domain/models';
 import { IGetRoundUsecase, IPassTurnUsecase } from '@domain/usecases';
 
 import { IRoundDAO } from '@data/dao';
-import { RoundHydrator } from '@data/hydration/_round';
-import { ChangeRoundObserver } from '@data/observers';
+import { IRoundHydrator } from '@data/hydration';
 
 export class PassTurnUsecase implements IPassTurnUsecase {
   private readonly getRound: IGetRoundUsecase;
   private readonly roundDAO: IRoundDAO;
-  private readonly changeRoundPublisher: ChangeRoundObserver.Publisher;
-
-  public constructor({ getRound, roundDAO, changeRoundPublisher }: Deps) {
+  private readonly roundHydrator: IRoundHydrator;
+  public constructor({ getRound, roundDAO, roundHydrator }: Deps) {
     this.getRound = getRound;
     this.roundDAO = roundDAO;
-    this.changeRoundPublisher = changeRoundPublisher;
+    this.roundHydrator = roundHydrator;
   }
 
   public async execute(id: string): Promise<RoundModel> {
@@ -42,9 +40,7 @@ export class PassTurnUsecase implements IPassTurnUsecase {
       started: i !== null,
     });
 
-    round = RoundHydrator.hydrate(dto);
-
-    this.changeRoundPublisher.notifyChangeRound(round);
+    round = await this.roundHydrator.hydrate(dto);
 
     return round;
   }
@@ -53,5 +49,5 @@ export class PassTurnUsecase implements IPassTurnUsecase {
 type Deps = {
   getRound: IGetRoundUsecase;
   roundDAO: IRoundDAO;
-  changeRoundPublisher: ChangeRoundObserver.Publisher;
+  roundHydrator: IRoundHydrator;
 };

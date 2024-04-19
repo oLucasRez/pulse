@@ -1,25 +1,23 @@
 import { IWatchPlayersUsecase } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { FetchPlayersObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class WatchPlayersUsecase implements IWatchPlayersUsecase {
   private readonly playerDAO: IPlayerDAO;
-  private readonly fetchPlayersPublisher: FetchPlayersObserver.Publisher;
-
-  public constructor({ playerDAO, fetchPlayersPublisher }: Deps) {
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ playerDAO, playerHydrator }: Deps) {
     this.playerDAO = playerDAO;
-    this.fetchPlayersPublisher = fetchPlayersPublisher;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(
     callback: IWatchPlayersUsecase.Callback,
   ): Promise<IWatchPlayersUsecase.Response> {
-    const unsubscribe = this.playerDAO.watch((dtos) => {
-      const players = dtos.map(PlayerHydrator.hydrate);
-
-      this.fetchPlayersPublisher.notifyFetchPlayers(players);
+    const unsubscribe = this.playerDAO.watch(async (dtos) => {
+      const players = await Promise.all(
+        dtos.map((dto) => this.playerHydrator.hydrate(dto)),
+      );
 
       callback(players);
     });
@@ -30,5 +28,5 @@ export class WatchPlayersUsecase implements IWatchPlayersUsecase {
 
 type Deps = {
   playerDAO: IPlayerDAO;
-  fetchPlayersPublisher: FetchPlayersObserver.Publisher;
+  playerHydrator: IPlayerHydrator;
 };

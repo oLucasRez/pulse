@@ -3,15 +3,19 @@ import { IStartRoundUsecase } from '@domain/usecases';
 import { StartRoundUsecase } from '@data/usecases';
 
 import {
-  makeChangeRoundPublisher,
   makeGetRoundUsecase,
   makeRoundDAO,
+  makeRoundHydrator,
 } from '@main/factories';
 
 export function makeStartRoundUsecase(): IStartRoundUsecase {
-  const changeRoundPublisher = makeChangeRoundPublisher();
   const getRound = makeGetRoundUsecase();
   const roundDAO = makeRoundDAO();
+  const roundHydrator = makeRoundHydrator();
 
-  return new StartRoundUsecase({ changeRoundPublisher, getRound, roundDAO });
+  return new StartRoundUsecase({
+    getRound,
+    roundDAO,
+    roundHydrator,
+  });
 }

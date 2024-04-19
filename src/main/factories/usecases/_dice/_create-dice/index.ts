@@ -2,11 +2,11 @@ import { ICreateDiceUsecase } from '@domain/usecases';
 
 import { CreateDiceUsecase } from '@data/usecases';
 
-import { makeCreateDicePublisher, makeDiceDAO } from '@main/factories';
+import { makeDiceDAO, makeDiceHydrator } from '@main/factories';
 
 export function makeCreateDiceUsecase(): ICreateDiceUsecase {
-  const createDicePublisher = makeCreateDicePublisher();
   const diceDAO = makeDiceDAO();
+  const diceHydrator = makeDiceHydrator();
 
-  return new CreateDiceUsecase({ createDicePublisher, diceDAO });
+  return new CreateDiceUsecase({ diceDAO, diceHydrator });
 }

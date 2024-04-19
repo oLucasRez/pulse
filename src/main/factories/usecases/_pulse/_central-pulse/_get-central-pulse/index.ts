@@ -4,18 +4,18 @@ import { GetCentralPulseUsecase } from '@data/usecases';
 
 import {
   makeCentralPulseDAO,
-  makeFetchCentralPulsePublisher,
+  makeCentralPulseHydrator,
   makeGetCurrentGameUsecase,
 } from '@main/factories';
 
 export function makeGetCentralPulseUsecase(): IGetCentralPulseUsecase {
   const centralPulseDAO = makeCentralPulseDAO();
-  const fetchCentralPulsePublisher = makeFetchCentralPulsePublisher();
+  const centralPulseHydrator = makeCentralPulseHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
 
   return new GetCentralPulseUsecase({
     centralPulseDAO,
-    fetchCentralPulsePublisher,
+    centralPulseHydrator,
     getCurrentGame,
   });
 }

@@ -1,11 +1,6 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 
-import {
-  useDiceUsecases,
-  usePlayerUsecases,
-  useRoundUsecases,
-  useSubjectUsecases,
-} from '@presentation/contexts';
+import { useDice } from '@presentation/hooks';
 import { darken, getColor } from '@presentation/styles/mixins';
 
 import { DiceProps, DicesProps } from './types';
@@ -16,30 +11,11 @@ const d4Edge = 40;
 const d6Edge = 20;
 
 export const Dice: FC<DiceProps> = (props) => {
-  const { value, sides, ownerID, transparent = false } = props;
+  const { value, sides, transparent = false, color } = props;
 
   const { mapSpace } = useMapContext();
 
-  const { players } = usePlayerUsecases();
-  const { subjects } = useSubjectUsecases();
-
-  const color = useMemo(
-    () =>
-      (ownerID && players.find((value) => value.id === ownerID)?.color) || null,
-    [ownerID, players],
-  );
-
-  const position = useMemo(() => {
-    if (props.position) return mapSpace.mult(props.position);
-
-    const player = players.find((player) => player.id === ownerID);
-
-    if (!player) return null;
-
-    const subject = subjects.find((subject) => subject.id === player.subjectID);
-
-    return subject?.position ? mapSpace.mult(subject.position) : null;
-  }, [mapSpace, props.position, players, subjects]);
+  const position = props.position && mapSpace.mult(props.position);
 
   if (!position || !color) return null;
 
@@ -251,24 +227,16 @@ export const Dice: FC<DiceProps> = (props) => {
 };
 
 export const Dices: FC<DicesProps> = (props) => {
-  const { position, transparent, currentHidden } = props;
+  const { transparent, currentHidden } = props;
 
-  const { currentDice } = useRoundUsecases();
-  const { dices } = useDiceUsecases();
+  const { currentDice, dices } = useDice();
 
   return (
     <>
       {dices.map((dice) => {
         if (currentHidden && dice.id === currentDice?.id) return null;
 
-        return (
-          <Dice
-            key={dice.id}
-            transparent={transparent}
-            position={position}
-            {...dice}
-          />
-        );
+        return <Dice key={dice.id} transparent={transparent} {...dice} />;
       })}
     </>
   );

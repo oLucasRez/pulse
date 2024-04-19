@@ -2,24 +2,22 @@ import { SubjectPulseModel } from '@domain/models';
 import { IGetSubjectPulseUsecase } from '@domain/usecases';
 
 import { ISubjectPulseDAO } from '@data/dao';
-import { SubjectPulseHydrator } from '@data/hydration';
-import { FetchSubjectPulseObserver } from '@data/observers';
+import { ISubjectPulseHydrator } from '@data/hydration';
 
 export class GetSubjectPulseUsecase implements IGetSubjectPulseUsecase {
   private readonly subjectPulseDAO: ISubjectPulseDAO;
-  private readonly fetchSubjectPulsePublisher: FetchSubjectPulseObserver.Publisher;
-
-  public constructor({ subjectPulseDAO, fetchSubjectPulsePublisher }: Deps) {
+  private readonly subjectPulseHydrator: ISubjectPulseHydrator;
+  public constructor({ subjectPulseDAO, subjectPulseHydrator }: Deps) {
     this.subjectPulseDAO = subjectPulseDAO;
-    this.fetchSubjectPulsePublisher = fetchSubjectPulsePublisher;
+    this.subjectPulseHydrator = subjectPulseHydrator;
   }
 
   public async execute(id: string): Promise<SubjectPulseModel | null> {
     const dto = await this.subjectPulseDAO.getByID(id);
 
-    const subjectPulse = dto ? SubjectPulseHydrator.hydrate(dto) : null;
-
-    this.fetchSubjectPulsePublisher.notifyFetchSubjectPulse(id, subjectPulse);
+    const subjectPulse = dto
+      ? await this.subjectPulseHydrator.hydrate(dto)
+      : null;
 
     return subjectPulse;
   }
@@ -27,5 +25,5 @@ export class GetSubjectPulseUsecase implements IGetSubjectPulseUsecase {
 
 type Deps = {
   subjectPulseDAO: ISubjectPulseDAO;
-  fetchSubjectPulsePublisher: FetchSubjectPulseObserver.Publisher;
+  subjectPulseHydrator: ISubjectPulseHydrator;
 };

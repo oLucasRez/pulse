@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class QuestionDAO implements IQuestionDAO {
   private currentGameID: string | null;
   private questionsByID: Map<string, QuestionModel.DTO>;
@@ -42,31 +44,33 @@ export class QuestionDAO implements IQuestionDAO {
   }
 
   private async fetchQuestions(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access questions without session' },
-      });
+    await Asyncleton.run('QuestionDAO.fetchQuestions', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access questions without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access questions without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access questions without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const questions = await this.database.select<QuestionModel.DTO>(table);
+      const questions = await this.database.select<QuestionModel.DTO>(table);
 
-    this.fillCache(questions);
+      this.fillCache(questions);
+    });
   }
 
   public async getAll(): Promise<QuestionModel.DTO[]> {

@@ -1,25 +1,23 @@
 import { IWatchRoundsUsecase } from '@domain/usecases';
 
 import { IRoundDAO } from '@data/dao';
-import { RoundHydrator } from '@data/hydration';
-import { FetchRoundsObserver } from '@data/observers';
+import { IRoundHydrator } from '@data/hydration';
 
 export class WatchRoundsUsecase implements IWatchRoundsUsecase {
   private readonly roundDAO: IRoundDAO;
-  private readonly fetchRoundsPublisher: FetchRoundsObserver.Publisher;
-
-  public constructor({ roundDAO, fetchRoundsPublisher }: Deps) {
+  private readonly roundHydrator: IRoundHydrator;
+  public constructor({ roundDAO, roundHydrator }: Deps) {
     this.roundDAO = roundDAO;
-    this.fetchRoundsPublisher = fetchRoundsPublisher;
+    this.roundHydrator = roundHydrator;
   }
 
   public async execute(
     callback: IWatchRoundsUsecase.Callback,
   ): Promise<IWatchRoundsUsecase.Response> {
-    const unsubscribe = this.roundDAO.watch((dtos) => {
-      const rounds = dtos.map(RoundHydrator.hydrate);
-
-      this.fetchRoundsPublisher.notifyFetchRounds(rounds);
+    const unsubscribe = this.roundDAO.watch(async (dtos) => {
+      const rounds = await Promise.all(
+        dtos.map((dto) => this.roundHydrator.hydrate(dto)),
+      );
 
       callback(rounds);
     });
@@ -30,5 +28,5 @@ export class WatchRoundsUsecase implements IWatchRoundsUsecase {
 
 type Deps = {
   roundDAO: IRoundDAO;
-  fetchRoundsPublisher: FetchRoundsObserver.Publisher;
+  roundHydrator: IRoundHydrator;
 };

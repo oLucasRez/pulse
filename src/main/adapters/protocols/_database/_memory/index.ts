@@ -4,7 +4,7 @@ import { uuid } from '@domain/utils';
 
 import { DatabaseProtocol } from '@data/protocols';
 
-import { delay } from '@main/utils';
+import { asyncDelay } from '@main/utils';
 
 export class MemoryDatabase implements DatabaseProtocol {
   private static database: MemoryDatabase.Database = {};
@@ -39,7 +39,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     table: string,
     where?: (value: M) => boolean,
   ): Promise<M[]> {
-    await delay(100);
+    await asyncDelay(100);
 
     if (!MemoryDatabase.database[table]) MemoryDatabase.database[table] = {};
 
@@ -56,7 +56,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     table: string,
     data: Omit<M, keyof Model>,
   ): Promise<M> {
-    await delay(100);
+    await asyncDelay(100);
 
     if (!MemoryDatabase.database[table]) MemoryDatabase.database[table] = {};
 
@@ -81,7 +81,7 @@ export class MemoryDatabase implements DatabaseProtocol {
     id: string,
     data: DeepPartial<Omit<M, keyof Model>>,
   ): Promise<M> {
-    await delay(100);
+    await asyncDelay(100);
 
     const updatedData = MemoryDatabase.database[table][id] ?? {};
 
@@ -95,7 +95,7 @@ export class MemoryDatabase implements DatabaseProtocol {
   }
 
   public async delete(table: string, id: string): Promise<void> {
-    await delay(100);
+    await asyncDelay(100);
 
     delete MemoryDatabase.database[table][id];
 

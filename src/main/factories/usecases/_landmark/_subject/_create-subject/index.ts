@@ -3,19 +3,19 @@ import { ICreateSubjectUsecase } from '@domain/usecases';
 import { CreateSubjectUsecase } from '@data/usecases';
 
 import {
-  makeCreateSubjectPublisher,
   makeGetMyPlayerUsecase,
   makeSubjectDAO,
+  makeSubjectHydrator,
 } from '@main/factories';
 
 export function makeCreateSubjectUsecase(): ICreateSubjectUsecase {
-  const createSubjectPublisher = makeCreateSubjectPublisher();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const subjectDAO = makeSubjectDAO();
+  const subjectHydrator = makeSubjectHydrator();
 
   return new CreateSubjectUsecase({
-    createSubjectPublisher,
     getMyPlayer,
     subjectDAO,
+    subjectHydrator,
   });
 }

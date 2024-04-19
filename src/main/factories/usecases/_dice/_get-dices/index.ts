@@ -2,11 +2,11 @@ import { IGetDicesUsecase } from '@domain/usecases';
 
 import { GetDicesUsecase } from '@data/usecases';
 
-import { makeDiceDAO, makeFetchDicesPublisher } from '@main/factories';
+import { makeDiceDAO, makeDiceHydrator } from '@main/factories';
 
 export function makeGetDicesUsecase(): IGetDicesUsecase {
   const diceDAO = makeDiceDAO();
-  const fetchDicesPublisher = makeFetchDicesPublisher();
+  const diceHydrator = makeDiceHydrator();
 
-  return new GetDicesUsecase({ diceDAO, fetchDicesPublisher });
+  return new GetDicesUsecase({ diceDAO, diceHydrator });
 }

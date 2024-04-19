@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class CentralPulseDAO implements ICentralPulseDAO {
   private currentGameID: string | null;
   private centralPulsesByID: Map<string, CentralPulseModel.DTO>;
@@ -44,33 +46,35 @@ export class CentralPulseDAO implements ICentralPulseDAO {
   }
 
   private async fetchCentralPulses(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access central-pulses without session' },
-      });
+    await Asyncleton.run('CentralPulseDAO.fetchCentralPulses', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access central-pulses without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access central-pulses without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access central-pulses without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const centralPulses = await this.database.select<CentralPulseModel.DTO>(
-      table,
-    );
+      const centralPulses = await this.database.select<CentralPulseModel.DTO>(
+        table,
+      );
 
-    this.fillCache(centralPulses);
+      this.fillCache(centralPulses);
+    });
   }
 
   public async getByID(id: string): Promise<CentralPulseModel.DTO | null> {

@@ -2,19 +2,17 @@ import { UserModel } from '@domain/models';
 import { IGetMeUsecase } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { FetchMeObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 import { SessionGetterProtocol } from '@data/protocols';
 
 export class GetMeUsecase implements IGetMeUsecase {
   private readonly sessionGetter: SessionGetterProtocol;
-  private readonly fetchMePublisher: FetchMeObserver.Publisher;
   private readonly userDAO: IUserDAO;
-
-  public constructor({ sessionGetter, fetchMePublisher, userDAO }: Deps) {
+  private readonly userHydrator: IUserHydrator;
+  public constructor({ sessionGetter, userDAO, userHydrator }: Deps) {
     this.sessionGetter = sessionGetter;
-    this.fetchMePublisher = fetchMePublisher;
     this.userDAO = userDAO;
+    this.userHydrator = userHydrator;
   }
 
   public async execute(): Promise<UserModel | null> {
@@ -30,9 +28,7 @@ export class GetMeUsecase implements IGetMeUsecase {
       dto.providers = providers;
     }
 
-    const user = dto ? UserHydrator.hydrate(dto) : null;
-
-    this.fetchMePublisher.notifyFetchMe(user);
+    const user = dto ? await this.userHydrator.hydrate(dto) : null;
 
     return user;
   }
@@ -40,6 +36,6 @@ export class GetMeUsecase implements IGetMeUsecase {
 
 type Deps = {
   sessionGetter: SessionGetterProtocol;
-  fetchMePublisher: FetchMeObserver.Publisher;
   userDAO: IUserDAO;
+  userHydrator: IUserHydrator;
 };

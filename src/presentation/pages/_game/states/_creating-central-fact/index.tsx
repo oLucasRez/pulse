@@ -3,15 +3,14 @@ import { FC, useEffect } from 'react';
 import { Vector } from '@domain/utils';
 
 import {
-  useCentralFactUsecases,
-  useCentralPulseUsecases,
-  useDiceUsecases,
-  useGameUsecases,
-  usePlayerUsecases,
-  useRoundUsecases,
-  useSubjectUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+  useCentralFact,
+  useCentralPulse,
+  useDice,
+  useGame,
+  usePlayer,
+  useStates,
+  useSubject,
+} from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import {
@@ -29,16 +28,17 @@ import {
 import { Container } from './styles';
 
 export const CreatingCentralFactState: FC = () => {
-  const { currentPlayer, currentDice } = useRoundUsecases();
-  const { myPlayer } = usePlayerUsecases();
-  const { currentGame } = useGameUsecases();
-  const { mySubject, changeMySubjectPosition } = useSubjectUsecases();
+  const { myPlayer, currentPlayer } = usePlayer();
+  const { currentGame } = useGame();
+  const { mySubject, changeMySubjectPosition } = useSubject();
+  const { currentDice, rollDice } = useDice();
+  const { centralPulse } = useCentralPulse();
 
   const {
     state: [, state],
   } = currentGame ?? { state: [] };
 
-  const { centralFact, changeCentralFact } = useCentralFactUsecases();
+  const { centralFact, changeCentralFact } = useCentralFact();
 
   const [s, set] = useStates({
     description: centralFact?.description,
@@ -64,8 +64,6 @@ export const CreatingCentralFactState: FC = () => {
       .finally(set('changingCentralFact', false));
   }
 
-  const { centralPulse } = useCentralPulseUsecases();
-
   function handleMapMouseMove(vector: Vector) {
     if (!isMyTurn) return;
     if (currentGame && state !== 'update:dice:position') return;
@@ -87,8 +85,6 @@ export const CreatingCentralFactState: FC = () => {
 
     changeMySubjectPosition(dicePosition).catch(alertError);
   }
-
-  const { rollDice } = useDiceUsecases();
 
   function handleDiceRoll({ dice }: RollDiceEvent) {
     rollDice(dice.id).catch(alertError);

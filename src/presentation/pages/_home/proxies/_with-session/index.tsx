@@ -1,14 +1,14 @@
 import { FC } from 'react';
 
 import { Navigate } from '@presentation/components';
-import { useAuthUsecases } from '@presentation/contexts';
+import { useUser } from '@presentation/hooks';
 
 import { WithSessionProxyProps } from './types';
 
 export const WithSessionProxy: FC<WithSessionProxyProps> = (props) => {
   const { children } = props;
 
-  const { me } = useAuthUsecases();
+  const { me } = useUser();
 
   if (!me) return <Navigate.toLogin />;
 

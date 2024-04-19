@@ -3,19 +3,19 @@ import { IGetMeUsecase } from '@domain/usecases';
 import { GetMeUsecase } from '@data/usecases';
 
 import {
-  makeFetchMePublisher,
   makeSessionGetter,
   makeUserDAO,
+  makeUserHydrator,
 } from '@main/factories';
 
 export function makeGetMeUsecase(): IGetMeUsecase {
-  const fetchMePublisher = makeFetchMePublisher();
   const sessionGetter = makeSessionGetter();
   const userDAO = makeUserDAO();
+  const userHydrator = makeUserHydrator();
 
   return new GetMeUsecase({
-    fetchMePublisher,
     sessionGetter,
     userDAO,
+    userHydrator,
   });
 }

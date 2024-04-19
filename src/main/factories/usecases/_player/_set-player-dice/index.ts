@@ -2,14 +2,14 @@ import { ISetPlayerDiceUsecase } from '@domain/usecases';
 
 import { SetPlayerDiceUsecase } from '@data/usecases';
 
-import { makeChangePlayerPublisher, makePlayerDAO } from '@main/factories';
+import { makePlayerDAO, makePlayerHydrator } from '@main/factories';
 
 export function makeSetPlayerDiceUsecase(): ISetPlayerDiceUsecase {
   const playerDAO = makePlayerDAO();
-  const changePlayerPublisher = makeChangePlayerPublisher();
+  const playerHydrator = makePlayerHydrator();
 
   return new SetPlayerDiceUsecase({
     playerDAO,
-    changePlayerPublisher,
+    playerHydrator,
   });
 }

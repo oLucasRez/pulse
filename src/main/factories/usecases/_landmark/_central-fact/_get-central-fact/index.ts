@@ -4,18 +4,18 @@ import { GetCentralFactUsecase } from '@data/usecases';
 
 import {
   makeCentralFactDAO,
-  makeFetchCentralFactPublisher,
+  makeCentralFactHydrator,
   makeGetCentralPulseUsecase,
 } from '@main/factories';
 
 export function makeGetCentralFactUsecase(): IGetCentralFactUsecase {
   const centralFactDAO = makeCentralFactDAO();
-  const fetchCentralFactPublisher = makeFetchCentralFactPublisher();
+  const centralFactHydrator = makeCentralFactHydrator();
   const getCentralPulse = makeGetCentralPulseUsecase();
 
   return new GetCentralFactUsecase({
     centralFactDAO,
-    fetchCentralFactPublisher,
+    centralFactHydrator,
     getCentralPulse,
   });
 }

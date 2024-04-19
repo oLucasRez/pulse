@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class GameDAO implements IGameDAO {
   private uid: string | null;
   private gamesByID: Map<string, GameModel.DTO>;
@@ -27,25 +29,25 @@ export class GameDAO implements IGameDAO {
 
   private fillCache(games: GameModel.DTO[]): void {
     this.gamesByID.clear();
-    games.map((game) => {
-      this.gamesByID.set(game.id, game);
-    });
+    games.map((game) => this.gamesByID.set(game.id, game));
   }
 
   private async fetchGames(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access games without session' },
-      });
+    await Asyncleton.run('GameDAO.fetchGames', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access games without session' },
+        });
 
-    if (uid === this.uid) return;
+      if (uid === this.uid) return;
 
-    this.uid = uid;
+      this.uid = uid;
 
-    const games = await this.database.select<GameModel.DTO>('games');
+      const games = await this.database.select<GameModel.DTO>('games');
 
-    this.fillCache(games);
+      this.fillCache(games);
+    });
   }
 
   public async getAll(): Promise<GameModel.DTO[]> {

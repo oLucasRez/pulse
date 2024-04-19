@@ -5,22 +5,20 @@ import {
 } from '@domain/usecases';
 
 import { ISubjectPulseDAO } from '@data/dao';
-import { SubjectPulseHydrator } from '@data/hydration';
-import { CreateSubjectPulseObserver } from '@data/observers';
+import { ISubjectPulseHydrator } from '@data/hydration';
 
 export class CreateSubjectPulseUsecase implements ICreateSubjectPulseUsecase {
   private readonly nextGameState: INextGameStateUsecase;
   private readonly subjectPulseDAO: ISubjectPulseDAO;
-  private readonly createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
-
+  private readonly subjectPulseHydrator: ISubjectPulseHydrator;
   public constructor({
     nextGameState,
     subjectPulseDAO,
-    createSubjectPulsePublisher,
+    subjectPulseHydrator,
   }: Deps) {
     this.nextGameState = nextGameState;
     this.subjectPulseDAO = subjectPulseDAO;
-    this.createSubjectPulsePublisher = createSubjectPulsePublisher;
+    this.subjectPulseHydrator = subjectPulseHydrator;
   }
 
   public async execute(
@@ -35,9 +33,7 @@ export class CreateSubjectPulseUsecase implements ICreateSubjectPulseUsecase {
       landmarkID,
     });
 
-    const subjectPulse = SubjectPulseHydrator.hydrate(dto);
-
-    this.createSubjectPulsePublisher.notifyCreateSubjectPulse(subjectPulse);
+    const subjectPulse = await this.subjectPulseHydrator.hydrate(dto);
 
     await this.nextGameState.execute();
 
@@ -48,5 +44,5 @@ export class CreateSubjectPulseUsecase implements ICreateSubjectPulseUsecase {
 type Deps = {
   nextGameState: INextGameStateUsecase;
   subjectPulseDAO: ISubjectPulseDAO;
-  createSubjectPulsePublisher: CreateSubjectPulseObserver.Publisher;
+  subjectPulseHydrator: ISubjectPulseHydrator;
 };

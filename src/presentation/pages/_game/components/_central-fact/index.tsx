@@ -1,13 +1,13 @@
 import { FC } from 'react';
 
 import { P } from '@presentation/components';
-import { useCentralFactUsecases } from '@presentation/contexts';
+import { useCentralFact } from '@presentation/hooks';
 
 import { Landmark, useMapContext } from '..';
 
 export const CentralFact: FC = () => {
   const { openBakingPaper, closeBakingPaper } = useMapContext();
-  const { centralFact } = useCentralFactUsecases();
+  const { centralFact } = useCentralFact();
 
   if (!centralFact) return null;
 

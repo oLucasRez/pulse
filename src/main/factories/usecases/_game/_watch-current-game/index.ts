@@ -1,21 +1,21 @@
-import { IWatchCurrentGameUsecase } from '@domain/usecases';
+import { IWatchGamesUsecase } from '@domain/usecases';
 
-import { WatchCurrentGameUsecase } from '@data/usecases';
+import { WatchGamesUsecase } from '@data/usecases';
 
 import {
-  makeFetchGamePublisher,
   makeGameDAO,
+  makeGameHydrator,
   makeGetMeUsecase,
 } from '@main/factories';
 
-export function makeWatchCurrentGameUsecase(): IWatchCurrentGameUsecase {
-  const fetchGamePublisher = makeFetchGamePublisher();
+export function makeWatchGamesUsecase(): IWatchGamesUsecase {
   const gameDAO = makeGameDAO();
+  const gameHydrator = makeGameHydrator();
   const getMe = makeGetMeUsecase();
 
-  return new WatchCurrentGameUsecase({
-    fetchGamePublisher,
+  return new WatchGamesUsecase({
     gameDAO,
+    gameHydrator,
     getMe,
   });
 }

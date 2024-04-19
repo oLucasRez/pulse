@@ -3,18 +3,16 @@ import { PlayerModel } from '@domain/models';
 import { IChangePlayerUsecase, IGetMyPlayerUsecase } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { ChangePlayerObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class ChangePlayerUsecase implements IChangePlayerUsecase {
   private readonly getMyPlayer: IGetMyPlayerUsecase;
-  private readonly changePlayerPublisher: ChangePlayerObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
-  public constructor({ getMyPlayer, changePlayerPublisher, playerDAO }: Deps) {
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ getMyPlayer, playerDAO, playerHydrator }: Deps) {
     this.getMyPlayer = getMyPlayer;
-    this.changePlayerPublisher = changePlayerPublisher;
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(
@@ -33,9 +31,7 @@ export class ChangePlayerUsecase implements IChangePlayerUsecase {
       avatar,
     });
 
-    const player = PlayerHydrator.hydrate(dto);
-
-    this.changePlayerPublisher.notifyChangePlayer(player);
+    const player = await this.playerHydrator.hydrate(dto);
 
     return player;
   }
@@ -43,6 +39,6 @@ export class ChangePlayerUsecase implements IChangePlayerUsecase {
 
 type Deps = {
   getMyPlayer: IGetMyPlayerUsecase;
-  changePlayerPublisher: ChangePlayerObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

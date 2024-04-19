@@ -4,18 +4,18 @@ import { SignUpWithCredentialsUsecase } from '@data/usecases';
 
 import {
   makeAuthCredentials,
-  makeSignInPublisher,
   makeUserDAO,
+  makeUserHydrator,
 } from '@main/factories';
 
 export function makeSignUpWithCredentialsUsecase(): ISignUpWithCredentialsUsecase {
   const authCredentials = makeAuthCredentials();
-  const signInPublisher = makeSignInPublisher();
   const userDAO = makeUserDAO();
+  const userHydrator = makeUserHydrator();
 
   return new SignUpWithCredentialsUsecase({
     authCredentials,
-    signInPublisher,
     userDAO,
+    userHydrator,
   });
 }

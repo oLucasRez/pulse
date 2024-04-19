@@ -1,14 +1,16 @@
 import { FC } from 'react';
 
-import { Navigate } from '@presentation/components';
-import { useAuthUsecases } from '@presentation/contexts';
+import { GlobalLoading, Navigate } from '@presentation/components';
+import { useUser } from '@presentation/hooks';
 
 import { WithoutSessionProxyProps } from './types';
 
 export const WithoutSessionProxy: FC<WithoutSessionProxyProps> = (props) => {
   const { children } = props;
 
-  const { me } = useAuthUsecases();
+  const { me, fetchingMe } = useUser();
+
+  if (fetchingMe) return <GlobalLoading />;
 
   if (me) return <Navigate.toHome />;
 

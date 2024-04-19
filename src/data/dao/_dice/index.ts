@@ -7,7 +7,9 @@ export interface IDiceDAO {
   create(payload: IDiceDAO.CreatePayload): Promise<DiceModel.DTO>;
   update(id: string, payload: IDiceDAO.UpdatePayload): Promise<DiceModel.DTO>;
   delete(id: string): Promise<void>;
-  watch(callback: (dtos: DiceModel.DTO[]) => void): Promise<() => void>;
+  watch(
+    callback: (dtos: DiceModel.DTO[]) => Promise<void> | void,
+  ): Promise<() => void>;
 }
 
 export namespace IDiceDAO {

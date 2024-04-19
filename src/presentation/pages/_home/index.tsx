@@ -1,41 +1,31 @@
 import { faker } from '@faker-js/faker';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
 import { GameModel } from '@domain/models';
 
 import { githubIcon, googleIcon } from '@presentation/assets';
-import {
-  useAuthUsecases,
-  useGameUsecases,
-  useUserUsecases,
-} from '@presentation/contexts';
-import { useNavigate, useStates } from '@presentation/hooks';
+import { useGame, useNavigate, useStates, useUser } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
 
 const HomePage: FC = () => {
   const [s, set] = useStates({
-    fetchingGames: true,
     creatingGame: false,
     deletingGame: null as string | null,
     linking: false,
     returnToGameBannerIsClosed: false,
   });
 
-  const { myGames, currentGame, fetchGames, createGame, deleteGame } =
-    useGameUsecases();
+  const { games, fetchingGames, currentGame, createGame, deleteGame } =
+    useGame();
 
-  const { setCurrentGame } = useUserUsecases();
-
-  useEffect(() => {
-    fetchGames().finally(set('fetchingGames', false));
-  }, []);
+  const { me, setCurrentGame, linkWithProvider } = useUser();
 
   const { navigateToGame, navigateToLogout, reloadWindow } = useNavigate();
 
   function handleCreateGameButtonClick() {
-    set('creatingGame')(true);
+    s.creatingGame = true;
 
     createGame({
       title: faker.lorem.sentence({ min: 1, max: 3 }).replace('.', ''),
@@ -50,17 +40,15 @@ const HomePage: FC = () => {
   }
 
   function handleDeleteGameButtonClick(game: GameModel) {
-    set('deletingGame')(game.id);
+    s.deletingGame = game.id;
 
     deleteGame(game.id).catch(alertError).finally(set('deletingGame', null));
 
     if (currentGame?.id === game.id) s.returnToGameBannerIsClosed = false;
   }
 
-  const { linkWithProvider } = useAuthUsecases();
-
   function handleGoogleButtonClick() {
-    set('linking')(true);
+    s.linking = true;
 
     linkWithProvider('google')
       .then(reloadWindow)
@@ -69,7 +57,7 @@ const HomePage: FC = () => {
   }
 
   function handleGithubButtonClick() {
-    set('linking')(true);
+    s.linking = true;
 
     linkWithProvider('github')
       .then(reloadWindow)
@@ -96,14 +84,14 @@ const HomePage: FC = () => {
   }
 
   function renderGamesList() {
-    if (s.fetchingGames && !myGames.length)
+    if (fetchingGames && !games.length)
       return (
         <ul className='games'>
           <span className='emoji loading'>⏳</span>
         </ul>
       );
 
-    if (!myGames.length)
+    if (!games.length)
       return (
         <ul className='games'>
           <li>
@@ -120,8 +108,9 @@ const HomePage: FC = () => {
 
     return (
       <ul className='games'>
-        {myGames.map((game) => {
+        {games.map((game) => {
           const deletingGame = s.deletingGame === game.id;
+          const notMine = game.uid !== me?.uid;
 
           return (
             <li key={game.id}>
@@ -140,7 +129,7 @@ const HomePage: FC = () => {
 
               <button
                 className='delete'
-                disabled={deletingGame}
+                disabled={deletingGame || notMine}
                 onClick={() => handleDeleteGameButtonClick(game)}
               >
                 {deletingGame ? (
@@ -157,8 +146,6 @@ const HomePage: FC = () => {
       </ul>
     );
   }
-
-  const { me } = useAuthUsecases();
 
   const notLinkedWithGoogle = !me?.providers.includes('google');
   const notLinkedWithGithub = !me?.providers.includes('github');

@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class AnswerDAO implements IAnswerDAO {
   private currentGameID: string | null;
   private answersByID: Map<string, AnswerModel.DTO>;
@@ -50,31 +52,33 @@ export class AnswerDAO implements IAnswerDAO {
   }
 
   private async fetchAnswers(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access answers without session' },
-      });
+    await Asyncleton.run('AnswerDAO.fetchAnswers', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access answers without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access answers without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access answers without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const answers = await this.database.select<AnswerModel.DTO>(table);
+      const answers = await this.database.select<AnswerModel.DTO>(table);
 
-    this.fillCache(answers);
+      this.fillCache(answers);
+    });
   }
 
   public async getAll(): Promise<AnswerModel.DTO[]> {

@@ -2,30 +2,26 @@ import { GameModel } from '@domain/models';
 import { IGetGameUsecase } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { FetchGameObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class GetGameUsecase implements IGetGameUsecase {
-  private readonly fetchGamePublisher: FetchGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
-  public constructor({ fetchGamePublisher, gameDAO }: Deps) {
-    this.fetchGamePublisher = fetchGamePublisher;
+  private readonly gameHydrator: IGameHydrator;
+  public constructor({ gameDAO, gameHydrator }: Deps) {
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
   public async execute(id: string): Promise<GameModel | null> {
     const dto = await this.gameDAO.getByID(id);
 
-    const game = dto ? GameHydrator.hydrate(dto) : null;
-
-    this.fetchGamePublisher.notifyFetchGame(id, game);
+    const game = dto ? await this.gameHydrator.hydrate(dto) : null;
 
     return game;
   }
 }
 
 type Deps = {
-  fetchGamePublisher: FetchGameObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

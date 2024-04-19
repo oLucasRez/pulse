@@ -1,14 +1,15 @@
-import { FC, KeyboardEvent, useMemo } from 'react';
+import { FC, Fragment, KeyboardEvent, useMemo } from 'react';
 
 import { Input, P } from '@presentation/components';
 import {
-  useAnswerUsecases,
-  usePlayerUsecases,
-  useQuestionUsecases,
-  useRoundUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+  useAnswer,
+  useGame,
+  usePlayer,
+  useQuestion,
+  useStates,
+} from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
+import { alertError } from '@presentation/utils';
 
 import { QuestionProps, QuestionsProps } from './types';
 
@@ -21,12 +22,23 @@ export const Question: FC<QuestionProps> = (props) => {
     active: false,
     answerDescription: '',
     creatingAnswer: false,
+    voted: false,
   });
 
   const { openBakingPaper, closeBakingPaper } = useMapContext();
-  const { players, myPlayer } = usePlayerUsecases();
-  const { currentPlayer } = useRoundUsecases();
-  const { answers } = useAnswerUsecases();
+  const { players, myPlayer, currentPlayer } = usePlayer();
+  const { answers } = useAnswer();
+  const { currentGame, vote } = useGame();
+  const votingAnswer = useMemo(
+    () =>
+      answers.find((answer) => answer.id === currentGame?.voting?.answerID) ??
+      null,
+    [answers, currentGame],
+  );
+  const pendingVote =
+    !!currentGame?.voting?.votes &&
+    !!myPlayer?.id &&
+    !(myPlayer.id in currentGame.voting.votes);
 
   const color = useMemo(
     () =>
@@ -34,6 +46,15 @@ export const Question: FC<QuestionProps> = (props) => {
       null,
     [authorID, players],
   );
+
+  function handleVoteClick(value: boolean) {
+    return () => {
+      if (!myPlayer) return;
+
+      s.voted = true;
+      vote(myPlayer.id, value).catch(alertError);
+    };
+  }
 
   function handleInputKeyDown(event: KeyboardEvent) {
     if (event.key !== 'Enter' || event.shiftKey) return;
@@ -54,14 +75,36 @@ export const Question: FC<QuestionProps> = (props) => {
         )?.color;
 
         return (
-          <P
-            key={answer.id}
-            // style
-            className='handwriting'
-            style={{ color: color ? getColor(color) : undefined }}
-          >
-            {answer.description}
-          </P>
+          <Fragment key={answer.id}>
+            <P
+              // style
+              className='handwriting'
+              style={{ color: color ? getColor(color) : undefined }}
+            >
+              {answer.description}
+            </P>
+
+            {votingAnswer?.id === answer.id && pendingVote && !s.voted && (
+              <P className='handwriting' style={{ fontSize: '0.75rem' }}>
+                {'('} Turn in fact?{' '}
+                <button
+                  className='handwriting'
+                  style={{ fontSize: '0.75rem' }}
+                  onClick={handleVoteClick(true)}
+                >
+                  Yes
+                </button>{' '}
+                <button
+                  className='handwriting'
+                  style={{ fontSize: '0.75rem' }}
+                  onClick={handleVoteClick(false)}
+                >
+                  No
+                </button>{' '}
+                {')'}
+              </P>
+            )}
+          </Fragment>
         );
       });
   }
@@ -147,7 +190,7 @@ export const Question: FC<QuestionProps> = (props) => {
 };
 
 export const Questions: FC<QuestionsProps> = (props) => {
-  const { questions } = useQuestionUsecases();
+  const { questions } = useQuestion();
 
   return (
     <>

@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react';
 
 import {
-  useCentralPulseUsecases,
-  useSubjectPulseUsecases,
-  useSubjectUsecases,
-} from '@presentation/contexts';
+  useCentralPulse,
+  useSubject,
+  useSubjectPulse,
+} from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 import { PulseProps } from './types';
@@ -13,7 +13,7 @@ import { useMapContext } from '..';
 
 export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
   const { mapSpace } = useMapContext();
-  const { subjects } = useSubjectUsecases();
+  const { subjects } = useSubject();
 
   const landmark = subjects.find((value) => value.id === landmarkID);
 
@@ -49,8 +49,8 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
 };
 
 export const Pulses: FC = () => {
-  const { centralPulse } = useCentralPulseUsecases();
-  const { subjectPulses } = useSubjectPulseUsecases();
+  const { centralPulse } = useCentralPulse();
+  const { subjectPulses } = useSubjectPulse();
 
   return (
     <>

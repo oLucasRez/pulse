@@ -2,12 +2,12 @@ import { ReactElement } from 'react';
 
 import LogoutPage from '@presentation/pages/_logout';
 
-import { makeAuthUsecasesContextProvider } from '@main/factories';
+import { makeUserContextProvider } from '@main/factories';
 
 export function makeLogoutPage(): ReactElement {
   const page = [
     // inner
-    makeAuthUsecasesContextProvider,
+    makeUserContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),

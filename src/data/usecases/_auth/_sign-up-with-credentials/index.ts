@@ -2,21 +2,19 @@ import { UserModel } from '@domain/models';
 import { ISignUpWithCredentialsUsecase } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { SignInObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 import { AuthCredentialsProtocol } from '@data/protocols';
 
 export class SignUpWithCredentialsUsecase
   implements ISignUpWithCredentialsUsecase
 {
   private readonly authCredentials: AuthCredentialsProtocol;
-  private readonly signInPublisher: SignInObserver.Publisher;
   private readonly userDAO: IUserDAO;
-
-  public constructor({ authCredentials, signInPublisher, userDAO }: Deps) {
+  private readonly userHydrator: IUserHydrator;
+  public constructor({ authCredentials, userDAO, userHydrator }: Deps) {
     this.authCredentials = authCredentials;
-    this.signInPublisher = signInPublisher;
     this.userDAO = userDAO;
+    this.userHydrator = userHydrator;
   }
 
   public async execute(
@@ -38,9 +36,7 @@ export class SignUpWithCredentialsUsecase
       providers: [],
     });
 
-    const user = UserHydrator.hydrate(userDTO);
-
-    this.signInPublisher.notifySignIn(user);
+    const user = await this.userHydrator.hydrate(userDTO);
 
     return user;
   }
@@ -48,6 +44,6 @@ export class SignUpWithCredentialsUsecase
 
 type Deps = {
   authCredentials: AuthCredentialsProtocol;
-  signInPublisher: SignInObserver.Publisher;
   userDAO: IUserDAO;
+  userHydrator: IUserHydrator;
 };

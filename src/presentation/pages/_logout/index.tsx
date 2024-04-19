@@ -1,14 +1,13 @@
 import { FC, useEffect } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
-import { useAuthUsecases } from '@presentation/contexts';
-import { useNavigate } from '@presentation/hooks';
+import { useNavigate, useUser } from '@presentation/hooks';
 import { logError } from '@presentation/utils';
 
 const LogoutPage: FC = () => {
   const { navigateToLogin } = useNavigate();
 
-  const { signOut } = useAuthUsecases();
+  const { signOut } = useUser();
 
   useEffect(() => {
     signOut().catch(logError).finally(navigateToLogin);

@@ -7,25 +7,18 @@ import {
 } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { ChangeCurrentGameObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 
 export class SetCurrentGameUsecase implements ISetCurrentGameUsecase {
   private readonly getGame: IGetGameUsecase;
   private readonly getMe: IGetMeUsecase;
-  private readonly changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
   private readonly userDAO: IUserDAO;
-
-  public constructor({
-    getGame,
-    getMe,
-    changeCurrentGamePublisher,
-    userDAO,
-  }: Deps) {
+  private readonly userHydrator: IUserHydrator;
+  public constructor({ getGame, getMe, userDAO, userHydrator }: Deps) {
     this.getGame = getGame;
     this.getMe = getMe;
-    this.changeCurrentGamePublisher = changeCurrentGamePublisher;
     this.userDAO = userDAO;
+    this.userHydrator = userHydrator;
   }
 
   public async execute(gameID: string | null): Promise<UserModel> {
@@ -38,15 +31,13 @@ export class SetCurrentGameUsecase implements ISetCurrentGameUsecase {
         throw new NotFoundError({
           metadata: { entity: 'Game', prop: 'id', value: gameID },
         });
-
-      this.changeCurrentGamePublisher.notifyChangeCurrentGame(game);
-    } else this.changeCurrentGamePublisher.notifyChangeCurrentGame(null);
+    }
 
     const dto = await this.userDAO.update(me.uid, {
       currentGameID: gameID,
     });
 
-    const user = UserHydrator.hydrate(dto);
+    const user = await this.userHydrator.hydrate(dto);
 
     return user;
   }
@@ -55,6 +46,6 @@ export class SetCurrentGameUsecase implements ISetCurrentGameUsecase {
 type Deps = {
   getGame: IGetGameUsecase;
   getMe: IGetMeUsecase;
-  changeCurrentGamePublisher: ChangeCurrentGameObserver.Publisher;
   userDAO: IUserDAO;
+  userHydrator: IUserHydrator;
 };

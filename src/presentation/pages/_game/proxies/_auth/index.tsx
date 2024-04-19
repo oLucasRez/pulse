@@ -1,16 +1,8 @@
 import { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { DomainError } from '@domain/errors';
-import { GameModel } from '@domain/models';
-
 import { AuthForm, GlobalLoading } from '@presentation/components';
-import {
-  useAuthUsecases,
-  useGameUsecases,
-  useUserUsecases,
-} from '@presentation/contexts';
-import { useNavigate, useStates } from '@presentation/hooks';
+import { useNavigate, useStates, useUser } from '@presentation/hooks';
 import { logError } from '@presentation/utils';
 
 import { Container } from './styles';
@@ -21,13 +13,11 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   const { children } = props;
 
   const [s, set] = useStates({
-    currentGame: null as GameModel | null,
+    settingCurrentGame: true,
     authFormMode: 'login' as AuthForm.Mode,
   });
 
-  const { setCurrentGame } = useUserUsecases();
-
-  const { fetchGame } = useGameUsecases();
+  const { me, fetchingMe, setCurrentGame } = useUser();
 
   const { navigateToHome } = useNavigate();
 
@@ -36,19 +26,20 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   async function handleAuth() {
     if (!params.id) return;
 
-    Promise.all([fetchGame(params.id), setCurrentGame(params.id)])
-      .then(([currentGame]) => set('currentGame')(currentGame))
-      .catch((error: DomainError) => {
-        logError(error);
+    s.settingCurrentGame = true;
+    setCurrentGame(params.id)
+      .catch((err) => {
+        logError(err);
         navigateToHome();
-      });
+      })
+      .finally(set('settingCurrentGame', false));
   }
-
-  const { me } = useAuthUsecases();
 
   useEffect(() => {
     if (me) handleAuth();
   }, [!me]);
+
+  if (fetchingMe) return <GlobalLoading />;
 
   if (!me)
     return (
@@ -62,7 +53,7 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
       </Container>
     );
 
-  if (!s.currentGame) return <GlobalLoading />;
+  if (s.settingCurrentGame) return <GlobalLoading />;
 
   return children;
 };

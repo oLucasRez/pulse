@@ -8,18 +8,16 @@ import { ICreateGameUsecase, IGetMeUsecase } from '@domain/usecases';
 import { isInteger } from '@domain/utils';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { CreateGameObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class CreateGameUsecase implements ICreateGameUsecase {
   private readonly getMe: IGetMeUsecase;
-  private readonly createGamePublisher: CreateGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
-  public constructor({ getMe, createGamePublisher, gameDAO }: Deps) {
+  private readonly gameHydrator: IGameHydrator;
+  public constructor({ getMe, gameDAO, gameHydrator }: Deps) {
     this.getMe = getMe;
-    this.createGamePublisher = createGamePublisher;
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
   public async execute(
@@ -46,9 +44,7 @@ export class CreateGameUsecase implements ICreateGameUsecase {
       lightSpotRoundID: null,
     });
 
-    const game = GameHydrator.hydrate(dto);
-
-    this.createGamePublisher.notifyCreateGame(game);
+    const game = await this.gameHydrator.hydrate(dto);
 
     return game;
   }
@@ -74,6 +70,6 @@ export class CreateGameUsecase implements ICreateGameUsecase {
 
 type Deps = {
   getMe: IGetMeUsecase;
-  createGamePublisher: CreateGameObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

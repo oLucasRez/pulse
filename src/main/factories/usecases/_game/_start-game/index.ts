@@ -11,7 +11,6 @@ import {
   makeGetPlayersUsecase,
   makeNextGameStateUsecase,
   makeSetPlayerDiceUsecase,
-  makeStartGamePublisher,
 } from '@main/factories';
 
 export function makeStartGameUsecase(): IStartGameUsecase {
@@ -19,7 +18,6 @@ export function makeStartGameUsecase(): IStartGameUsecase {
   const createDice = makeCreateDiceUsecase();
   const createRound = makeCreateRoundUsecase();
   const gameDAO = makeGameDAO();
-  const startGamePublisher = makeStartGamePublisher();
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const nextGameState = makeNextGameStateUsecase();
@@ -30,7 +28,6 @@ export function makeStartGameUsecase(): IStartGameUsecase {
     createDice,
     createRound,
     gameDAO,
-    startGamePublisher,
     getCurrentGame,
     getPlayers,
     nextGameState,

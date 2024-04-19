@@ -5,18 +5,16 @@ import { UserModel } from '@domain/models';
 import { ISignInAnonymouslyUsecase } from '@domain/usecases';
 
 import { IUserDAO } from '@data/dao';
-import { UserHydrator } from '@data/hydration';
-import { SignInObserver } from '@data/observers';
+import { IUserHydrator } from '@data/hydration';
 import { AuthAnonymousProtocol } from '@data/protocols';
 
 export class SignInAnonymouslyUsecase implements ISignInAnonymouslyUsecase {
   private readonly userDAO: IUserDAO;
-  private readonly signInPublisher: SignInObserver.Publisher;
+  private readonly userHydrator: IUserHydrator;
   private readonly authAnonymous: AuthAnonymousProtocol;
-
-  public constructor({ userDAO, signInPublisher, authAnonymous }: Deps) {
+  public constructor({ userDAO, userHydrator, authAnonymous }: Deps) {
     this.userDAO = userDAO;
-    this.signInPublisher = signInPublisher;
+    this.userHydrator = userHydrator;
     this.authAnonymous = authAnonymous;
   }
 
@@ -41,9 +39,7 @@ export class SignInAnonymouslyUsecase implements ISignInAnonymouslyUsecase {
         metadata: { entity: 'User', prop: 'uid', value: uid },
       });
 
-    const user = UserHydrator.hydrate(dto);
-
-    this.signInPublisher.notifySignIn(user);
+    const user = await this.userHydrator.hydrate(dto);
 
     return user;
   }
@@ -51,6 +47,6 @@ export class SignInAnonymouslyUsecase implements ISignInAnonymouslyUsecase {
 
 type Deps = {
   userDAO: IUserDAO;
-  signInPublisher: SignInObserver.Publisher;
+  userHydrator: IUserHydrator;
   authAnonymous: AuthAnonymousProtocol;
 };

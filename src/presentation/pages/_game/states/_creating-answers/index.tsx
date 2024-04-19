@@ -1,11 +1,6 @@
 import { FC } from 'react';
 
-import {
-  useAnswerUsecases,
-  useGameUsecases,
-  useRoundUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { useAnswer, useGame, usePlayer, useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import {
@@ -24,9 +19,9 @@ export const CreatingAnswersState: FC = () => {
     creatingAnswer: false,
   });
 
-  const { currentGame } = useGameUsecases();
-  const { isMyTurn, currentPlayer } = useRoundUsecases();
-  const { createAnswer } = useAnswerUsecases();
+  const { currentGame } = useGame();
+  const { isMyTurn, currentPlayer } = usePlayer();
+  const { createAnswer } = useAnswer();
 
   const {
     state: [, state],

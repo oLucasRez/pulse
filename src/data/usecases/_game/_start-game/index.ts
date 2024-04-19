@@ -12,7 +12,6 @@ import {
 } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { StartGameObserver } from '@data/observers';
 
 export class StartGameUsecase implements IStartGameUsecase {
   private readonly createCentralPulse: ICreateCentralPulseUsecase;
@@ -22,9 +21,7 @@ export class StartGameUsecase implements IStartGameUsecase {
   private readonly getPlayers: IGetPlayersUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly setPlayerDice: ISetPlayerDiceUsecase;
-  private readonly startGamePublisher: StartGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
   public constructor({
     createCentralPulse,
     createDice,
@@ -33,7 +30,6 @@ export class StartGameUsecase implements IStartGameUsecase {
     getPlayers,
     nextGameState,
     setPlayerDice,
-    startGamePublisher,
     gameDAO,
   }: Deps) {
     this.createCentralPulse = createCentralPulse;
@@ -43,7 +39,6 @@ export class StartGameUsecase implements IStartGameUsecase {
     this.getPlayers = getPlayers;
     this.nextGameState = nextGameState;
     this.setPlayerDice = setPlayerDice;
-    this.startGamePublisher = startGamePublisher;
     this.gameDAO = gameDAO;
   }
 
@@ -95,8 +90,6 @@ export class StartGameUsecase implements IStartGameUsecase {
 
     const game = await this.nextGameState.execute();
 
-    this.startGamePublisher.notifyStartGame(game);
-
     return game;
   }
 }
@@ -109,6 +102,5 @@ type Deps = {
   getPlayers: IGetPlayersUsecase;
   nextGameState: INextGameStateUsecase;
   setPlayerDice: ISetPlayerDiceUsecase;
-  startGamePublisher: StartGameObserver.Publisher;
   gameDAO: IGameDAO;
 };

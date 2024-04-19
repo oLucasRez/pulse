@@ -1,25 +1,23 @@
 import { IWatchCentralPulseUsecase } from '@domain/usecases';
 
 import { ICentralPulseDAO } from '@data/dao';
-import { CentralPulseHydrator } from '@data/hydration';
-import { FetchCentralPulseObserver } from '@data/observers';
+import { ICentralPulseHydrator } from '@data/hydration';
 
 export class WatchCentralPulseUsecase implements IWatchCentralPulseUsecase {
   private readonly centralPulseDAO: ICentralPulseDAO;
-  private readonly fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
-
-  public constructor({ centralPulseDAO, fetchCentralPulsePublisher }: Deps) {
+  private readonly centralPulseHydrator: ICentralPulseHydrator;
+  public constructor({ centralPulseDAO, centralPulseHydrator }: Deps) {
     this.centralPulseDAO = centralPulseDAO;
-    this.fetchCentralPulsePublisher = fetchCentralPulsePublisher;
+    this.centralPulseHydrator = centralPulseHydrator;
   }
 
   public async execute(
     callback: IWatchCentralPulseUsecase.Callback,
   ): Promise<IWatchCentralPulseUsecase.Response> {
-    const unsubscribe = this.centralPulseDAO.watch(([dto]) => {
-      const centralPulse = dto ? CentralPulseHydrator.hydrate(dto) : null;
-
-      this.fetchCentralPulsePublisher.notifyFetchCentralPulse(centralPulse);
+    const unsubscribe = this.centralPulseDAO.watch(async ([dto]) => {
+      const centralPulse = dto
+        ? await this.centralPulseHydrator.hydrate(dto)
+        : null;
 
       callback(centralPulse);
     });
@@ -30,5 +28,5 @@ export class WatchCentralPulseUsecase implements IWatchCentralPulseUsecase {
 
 type Deps = {
   centralPulseDAO: ICentralPulseDAO;
-  fetchCentralPulsePublisher: FetchCentralPulseObserver.Publisher;
+  centralPulseHydrator: ICentralPulseHydrator;
 };

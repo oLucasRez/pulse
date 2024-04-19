@@ -8,6 +8,8 @@ import {
   SocketProtocol,
 } from '@data/protocols';
 
+import { Asyncleton } from '@main/utils';
+
 export class PlayerDAO implements IPlayerDAO {
   private currentGameID: string | null;
   private playersByID: Map<string, PlayerModel.DTO>;
@@ -48,31 +50,33 @@ export class PlayerDAO implements IPlayerDAO {
   }
 
   private async fetchPlayers(): Promise<void> {
-    const { uid } = await this.sessionGetter.getSession();
-    if (!uid)
-      throw new ForbiddenError({
-        metadata: { tried: 'access players without session' },
-      });
+    await Asyncleton.run('PlayerDAO.fetchPlayers', async () => {
+      const { uid } = await this.sessionGetter.getSession();
+      if (!uid)
+        throw new ForbiddenError({
+          metadata: { tried: 'access players without session' },
+        });
 
-    const user = await this.userDAO.getByUID(uid);
-    if (!user)
-      throw new NotFoundError({
-        metadata: { entity: 'User', prop: 'uid', value: uid },
-      });
-    if (!user.currentGameID)
-      throw new ForbiddenError({
-        metadata: { tried: 'access players without current-game' },
-      });
+      const user = await this.userDAO.getByUID(uid);
+      if (!user)
+        throw new NotFoundError({
+          metadata: { entity: 'User', prop: 'uid', value: uid },
+        });
+      if (!user.currentGameID)
+        throw new ForbiddenError({
+          metadata: { tried: 'access players without current-game' },
+        });
 
-    if (user.currentGameID === this.currentGameID) return;
+      if (user.currentGameID === this.currentGameID) return;
 
-    this.currentGameID = user.currentGameID;
+      this.currentGameID = user.currentGameID;
 
-    const table = await this.getTable();
+      const table = await this.getTable();
 
-    const players = await this.database.select<PlayerModel.DTO>(table);
+      const players = await this.database.select<PlayerModel.DTO>(table);
 
-    this.fillCache(players);
+      this.fillCache(players);
+    });
   }
 
   public async getAll(): Promise<PlayerModel.DTO[]> {

@@ -2,12 +2,7 @@ import { FC, FocusEvent, useRef } from 'react';
 
 import { PlayerModel } from '@domain/models';
 
-import {
-  useAuthUsecases,
-  useGameUsecases,
-  usePlayerUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { useGame, usePlayer, useStates, useUser } from '@presentation/hooks';
 import { getClasses, getColor } from '@presentation/styles/mixins';
 import { alertError } from '@presentation/utils';
 
@@ -22,9 +17,9 @@ export const InitialState: FC = () => {
     startingGame: false,
   });
 
-  const { me } = useAuthUsecases();
-  const { currentGame, startGame } = useGameUsecases();
-  const { players, myPlayer, banPlayer } = usePlayerUsecases();
+  const { me } = useUser();
+  const { currentGame, startGame } = useGame();
+  const { players, myPlayer, banPlayer } = usePlayer();
 
   const imHost = me?.uid === currentGame?.uid;
 

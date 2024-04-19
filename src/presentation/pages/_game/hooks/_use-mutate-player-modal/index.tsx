@@ -3,8 +3,7 @@ import { MouseEvent, useCallback } from 'react';
 import { PlayerModel } from '@domain/models';
 import { getAvailableColors } from '@domain/utils';
 
-import { useAuthUsecases, usePlayerUsecases } from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { usePlayer, useStates, useUser } from '@presentation/hooks';
 import { darken, getColor } from '@presentation/styles/mixins';
 import { alertError } from '@presentation/utils';
 
@@ -38,7 +37,7 @@ export function useMutatePlayerModal(
 ): MutatePlayerModalHookReturn {
   const { unclosable, open = false, player, onSuccess } = props;
 
-  const { me } = useAuthUsecases();
+  const { me } = useUser();
 
   const [s, set] = useStates({
     open,
@@ -56,7 +55,7 @@ export function useMutatePlayerModal(
     (s.avatarIndex =
       s.avatarIndex - 1 < 0 ? avatars.length - 1 : s.avatarIndex - 1);
 
-  const { players, createPlayer, changePlayer } = usePlayerUsecases();
+  const { players, createPlayer, changePlayer } = usePlayer();
 
   const openMutatePlayerModal = useCallback(
     (player?: PlayerModel) => {

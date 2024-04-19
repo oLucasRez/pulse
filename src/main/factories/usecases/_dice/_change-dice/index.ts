@@ -3,21 +3,21 @@ import { IChangeDiceUsecase } from '@domain/usecases';
 import { ChangeDiceUsecase } from '@data/usecases';
 
 import {
-  makeChangeDicePublisher,
   makeDiceDAO,
+  makeDiceHydrator,
   makeGetDiceUsecase,
   makeGetPlayerUsecase,
 } from '@main/factories';
 
 export function makeChangeDiceUsecase(): IChangeDiceUsecase {
-  const changeDicePublisher = makeChangeDicePublisher();
   const diceDAO = makeDiceDAO();
+  const diceHydrator = makeDiceHydrator();
   const getDice = makeGetDiceUsecase();
   const getPlayer = makeGetPlayerUsecase();
 
   return new ChangeDiceUsecase({
-    changeDicePublisher,
     diceDAO,
+    diceHydrator,
     getDice,
     getPlayer,
   });

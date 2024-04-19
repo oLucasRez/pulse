@@ -1,25 +1,23 @@
 import { IWatchDicesUsecase } from '@domain/usecases';
 
 import { IDiceDAO } from '@data/dao';
-import { DiceHydrator } from '@data/hydration';
-import { FetchDicesObserver } from '@data/observers';
+import { IDiceHydrator } from '@data/hydration';
 
 export class WatchDicesUsecase implements IWatchDicesUsecase {
   private readonly diceDAO: IDiceDAO;
-  private readonly fetchDicesPublisher: FetchDicesObserver.Publisher;
-
-  public constructor({ diceDAO, fetchDicesPublisher }: Deps) {
+  private readonly diceHydrator: IDiceHydrator;
+  public constructor({ diceDAO, diceHydrator }: Deps) {
     this.diceDAO = diceDAO;
-    this.fetchDicesPublisher = fetchDicesPublisher;
+    this.diceHydrator = diceHydrator;
   }
 
   public async execute(
     callback: IWatchDicesUsecase.Callback,
   ): Promise<IWatchDicesUsecase.Response> {
-    const unsubscribe = this.diceDAO.watch((dtos) => {
-      const dices = dtos.map(DiceHydrator.hydrate);
-
-      this.fetchDicesPublisher.notifyFetchDices(dices);
+    const unsubscribe = this.diceDAO.watch(async (dtos) => {
+      const dices = await Promise.all(
+        dtos.map((dto) => this.diceHydrator.hydrate(dto)),
+      );
 
       callback(dices);
     });
@@ -30,5 +28,5 @@ export class WatchDicesUsecase implements IWatchDicesUsecase {
 
 type Deps = {
   diceDAO: IDiceDAO;
-  fetchDicesPublisher: FetchDicesObserver.Publisher;
+  diceHydrator: IDiceHydrator;
 };

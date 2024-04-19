@@ -2,14 +2,14 @@ import { IWatchSubjectsUsecase } from '@domain/usecases';
 
 import { WatchSubjectsUsecase } from '@data/usecases';
 
-import { makeFetchSubjectsPublisher, makeSubjectDAO } from '@main/factories';
+import { makeSubjectDAO, makeSubjectHydrator } from '@main/factories';
 
 export function makeWatchSubjectsUsecase(): IWatchSubjectsUsecase {
-  const fetchSubjectsPublisher = makeFetchSubjectsPublisher();
   const subjectDAO = makeSubjectDAO();
+  const subjectHydrator = makeSubjectHydrator();
 
   return new WatchSubjectsUsecase({
-    fetchSubjectsPublisher,
     subjectDAO,
+    subjectHydrator,
   });
 }

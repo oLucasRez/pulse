@@ -1,15 +1,15 @@
-import { IGetSubjectUsecase } from '@domain/usecases';
+import { IGetSubjectsUsecase } from '@domain/usecases';
 
-import { GetSubjectUsecase } from '@data/usecases';
+import { GetSubjectsUsecase } from '@data/usecases';
 
-import { makeFetchSubjectPublisher, makeSubjectDAO } from '@main/factories';
+import { makeSubjectDAO, makeSubjectHydrator } from '@main/factories';
 
-export function makeGetSubjectsUsecase(): IGetSubjectUsecase {
-  const fetchSubjectPublisher = makeFetchSubjectPublisher();
+export function makeGetSubjectsUsecase(): IGetSubjectsUsecase {
   const subjectDAO = makeSubjectDAO();
+  const subjectHydrator = makeSubjectHydrator();
 
-  return new GetSubjectUsecase({
-    fetchSubjectPublisher,
+  return new GetSubjectsUsecase({
     subjectDAO,
+    subjectHydrator,
   });
 }

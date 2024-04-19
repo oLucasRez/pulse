@@ -1,14 +1,13 @@
 import { FC, useEffect } from 'react';
 
-import { usePlayerUsecases, useRoundUsecases } from '@presentation/contexts';
+import { usePlayer } from '@presentation/hooks';
 
 import { useMutateSubjectModal } from '../../hooks';
 
 import { Map, PlayersList, Pulses } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
-  const { currentPlayer } = useRoundUsecases();
-  const { myPlayer } = usePlayerUsecases();
+  const { myPlayer, currentPlayer } = usePlayer();
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 

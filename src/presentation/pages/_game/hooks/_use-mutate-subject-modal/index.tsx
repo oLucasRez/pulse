@@ -5,8 +5,7 @@ import { UnknownError } from '@domain/errors';
 import { SubjectModel } from '@domain/models';
 import { enumToArray } from '@domain/utils';
 
-import { usePlayerUsecases, useSubjectUsecases } from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { usePlayer, useStates, useSubject } from '@presentation/hooks';
 import { darken, getColor } from '@presentation/styles/mixins';
 import { alertError, getRandomEmoji } from '@presentation/utils';
 
@@ -29,9 +28,9 @@ export function useMutateSubjectModal(
   } = props;
 
   const { mySubject, createMySubject, createSubject, changeSubject } =
-    useSubjectUsecases();
+    useSubject();
 
-  const { myPlayer } = usePlayerUsecases();
+  const { myPlayer } = usePlayer();
 
   const [s, set] = useStates({
     isMyFirstSubject: !mySubject,

@@ -2,16 +2,14 @@ import { PlayerModel } from '@domain/models';
 import { IGetPlayersUsecase } from '@domain/usecases';
 
 import { IPlayerDAO } from '@data/dao';
-import { PlayerHydrator } from '@data/hydration';
-import { FetchPlayersObserver } from '@data/observers';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class GetPlayersUsecase implements IGetPlayersUsecase {
-  private readonly fetchPlayersPublisher: FetchPlayersObserver.Publisher;
   private readonly playerDAO: IPlayerDAO;
-
-  public constructor({ fetchPlayersPublisher, playerDAO }: Deps) {
-    this.fetchPlayersPublisher = fetchPlayersPublisher;
+  private readonly playerHydrator: IPlayerHydrator;
+  public constructor({ playerDAO, playerHydrator }: Deps) {
     this.playerDAO = playerDAO;
+    this.playerHydrator = playerHydrator;
   }
 
   public async execute(
@@ -19,13 +17,13 @@ export class GetPlayersUsecase implements IGetPlayersUsecase {
   ): Promise<PlayerModel[]> {
     const { includeBanned = false } = options;
 
-    const dto = includeBanned
+    const dtos = includeBanned
       ? await this.playerDAO.getAll()
       : await this.playerDAO.getUnbanned();
 
-    const players = dto.map(PlayerHydrator.hydrate);
-
-    this.fetchPlayersPublisher.notifyFetchPlayers(players);
+    const players = await Promise.all(
+      dtos.map((dto) => this.playerHydrator.hydrate(dto)),
+    );
 
     if (includeBanned) return players;
 
@@ -34,6 +32,6 @@ export class GetPlayersUsecase implements IGetPlayersUsecase {
 }
 
 type Deps = {
-  fetchPlayersPublisher: FetchPlayersObserver.Publisher;
   playerDAO: IPlayerDAO;
+  playerHydrator: IPlayerHydrator;
 };

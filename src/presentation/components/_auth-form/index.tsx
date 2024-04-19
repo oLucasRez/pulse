@@ -4,8 +4,7 @@ import { useForm } from 'react-hook-form';
 import { UserModel } from '@domain/models';
 
 import { githubIcon, googleIcon } from '@presentation/assets';
-import { useAuthUsecases } from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+import { useStates, useUser } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import { Container } from './styles';
@@ -28,7 +27,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
     signUpWithCredentials,
     signInWithProvider,
     signInAnonymously,
-  } = useAuthUsecases();
+  } = useUser();
 
   const handleAuth = (me: UserModel) =>
     onAuth?.(me)?.finally(set('signing', false));

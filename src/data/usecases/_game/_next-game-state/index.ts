@@ -8,28 +8,26 @@ import {
 } from '@domain/usecases';
 
 import { IGameDAO } from '@data/dao';
-import { GameHydrator } from '@data/hydration';
-import { ChangeGameObserver } from '@data/observers';
+import { IGameHydrator } from '@data/hydration';
 
 export class NextGameStateUsecase implements INextGameStateUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly passTurn: IPassTurnUsecase;
   private readonly startRound: IStartRoundUsecase;
-  private readonly changeGamePublisher: ChangeGameObserver.Publisher;
   private readonly gameDAO: IGameDAO;
-
+  private readonly gameHydrator: IGameHydrator;
   public constructor({
     getCurrentGame,
     passTurn,
     startRound,
-    changeGamePublisher,
     gameDAO,
+    gameHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
     this.passTurn = passTurn;
     this.startRound = startRound;
-    this.changeGamePublisher = changeGamePublisher;
     this.gameDAO = gameDAO;
+    this.gameHydrator = gameHydrator;
   }
 
   public async execute(): Promise<GameModel> {
@@ -123,9 +121,7 @@ export class NextGameStateUsecase implements INextGameStateUsecase {
 
     const dto = await this.gameDAO.update(currentGame.id, { state, voting });
 
-    const game = GameHydrator.hydrate(dto);
-
-    this.changeGamePublisher.notifyChangeGame(game);
+    const game = await this.gameHydrator.hydrate(dto);
 
     return game;
   }
@@ -135,6 +131,6 @@ type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   passTurn: IPassTurnUsecase;
   startRound: IStartRoundUsecase;
-  changeGamePublisher: ChangeGameObserver.Publisher;
   gameDAO: IGameDAO;
+  gameHydrator: IGameHydrator;
 };

@@ -3,19 +3,19 @@ import { IChangeGameUsecase } from '@domain/usecases';
 import { ChangeGameUsecase } from '@data/usecases';
 
 import {
-  makeChangeGamePublisher,
   makeGameDAO,
+  makeGameHydrator,
   makeGetCurrentGameUsecase,
 } from '@main/factories';
 
 export function makeChangeGameUsecase(): IChangeGameUsecase {
   const gameDAO = makeGameDAO();
-  const changeGamePublisher = makeChangeGamePublisher();
+  const gameHydrator = makeGameHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
 
   return new ChangeGameUsecase({
     gameDAO,
-    changeGamePublisher,
+    gameHydrator,
     getCurrentGame,
   });
 }

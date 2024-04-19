@@ -4,10 +4,10 @@ import { LandmarkModel, PulseModel } from '@domain/models';
 import { Circle, Vector } from '@domain/utils';
 
 import {
-  useCentralPulseUsecases,
-  useSubjectPulseUsecases,
-} from '@presentation/contexts';
-import { useStates } from '@presentation/hooks';
+  useCentralPulse,
+  useStates,
+  useSubjectPulse,
+} from '@presentation/hooks';
 
 import { CrossingsProps } from './types';
 
@@ -54,8 +54,8 @@ export const Crossings: FC<CrossingsProps> = (props) => {
 
   const { mapSpace, onMouseMove } = useMapContext();
 
-  const { centralPulse } = useCentralPulseUsecases();
-  const { subjectPulses } = useSubjectPulseUsecases();
+  const { centralPulse } = useCentralPulse();
+  const { subjectPulses } = useSubjectPulse();
 
   const crossings = useMemo(() => {
     const value: Vector[] = [];
