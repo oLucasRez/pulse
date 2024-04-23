@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useContext, useMemo } from 'react';
 
 import { AnswerModel } from '@domain/models';
 
 import { AnswerContextProviderProps, AnswerContextValue } from './types';
 
 import { useGame } from '../_use-game';
+import { usePlayer } from '../_use-player';
 import { useUsecase } from '../_use-usecase';
 import { useWatch } from '../_use-watch';
 
@@ -20,6 +21,7 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
   ...props
 }) => {
   const { currentGame } = useGame();
+  const { myPlayer } = usePlayer();
 
   const queryClient = useQueryClient();
 
@@ -30,7 +32,19 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
     queryFn: () => getAnswers.execute(),
   });
 
+  const votingAnswer = useMemo(
+    () => answers.find(({ id }) => id === currentGame?.votingAnswerID) ?? null,
+    [answers, currentGame],
+  );
+
+  const pendingMyVote = useMemo(
+    () => !!myPlayer && !!votingAnswer && !(myPlayer.id in votingAnswer.votes),
+    [myPlayer, votingAnswer],
+  );
+
   const createAnswer = useUsecase(props.createAnswer);
+
+  const voteAnswer = useUsecase(props.voteAnswer);
 
   useWatch(async () => {
     if (currentGame)
@@ -43,7 +57,10 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
     <Context.Provider
       value={{
         answers,
+        votingAnswer,
+        pendingMyVote,
         createAnswer,
+        voteAnswer,
       }}
     >
       {children}

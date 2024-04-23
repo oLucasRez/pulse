@@ -1,9 +1,8 @@
-import { FC, Fragment, KeyboardEvent, useMemo } from 'react';
+import { FC, Fragment, KeyboardEvent } from 'react';
 
 import { Input, P } from '@presentation/components';
 import {
   useAnswer,
-  useGame,
   usePlayer,
   useQuestion,
   useStates,
@@ -16,43 +15,21 @@ import { QuestionProps, QuestionsProps } from './types';
 import { Landmark, useMapContext } from '..';
 
 export const Question: FC<QuestionProps> = (props) => {
-  const { id, description, authorID, position, onAnswer } = props;
+  const { id, description, color, solved, onAnswer } = props;
 
   const [s, set] = useStates({
     active: false,
     answerDescription: '',
-    creatingAnswer: false,
-    voted: false,
   });
 
   const { openBakingPaper, closeBakingPaper } = useMapContext();
-  const { players, myPlayer, currentPlayer } = usePlayer();
-  const { answers } = useAnswer();
-  const { currentGame, vote } = useGame();
-  const votingAnswer = useMemo(
-    () =>
-      answers.find((answer) => answer.id === currentGame?.voting?.answerID) ??
-      null,
-    [answers, currentGame],
-  );
-  const pendingVote =
-    !!currentGame?.voting?.votes &&
-    !!myPlayer?.id &&
-    !(myPlayer.id in currentGame.voting.votes);
-
-  const color = useMemo(
-    () =>
-      (authorID && players.find((value) => value.id === authorID)?.color) ||
-      null,
-    [authorID, players],
-  );
+  const { myPlayer, currentPlayer } = usePlayer();
+  const { answers, pendingMyVote, voteAnswer } = useAnswer();
 
   function handleVoteClick(value: boolean) {
     return () => {
-      if (!myPlayer) return;
-
-      s.voted = true;
-      vote(myPlayer.id, value).catch(alertError);
+      voteAnswer(value).catch(alertError);
+      closeBakingPaper();
     };
   }
 
@@ -62,61 +39,62 @@ export const Question: FC<QuestionProps> = (props) => {
     if (!s.answerDescription) return;
 
     onAnswer?.({ question: props, description: s.answerDescription });
+    closeBakingPaper();
   }
-
-  if (!color) return null;
 
   function renderAnswers() {
     return answers
       .filter(({ questionID }) => questionID === id)
-      .map((answer) => {
-        const color = players.find(
-          (player) => player.id === answer.authorID,
-        )?.color;
+      .map((answer) => (
+        <Fragment key={answer.id}>
+          <P
+            // style
+            className='handwriting'
+            style={{
+              color: getColor(answer.color),
+              textDecoration: answer.state === 'fact' ? 'underline' : undefined,
+            }}
+          >
+            {answer.description}
+          </P>
 
-        return (
-          <Fragment key={answer.id}>
-            <P
-              // style
-              className='handwriting'
-              style={{ color: color ? getColor(color) : undefined }}
-            >
-              {answer.description}
+          {answer.state === 'voting' && pendingMyVote && (
+            <P className='handwriting' style={{ fontSize: '0.75rem' }}>
+              {'('} Turn in fact?{' '}
+              <button
+                // style
+                className='handwriting'
+                style={{ fontSize: '0.75rem' }}
+                // handle
+                onClick={handleVoteClick(true)}
+              >
+                Yes
+              </button>{' '}
+              <button
+                // style
+                className='handwriting'
+                style={{ fontSize: '0.75rem' }}
+                // handle
+                onClick={handleVoteClick(false)}
+              >
+                No
+              </button>{' '}
+              {')'}
             </P>
-
-            {votingAnswer?.id === answer.id && pendingVote && !s.voted && (
-              <P className='handwriting' style={{ fontSize: '0.75rem' }}>
-                {'('} Turn in fact?{' '}
-                <button
-                  className='handwriting'
-                  style={{ fontSize: '0.75rem' }}
-                  onClick={handleVoteClick(true)}
-                >
-                  Yes
-                </button>{' '}
-                <button
-                  className='handwriting'
-                  style={{ fontSize: '0.75rem' }}
-                  onClick={handleVoteClick(false)}
-                >
-                  No
-                </button>{' '}
-                {')'}
-              </P>
-            )}
-          </Fragment>
-        );
-      });
+          )}
+        </Fragment>
+      ));
   }
 
   function renderAnswerInput() {
     if (!onAnswer) return null;
     if (!myPlayer) return null;
+    if (solved) return null;
 
     return (
       <Input
         // style
-        multiline
+        variant='baking-paper'
         className='handwriting'
         placeholderColor={getColor(myPlayer.color)}
         placeholderOpacity={0.6}
@@ -125,11 +103,8 @@ export const Question: FC<QuestionProps> = (props) => {
           background: 'none',
           border: 'none',
           padding: 0,
-          width: '30rem',
           outline: 'none',
-          borderRadius: 0,
         }}
-        disabled={s.creatingAnswer}
         // params
         placeholder='Answer...'
         // handle
@@ -141,10 +116,8 @@ export const Question: FC<QuestionProps> = (props) => {
 
   return (
     <Landmark
-      description={description}
-      position={position}
+      {...props}
       symbol='?'
-      color={color}
       onClick={() =>
         openBakingPaper(
           <div

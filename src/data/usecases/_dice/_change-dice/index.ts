@@ -31,7 +31,7 @@ export class ChangeDiceUsecase implements IChangeDiceUsecase {
     id: string,
     payload: IChangeDiceUsecase.Payload,
   ): Promise<DiceModel> {
-    const { value, ownerID } = payload;
+    const { value, position, ownerID } = payload;
 
     let dice = await this.getDice.execute(id);
     if (!dice)
@@ -52,6 +52,7 @@ export class ChangeDiceUsecase implements IChangeDiceUsecase {
 
     const dto = await this.diceDAO.update(id, {
       value,
+      position: position && position.toJSON(),
       ownerID,
     });
 

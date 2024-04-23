@@ -6,7 +6,7 @@ export interface PulseModel<L extends LandmarkModel> extends Model {
   origin: Vector;
   gap: number;
   amount: number;
-  landmarkID: L['id'];
+  landmarkID: L['id'] | null;
 }
 
 export namespace PulseModel {
@@ -14,7 +14,7 @@ export namespace PulseModel {
     origin: Vector.JSON;
     gap: number;
     amount: number;
-    landmarkID: string;
+    landmarkID: string | null;
   }
 }
 

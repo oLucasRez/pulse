@@ -12,7 +12,6 @@ export interface SubjectModel extends LandmarkModel {
 
 export namespace SubjectModel {
   export interface DTO extends LandmarkModel.DTO {
-    color: Color;
     icon: string;
     authorID: string;
     pathIDs: string[];

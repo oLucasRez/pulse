@@ -1,20 +1,34 @@
+import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import {
   IGetCurrentDiceUsecase,
+  IGetCurrentGameUsecase,
   IGetCurrentPlayerUsecase,
   IGetDiceUsecase,
 } from '@domain/usecases';
 
 export class GetCurrentDiceUsecase implements IGetCurrentDiceUsecase {
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getCurrentPlayer: IGetCurrentPlayerUsecase;
   private readonly getDice: IGetDiceUsecase;
-  public constructor({ getCurrentPlayer, getDice }: Deps) {
+  public constructor({ getCurrentGame, getCurrentPlayer, getDice }: Deps) {
+    this.getCurrentGame = getCurrentGame;
     this.getCurrentPlayer = getCurrentPlayer;
     this.getDice = getDice;
   }
 
-  public async execute(roundID: string): Promise<DiceModel | null> {
-    const currentPlayer = await this.getCurrentPlayer.execute(roundID);
+  public async execute(): Promise<DiceModel | null> {
+    const currentGame = await this.getCurrentGame.execute();
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
+    if (!currentGame.roundID)
+      throw new ForbiddenError({
+        metadata: { tried: 'get current-dice without round' },
+      });
+
+    const currentPlayer = await this.getCurrentPlayer.execute(
+      currentGame.roundID,
+    );
 
     if (!currentPlayer?.diceID) return null;
 
@@ -25,6 +39,7 @@ export class GetCurrentDiceUsecase implements IGetCurrentDiceUsecase {
 }
 
 type Deps = {
+  getCurrentGame: IGetCurrentGameUsecase;
   getCurrentPlayer: IGetCurrentPlayerUsecase;
   getDice: IGetDiceUsecase;
 };

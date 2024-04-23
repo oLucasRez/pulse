@@ -5,7 +5,6 @@ import {
   IDeleteGameUsecase,
   IGetGamesUsecase,
   IStartGameUsecase,
-  IVoteUsecase,
   IWatchGamesUsecase,
 } from '@domain/usecases';
 
@@ -19,7 +18,6 @@ export type GameContextValue = {
   changeGame: IChangeGameUsecase['execute'];
   deleteGame: IDeleteGameUsecase['execute'];
   startGame: IStartGameUsecase['execute'];
-  vote: IVoteUsecase['execute'];
 };
 
 export interface GameContextProviderProps extends ContextProviderProps {
@@ -29,5 +27,4 @@ export interface GameContextProviderProps extends ContextProviderProps {
   changeGame: IChangeGameUsecase;
   deleteGame: IDeleteGameUsecase;
   startGame: IStartGameUsecase;
-  vote: IVoteUsecase;
 }

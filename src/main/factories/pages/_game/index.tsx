@@ -13,6 +13,7 @@ import {
   makeCentralPulseContextProvider,
   makeDiceContextProvider,
   makeGameContextProvider,
+  makeLightSpotContextProvider,
   makePlayerContextProvider,
   makeQuestionContextProvider,
   makeRoundContextProvider,
@@ -26,6 +27,7 @@ const GamePage = lazy(() => import('@presentation/pages/_game'));
 export function makeGamePage(): ReactElement {
   const page = [
     // inner
+    makeLightSpotContextProvider,
     makeAnswerContextProvider,
     makeQuestionContextProvider,
     makeSubjectPulseContextProvider,

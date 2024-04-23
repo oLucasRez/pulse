@@ -16,6 +16,7 @@ export type PlayerContextValue = {
   currentPlayer: PlayerModel | null;
   currentLightSpotPlayer: PlayerModel | null;
   isMyTurn: boolean;
+  isMyLightSpotTurn: boolean;
   fetchingPlayers: boolean;
   createPlayer: ICreatePlayerUsecase['execute'];
   changePlayer: IChangePlayerUsecase['execute'];

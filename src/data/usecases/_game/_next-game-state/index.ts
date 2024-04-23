@@ -2,6 +2,7 @@ import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { GameModel } from '@domain/models';
 import {
   IGetCurrentGameUsecase,
+  IGetRoundUsecase,
   INextGameStateUsecase,
   IPassTurnUsecase,
   IStartRoundUsecase,
@@ -12,18 +13,21 @@ import { IGameHydrator } from '@data/hydration';
 
 export class NextGameStateUsecase implements INextGameStateUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
+  private readonly getRound: IGetRoundUsecase;
   private readonly passTurn: IPassTurnUsecase;
   private readonly startRound: IStartRoundUsecase;
   private readonly gameDAO: IGameDAO;
   private readonly gameHydrator: IGameHydrator;
   public constructor({
     getCurrentGame,
+    getRound,
     passTurn,
     startRound,
     gameDAO,
     gameHydrator,
   }: Deps) {
     this.getCurrentGame = getCurrentGame;
+    this.getRound = getRound;
     this.passTurn = passTurn;
     this.startRound = startRound;
     this.gameDAO = gameDAO;
@@ -47,7 +51,6 @@ export class NextGameStateUsecase implements INextGameStateUsecase {
       });
 
     let state = currentGame.state;
-    let voting: null | undefined = undefined;
 
     if (state[0] === 'initial:state') {
       state = ['creating:subjects'];
@@ -96,39 +99,43 @@ export class NextGameStateUsecase implements INextGameStateUsecase {
         state = ['creating:answers', 'vote:answer'];
       } else if (state[1] === 'vote:answer') {
         const round = await this.passTurn.execute(currentGame.roundID);
-        voting = null;
 
         if (round.finished) {
-          state = ['creating:lightSpot'];
+          state = ['creating:lightSpot', 'roll:dice'];
           await this.startRound.execute(currentGame.roundID, 'clockwise');
-        }
+        } else state = ['creating:answers', 'create:answer'];
       }
     } else if (state[0] === 'creating:lightSpot') {
-      const lightSpotRound = await this.passTurn.execute(
-        currentGame.lightSpotRoundID,
-      );
+      if (state[1] === 'roll:dice') {
+        state = ['creating:lightSpot', 'create:subject'];
+      } else if (state[1] === 'create:subject') {
+        const lightSpotRound = await this.getRound.execute(
+          currentGame.lightSpotRoundID,
+        );
 
-      if (lightSpotRound.finished) {
-        state = ['final:state'];
-      } else {
-        state = ['creating:questions', 'roll:dice'];
-        await this.startRound.execute(currentGame.roundID, 'clockwise');
+        if (lightSpotRound?.finished) {
+          state = ['final:state'];
+        } else {
+          await this.passTurn.execute(currentGame.lightSpotRoundID);
+
+          state = ['creating:questions', 'roll:dice'];
+          await this.startRound.execute(currentGame.roundID, 'clockwise');
+        }
       }
     }
 
     // initial:state -> creating:subjects -> creating:centralFact ┬> creating:questions -> creating:answers -> creating:lightSpot ┐
     //                                                            └---------------------------------------------------------------┘
 
-    const dto = await this.gameDAO.update(currentGame.id, { state, voting });
+    const dto = await this.gameDAO.update(currentGame.id, { state });
 
-    const game = await this.gameHydrator.hydrate(dto);
-
-    return game;
+    return this.gameHydrator.hydrate(dto);
   }
 }
 
 type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
+  getRound: IGetRoundUsecase;
   passTurn: IPassTurnUsecase;
   startRound: IStartRoundUsecase;
   gameDAO: IGameDAO;

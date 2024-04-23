@@ -19,8 +19,6 @@ export const GameExistsProxy: FC<GameExistsProxyProps> = (props) => {
     if (!params.id) navigateToLogin();
   }, []);
 
-  console.log('GameExistsProxy', { fetchingGames, games });
-
   if (fetchingGames) return <GlobalLoading />;
 
   if (!games.find(({ id }) => id === params.id)) return <Navigate.toHome />;

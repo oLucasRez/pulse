@@ -1,10 +1,6 @@
 import { FC, ReactNode } from 'react';
 
-import {
-  useCentralPulse,
-  useSubject,
-  useSubjectPulse,
-} from '@presentation/hooks';
+import { useLandmark, usePulse } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 import { PulseProps } from './types';
@@ -13,9 +9,9 @@ import { useMapContext } from '..';
 
 export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
   const { mapSpace } = useMapContext();
-  const { subjects } = useSubject();
+  const { landmarks } = useLandmark();
 
-  const landmark = subjects.find((value) => value.id === landmarkID);
+  const landmark = landmarks.find((value) => value.id === landmarkID);
 
   const c = mapSpace.mult(origin);
 
@@ -25,7 +21,7 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
       cx={c.x}
       cy={c.y}
       r={2}
-      fill={landmark ? getColor(landmark.color) : '#757575'}
+      fill={getColor(landmark?.color)}
       stroke='none'
     />,
   ];
@@ -40,7 +36,8 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
         cy={c.y}
         r={r}
         fill='none'
-        stroke={landmark ? getColor(landmark.color) : '#757575'}
+        stroke={getColor(landmark?.color)}
+        strokeDasharray={!landmark ? 4 : undefined}
       />,
     );
   }
@@ -49,14 +46,12 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
 };
 
 export const Pulses: FC = () => {
-  const { centralPulse } = useCentralPulse();
-  const { subjectPulses } = useSubjectPulse();
+  const { pulses } = usePulse();
 
   return (
     <>
-      {centralPulse && <Pulse {...centralPulse} />}
-      {subjectPulses.map((subjectPulse) => (
-        <Pulse key={subjectPulse.id} {...subjectPulse} />
+      {pulses.map((pulse) => (
+        <Pulse key={pulse.id} {...pulse} />
       ))}
     </>
   );

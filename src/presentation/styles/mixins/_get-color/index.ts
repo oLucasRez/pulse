@@ -1,6 +1,8 @@
 import { Color } from '@domain/enums';
 
-export function getColor(color: Color): string {
+export function getColor(color?: Color | null): string {
+  if (!color) return '#757575';
+
   const map: Record<Color, string> = {
     [Color.RED]: '#ff2f2f',
     [Color.GREEN]: '#22b122',

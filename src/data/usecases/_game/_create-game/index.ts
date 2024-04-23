@@ -38,10 +38,10 @@ export class CreateGameUsecase implements ICreateGameUsecase {
       title,
       config,
       state: ['initial:state'],
-      voting: null,
       centralPulseID: null,
       roundID: null,
       lightSpotRoundID: null,
+      votingAnswerID: null,
     });
 
     const game = await this.gameHydrator.hydrate(dto);

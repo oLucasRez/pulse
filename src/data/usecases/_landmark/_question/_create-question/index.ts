@@ -50,11 +50,11 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
       });
 
     const dto = await this.questionDAO.create({
-      position: mySubject.position,
+      position: mySubject.position.toJSON(),
       description,
+      color: null,
       subjectIDs,
       authorID: myPlayer.id,
-      factID: null,
     });
 
     await this.nextGameState.execute();

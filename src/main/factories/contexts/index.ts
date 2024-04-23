@@ -3,6 +3,7 @@ export * from './_central-fact';
 export * from './_central-pulse';
 export * from './_dice';
 export * from './_game';
+export * from './_light-spot';
 export * from './_player';
 export * from './_question';
 export * from './_round';

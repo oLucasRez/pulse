@@ -46,6 +46,8 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
 
   const createMySubject = useUsecase(props.createMySubject);
 
+  const createLightSpotSubject = useUsecase(props.createLightSpotSubject);
+
   const changeSubject = useUsecase(props.changeSubject);
 
   const changeMySubjectPosition = useUsecase(props.changeMySubjectPosition);
@@ -62,6 +64,7 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
         mySubject,
         createSubject,
         createMySubject,
+        createLightSpotSubject,
         changeSubject,
         changeMySubjectPosition,
       }}

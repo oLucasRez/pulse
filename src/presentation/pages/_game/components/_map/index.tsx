@@ -1,9 +1,10 @@
 import {
   createContext,
-  FC,
+  forwardRef,
   MouseEventHandler,
   ReactNode,
   useContext,
+  useImperativeHandle,
   useMemo,
   useRef,
 } from 'react';
@@ -33,7 +34,10 @@ const Context = createContext<MapContextValue>({
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
-export const Map: FC<MapProps> = (props) => {
+export const Map = forwardRef<MapContextValue, MapProps>(function Map(
+  props,
+  ref,
+) {
   const { children } = props;
 
   const [s, set] = useStates({
@@ -119,6 +123,8 @@ export const Map: FC<MapProps> = (props) => {
     closeBakingPaper: set('portal', null),
   };
 
+  useImperativeHandle(ref, () => contextValue, []);
+
   return (
     <Context.Provider value={contextValue}>
       <Container ref={divRef}>
@@ -150,4 +156,8 @@ export const Map: FC<MapProps> = (props) => {
       </Container>
     </Context.Provider>
   );
-};
+});
+
+export namespace Map {
+  export type Ref = MapContextValue;
+}

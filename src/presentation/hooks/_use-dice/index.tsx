@@ -47,7 +47,9 @@ export const DiceContextProvider: FC<DiceContextProviderProps> = ({
     queryClient.setQueryData<DiceModel[]>(queryKey, () => dices);
   }
 
-  const rollDice = useUsecase(props.rollDice);
+  const rollCurrentDice = useUsecase(props.rollCurrentDice);
+
+  const rollCurrentLightSpotDice = useUsecase(props.rollCurrentLightSpotDice);
 
   useWatch(async () => {
     if (currentGame) return watchDices.execute((dices) => replaceAll(dices));
@@ -55,7 +57,13 @@ export const DiceContextProvider: FC<DiceContextProviderProps> = ({
 
   return (
     <Context.Provider
-      value={{ dices, currentDice, currentLightSpotDice, rollDice }}
+      value={{
+        dices,
+        currentDice,
+        currentLightSpotDice,
+        rollCurrentDice,
+        rollCurrentLightSpotDice,
+      }}
     >
       {children}
     </Context.Provider>

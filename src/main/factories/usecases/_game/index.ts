@@ -5,7 +5,6 @@ export * from './_get-current-game';
 export * from './_get-game';
 export * from './_get-games';
 export * from './_next-game-state';
+export * from './_set-voting-answer';
 export * from './_start-game';
-export * from './_start-voting';
-export * from './_vote';
 export * from './_watch-current-game';

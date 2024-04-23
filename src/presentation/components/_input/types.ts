@@ -1,16 +1,18 @@
 import { ChangeEvent, CSSProperties, HTMLAttributes } from 'react';
 
 export type InputProps = Omit<
-  HTMLAttributes<HTMLTextAreaElement> & HTMLAttributes<HTMLInputElement>,
+  HTMLAttributes<HTMLTextAreaElement> &
+    HTMLAttributes<HTMLDivElement> &
+    HTMLAttributes<HTMLInputElement>,
   'onChange'
 > & {
-  multiline?: boolean;
+  variant?: 'single-line' | 'multiline' | 'baking-paper';
   placeholderColor?: CSSProperties['color'];
   placeholderOpacity?: CSSProperties['opacity'];
   disabled?: boolean;
   onChange?(
     value: string,
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: ChangeEvent<HTMLTextAreaElement | HTMLDivElement | HTMLInputElement>,
   ): void;
 };
 

@@ -25,7 +25,6 @@ import {
   PulseCreator,
   Pulses,
   Questions,
-  RollDiceEvent,
   Subjects,
 } from '../../components';
 
@@ -39,7 +38,7 @@ export const CreatingQuestionsState: FC = () => {
   });
 
   const { myPlayer, currentPlayer } = usePlayer();
-  const { currentDice, rollDice } = useDice();
+  const { currentDice, rollCurrentDice } = useDice();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { subjectPulses, createSubjectPulse } = useSubjectPulse();
@@ -83,8 +82,8 @@ export const CreatingQuestionsState: FC = () => {
       .finally(set('creatingQuestion', false));
   }
 
-  function handleRollDice({ dice }: RollDiceEvent) {
-    rollDice(dice.id).catch(alertError);
+  function handleRollDice() {
+    rollCurrentDice().catch(alertError);
   }
 
   function handleCreatePulse({ amount, gap, origin }: CreatePulseEvent) {
@@ -106,8 +105,8 @@ export const CreatingQuestionsState: FC = () => {
         }
       >
         <Pulses />
-        <Subjects />
         <Dices transparent />
+        <Subjects />
         <CentralFact />
         <Questions />
 

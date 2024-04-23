@@ -8,6 +8,5 @@ export namespace ICreateAnswerUsecase {
   export type Payload = {
     description: string;
     questionID: string;
-    authorID: string;
   };
 }

@@ -16,6 +16,7 @@ export class CreateCentralFactUsecase implements ICreateCentralFactUsecase {
     const dto = await this.centralFactDAO.create({
       position: { x: 0, y: 0 },
       description: '',
+      color: null,
     });
 
     const centralFact = await this.centralFactHydrator.hydrate(dto);

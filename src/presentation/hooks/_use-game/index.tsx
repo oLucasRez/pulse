@@ -38,8 +38,8 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
   );
 
   function replaceAll(games: GameModel[]): void {
-    console.log('replaceAll', games);
     queryClient.setQueryData<GameModel[]>(queryKey, () => games);
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
   }
 
   function replaceOrAppendData(game: GameModel): void {
@@ -50,6 +50,7 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
       newGames.splice(i, 1, game);
       return newGames;
     });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
   }
 
   function removeData(id: string): void {
@@ -60,6 +61,7 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
       newGames.splice(i, 1);
       return newGames;
     });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
   }
 
   const createGame = useUsecase(props.createGame, {
@@ -78,10 +80,6 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
     onSuccess: (game) => replaceOrAppendData(game),
   });
 
-  const vote = useUsecase(props.vote, {
-    onSuccess: (game) => replaceOrAppendData(game),
-  });
-
   useWatch(async () => {
     if (me) return watchGames.execute((games) => replaceAll(games));
   }, [me?.uid]);
@@ -96,7 +94,6 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
         changeGame,
         deleteGame,
         startGame,
-        vote,
       }}
     >
       {children}

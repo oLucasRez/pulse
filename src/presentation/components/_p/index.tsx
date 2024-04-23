@@ -3,11 +3,9 @@ import { forwardRef, ReactElement, useImperativeHandle, useRef } from 'react';
 import { PProps } from './types';
 
 export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
-  props,
+  { strokeWidth, stroke, ...props },
   ref,
 ) {
-  const { strokeWidth, stroke, ...rest } = props;
-
   function isInsideSVG(element: HTMLElement): boolean {
     let currentElement: HTMLElement | null = element;
 
@@ -50,15 +48,15 @@ export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
     <>
       {!!strokeWidth && !!stroke && (
         <p
-          {...rest}
+          {...props}
           style={{
-            ...rest.style,
+            ...props.style,
             WebkitTextStrokeWidth: strokeWidth * 2,
             WebkitTextStrokeColor: stroke,
           }}
         />
       )}
-      <p ref={_ref} {...rest} />
+      <p ref={_ref} {...props} />
     </>,
   );
 });

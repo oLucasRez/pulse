@@ -21,9 +21,7 @@ export class GetMyPlayerUsecase implements IGetMyPlayerUsecase {
 
     const dto = await this.playerDAO.getByUID(me.uid);
 
-    const player = dto ? await this.playerHydrator.hydrate(dto) : null;
-
-    return player;
+    return dto ? await this.playerHydrator.hydrate(dto) : null;
   }
 }
 

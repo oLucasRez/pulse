@@ -1,13 +1,15 @@
-import { AnswerModel, PlayerModel } from '@domain/models';
+import { Color } from '@domain/enums';
+import { PlayerModel } from '@domain/models';
 import { Vector } from '@domain/utils';
 
 import { LandmarkModel, SubjectModel } from '..';
 
 export interface QuestionModel extends LandmarkModel {
   position: Vector;
+  color: Color;
+  solved: boolean;
   subjectIDs: SubjectModel['id'][];
   authorID: PlayerModel['id'];
-  factID: AnswerModel['id'] | null;
 }
 
 export namespace QuestionModel {
@@ -15,6 +17,5 @@ export namespace QuestionModel {
     position: Vector.JSON;
     subjectIDs: string[];
     authorID: string;
-    factID: string | null;
   }
 }

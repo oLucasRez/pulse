@@ -8,6 +8,7 @@ export class CentralFactHydrator implements ICentralFactHydrator {
     return {
       id: dto.id,
       description: dto.description,
+      color: dto.color,
       position: Vector.fromJSON(dto.position),
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),

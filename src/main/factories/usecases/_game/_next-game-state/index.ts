@@ -6,6 +6,7 @@ import {
   makeGameDAO,
   makeGameHydrator,
   makeGetCurrentGameUsecase,
+  makeGetRoundUsecase,
   makePassTurnUsecase,
   makeStartRoundUsecase,
 } from '@main/factories';
@@ -14,6 +15,7 @@ export function makeNextGameStateUsecase(): INextGameStateUsecase {
   const gameDAO = makeGameDAO();
   const gameHydrator = makeGameHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
+  const getRound = makeGetRoundUsecase();
   const passTurn = makePassTurnUsecase();
   const startRound = makeStartRoundUsecase();
 
@@ -21,6 +23,7 @@ export function makeNextGameStateUsecase(): INextGameStateUsecase {
     gameDAO,
     gameHydrator,
     getCurrentGame,
+    getRound,
     passTurn,
     startRound,
   });

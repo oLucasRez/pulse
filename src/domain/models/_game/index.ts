@@ -1,14 +1,20 @@
-import { CentralPulseModel, Model, RoundModel, UserModel } from '..';
+import {
+  AnswerModel,
+  CentralPulseModel,
+  Model,
+  RoundModel,
+  UserModel,
+} from '..';
 
 export interface GameModel extends Model {
   uid: UserModel['uid'];
   title: string | null;
   config: GameModel.Config;
   state: GameModel.State;
-  voting: GameModel.Voting | null;
   centralPulseID: CentralPulseModel['id'] | null;
   roundID: RoundModel['id'] | null;
   lightSpotRoundID: RoundModel['id'] | null;
+  votingAnswerID: AnswerModel['id'] | null;
 }
 
 export namespace GameModel {
@@ -31,8 +37,32 @@ export namespace GameModel {
         ),
       ]
     | ['creating:answers', 'create:answer' | 'vote:answer']
-    | ['creating:lightSpot']
+    | ['creating:lightSpot', 'roll:dice' | 'create:subject']
     | ['final:state'];
+
+  // export const STATES: {
+  //   value: State[0];
+  //   subState?: State[1][];
+  // }[] = [
+  //   { value: 'initial:state' },
+  //   { value: 'creating:subjects' },
+  //   {
+  //     value: 'creating:centralFact',
+  //     subState: ['change:centralFact', 'roll:dice', 'update:dice:position'],
+  //   },
+  //   {
+  //     value: 'creating:questions',
+  //     subState: [
+  //       'roll:dice',
+  //       'create:subjectPulse',
+  //       'update:dice:position',
+  //       'create:question',
+  //     ],
+  //   },
+  //   { value: 'creating:answers', subState: ['create:answer', 'vote:answer'] },
+  //   { value: 'creating:lightSpot', subState: ['roll:dice', 'create:subject'] },
+  //   { value: 'final:state' },
+  // ];
 
   export type Config = {
     maxPlayers: number;
@@ -40,19 +70,14 @@ export namespace GameModel {
     dicesMode: DicesMode;
   };
 
-  export type Voting = {
-    answerID: string;
-    votes: Record<string, boolean>;
-  };
-
   export interface DTO extends Model.DTO {
     uid: string;
     title: string | null;
     config: GameModel.Config;
     state: GameModel.State;
-    voting: GameModel.Voting | null;
     centralPulseID: string | null;
     roundID: string | null;
     lightSpotRoundID: string | null;
+    votingAnswerID: string | null;
   }
 }

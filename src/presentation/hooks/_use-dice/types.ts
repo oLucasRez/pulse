@@ -1,7 +1,8 @@
 import { DiceModel } from '@domain/models';
 import {
   IGetDicesUsecase,
-  IRollDiceUsecase,
+  IRollCurrentDiceUsecase,
+  IRollCurrentLightSpotDiceUsecase,
   IWatchDicesUsecase,
 } from '@domain/usecases';
 
@@ -11,11 +12,13 @@ export type DiceContextValue = {
   dices: DiceModel[];
   currentDice: DiceModel | null;
   currentLightSpotDice: DiceModel | null;
-  rollDice: IRollDiceUsecase['execute'];
+  rollCurrentDice: IRollCurrentDiceUsecase['execute'];
+  rollCurrentLightSpotDice: IRollCurrentLightSpotDiceUsecase['execute'];
 };
 
 export interface DiceContextProviderProps extends ContextProviderProps {
   getDices: IGetDicesUsecase;
   watchDices: IWatchDicesUsecase;
-  rollDice: IRollDiceUsecase;
+  rollCurrentDice: IRollCurrentDiceUsecase;
+  rollCurrentLightSpotDice: IRollCurrentLightSpotDiceUsecase;
 }

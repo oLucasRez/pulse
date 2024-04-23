@@ -3,11 +3,7 @@ import { FC, useEffect, useMemo } from 'react';
 import { LandmarkModel, PulseModel } from '@domain/models';
 import { Circle, Vector } from '@domain/utils';
 
-import {
-  useCentralPulse,
-  useStates,
-  useSubjectPulse,
-} from '@presentation/hooks';
+import { usePulse, useStates } from '@presentation/hooks';
 
 import { CrossingsProps } from './types';
 
@@ -54,26 +50,20 @@ export const Crossings: FC<CrossingsProps> = (props) => {
 
   const { mapSpace, onMouseMove } = useMapContext();
 
-  const { centralPulse } = useCentralPulse();
-  const { subjectPulses } = useSubjectPulse();
+  const { pulses } = usePulse();
 
   const crossings = useMemo(() => {
     const value: Vector[] = [];
 
-    const pulses: PulseModel<LandmarkModel>[] = [];
-    if (centralPulse) pulses.push(centralPulse);
-    if (subjectPulses) pulses.push(...subjectPulses);
-
-    for (const pulse of pulses) {
+    for (const pulse of pulses)
       for (const circle of getCircles(pulse)) {
         const positions = calcCrossings(circle, targetCircle);
 
         value.push(...positions);
       }
-    }
 
     return value;
-  }, [targetCircle, centralPulse, subjectPulses]);
+  }, [targetCircle, pulses]);
 
   useEffect(() => onMouseMove(set('mouse')), []);
 

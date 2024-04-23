@@ -3,52 +3,17 @@ import { child, get, ref, remove, set, update } from 'firebase/database';
 import { NotFoundError } from '@domain/errors';
 import { Model } from '@domain/models';
 import { DeepPartial } from '@domain/types';
-import { isNonNullable, uuid } from '@domain/utils';
+import { deepMerge, uuid } from '@domain/utils';
 
 import { DatabaseProtocol } from '@data/protocols';
 import { FirebaseService } from '@data/services';
 
-const nullable = 'null-r9rng8bY6d';
+import { FirebaseRealtimeDBHelper } from '../../helpers';
 
 function clearGarbage(data: Record<any, any>): void {
   Object.keys(data).map((key) => {
     if ((data as any)[key] === undefined) delete (data as any)[key];
   });
-}
-
-function encodeData(data: Record<string, any>): any {
-  if (Array.isArray(data)) return data.map((item: any) => encodeData(item));
-
-  if (typeof data === 'object' && data !== null) {
-    Object.keys(data).forEach((key) => (data[key] = encodeData(data[key])));
-
-    return data;
-  }
-
-  if (!isNonNullable(data)) return nullable;
-
-  return data;
-}
-
-function decodeData(data: any): any {
-  if (Array.isArray(data)) return data.map((item: any) => decodeData(item));
-
-  if (typeof data === 'object' && data !== null) {
-    Object.keys(data).forEach((key) => (data[key] = decodeData(data[key])));
-
-    return data;
-  }
-
-  if (data === nullable) return null;
-
-  return data;
-}
-
-function parseSnapshot<M>(snapshot: Record<string, M>): (M & { id: string })[] {
-  return Object.entries(snapshot).map(([id, data]) => ({
-    id,
-    ...(data as any),
-  }));
 }
 
 export class RealtimeDatabase implements DatabaseProtocol {
@@ -59,9 +24,11 @@ export class RealtimeDatabase implements DatabaseProtocol {
     const dbRef = ref(FirebaseService.realtimeDB);
     const data = await get(child(dbRef, table))
       .then((snapshot) => {
-        if (snapshot.exists()) {
-          return parseSnapshot<M>(snapshot.val()).map(decodeData);
-        } else return [];
+        if (snapshot.exists())
+          return FirebaseRealtimeDBHelper.parseData<M>(snapshot.val()).map(
+            FirebaseRealtimeDBHelper.decodeData,
+          );
+        else return [];
       })
       .catch((error) => {
         console.error(error);
@@ -81,15 +48,13 @@ export class RealtimeDatabase implements DatabaseProtocol {
 
     const id = uuid();
 
-    encodeData(data);
+    const encodedData = FirebaseRealtimeDBHelper.encodeData(data);
 
     await set(ref(FirebaseService.realtimeDB, `${table}/${id}`), {
-      ...data,
+      ...encodedData,
       createdAt,
       updatedAt: createdAt,
     });
-
-    decodeData(data);
 
     return {
       id,
@@ -119,14 +84,15 @@ export class RealtimeDatabase implements DatabaseProtocol {
 
     clearGarbage(data);
 
-    encodeData(data);
+    const encodedData = FirebaseRealtimeDBHelper.encodeData(data);
 
-    await update(dbRef, { [path]: { ...oldData, ...data } });
+    const mergedData = deepMerge({}, oldData, encodedData);
 
-    decodeData(oldData);
-    decodeData(data);
+    await update(dbRef, { [path]: mergedData });
 
-    return { id, ...oldData, ...data } as M;
+    const decodedMergedData = FirebaseRealtimeDBHelper.decodeData(mergedData);
+
+    return { id, ...decodedMergedData } as M;
   }
 
   public async delete(table: string, id: string): Promise<void> {

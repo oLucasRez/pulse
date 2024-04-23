@@ -1,10 +1,6 @@
-import { Color } from '@domain/enums';
-import { Vector } from '@domain/utils';
+import { LandmarkModel } from '@domain/models';
 
-export interface LandmarkProps {
-  description: string;
-  position: Vector;
-  color?: Color;
+export interface LandmarkProps extends LandmarkModel {
   symbol: '#' | '?';
   onClick?(): void;
 }

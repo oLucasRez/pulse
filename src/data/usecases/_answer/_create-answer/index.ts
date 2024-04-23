@@ -1,26 +1,31 @@
+import { NotFoundError } from '@domain/errors';
 import { AnswerModel } from '@domain/models';
 import {
   ICreateAnswerUsecase,
+  IGetMyPlayerUsecase,
   INextGameStateUsecase,
-  IStartVotingUsecase,
+  ISetVotingAnswerUsecase,
 } from '@domain/usecases';
 
 import { IAnswerDAO } from '@data/dao';
 import { IAnswerHydrator } from '@data/hydration';
 
 export class CreateAnswerUsecase implements ICreateAnswerUsecase {
-  private readonly startVoting: IStartVotingUsecase;
+  private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly nextGameState: INextGameStateUsecase;
+  private readonly setVotingAnswer: ISetVotingAnswerUsecase;
   private readonly answerDAO: IAnswerDAO;
   private readonly answerHydrator: IAnswerHydrator;
   public constructor({
-    startVoting,
+    getMyPlayer,
     nextGameState,
+    setVotingAnswer,
     answerDAO,
     answerHydrator,
   }: Deps) {
-    this.startVoting = startVoting;
+    this.getMyPlayer = getMyPlayer;
     this.nextGameState = nextGameState;
+    this.setVotingAnswer = setVotingAnswer;
     this.answerDAO = answerDAO;
     this.answerHydrator = answerHydrator;
   }
@@ -28,27 +33,32 @@ export class CreateAnswerUsecase implements ICreateAnswerUsecase {
   public async execute(
     payload: ICreateAnswerUsecase.Payload,
   ): Promise<AnswerModel> {
-    const { description, questionID, authorID } = payload;
+    const { description, questionID } = payload;
+
+    const myPlayer = await this.getMyPlayer.execute();
+
+    if (!myPlayer)
+      throw new NotFoundError({ metadata: { entity: 'MyPlayer' } });
 
     const dto = await this.answerDAO.create({
       description,
       questionID,
-      authorID,
+      authorID: myPlayer.id,
+      votes: { [myPlayer.id]: true },
     });
 
-    const answer = await this.answerHydrator.hydrate(dto);
-
-    await this.startVoting.execute(dto.id);
+    await this.setVotingAnswer.execute(dto.id);
 
     await this.nextGameState.execute();
 
-    return answer;
+    return this.answerHydrator.hydrate(dto);
   }
 }
 
 type Deps = {
-  startVoting: IStartVotingUsecase;
+  getMyPlayer: IGetMyPlayerUsecase;
   nextGameState: INextGameStateUsecase;
+  setVotingAnswer: ISetVotingAnswerUsecase;
   answerDAO: IAnswerDAO;
   answerHydrator: IAnswerHydrator;
 };

@@ -9,7 +9,6 @@ import {
   makeDeleteGameUsecase,
   makeGetGamesUsecase,
   makeStartGameUsecase,
-  makeVoteUsecase,
   makeWatchGamesUsecase,
 } from '@main/factories';
 
@@ -22,7 +21,6 @@ export function makeGameContextProvider(
   const changeGame = makeChangeGameUsecase();
   const deleteGame = makeDeleteGameUsecase();
   const startGame = makeStartGameUsecase();
-  const vote = makeVoteUsecase();
 
   return (
     <GameContextProvider
@@ -32,7 +30,6 @@ export function makeGameContextProvider(
       changeGame={changeGame}
       deleteGame={deleteGame}
       startGame={startGame}
-      vote={vote}
       {...props}
     />
   );

@@ -63,10 +63,15 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
   );
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
+  const isMyLightSpotTurn =
+    !!currentLightSpotPlayer && currentLightSpotPlayer?.id === myPlayer?.id;
 
   function replaceAll(players: PlayerModel[]): void {
     queryClient.setQueryData<PlayerModel[]>(queryKey, () => players);
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'questions'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
   }
 
   const createPlayer = useUsecase(props.createPlayer);
@@ -90,6 +95,7 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
         currentLightSpotPlayer,
         fetchingPlayers,
         isMyTurn,
+        isMyLightSpotTurn,
         createPlayer,
         changePlayer,
         banPlayer,

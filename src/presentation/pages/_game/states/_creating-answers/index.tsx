@@ -32,9 +32,8 @@ export const CreatingAnswersState: FC = () => {
 
     s.creatingAnswer = true;
     createAnswer({
-      description: event.description,
       questionID: event.question.id,
-      authorID: currentPlayer.id,
+      description: event.description,
     })
       .catch(alertError)
       .finally(set('creatingAnswer', false));

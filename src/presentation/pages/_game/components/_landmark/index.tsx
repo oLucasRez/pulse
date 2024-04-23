@@ -30,7 +30,7 @@ export const Landmark: FC<LandmarkProps> = ({
   const position = mapSpace.mult(props.position);
   const descriptionPosition = position.sum(descriptionOffset);
 
-  const color = props.color ? getColor(props.color) : '#757575';
+  const color = getColor(props.color);
 
   return (
     <>

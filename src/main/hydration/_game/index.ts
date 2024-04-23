@@ -10,10 +10,10 @@ export class GameHydrator implements IGameHydrator {
       title: dto.title,
       config: dto.config,
       state: dto.state,
-      voting: dto.voting,
       centralPulseID: dto.centralPulseID,
       roundID: dto.roundID,
       lightSpotRoundID: dto.lightSpotRoundID,
+      votingAnswerID: dto.votingAnswerID,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };

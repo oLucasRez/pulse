@@ -21,7 +21,6 @@ import {
   Map,
   PlayersList,
   Pulses,
-  RollDiceEvent,
   Subjects,
 } from '../../components';
 
@@ -31,7 +30,7 @@ export const CreatingCentralFactState: FC = () => {
   const { myPlayer, currentPlayer } = usePlayer();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
-  const { currentDice, rollDice } = useDice();
+  const { currentDice, rollCurrentDice } = useDice();
   const { centralPulse } = useCentralPulse();
 
   const {
@@ -44,6 +43,7 @@ export const CreatingCentralFactState: FC = () => {
     description: centralFact?.description,
     changingCentralFact: false,
     dicePosition: mySubject?.position ?? null,
+    dicePositioned: false,
   });
 
   useEffect(() => {
@@ -69,6 +69,7 @@ export const CreatingCentralFactState: FC = () => {
     if (currentGame && state !== 'update:dice:position') return;
     if (!centralPulse) return;
     if (!currentDice?.value) return;
+    if (s.dicePositioned) return;
 
     s.dicePosition = vector.norm().mult(currentDice.value);
   }
@@ -82,12 +83,13 @@ export const CreatingCentralFactState: FC = () => {
     const { dicePosition } = s;
 
     s.dicePosition = null;
+    s.dicePositioned = true;
 
     changeMySubjectPosition(dicePosition).catch(alertError);
   }
 
-  function handleDiceRoll({ dice }: RollDiceEvent) {
-    rollDice(dice.id).catch(alertError);
+  function handleDiceRoll() {
+    rollCurrentDice().catch(alertError);
   }
 
   if (!currentGame) return null;

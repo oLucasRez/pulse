@@ -5,7 +5,8 @@ import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeGetDicesUsecase,
-  makeRollDiceUsecase,
+  makeRollCurrentDiceUsecase,
+  makeRollCurrentLightSpotDiceUsecase,
   makeWatchDicesUsecase,
 } from '@main/factories';
 
@@ -14,13 +15,15 @@ export function makeDiceContextProvider(
 ): ReactElement {
   const getDices = makeGetDicesUsecase();
   const watchDices = makeWatchDicesUsecase();
-  const rollDice = makeRollDiceUsecase();
+  const rollCurrentDice = makeRollCurrentDiceUsecase();
+  const rollCurrentLightSpotDice = makeRollCurrentLightSpotDiceUsecase();
 
   return (
     <DiceContextProvider
       getDices={getDices}
       watchDices={watchDices}
-      rollDice={rollDice}
+      rollCurrentDice={rollCurrentDice}
+      rollCurrentLightSpotDice={rollCurrentLightSpotDice}
       {...props}
     />
   );

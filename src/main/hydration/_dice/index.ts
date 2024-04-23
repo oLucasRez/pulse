@@ -25,7 +25,11 @@ export class DiceHydrator implements IDiceHydrator {
       sides: dto.sides,
       value: dto.value,
       ownerID: dto.ownerID,
-      position: subject?.position ? Vector.fromJSON(subject.position) : null,
+      position: dto.position
+        ? Vector.fromJSON(dto.position)
+        : subject?.position
+        ? Vector.fromJSON(subject.position)
+        : null,
       color: owner?.color ?? null,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),

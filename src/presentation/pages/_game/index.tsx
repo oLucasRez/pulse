@@ -8,8 +8,10 @@ import { useGame, useNavigate, usePlayer, useUser } from '@presentation/hooks';
 import {
   CreatingAnswersState,
   CreatingCentralFactState,
+  CreatingLightSpotState,
   CreatingQuestionsState,
   CreatingSubjectsState,
+  FinalState,
   InitialState,
 } from './states';
 
@@ -44,8 +46,8 @@ const GamePage: FC = () => {
       'creating:centralFact': <CreatingCentralFactState />,
       'creating:questions': <CreatingQuestionsState />,
       'creating:answers': <CreatingAnswersState />,
-      'creating:lightSpot': null,
-      'final:state': null,
+      'creating:lightSpot': <CreatingLightSpotState />,
+      'final:state': <FinalState />,
     };
 
     return (

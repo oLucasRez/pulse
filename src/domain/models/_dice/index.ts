@@ -15,6 +15,7 @@ export namespace DiceModel {
   export interface DTO extends Model.DTO {
     sides: number;
     value: number | null;
+    position: Vector | null;
     ownerID: string | null;
   }
 }
