@@ -30,8 +30,7 @@ export class CreateSubjectUsecase implements ICreateSubjectUsecase {
       description,
       color,
       icon,
-      authorID: myPlayer.id,
-      pathIDs: [],
+      order: myPlayer.order,
     });
 
     const subject = await this.subjectHydrator.hydrate(dto);

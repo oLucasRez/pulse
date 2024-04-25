@@ -2,14 +2,16 @@ import { IGetCurrentPlayerUsecase } from '@domain/usecases';
 
 import { GetCurrentPlayerUsecase } from '@data/usecases';
 
-import { makeGetPlayerUsecase, makeGetRoundUsecase } from '@main/factories';
+import {
+  makeGetRoundUsecase,
+  makePlayerDAO,
+  makePlayerHydrator,
+} from '@main/factories';
 
 export function makeGetCurrentPlayerUsecase(): IGetCurrentPlayerUsecase {
-  const getPlayer = makeGetPlayerUsecase();
   const getRound = makeGetRoundUsecase();
+  const playerDAO = makePlayerDAO();
+  const playerHidrator = makePlayerHydrator();
 
-  return new GetCurrentPlayerUsecase({
-    getPlayer,
-    getRound,
-  });
+  return new GetCurrentPlayerUsecase({ getRound, playerDAO, playerHidrator });
 }

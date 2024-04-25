@@ -1,6 +1,6 @@
 import { IDiceHydrator } from '@data/hydration';
 
-import { makePlayerDAO, makeSubjectDAO } from '@main/factories/dao';
+import { makePlayerDAO, makeSubjectDAO } from '@main/factories';
 import { DiceHydrator } from '@main/hydration';
 
 export function makeDiceHydrator(): IDiceHydrator {

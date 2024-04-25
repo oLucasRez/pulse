@@ -14,6 +14,7 @@ export class PlayerDAO implements IPlayerDAO {
   private currentGameID: string | null;
   private playersByID: Map<string, PlayerModel.DTO>;
   private playersByUID: Map<string, PlayerModel.DTO>;
+  private playersByOrder: Map<number, PlayerModel.DTO>;
 
   private readonly database: DatabaseProtocol;
   private readonly socket: SocketProtocol;
@@ -29,6 +30,7 @@ export class PlayerDAO implements IPlayerDAO {
     this.currentGameID = null;
     this.playersByID = new Map();
     this.playersByUID = new Map();
+    this.playersByOrder = new Map();
   }
 
   private async getTable(): Promise<string> {
@@ -43,9 +45,11 @@ export class PlayerDAO implements IPlayerDAO {
   private fillCache(players: PlayerModel.DTO[]): void {
     this.playersByID.clear();
     this.playersByUID.clear();
+    this.playersByOrder.clear();
     players.map((player) => {
       this.playersByID.set(player.id, player);
       this.playersByUID.set(player.uid, player);
+      this.playersByOrder.set(player.order, player);
     });
   }
 
@@ -101,6 +105,12 @@ export class PlayerDAO implements IPlayerDAO {
     await this.fetchPlayers();
 
     return this.playersByUID.get(uid) ?? null;
+  }
+
+  public async getByOrder(order: number): Promise<PlayerModel.DTO | null> {
+    await this.fetchPlayers();
+
+    return this.playersByOrder.get(order) ?? null;
   }
 
   public async create(

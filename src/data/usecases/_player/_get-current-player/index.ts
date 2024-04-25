@@ -1,39 +1,33 @@
-import { NotFoundError } from '@domain/errors';
 import { PlayerModel } from '@domain/models';
-import {
-  IGetCurrentPlayerUsecase,
-  IGetPlayerUsecase,
-  IGetRoundUsecase,
-} from '@domain/usecases';
+import { IGetCurrentPlayerUsecase, IGetRoundUsecase } from '@domain/usecases';
+
+import { IPlayerDAO } from '@data/dao';
+import { IPlayerHydrator } from '@data/hydration';
 
 export class GetCurrentPlayerUsecase implements IGetCurrentPlayerUsecase {
-  private readonly getPlayer: IGetPlayerUsecase;
   private readonly getRound: IGetRoundUsecase;
-  public constructor({ getPlayer, getRound }: Deps) {
-    this.getPlayer = getPlayer;
+  private readonly playerDAO: IPlayerDAO;
+  private readonly playerHidrator: IPlayerHydrator;
+  public constructor({ getRound, playerDAO, playerHidrator }: Deps) {
     this.getRound = getRound;
+    this.playerDAO = playerDAO;
+    this.playerHidrator = playerHidrator;
   }
 
-  public async execute(roundID: string): Promise<PlayerModel | null> {
-    const round = await this.getRound.execute(roundID);
+  public async execute(): Promise<PlayerModel | null> {
+    const round = await this.getRound.execute();
 
-    if (!round)
-      throw new NotFoundError({
-        metadata: { entity: 'Round', prop: 'id', value: roundID },
-      });
-
+    if (!round) return null;
     if (round.i === null) return null;
 
-    const currentPlayerID = round.playerIDs[round.i];
-    if (!currentPlayerID) return null;
+    const dto = await this.playerDAO.getByOrder(round.i);
 
-    const currentPlayer = await this.getPlayer.execute(currentPlayerID);
-
-    return currentPlayer;
+    return dto && this.playerHidrator.hydrate(dto);
   }
 }
 
 type Deps = {
-  getPlayer: IGetPlayerUsecase;
   getRound: IGetRoundUsecase;
+  playerDAO: IPlayerDAO;
+  playerHidrator: IPlayerHydrator;
 };

@@ -4,6 +4,7 @@ import { DeepPartial } from '@domain/types';
 export interface ISubjectPulseDAO {
   getAll(): Promise<SubjectPulseModel.DTO[]>;
   getByID(id: string): Promise<SubjectPulseModel.DTO | null>;
+  getByLandmarkID(landmarkID: string): Promise<SubjectPulseModel.DTO[]>;
   create(
     payload: ISubjectPulseDAO.CreatePayload,
   ): Promise<SubjectPulseModel.DTO>;

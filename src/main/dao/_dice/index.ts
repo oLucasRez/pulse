@@ -13,6 +13,7 @@ import { Asyncleton } from '@main/utils';
 export class DiceDAO implements IDiceDAO {
   private currentGameID: string | null;
   private dicesByID: Map<string, DiceModel.DTO>;
+  private dicesByOrder: Map<number, DiceModel.DTO>;
 
   private readonly database: DatabaseProtocol;
   private readonly socket: SocketProtocol;
@@ -27,6 +28,7 @@ export class DiceDAO implements IDiceDAO {
 
     this.currentGameID = null;
     this.dicesByID = new Map();
+    this.dicesByOrder = new Map();
   }
 
   private async getTable(): Promise<string> {
@@ -49,7 +51,11 @@ export class DiceDAO implements IDiceDAO {
 
   private fillCache(dices: DiceModel.DTO[]): void {
     this.dicesByID.clear();
-    dices.map((dice) => this.dicesByID.set(dice.id, dice));
+    this.dicesByOrder.clear();
+    dices.map((dice) => {
+      this.dicesByID.set(dice.id, dice);
+      this.dicesByOrder.set(dice.order, dice);
+    });
   }
 
   private async fetchDices(): Promise<void> {
@@ -92,6 +98,12 @@ export class DiceDAO implements IDiceDAO {
     await this.fetchDices();
 
     return this.dicesByID.get(id) ?? null;
+  }
+
+  public async getByOrder(order: number): Promise<DiceModel.DTO | null> {
+    await this.fetchDices();
+
+    return this.dicesByOrder.get(order) ?? null;
   }
 
   public async create(payload: IDiceDAO.CreatePayload): Promise<DiceModel.DTO> {

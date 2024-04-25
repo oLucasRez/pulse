@@ -40,6 +40,7 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
   function replaceAll(subjects: SubjectModel[]): void {
     queryClient.setQueryData<SubjectModel[]>(queryKey, () => subjects);
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'players'] });
   }
 
   const createSubject = useUsecase(props.createSubject);
@@ -48,7 +49,7 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
 
   const createLightSpotSubject = useUsecase(props.createLightSpotSubject);
 
-  const changeSubject = useUsecase(props.changeSubject);
+  const editSubject = useUsecase(props.editSubject);
 
   const changeMySubjectPosition = useUsecase(props.changeMySubjectPosition);
 
@@ -65,7 +66,7 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
         createSubject,
         createMySubject,
         createLightSpotSubject,
-        changeSubject,
+        editSubject,
         changeMySubjectPosition,
       }}
     >

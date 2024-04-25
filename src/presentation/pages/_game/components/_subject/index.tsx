@@ -1,7 +1,9 @@
 import { FC } from 'react';
 
+import { Vector } from '@domain/utils';
+
 import { Text } from '@presentation/components';
-import { useSubject } from '@presentation/hooks';
+import { usePlayer, useSubject } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 import { SubjectProps } from './types';
@@ -9,13 +11,17 @@ import { SubjectProps } from './types';
 import { useMapContext } from '..';
 
 export const Subject: FC<SubjectProps> = (props) => {
-  const { icon, description, color } = props;
+  const { icon, description, color, authorID } = props;
+
+  const { players } = usePlayer();
 
   const { mapSpace } = useMapContext();
 
-  const position = props.position && mapSpace.mult(props.position);
+  const author = players.find(({ id }) => id === authorID) ?? null;
 
-  if (!position) return null;
+  const position = mapSpace.mult(
+    props.position ?? new Vector([-18, -18 + (author?.order ?? 0) * 1.5]),
+  );
 
   return (
     <>

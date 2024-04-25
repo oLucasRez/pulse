@@ -16,7 +16,7 @@ export class CreateDiceUsecase implements ICreateDiceUsecase {
   public async execute(
     payload: ICreateDiceUsecase.Payload,
   ): Promise<DiceModel> {
-    const { sides, ownerID } = payload;
+    const { sides, order } = payload;
 
     if (![4, 6, 8, 10, 12].includes(sides))
       throw new ForbiddenError({
@@ -28,12 +28,10 @@ export class CreateDiceUsecase implements ICreateDiceUsecase {
       sides,
       value: null,
       position: null,
-      ownerID,
+      order,
     });
 
-    const dice = await this.diceHydrator.hydrate(dto);
-
-    return dice;
+    return this.diceHydrator.hydrate(dto);
   }
 }
 

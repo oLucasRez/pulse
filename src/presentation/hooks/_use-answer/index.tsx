@@ -42,15 +42,18 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
     [myPlayer, votingAnswer],
   );
 
+  function replaceAll(answers: AnswerModel[]): void {
+    queryClient.setQueryData<AnswerModel[]>(queryKey, () => answers);
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'questions'] });
+  }
+
   const createAnswer = useUsecase(props.createAnswer);
 
   const voteAnswer = useUsecase(props.voteAnswer);
 
   useWatch(async () => {
     if (currentGame)
-      return watchAnswers.execute((answers) =>
-        queryClient.setQueryData<AnswerModel[]>(queryKey, () => answers),
-      );
+      return watchAnswers.execute((answers) => replaceAll(answers));
   }, [currentGame]);
 
   return (

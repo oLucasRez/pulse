@@ -13,12 +13,12 @@ import { Asyncleton } from '@main/utils';
 export class SubjectPulseDAO implements ISubjectPulseDAO {
   private currentGameID: string | null;
   private subjectPulsesByID: Map<string, SubjectPulseModel.DTO>;
+  private subjectPulsesByLandmarkID: Map<string, SubjectPulseModel.DTO[]>;
 
   private readonly database: DatabaseProtocol;
   private readonly socket: SocketProtocol;
   private readonly userDAO: IUserDAO;
   private readonly sessionGetter: SessionGetterProtocol;
-
   public constructor({ database, socket, userDAO, sessionGetter }: Deps) {
     this.database = database;
     this.socket = socket;
@@ -27,6 +27,7 @@ export class SubjectPulseDAO implements ISubjectPulseDAO {
 
     this.currentGameID = null;
     this.subjectPulsesByID = new Map();
+    this.subjectPulsesByLandmarkID = new Map();
   }
 
   private async getTable(): Promise<string> {
@@ -40,9 +41,18 @@ export class SubjectPulseDAO implements ISubjectPulseDAO {
 
   private fillCache(subjectPulses: SubjectPulseModel.DTO[]): void {
     this.subjectPulsesByID.clear();
-    subjectPulses.map((subjectPulse) =>
-      this.subjectPulsesByID.set(subjectPulse.id, subjectPulse),
-    );
+    this.subjectPulsesByLandmarkID.clear();
+    subjectPulses.map((subjectPulse) => {
+      this.subjectPulsesByID.set(subjectPulse.id, subjectPulse);
+      if (this.subjectPulsesByLandmarkID.has(subjectPulse.landmarkID))
+        this.subjectPulsesByLandmarkID
+          .get(subjectPulse.landmarkID)
+          ?.push(subjectPulse);
+      else
+        this.subjectPulsesByLandmarkID.set(subjectPulse.landmarkID, [
+          subjectPulse,
+        ]);
+    });
   }
 
   private async fetchSubjectPulses(): Promise<void> {
@@ -87,6 +97,14 @@ export class SubjectPulseDAO implements ISubjectPulseDAO {
     await this.fetchSubjectPulses();
 
     return this.subjectPulsesByID.get(id) ?? null;
+  }
+
+  public async getByLandmarkID(
+    landmarkID: string,
+  ): Promise<SubjectPulseModel.DTO[]> {
+    await this.fetchSubjectPulses();
+
+    return this.subjectPulsesByLandmarkID.get(landmarkID) ?? [];
   }
 
   public async create(

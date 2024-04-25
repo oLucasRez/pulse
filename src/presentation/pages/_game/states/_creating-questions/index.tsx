@@ -21,7 +21,6 @@ import {
   DiceRoller,
   Dices,
   Map,
-  PlayersList,
   PulseCreator,
   Pulses,
   Questions,
@@ -52,7 +51,7 @@ export const CreatingQuestionsState: FC = () => {
   const submitDisabled = !s.description;
 
   const currentSubjectPulse = useMemo(
-    () => subjectPulses.find((value) => value.landmarkID === mySubject?.id),
+    () => subjectPulses.find(({ id }) => id === mySubject?.pulseIDs[0]),
     [subjectPulses, mySubject],
   );
 
@@ -73,10 +72,8 @@ export const CreatingQuestionsState: FC = () => {
 
     s.creatingQuestion = true;
 
-    // @todo: fill subjectIDs
     createQuestion({
       description: s.description,
-      subjectIDs: [],
     })
       .catch(alertError)
       .finally(set('creatingQuestion', false));
@@ -133,8 +130,6 @@ export const CreatingQuestionsState: FC = () => {
           />
         )}
       </Map>
-
-      <PlayersList />
 
       {!isMyTurn && currentPlayer && (
         <P className='legend handwriting'>

@@ -3,6 +3,7 @@ import { ICreateQuestionUsecase } from '@domain/usecases';
 import { CreateQuestionUsecase } from '@data/usecases';
 
 import {
+  makeGetCurrentGameUsecase,
   makeGetMyPlayerUsecase,
   makeGetMySubjectUsecase,
   makeNextGameStateUsecase,
@@ -11,6 +12,7 @@ import {
 } from '@main/factories';
 
 export function makeCreateQuestionUsecase(): ICreateQuestionUsecase {
+  const getCurrentGame = makeGetCurrentGameUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
   const getMySubject = makeGetMySubjectUsecase();
   const nextGameState = makeNextGameStateUsecase();
@@ -18,6 +20,7 @@ export function makeCreateQuestionUsecase(): ICreateQuestionUsecase {
   const questionHydrator = makeQuestionHydrator();
 
   return new CreateQuestionUsecase({
+    getCurrentGame,
     getMyPlayer,
     getMySubject,
     nextGameState,

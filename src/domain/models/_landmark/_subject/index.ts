@@ -1,5 +1,5 @@
 import { Color } from '@domain/enums';
-import { PlayerModel, SubjectPulseModel } from '@domain/models';
+import { PlayerModel, PulseModel } from '@domain/models';
 
 import { LandmarkModel } from '..';
 
@@ -7,13 +7,12 @@ export interface SubjectModel extends LandmarkModel {
   color: Color;
   icon: string;
   authorID: PlayerModel['id'];
-  pathIDs: SubjectPulseModel['id'][];
+  pulseIDs: PulseModel<SubjectModel>['id'][];
 }
 
 export namespace SubjectModel {
   export interface DTO extends LandmarkModel.DTO {
     icon: string;
-    authorID: string;
-    pathIDs: string[];
+    order: number;
   }
 }

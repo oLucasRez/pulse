@@ -16,11 +16,11 @@ export class QuestionHydrator implements IQuestionHydrator {
   }
 
   public async hydrate(dto: QuestionModel.DTO): Promise<QuestionModel> {
-    const author = await this.playerDAO.getByID(dto.authorID);
+    const author = await this.playerDAO.getByOrder(dto.order);
 
     if (!author)
       throw new NotFoundError({
-        metadata: { entity: 'Player', prop: 'id', value: dto.authorID },
+        metadata: { entity: 'Player', prop: 'order', value: dto.order },
       });
 
     const answers = await this.answerDAO.getByQuestionID(dto.id);
@@ -38,8 +38,7 @@ export class QuestionHydrator implements IQuestionHydrator {
       description: dto.description,
       position: Vector.fromJSON(dto.position),
       color: author.color,
-      subjectIDs: dto.subjectIDs,
-      authorID: dto.authorID,
+      authorID: author.id,
       solved,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),

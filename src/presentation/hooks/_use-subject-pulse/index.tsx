@@ -31,15 +31,20 @@ export const SubjectPulseContextProvider: FC<
     queryFn: () => getSubjectPulses.execute(),
   });
 
+  function replaceAll(subjectPulses: SubjectPulseModel[]): void {
+    queryClient.setQueryData<SubjectPulseModel[]>(
+      queryKey,
+      () => subjectPulses,
+    );
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
+  }
+
   const createSubjectPulse = useUsecase(props.createSubjectPulse);
 
   useWatch(async () => {
     if (currentGame)
       return watchSubjectPulses.execute((subjectPulses) =>
-        queryClient.setQueryData<SubjectPulseModel[]>(
-          queryKey,
-          () => subjectPulses,
-        ),
+        replaceAll(subjectPulses),
       );
   }, [currentGame]);
 

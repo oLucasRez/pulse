@@ -1,27 +1,36 @@
+import { NotFoundError } from '@domain/errors';
 import { RoundModel } from '@domain/models';
-import { IGetRoundUsecase } from '@domain/usecases';
+import { IGetCurrentGameUsecase, IGetRoundUsecase } from '@domain/usecases';
 
 import { IRoundDAO } from '@data/dao';
 import { IRoundHydrator } from '@data/hydration';
 
 export class GetRoundUsecase implements IGetRoundUsecase {
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly roundDAO: IRoundDAO;
   private readonly roundHydrator: IRoundHydrator;
-  public constructor({ roundDAO, roundHydrator }: Deps) {
+  public constructor({ getCurrentGame, roundDAO, roundHydrator }: Deps) {
+    this.getCurrentGame = getCurrentGame;
     this.roundDAO = roundDAO;
     this.roundHydrator = roundHydrator;
   }
 
-  public async execute(id: string): Promise<RoundModel | null> {
-    const dto = await this.roundDAO.getByID(id);
+  public async execute(): Promise<RoundModel | null> {
+    const currentGame = await this.getCurrentGame.execute();
 
-    const round = dto ? await this.roundHydrator.hydrate(dto) : null;
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    return round;
+    if (!currentGame.roundID) return null;
+
+    const dto = await this.roundDAO.getByID(currentGame.roundID);
+
+    return dto ? await this.roundHydrator.hydrate(dto) : null;
   }
 }
 
 type Deps = {
+  getCurrentGame: IGetCurrentGameUsecase;
   roundDAO: IRoundDAO;
   roundHydrator: IRoundHydrator;
 };

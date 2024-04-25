@@ -19,8 +19,6 @@ export namespace PlayerModel {
     color: Color;
     avatar: string;
     uid: string;
-    diceID: string | null;
-    subjectID: string | null;
     banned: boolean;
     order: number;
   }

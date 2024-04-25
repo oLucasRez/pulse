@@ -7,6 +7,5 @@ export interface ICreateQuestionUsecase {
 export namespace ICreateQuestionUsecase {
   export type Payload = {
     description: string;
-    subjectIDs: string[];
   };
 }

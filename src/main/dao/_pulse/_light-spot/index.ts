@@ -13,12 +13,12 @@ import { Asyncleton } from '@main/utils';
 export class LightSpotDAO implements ILightSpotDAO {
   private currentGameID: string | null;
   private lightSpotsByID: Map<string, LightSpotModel.DTO>;
+  private lightSpotsByLandmarkID: Map<string, LightSpotModel.DTO>;
 
   private readonly database: DatabaseProtocol;
   private readonly socket: SocketProtocol;
   private readonly userDAO: IUserDAO;
   private readonly sessionGetter: SessionGetterProtocol;
-
   public constructor({ database, socket, userDAO, sessionGetter }: Deps) {
     this.database = database;
     this.socket = socket;
@@ -27,6 +27,7 @@ export class LightSpotDAO implements ILightSpotDAO {
 
     this.currentGameID = null;
     this.lightSpotsByID = new Map();
+    this.lightSpotsByLandmarkID = new Map();
   }
 
   private async getTable(): Promise<string> {
@@ -40,9 +41,12 @@ export class LightSpotDAO implements ILightSpotDAO {
 
   private fillCache(lightSpots: LightSpotModel.DTO[]): void {
     this.lightSpotsByID.clear();
-    lightSpots.map((lightSpot) =>
-      this.lightSpotsByID.set(lightSpot.id, lightSpot),
-    );
+    this.lightSpotsByLandmarkID.clear();
+    lightSpots.map((lightSpot) => {
+      this.lightSpotsByID.set(lightSpot.id, lightSpot);
+      if (lightSpot.landmarkID)
+        this.lightSpotsByLandmarkID.set(lightSpot.landmarkID, lightSpot);
+    });
   }
 
   private async fetchLightSpots(): Promise<void> {
@@ -85,6 +89,14 @@ export class LightSpotDAO implements ILightSpotDAO {
     await this.fetchLightSpots();
 
     return this.lightSpotsByID.get(id) ?? null;
+  }
+
+  public async getByLandmarkID(
+    landmarkID: string,
+  ): Promise<LightSpotModel.DTO | null> {
+    await this.fetchLightSpots();
+
+    return this.lightSpotsByLandmarkID.get(landmarkID) ?? null;
   }
 
   public async create(

@@ -27,7 +27,7 @@ export function useMutateSubjectModal(
     onSuccess,
   } = props;
 
-  const { mySubject, createMySubject, createSubject, changeSubject } =
+  const { mySubject, createMySubject, createSubject, editSubject } =
     useSubject();
 
   const { myPlayer } = usePlayer();
@@ -82,7 +82,7 @@ export function useMutateSubjectModal(
 
     let promise: Promise<SubjectModel>;
 
-    if (s.subject) promise = changeSubject(s.subject.id, { description });
+    if (s.subject) promise = editSubject(s.subject.id, { description });
     else if (!s.isMyFirstSubject && position)
       promise = createSubject({ color, description, icon, position });
     else if (s.isMyFirstSubject)

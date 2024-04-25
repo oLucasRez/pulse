@@ -6,7 +6,6 @@ import {
   IGetCurrentGameUsecase,
   IGetMyPlayerUsecase,
   INextGameStateUsecase,
-  ISetPlayerSubjectUsecase,
 } from '@domain/usecases';
 
 export class CreateMySubjectUsecase implements ICreateMySubjectUsecase {
@@ -14,19 +13,16 @@ export class CreateMySubjectUsecase implements ICreateMySubjectUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly nextGameState: INextGameStateUsecase;
-  private readonly setPlayerSubject: ISetPlayerSubjectUsecase;
   public constructor({
     createSubject,
     getCurrentGame,
     getMyPlayer,
     nextGameState,
-    setPlayerSubject,
   }: Deps) {
     this.createSubject = createSubject;
     this.getCurrentGame = getCurrentGame;
     this.getMyPlayer = getMyPlayer;
     this.nextGameState = nextGameState;
-    this.setPlayerSubject = setPlayerSubject;
   }
 
   public async execute(
@@ -54,8 +50,6 @@ export class CreateMySubjectUsecase implements ICreateMySubjectUsecase {
       color: myPlayer.color,
     });
 
-    await this.setPlayerSubject.execute(mySubject.id);
-
     await this.nextGameState.execute();
 
     return mySubject;
@@ -67,5 +61,4 @@ type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   getMyPlayer: IGetMyPlayerUsecase;
   nextGameState: INextGameStateUsecase;
-  setPlayerSubject: ISetPlayerSubjectUsecase;
 };

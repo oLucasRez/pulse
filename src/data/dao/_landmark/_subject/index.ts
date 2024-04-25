@@ -4,6 +4,7 @@ import { DeepPartial } from '@domain/types';
 export interface ISubjectDAO {
   getAll(): Promise<SubjectModel.DTO[]>;
   getByID(id: string): Promise<SubjectModel.DTO | null>;
+  getByOrder(order: number): Promise<SubjectModel.DTO[]>;
   create(payload: ISubjectDAO.CreatePayload): Promise<SubjectModel.DTO>;
   update(
     id: string,

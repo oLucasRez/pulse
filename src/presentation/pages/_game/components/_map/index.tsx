@@ -59,7 +59,7 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     () =>
       new VectorSpace({
         translate: new Vector([s.width / 2, s.height / 2]),
-        scale: Math.max(s.width, s.height) / (bounds.right - bounds.left),
+        scale: Math.min(s.width, s.height) / (bounds.right - bounds.left),
       }),
     [s.width, s.height],
   );
@@ -137,6 +137,22 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
         >
           {typeof children === 'function' ? children(contextValue) : children}
         </ViewBox>
+
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: 0,
+            margin: 'auto',
+            width: s.height,
+            height: s.height,
+            borderLeft: '1px solid darkgrey',
+            borderRight: '1px solid darkgrey',
+            transform: 'translateX(-50%)',
+            opacity: 0.5,
+            pointerEvents: 'none',
+          }}
+        />
 
         <Transition.Fade active={!!s.portal} ms={200}>
           <div

@@ -19,7 +19,6 @@ import {
   DiceRoller,
   Dices,
   Map,
-  PlayersList,
   Pulses,
   Subjects,
 } from '../../components';
@@ -111,8 +110,6 @@ export const CreatingCentralFactState: FC = () => {
           <DiceRoller onRollDice={handleDiceRoll} />
         )}
       </Map>
-
-      <PlayersList />
 
       {!isMyTurn && currentPlayer && (
         <p className='legend handwriting'>

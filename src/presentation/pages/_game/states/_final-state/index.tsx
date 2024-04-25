@@ -4,7 +4,6 @@ import {
   CentralFact,
   Dices,
   Map,
-  PlayersList,
   Pulses,
   Questions,
   Subjects,
@@ -20,8 +19,6 @@ export const FinalState: FC = () => {
         <CentralFact />
         <Questions />
       </Map>
-
-      <PlayersList />
 
       <p className='legend handwriting'>The game is over!!</p>
     </>

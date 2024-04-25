@@ -4,12 +4,10 @@ import { usePlayer } from '@presentation/hooks';
 
 import { useMutateSubjectModal } from '../../hooks';
 
-import { Map, PlayersList, Pulses } from '../../components';
+import { Map, Pulses, Subjects } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
-  const { myPlayer, currentPlayer } = usePlayer();
-
-  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
+  const { currentPlayer, isMyTurn } = usePlayer();
 
   const { renderMutateSubjectModal, openMutateSubjectModal } =
     useMutateSubjectModal();
@@ -22,9 +20,8 @@ export const CreatingSubjectsState: FC = () => {
     <>
       <Map>
         <Pulses />
+        <Subjects />
       </Map>
-
-      <PlayersList />
 
       {!isMyTurn && (
         <p className='legend handwriting'>

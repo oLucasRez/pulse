@@ -8,8 +8,6 @@ export class RoundHydrator implements IRoundHydrator {
       id: dto.id,
       i: dto.i,
       clockwise: dto.clockwise,
-      playerIDs: dto.playerIDs,
-      started: dto.started,
       finished: dto.finished,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),

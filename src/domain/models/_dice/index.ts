@@ -9,6 +9,7 @@ export interface DiceModel extends Model {
   position: Vector | null;
   color: Color | null;
   ownerID: PlayerModel['id'] | null;
+  order: number;
 }
 
 export namespace DiceModel {
@@ -16,6 +17,6 @@ export namespace DiceModel {
     sides: number;
     value: number | null;
     position: Vector | null;
-    ownerID: string | null;
+    order: number;
   }
 }

@@ -3,19 +3,15 @@ import { IGetCurrentDiceUsecase } from '@domain/usecases';
 import { GetCurrentDiceUsecase } from '@data/usecases';
 
 import {
-  makeGetCurrentGameUsecase,
-  makeGetCurrentPlayerUsecase,
-  makeGetDiceUsecase,
+  makeDiceDAO,
+  makeDiceHydrator,
+  makeGetRoundUsecase,
 } from '@main/factories';
 
 export function makeGetCurrentDiceUsecase(): IGetCurrentDiceUsecase {
-  const getCurrentGame = makeGetCurrentGameUsecase();
-  const getCurrentPlayer = makeGetCurrentPlayerUsecase();
-  const getDice = makeGetDiceUsecase();
+  const diceDAO = makeDiceDAO();
+  const diceHidrator = makeDiceHydrator();
+  const getRound = makeGetRoundUsecase();
 
-  return new GetCurrentDiceUsecase({
-    getCurrentGame,
-    getCurrentPlayer,
-    getDice,
-  });
+  return new GetCurrentDiceUsecase({ diceDAO, diceHidrator, getRound });
 }

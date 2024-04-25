@@ -6,6 +6,7 @@ export interface IPlayerDAO {
   getUnbanned(): Promise<PlayerModel.DTO[]>;
   getByID(id: string): Promise<PlayerModel.DTO | null>;
   getByUID(uid: string): Promise<PlayerModel.DTO | null>;
+  getByOrder(order: number): Promise<PlayerModel.DTO | null>;
   create(payload: IPlayerDAO.CreatePayload): Promise<PlayerModel.DTO>;
   update(
     id: string,

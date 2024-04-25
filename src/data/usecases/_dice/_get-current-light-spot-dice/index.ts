@@ -1,49 +1,38 @@
-import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { DiceModel } from '@domain/models';
 import {
-  IGetCurrentGameUsecase,
   IGetCurrentLightSpotDiceUsecase,
-  IGetCurrentPlayerUsecase,
-  IGetDiceUsecase,
+  IGetLightSpotRoundUsecase,
 } from '@domain/usecases';
+
+import { IDiceDAO } from '@data/dao';
+import { IDiceHydrator } from '@data/hydration';
 
 export class GetCurrentLightSpotDiceUsecase
   implements IGetCurrentLightSpotDiceUsecase
 {
-  private readonly getCurrentGame: IGetCurrentGameUsecase;
-  private readonly getCurrentPlayer: IGetCurrentPlayerUsecase;
-  private readonly getDice: IGetDiceUsecase;
-  public constructor({ getCurrentGame, getCurrentPlayer, getDice }: Deps) {
-    this.getCurrentGame = getCurrentGame;
-    this.getCurrentPlayer = getCurrentPlayer;
-    this.getDice = getDice;
+  private readonly getLightSpotRound: IGetLightSpotRoundUsecase;
+  private readonly diceDAO: IDiceDAO;
+  private readonly diceHydrator: IDiceHydrator;
+  public constructor({ getLightSpotRound, diceDAO, diceHydrator }: Deps) {
+    this.getLightSpotRound = getLightSpotRound;
+    this.diceDAO = diceDAO;
+    this.diceHydrator = diceHydrator;
   }
 
   public async execute(): Promise<DiceModel | null> {
-    const currentGame = await this.getCurrentGame.execute();
-    if (!currentGame)
-      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
-    if (!currentGame.lightSpotRoundID)
-      throw new ForbiddenError({
-        metadata: {
-          tried: 'get current-light-spot-dice without light-spot-round',
-        },
-      });
+    const lightSpotRound = await this.getLightSpotRound.execute();
 
-    const currentPlayer = await this.getCurrentPlayer.execute(
-      currentGame.lightSpotRoundID,
-    );
+    if (!lightSpotRound) return null;
+    if (lightSpotRound.i === null) return null;
 
-    if (!currentPlayer?.diceID) return null;
+    const dto = await this.diceDAO.getByOrder(lightSpotRound.i);
 
-    const dice = await this.getDice.execute(currentPlayer.diceID);
-
-    return dice;
+    return dto && this.diceHydrator.hydrate(dto);
   }
 }
 
 type Deps = {
-  getCurrentGame: IGetCurrentGameUsecase;
-  getCurrentPlayer: IGetCurrentPlayerUsecase;
-  getDice: IGetDiceUsecase;
+  getLightSpotRound: IGetLightSpotRoundUsecase;
+  diceDAO: IDiceDAO;
+  diceHydrator: IDiceHydrator;
 };

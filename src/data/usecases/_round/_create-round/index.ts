@@ -12,22 +12,14 @@ export class CreateRoundUsecase implements ICreateRoundUsecase {
     this.roundHydrator = roundHydrator;
   }
 
-  public async execute(
-    payload: ICreateRoundUsecase.Payload,
-  ): Promise<RoundModel> {
-    const { playerIDs } = payload;
-
+  public async execute(): Promise<RoundModel> {
     const dto = await this.roundDAO.create({
-      playerIDs,
       i: null,
       clockwise: null,
-      started: false,
       finished: false,
     });
 
-    const round = await this.roundHydrator.hydrate(dto);
-
-    return round;
+    return this.roundHydrator.hydrate(dto);
   }
 }
 

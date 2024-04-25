@@ -13,7 +13,7 @@ export class WatchQuestionsUsecase implements IWatchQuestionsUsecase {
 
   public async execute(
     callback: IWatchQuestionsUsecase.Callback,
-  ): Promise<IWatchQuestionsUsecase.Response> {
+  ): Promise<() => void> {
     return this.questionDAO.watch(async (dtos) => {
       const questions = await Promise.all(
         dtos.map((dto) => this.questionHydrator.hydrate(dto)),

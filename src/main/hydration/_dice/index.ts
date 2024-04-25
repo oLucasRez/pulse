@@ -4,6 +4,8 @@ import { Vector } from '@domain/utils';
 import { IPlayerDAO, ISubjectDAO } from '@data/dao';
 import { IDiceHydrator } from '@data/hydration';
 
+import { getOldestSubject } from '../helpers';
+
 export class DiceHydrator implements IDiceHydrator {
   private readonly playerDAO: IPlayerDAO;
   private readonly subjectDAO: ISubjectDAO;
@@ -13,22 +15,22 @@ export class DiceHydrator implements IDiceHydrator {
   }
 
   public async hydrate(dto: DiceModel.DTO): Promise<DiceModel> {
-    const owner = dto.ownerID
-      ? await this.playerDAO.getByID(dto.ownerID)
-      : null;
-    const subject = owner?.subjectID
-      ? await this.subjectDAO.getByID(owner.subjectID)
-      : null;
+    const owner = await this.playerDAO.getByOrder(dto.order);
+
+    const oldestSubject = await getOldestSubject(dto.order, {
+      subjectDAO: this.subjectDAO,
+    });
 
     return {
       id: dto.id,
       sides: dto.sides,
       value: dto.value,
-      ownerID: dto.ownerID,
+      ownerID: owner?.id ?? null,
+      order: dto.order,
       position: dto.position
         ? Vector.fromJSON(dto.position)
-        : subject?.position
-        ? Vector.fromJSON(subject.position)
+        : oldestSubject?.position
+        ? Vector.fromJSON(oldestSubject.position)
         : null,
       color: owner?.color ?? null,
       updatedAt: new Date(dto.updatedAt),

@@ -8,7 +8,6 @@ import {
   DiceRoller,
   Dices,
   Map,
-  PlayersList,
   Pulses,
   Questions,
   RollDiceEvent,
@@ -66,8 +65,6 @@ export const CreatingLightSpotState: FC = () => {
           <DiceRoller onRollDice={handleRollDice} />
         )}
       </Map>
-
-      <PlayersList />
 
       {!isMyLightSpotTurn && currentLightSpotPlayer && (
         <p className='legend handwriting'>

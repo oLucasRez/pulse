@@ -8,7 +8,6 @@ import {
   CentralFact,
   Dices,
   Map,
-  PlayersList,
   Pulses,
   Questions,
   Subjects,
@@ -53,8 +52,6 @@ export const CreatingAnswersState: FC = () => {
         <CentralFact />
         <Questions onAnswer={onAnswer} />
       </Map>
-
-      <PlayersList />
 
       {!isMyTurn && currentPlayer && (
         <p className='legend handwriting'>

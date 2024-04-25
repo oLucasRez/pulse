@@ -10,7 +10,6 @@ import {
   makeGetCurrentGameUsecase,
   makeGetPlayersUsecase,
   makeNextGameStateUsecase,
-  makeSetPlayerDiceUsecase,
 } from '@main/factories';
 
 export function makeStartGameUsecase(): IStartGameUsecase {
@@ -21,7 +20,6 @@ export function makeStartGameUsecase(): IStartGameUsecase {
   const getCurrentGame = makeGetCurrentGameUsecase();
   const getPlayers = makeGetPlayersUsecase();
   const nextGameState = makeNextGameStateUsecase();
-  const setPlayerDice = makeSetPlayerDiceUsecase();
 
   return new StartGameUsecase({
     createCentralPulse,
@@ -31,6 +29,5 @@ export function makeStartGameUsecase(): IStartGameUsecase {
     getCurrentGame,
     getPlayers,
     nextGameState,
-    setPlayerDice,
   });
 }

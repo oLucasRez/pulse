@@ -58,15 +58,13 @@ export class CreateLightSpotSubjectUsecase
       description,
       icon,
       color,
-      pathIDs: [],
-      authorID: currentLightSpotDice.ownerID,
+      order: currentLightSpotDice.order,
       position: currentLightSpotDice.position.toJSON(),
     });
 
-    await Promise.all([
-      this.setLightSpotLandmark.execute(dto.id),
-      this.setDicePosition.execute(currentLightSpotDice.id, null),
-    ]);
+    await this.setLightSpotLandmark.execute(dto.id);
+
+    await this.setDicePosition.execute(currentLightSpotDice.id, null);
 
     await this.nextGameState.execute();
 

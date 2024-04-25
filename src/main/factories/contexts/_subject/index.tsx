@@ -5,10 +5,10 @@ import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeChangeMySubjectPositionUsecase,
-  makeChangeSubjectUsecase,
   makeCreateLightSpotSubjectUsecase,
   makeCreateMySubjectUsecase,
   makeCreateSubjectUsecase,
+  makeEditSubjectUsecase,
   makeGetSubjectsUsecase,
   makeWatchSubjectsUsecase,
 } from '@main/factories';
@@ -22,7 +22,7 @@ export function makeSubjectContextProvider(
   const createSubject = makeCreateSubjectUsecase();
   const createLightSpotSubject = makeCreateLightSpotSubjectUsecase();
   const changeMySubjectPosition = makeChangeMySubjectPositionUsecase();
-  const changeSubject = makeChangeSubjectUsecase();
+  const editSubject = makeEditSubjectUsecase();
 
   return (
     <SubjectContextProvider
@@ -32,7 +32,7 @@ export function makeSubjectContextProvider(
       createSubject={createSubject}
       createLightSpotSubject={createLightSpotSubject}
       changeMySubjectPosition={changeMySubjectPosition}
-      changeSubject={changeSubject}
+      editSubject={editSubject}
       {...props}
     />
   );

@@ -61,8 +61,6 @@ export class CreatePlayerUsecase implements ICreatePlayerUsecase {
       color,
       avatar,
       uid: me.uid,
-      diceID: null,
-      subjectID: null,
       banned: false,
       order: notBannedPlayers.length,
     });

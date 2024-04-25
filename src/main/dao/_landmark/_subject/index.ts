@@ -13,6 +13,7 @@ import { Asyncleton } from '@main/utils';
 export class SubjectDAO implements ISubjectDAO {
   private currentGameID: string | null;
   private subjectsByID: Map<string, SubjectModel.DTO>;
+  private subjectsByOrder: Map<number, SubjectModel.DTO[]>;
 
   private readonly database: DatabaseProtocol;
   private readonly socket: SocketProtocol;
@@ -27,6 +28,7 @@ export class SubjectDAO implements ISubjectDAO {
 
     this.currentGameID = null;
     this.subjectsByID = new Map();
+    this.subjectsByOrder = new Map();
   }
 
   private async getTable(): Promise<string> {
@@ -40,7 +42,13 @@ export class SubjectDAO implements ISubjectDAO {
 
   private fillCache(subjects: SubjectModel.DTO[]): void {
     this.subjectsByID.clear();
-    subjects.map((subject) => this.subjectsByID.set(subject.id, subject));
+    this.subjectsByOrder.clear();
+    subjects.map((subject) => {
+      this.subjectsByID.set(subject.id, subject);
+      if (this.subjectsByOrder.has(subject.order))
+        this.subjectsByOrder.get(subject.order)?.push(subject);
+      else this.subjectsByOrder.set(subject.order, [subject]);
+    });
   }
 
   private async fetchSubjects(): Promise<void> {
@@ -83,6 +91,12 @@ export class SubjectDAO implements ISubjectDAO {
     await this.fetchSubjects();
 
     return this.subjectsByID.get(id) ?? null;
+  }
+
+  public async getByOrder(order: number): Promise<SubjectModel.DTO[]> {
+    await this.fetchSubjects();
+
+    return this.subjectsByOrder.get(order) ?? [];
   }
 
   public async create(

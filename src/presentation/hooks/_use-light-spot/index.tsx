@@ -30,13 +30,16 @@ export const LightSpotContextProvider: FC<LightSpotContextProviderProps> = ({
     queryFn: () => getLightSpots.execute(),
   });
 
+  function replaceAll(lightSpots: LightSpotModel[]): void {
+    queryClient.setQueryData<LightSpotModel[]>(queryKey, () => lightSpots);
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
+  }
+
   const createLightSpot = useUsecase(props.createLightSpot);
 
   useWatch(async () => {
     if (currentGame)
-      return watchLightSpots.execute((lightSpots) =>
-        queryClient.setQueryData<LightSpotModel[]>(queryKey, () => lightSpots),
-      );
+      return watchLightSpots.execute((lightSpots) => replaceAll(lightSpots));
   }, [currentGame]);
 
   return (

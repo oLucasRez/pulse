@@ -1,10 +1,10 @@
 import { SubjectModel } from '@domain/models';
 import {
   IChangeMySubjectPositionUsecase,
-  IChangeSubjectUsecase,
   ICreateLightSpotSubjectUsecase,
   ICreateMySubjectUsecase,
   ICreateSubjectUsecase,
+  IEditSubjectUsecase,
   IGetSubjectsUsecase,
   IWatchSubjectsUsecase,
 } from '@domain/usecases';
@@ -17,7 +17,7 @@ export type SubjectContextValue = {
   createMySubject: ICreateMySubjectUsecase['execute'];
   createLightSpotSubject: ICreateLightSpotSubjectUsecase['execute'];
   createSubject: ICreateSubjectUsecase['execute'];
-  changeSubject: IChangeSubjectUsecase['execute'];
+  editSubject: IEditSubjectUsecase['execute'];
   changeMySubjectPosition: IChangeMySubjectPositionUsecase['execute'];
 };
 
@@ -27,6 +27,6 @@ export interface SubjectContextProviderProps extends ContextProviderProps {
   createMySubject: ICreateMySubjectUsecase;
   createSubject: ICreateSubjectUsecase;
   createLightSpotSubject: ICreateLightSpotSubjectUsecase;
-  changeSubject: IChangeSubjectUsecase;
+  editSubject: IEditSubjectUsecase;
   changeMySubjectPosition: IChangeMySubjectPositionUsecase;
 }

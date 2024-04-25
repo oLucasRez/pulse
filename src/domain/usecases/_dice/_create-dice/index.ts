@@ -7,6 +7,6 @@ export interface ICreateDiceUsecase {
 export namespace ICreateDiceUsecase {
   export type Payload = {
     sides: number;
-    ownerID: string;
+    order: number;
   };
 }

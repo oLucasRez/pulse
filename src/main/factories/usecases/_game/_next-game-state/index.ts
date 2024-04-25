@@ -6,8 +6,10 @@ import {
   makeGameDAO,
   makeGameHydrator,
   makeGetCurrentGameUsecase,
-  makeGetRoundUsecase,
-  makePassTurnUsecase,
+  makeGetLightSpotRoundUsecase,
+  makePassLightSpotRoundTurnUsecase,
+  makePassRoundTurnUsecase,
+  makeStartLightSpotRoundUsecase,
   makeStartRoundUsecase,
 } from '@main/factories';
 
@@ -15,16 +17,20 @@ export function makeNextGameStateUsecase(): INextGameStateUsecase {
   const gameDAO = makeGameDAO();
   const gameHydrator = makeGameHydrator();
   const getCurrentGame = makeGetCurrentGameUsecase();
-  const getRound = makeGetRoundUsecase();
-  const passTurn = makePassTurnUsecase();
+  const getLightSpotRound = makeGetLightSpotRoundUsecase();
+  const passLightSpotRoundTurn = makePassLightSpotRoundTurnUsecase();
+  const passRoundTurn = makePassRoundTurnUsecase();
+  const startLightSpotRound = makeStartLightSpotRoundUsecase();
   const startRound = makeStartRoundUsecase();
 
   return new NextGameStateUsecase({
     gameDAO,
     gameHydrator,
     getCurrentGame,
-    getRound,
-    passTurn,
+    getLightSpotRound,
+    passLightSpotRoundTurn,
+    passRoundTurn,
+    startLightSpotRound,
     startRound,
   });
 }

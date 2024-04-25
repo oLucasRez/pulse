@@ -4,6 +4,7 @@ import { DeepPartial } from '@domain/types';
 export interface ILightSpotDAO {
   getAll(): Promise<LightSpotModel.DTO[]>;
   getByID(id: string): Promise<LightSpotModel.DTO | null>;
+  getByLandmarkID(landmarkID: string): Promise<LightSpotModel.DTO | null>;
   create(payload: ILightSpotDAO.CreatePayload): Promise<LightSpotModel.DTO>;
   update(
     id: string,

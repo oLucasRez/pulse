@@ -50,25 +50,7 @@ const GamePage: FC = () => {
       'final:state': <FinalState />,
     };
 
-    return (
-      <Main>
-        <div
-          style={{
-            position: 'absolute',
-            right: '1rem',
-            top: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {currentGame.state.map((state, i) => (
-            <div key={i}>{state}</div>
-          ))}
-        </div>
-
-        {map[currentGame.state[0]]}
-      </Main>
-    );
+    return <Main>{map[currentGame.state[0]]}</Main>;
   }
 
   function renderMyHeader() {
@@ -90,22 +72,20 @@ const GamePage: FC = () => {
   if (!currentGame) return <Navigate.toHome />;
 
   return (
-    <>
-      <Container>
-        <header>
-          <button onClick={navigateToHome}>🔙</button>
+    <Container>
+      <header>
+        <button onClick={navigateToHome}>🔙</button>
 
-          <h2>
-            <b>{currentGame.title}</b>
-          </h2>
+        <h2>
+          <b>{currentGame.title}</b>
+        </h2>
 
-          {renderMyHeader()}
-          <button onClick={navigateToLogout}>🚪</button>
-        </header>
+        {renderMyHeader()}
+        <button onClick={navigateToLogout}>🚪</button>
+      </header>
 
-        {renderMain()}
-      </Container>
-    </>
+      {renderMain()}
+    </Container>
   );
 };
 

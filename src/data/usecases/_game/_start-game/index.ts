@@ -1,5 +1,5 @@
 import { NotFoundError } from '@domain/errors';
-import { DiceModel, GameModel } from '@domain/models';
+import { GameModel } from '@domain/models';
 import {
   ICreateCentralPulseUsecase,
   ICreateDiceUsecase,
@@ -7,7 +7,6 @@ import {
   IGetCurrentGameUsecase,
   IGetPlayersUsecase,
   INextGameStateUsecase,
-  ISetPlayerDiceUsecase,
   IStartGameUsecase,
 } from '@domain/usecases';
 
@@ -20,7 +19,6 @@ export class StartGameUsecase implements IStartGameUsecase {
   private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getPlayers: IGetPlayersUsecase;
   private readonly nextGameState: INextGameStateUsecase;
-  private readonly setPlayerDice: ISetPlayerDiceUsecase;
   private readonly gameDAO: IGameDAO;
   public constructor({
     createCentralPulse,
@@ -29,7 +27,6 @@ export class StartGameUsecase implements IStartGameUsecase {
     getCurrentGame,
     getPlayers,
     nextGameState,
-    setPlayerDice,
     gameDAO,
   }: Deps) {
     this.createCentralPulse = createCentralPulse;
@@ -38,7 +35,6 @@ export class StartGameUsecase implements IStartGameUsecase {
     this.getCurrentGame = getCurrentGame;
     this.getPlayers = getPlayers;
     this.nextGameState = nextGameState;
-    this.setPlayerDice = setPlayerDice;
     this.gameDAO = gameDAO;
   }
 
@@ -48,38 +44,16 @@ export class StartGameUsecase implements IStartGameUsecase {
     if (!currentGame)
       throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
-    const centralPulse = await this.createCentralPulse.execute();
-
-    const playerIDs = (await this.getPlayers.execute())
-      .sort((a, b) => a.order - b.order)
-      .map((player) => player.id);
-
-    const diceCreators = [
-      (ownerID: string): Promise<DiceModel> =>
-        this.createDice.execute({ sides: 4, ownerID }),
-      (ownerID: string): Promise<DiceModel> =>
-        this.createDice.execute({ sides: 6, ownerID }),
-      (ownerID: string): Promise<DiceModel> =>
-        this.createDice.execute({ sides: 8, ownerID }),
-      (ownerID: string): Promise<DiceModel> =>
-        this.createDice.execute({ sides: 10, ownerID }),
-      (ownerID: string): Promise<DiceModel> =>
-        this.createDice.execute({ sides: 12, ownerID }),
-    ];
-
-    const dices = await Promise.all(
-      playerIDs.map((playerID, i) => diceCreators[i](playerID)),
-    );
-
-    await Promise.all(
-      playerIDs.map((playerID, i) =>
-        this.setPlayerDice.execute(playerID, dices[i].id),
-      ),
-    );
-
-    const [round, lightSpotRound] = await Promise.all([
-      this.createRound.execute({ playerIDs }),
-      this.createRound.execute({ playerIDs }),
+    const [centralPulse, round, lightSpotRound] = await Promise.all([
+      this.createCentralPulse.execute(),
+      this.createRound.execute(),
+      this.createRound.execute(),
+      this.getPlayers.execute(),
+      this.createDice.execute({ sides: 4, order: 0 }),
+      this.createDice.execute({ sides: 6, order: 1 }),
+      this.createDice.execute({ sides: 8, order: 2 }),
+      this.createDice.execute({ sides: 10, order: 3 }),
+      this.createDice.execute({ sides: 12, order: 4 }),
     ]);
 
     await this.gameDAO.update(currentGame.id, {
@@ -88,9 +62,7 @@ export class StartGameUsecase implements IStartGameUsecase {
       lightSpotRoundID: lightSpotRound.id,
     });
 
-    const game = await this.nextGameState.execute();
-
-    return game;
+    return this.nextGameState.execute();
   }
 }
 
@@ -101,6 +73,5 @@ type Deps = {
   getCurrentGame: IGetCurrentGameUsecase;
   getPlayers: IGetPlayersUsecase;
   nextGameState: INextGameStateUsecase;
-  setPlayerDice: ISetPlayerDiceUsecase;
   gameDAO: IGameDAO;
 };

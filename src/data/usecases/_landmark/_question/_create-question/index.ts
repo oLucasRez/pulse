@@ -2,6 +2,7 @@ import { ForbiddenError, NotFoundError } from '@domain/errors';
 import { QuestionModel } from '@domain/models';
 import {
   ICreateQuestionUsecase,
+  IGetCurrentGameUsecase,
   IGetMyPlayerUsecase,
   IGetMySubjectUsecase,
   INextGameStateUsecase,
@@ -11,18 +12,21 @@ import { IQuestionDAO } from '@data/dao';
 import { IQuestionHydrator } from '@data/hydration';
 
 export class CreateQuestionUsecase implements ICreateQuestionUsecase {
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly getMySubject: IGetMySubjectUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly questionDAO: IQuestionDAO;
   private readonly questionHydrator: IQuestionHydrator;
   public constructor({
+    getCurrentGame,
     getMyPlayer,
     getMySubject,
     nextGameState,
     questionDAO,
     questionHydrator,
   }: Deps) {
+    this.getCurrentGame = getCurrentGame;
     this.getMyPlayer = getMyPlayer;
     this.getMySubject = getMySubject;
     this.nextGameState = nextGameState;
@@ -33,7 +37,18 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
   public async execute(
     payload: ICreateQuestionUsecase.Payload,
   ): Promise<QuestionModel> {
-    const { description, subjectIDs } = payload;
+    const { description } = payload;
+
+    const currentGame = await this.getCurrentGame.execute();
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
+
+    const [state0, state1] = currentGame.state;
+
+    if (state0 !== 'creating:questions' || state1 !== 'create:question')
+      throw new ForbiddenError({
+        metadata: { tried: 'create question out of time' },
+      });
 
     const myPlayer = await this.getMyPlayer.execute();
 
@@ -53,8 +68,7 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
       position: mySubject.position.toJSON(),
       description,
       color: null,
-      subjectIDs,
-      authorID: myPlayer.id,
+      order: myPlayer.order,
     });
 
     await this.nextGameState.execute();
@@ -66,6 +80,7 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
 }
 
 type Deps = {
+  getCurrentGame: IGetCurrentGameUsecase;
   getMyPlayer: IGetMyPlayerUsecase;
   getMySubject: IGetMySubjectUsecase;
   nextGameState: INextGameStateUsecase;

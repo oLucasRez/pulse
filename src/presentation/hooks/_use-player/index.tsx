@@ -46,19 +46,12 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
   const { round, lightSpotRound } = useRound();
 
   const currentPlayer = useMemo(
-    () =>
-      players.find(
-        ({ id }) => id === (round?.playerIDs ?? [])[round?.i ?? -1],
-      ) ?? null,
+    () => players.find(({ order }) => order === round?.i) ?? null,
     [players, round],
   );
 
   const currentLightSpotPlayer = useMemo(
-    () =>
-      players.find(
-        ({ id }) =>
-          id === (lightSpotRound?.playerIDs ?? [])[lightSpotRound?.i ?? -1],
-      ) ?? null,
+    () => players.find(({ order }) => order === lightSpotRound?.i) ?? null,
     [players, lightSpotRound],
   );
 
@@ -68,10 +61,10 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
 
   function replaceAll(players: PlayerModel[]): void {
     queryClient.setQueryData<PlayerModel[]>(queryKey, () => players);
-    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
-    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
-    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'questions'] });
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'questions'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
   }
 
   const createPlayer = useUsecase(props.createPlayer);
