@@ -44,7 +44,9 @@ export class RollCurrentDiceUsecase implements IRollCurrentDiceUsecase {
 
     const value = Math.ceil(Math.random() * currentDice.sides);
 
-    const dto = await this.diceDAO.update(currentDice.id, { value });
+    const dto = await this.diceDAO.update(currentDice.id, {
+      value,
+    });
 
     const currentGame = await this.getCurrentGame.execute();
 

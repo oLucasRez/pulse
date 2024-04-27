@@ -11,6 +11,7 @@ export interface PlayerModel extends Model {
   subjectID: SubjectModel['id'] | null;
   banned: boolean;
   order: number;
+  overloaded: boolean;
 }
 
 export namespace PlayerModel {

@@ -41,6 +41,12 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
     queryClient.setQueryData<SubjectModel[]>(queryKey, () => subjects);
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'players'] });
+    queryClient.invalidateQueries({
+      queryKey: [currentGame?.id, 'lightSpots'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [currentGame?.id, 'subjectPulses'],
+    });
   }
 
   const createSubject = useUsecase(props.createSubject);

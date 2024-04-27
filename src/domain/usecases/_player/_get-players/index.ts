@@ -7,5 +7,6 @@ export interface IGetPlayersUsecase {
 export namespace IGetPlayersUsecase {
   export type Options = {
     includeBanned?: boolean;
+    excludeOverloaded?: boolean;
   };
 }

@@ -29,6 +29,7 @@ export class PlayerHydrator implements IPlayerHydrator {
       subjectID: oldestSubject?.id || null,
       banned: dto.banned,
       order: dto.order,
+      overloaded: dice?.overloaded ?? false,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };

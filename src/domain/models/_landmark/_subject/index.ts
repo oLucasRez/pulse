@@ -8,6 +8,7 @@ export interface SubjectModel extends LandmarkModel {
   icon: string;
   authorID: PlayerModel['id'];
   pulseIDs: PulseModel<SubjectModel>['id'][];
+  overloaded: boolean;
 }
 
 export namespace SubjectModel {

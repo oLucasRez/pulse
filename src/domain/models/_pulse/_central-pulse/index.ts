@@ -4,6 +4,7 @@ import { PulseModel } from '..';
 
 export interface CentralPulseModel extends PulseModel<CentralFactModel> {
   landmarkID: CentralFactModel['id'];
+  overloaded: false;
 }
 
 export namespace CentralPulseModel {

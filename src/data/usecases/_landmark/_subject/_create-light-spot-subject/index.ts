@@ -6,6 +6,7 @@ import {
   INextGameStateUsecase,
   ISetDicePositionUsecase,
   ISetLightSpotLandmarkUsecase,
+  IVerifyDicesOverloadUsecase,
 } from '@domain/usecases';
 
 import { ISubjectDAO } from '@data/dao';
@@ -18,6 +19,7 @@ export class CreateLightSpotSubjectUsecase
   private readonly nextGameState: INextGameStateUsecase;
   private readonly setDicePosition: ISetDicePositionUsecase;
   private readonly setLightSpotLandmark: ISetLightSpotLandmarkUsecase;
+  private readonly verifyDicesOverload: IVerifyDicesOverloadUsecase;
   private readonly subjectDAO: ISubjectDAO;
   private readonly subjectHydrator: ISubjectHydrator;
   public constructor({
@@ -25,6 +27,7 @@ export class CreateLightSpotSubjectUsecase
     nextGameState,
     setDicePosition,
     setLightSpotLandmark,
+    verifyDicesOverload,
     subjectDAO,
     subjectHydrator,
   }: Deps) {
@@ -32,6 +35,7 @@ export class CreateLightSpotSubjectUsecase
     this.nextGameState = nextGameState;
     this.setDicePosition = setDicePosition;
     this.setLightSpotLandmark = setLightSpotLandmark;
+    this.verifyDicesOverload = verifyDicesOverload;
     this.subjectDAO = subjectDAO;
     this.subjectHydrator = subjectHydrator;
   }
@@ -62,9 +66,12 @@ export class CreateLightSpotSubjectUsecase
       position: currentLightSpotDice.position.toJSON(),
     });
 
-    await this.setLightSpotLandmark.execute(dto.id);
+    await Promise.all([
+      this.setLightSpotLandmark.execute(dto.id),
+      this.setDicePosition.execute(currentLightSpotDice.id, null),
+    ]);
 
-    await this.setDicePosition.execute(currentLightSpotDice.id, null);
+    await this.verifyDicesOverload.execute();
 
     await this.nextGameState.execute();
 
@@ -77,6 +84,7 @@ type Deps = {
   nextGameState: INextGameStateUsecase;
   setDicePosition: ISetDicePositionUsecase;
   setLightSpotLandmark: ISetLightSpotLandmarkUsecase;
+  verifyDicesOverload: IVerifyDicesOverloadUsecase;
   subjectDAO: ISubjectDAO;
   subjectHydrator: ISubjectHydrator;
 };

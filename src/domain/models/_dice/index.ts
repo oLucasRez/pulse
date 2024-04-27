@@ -8,8 +8,10 @@ export interface DiceModel extends Model {
   value: number | null;
   position: Vector | null;
   color: Color | null;
-  ownerID: PlayerModel['id'] | null;
   order: number;
+  overloadCount: number;
+  overloaded: boolean;
+  ownerID: PlayerModel['id'] | null;
 }
 
 export namespace DiceModel {
@@ -18,5 +20,7 @@ export namespace DiceModel {
     value: number | null;
     position: Vector | null;
     order: number;
+    overloadCount: number;
+    overloaded: boolean;
   }
 }

@@ -13,17 +13,15 @@ import { Vector, VectorSpace } from '@domain/utils';
 
 import { Transition } from '@presentation/components';
 import { ms } from '@presentation/constants';
-import { useEvent, useInterval, useStates } from '@presentation/hooks';
+import { useDice, useEvent, useInterval, useStates } from '@presentation/hooks';
 
 import { Container, ViewBox } from './styles';
 
 import { MapContextValue, MapProps } from './types';
 
-const bounds = { top: -20, left: -20, right: 20, bottom: 20 };
-
 const Context = createContext<MapContextValue>({
   mapSpace: VectorSpace.identity,
-  bounds,
+  bounds: { top: -0, left: -0, right: 0, bottom: 0 },
   onMouseMove: () => () => {},
   onMouseDown: () => () => {},
   onMouseUp: () => () => {},
@@ -53,7 +51,21 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     s.height = divRef.current?.clientHeight ?? 0;
   }
 
-  useInterval(updateSize, 100 * ms, [divRef], { firstShot: true });
+  useInterval(updateSize, 100 * ms, [], { firstShot: true });
+
+  const { dices } = useDice();
+
+  const limit = useMemo(
+    () =>
+      dices.reduce(
+        (limit, dice) =>
+          dice.ownerID && dice.sides > limit ? dice.sides : limit,
+        0,
+      ) + 1,
+    [dices],
+  );
+
+  const bounds = { top: -limit, left: -limit, right: limit, bottom: limit };
 
   const mapSpace = useMemo(
     () =>
@@ -125,6 +137,23 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
 
   useImperativeHandle(ref, () => contextValue, []);
 
+  function renderOutside() {
+    const border = Math.abs(s.width - s.height) / 2;
+    const min = Math.min(s.width, s.height);
+
+    return (
+      <path
+        d={`M${s.width / 2} 0 h${s.width / 2} v${
+          s.height
+        } h${-s.width} v${-s.height} h${s.width / 2} v${
+          s.width > s.height ? 0 : (s.height - s.width) / 2
+        } a${border} ${border} 0 0 0 0 ${min} a${border} ${border} 0 0 0 0 ${-min}`}
+        fill='darkgrey'
+        opacity={0.1}
+      />
+    );
+  }
+
   return (
     <Context.Provider value={contextValue}>
       <Container ref={divRef}>
@@ -135,24 +164,9 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
           onMouseUp={handleMouseUp}
           onClick={handleClick}
         >
+          {renderOutside()}
           {typeof children === 'function' ? children(contextValue) : children}
         </ViewBox>
-
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: 0,
-            margin: 'auto',
-            width: s.height,
-            height: s.height,
-            borderLeft: '1px solid darkgrey',
-            borderRight: '1px solid darkgrey',
-            transform: 'translateX(-50%)',
-            opacity: 0.5,
-            pointerEvents: 'none',
-          }}
-        />
 
         <Transition.Fade active={!!s.portal} ms={200}>
           <div

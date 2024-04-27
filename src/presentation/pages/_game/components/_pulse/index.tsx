@@ -7,7 +7,13 @@ import { PulseProps } from './types';
 
 import { useMapContext } from '..';
 
-export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
+export const Pulse: FC<PulseProps> = ({
+  origin,
+  amount,
+  gap,
+  overloaded,
+  landmarkID,
+}) => {
   const { mapSpace } = useMapContext();
   const { landmarks } = useLandmark();
 
@@ -37,12 +43,12 @@ export const Pulse: FC<PulseProps> = ({ origin, amount, gap, landmarkID }) => {
         r={r}
         fill='none'
         stroke={getColor(landmark?.color)}
-        strokeDasharray={!landmark ? 4 : undefined}
+        strokeDasharray={!landmark || overloaded ? 3 : undefined}
       />,
     );
   }
 
-  return <>{circles}</>;
+  return <g opacity={overloaded ? 0.4 : 1}>{circles}</g>;
 };
 
 export const Pulses: FC = () => {

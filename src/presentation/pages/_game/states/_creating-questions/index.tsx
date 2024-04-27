@@ -107,8 +107,8 @@ export const CreatingQuestionsState: FC = () => {
         <CentralFact />
         <Questions />
 
-        {isMyTurn && state === 'roll:dice' && (
-          <DiceRoller onRollDice={handleRollDice} />
+        {isMyTurn && state === 'roll:dice' && currentDice && (
+          <DiceRoller dice={currentDice} onRollDice={handleRollDice} />
         )}
 
         {isMyTurn &&

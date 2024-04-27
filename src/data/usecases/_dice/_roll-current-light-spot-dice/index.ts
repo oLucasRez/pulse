@@ -41,10 +41,7 @@ export class RollCurrentLightSpotDiceUsecase
         metadata: { entity: 'CurrentLightSpotDice' },
       });
 
-    const value = Math.ceil(Math.random() * currentLightSpotDice.sides);
-
     const dto = await this.diceDAO.update(currentLightSpotDice.id, {
-      value,
       position: position.toJSON(),
     });
 

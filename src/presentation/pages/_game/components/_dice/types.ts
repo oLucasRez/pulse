@@ -2,7 +2,7 @@ import { DiceModel } from '@domain/models';
 
 export interface DicesProps {
   transparent?: boolean;
-  currentHidden?: boolean;
+  hidden?: string;
 }
 
 export type DiceProps = DiceModel & {

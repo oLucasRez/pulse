@@ -91,14 +91,19 @@ export const CreatingCentralFactState: FC = () => {
     rollCurrentDice().catch(alertError);
   }
 
+  const isRollDiceState = isMyTurn && state === 'roll:dice' && currentDice;
+
   if (!currentGame) return null;
 
   return (
     <>
       <Map onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
         <Pulses />
+        <Dices
+          hidden={isRollDiceState ? currentDice.id : undefined}
+          transparent
+        />
         <Subjects />
-        <Dices currentHidden transparent />
         <CentralFact />
 
         {isMyTurn &&
@@ -106,8 +111,8 @@ export const CreatingCentralFactState: FC = () => {
           currentDice &&
           s.dicePosition && <Dice {...currentDice} position={s.dicePosition} />}
 
-        {isMyTurn && state === 'roll:dice' && (
-          <DiceRoller onRollDice={handleDiceRoll} />
+        {isRollDiceState && (
+          <DiceRoller dice={currentDice} onRollDice={handleDiceRoll} />
         )}
       </Map>
 

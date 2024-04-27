@@ -2,14 +2,14 @@ import { FC, useEffect } from 'react';
 
 import { Vector } from '@domain/utils';
 
-import { useDice, usePlayer, useStates } from '@presentation/hooks';
+import { useStates } from '@presentation/hooks';
 
 import { DiceRollerProps } from './types';
 
 import { Dice, useMapContext } from '..';
 
 export const DiceRoller: FC<DiceRollerProps> = (props) => {
-  const { onRollDice } = props;
+  const { dice, onRollDice } = props;
 
   const [s] = useStates({
     origin: null as Vector | null,
@@ -18,9 +18,6 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     interval: undefined as NodeJS.Timer | undefined,
     value: 0,
   });
-
-  const { currentPlayer } = usePlayer();
-  const { currentDice } = useDice();
 
   const { mapSpace, bounds, onMouseMove, onMouseDown, onMouseUp } =
     useMapContext();
@@ -54,7 +51,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
         if (s.origin && s.target) {
           const vel = s.target.sub(s.origin);
 
-          if (vel.mag() < 5) {
+          if (vel.mag() < 3) {
             alert('Click and drag to roll the dice');
 
             s.origin = null;
@@ -75,7 +72,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     s.target = null;
     s.vel = null;
     s.value = 0;
-  }, [currentDice?.id]);
+  }, [dice.id]);
 
   useEffect(() => {
     if (!s.vel || !s.target) return;
@@ -110,14 +107,11 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
 
   useEffect(() => {
     if (s.vel && s.vel.mag() < 0.01) {
-      if (currentDice && s.target)
-        onRollDice?.({ position: s.target, dice: currentDice });
+      if (s.target) onRollDice?.({ position: s.target });
 
       clearInterval(s.interval);
     }
   }, [s.vel]);
-
-  if (!currentPlayer) return null;
 
   const origin = s.origin && mapSpace.mult(s.origin);
   const target = s.target && mapSpace.mult(s.target);
@@ -135,7 +129,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
         />
       )}
 
-      {target && currentDice && <Dice {...currentDice} position={s.target} />}
+      {target && <Dice {...dice} position={s.target} />}
     </>
   );
 };

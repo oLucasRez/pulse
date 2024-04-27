@@ -18,7 +18,7 @@ import { SubjectForm } from './components';
 export const CreatingLightSpotState: FC = () => {
   const { currentGame } = useGame();
   const { isMyLightSpotTurn, currentLightSpotPlayer } = usePlayer();
-  const { rollCurrentLightSpotDice } = useDice();
+  const { currentLightSpotDice, rollCurrentLightSpotDice } = useDice();
   const { createLightSpotSubject } = useSubject();
 
   const mapRef = useRef<Map.Ref>(null);
@@ -52,17 +52,23 @@ export const CreatingLightSpotState: FC = () => {
     );
   }, [isMyLightSpotTurn, state]);
 
+  const isRollDiceState =
+    isMyLightSpotTurn && state === 'roll:dice' && currentLightSpotDice;
+
   return (
     <>
       <Map ref={mapRef}>
         <Pulses />
-        <Dices transparent />
+        <Dices
+          transparent
+          hidden={isRollDiceState ? currentLightSpotDice.id : undefined}
+        />
         <Subjects />
         <CentralFact />
         <Questions />
 
-        {isMyLightSpotTurn && state === 'roll:dice' && (
-          <DiceRoller onRollDice={handleRollDice} />
+        {isRollDiceState && (
+          <DiceRoller dice={currentLightSpotDice} onRollDice={handleRollDice} />
         )}
       </Map>
 

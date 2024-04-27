@@ -9,6 +9,7 @@ import {
   makeSetLightSpotLandmarkUsecase,
   makeSubjectDAO,
   makeSubjectHydrator,
+  makeVerifyDicesOverloadUsecase,
 } from '@main/factories';
 
 export function makeCreateLightSpotSubjectUsecase(): ICreateLightSpotSubjectUsecase {
@@ -18,6 +19,7 @@ export function makeCreateLightSpotSubjectUsecase(): ICreateLightSpotSubjectUsec
   const setLightSpotLandmark = makeSetLightSpotLandmarkUsecase();
   const subjectDAO = makeSubjectDAO();
   const subjectHydrator = makeSubjectHydrator();
+  const verifyDicesOverload = makeVerifyDicesOverloadUsecase();
 
   return new CreateLightSpotSubjectUsecase({
     getCurrentLightSpotDice,
@@ -26,5 +28,6 @@ export function makeCreateLightSpotSubjectUsecase(): ICreateLightSpotSubjectUsec
     setLightSpotLandmark,
     subjectDAO,
     subjectHydrator,
+    verifyDicesOverload,
   });
 }

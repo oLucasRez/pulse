@@ -7,6 +7,7 @@ export interface PulseModel<L extends LandmarkModel> extends Model {
   gap: number;
   amount: number;
   landmarkID: L['id'] | null;
+  overloaded: boolean;
 }
 
 export namespace PulseModel {

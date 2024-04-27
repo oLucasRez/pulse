@@ -15,7 +15,7 @@ export class GetPlayersUsecase implements IGetPlayersUsecase {
   public async execute(
     options: IGetPlayersUsecase.Options = {},
   ): Promise<PlayerModel[]> {
-    const { includeBanned = false } = options;
+    const { includeBanned = false, excludeOverloaded = false } = options;
 
     const dtos = includeBanned
       ? await this.playerDAO.getAll()
@@ -25,9 +25,10 @@ export class GetPlayersUsecase implements IGetPlayersUsecase {
       dtos.map((dto) => this.playerHydrator.hydrate(dto)),
     );
 
-    if (includeBanned) return players;
+    if (excludeOverloaded)
+      return players.filter(({ overloaded }) => !overloaded);
 
-    return players.filter((value) => !value.banned);
+    return players;
   }
 }
 

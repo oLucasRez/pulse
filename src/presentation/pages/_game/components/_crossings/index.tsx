@@ -55,7 +55,7 @@ export const Crossings: FC<CrossingsProps> = (props) => {
   const crossings = useMemo(() => {
     const value: Vector[] = [];
 
-    for (const pulse of pulses)
+    for (const pulse of pulses.filter(({ overloaded }) => !overloaded))
       for (const circle of getCircles(pulse)) {
         const positions = calcCrossings(circle, targetCircle);
 

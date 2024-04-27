@@ -45,6 +45,14 @@ export const DiceContextProvider: FC<DiceContextProviderProps> = ({
 
   function replaceAll(dices: DiceModel[]): void {
     queryClient.setQueryData<DiceModel[]>(queryKey, () => dices);
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'subjects'] });
+    queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'players'] });
+    queryClient.invalidateQueries({
+      queryKey: [currentGame?.id, 'lightSpots'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [currentGame?.id, 'subjectPulses'],
+    });
   }
 
   const rollCurrentDice = useUsecase(props.rollCurrentDice);

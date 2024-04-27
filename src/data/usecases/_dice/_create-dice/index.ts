@@ -29,6 +29,8 @@ export class CreateDiceUsecase implements ICreateDiceUsecase {
       value: null,
       position: null,
       order,
+      overloadCount: 0,
+      overloaded: false,
     });
 
     return this.diceHydrator.hydrate(dto);

@@ -10,9 +10,14 @@ import { useMapContext } from '..';
 const d4Edge = 40;
 const d6Edge = 20;
 
-export const Dice: FC<DiceProps> = (props) => {
-  const { value, sides, transparent = false, color } = props;
-
+export const Dice: FC<DiceProps> = ({
+  value,
+  sides,
+  transparent = false,
+  color,
+  overloaded,
+  ...props
+}) => {
   const { mapSpace } = useMapContext();
 
   const position = props.position && mapSpace.mult(props.position);
@@ -21,7 +26,10 @@ export const Dice: FC<DiceProps> = (props) => {
 
   if (sides === 4)
     return (
-      <g opacity={transparent ? 0.5 : 1}>
+      <g
+        opacity={(transparent ? 0.5 : 1) * (overloaded ? 0.5 : 1)}
+        style={{ transition: '0.2s' }}
+      >
         <path
           d={`M${position.x},${position.y} m-${d4Edge / 2},${
             (d4Edge * Math.sqrt(3)) / 6
@@ -89,7 +97,7 @@ export const Dice: FC<DiceProps> = (props) => {
 
   if (sides === 6)
     return (
-      <g opacity={transparent ? 0.5 : 1}>
+      <g opacity={(transparent ? 0.5 : 1) * (overloaded ? 0.5 : 1)}>
         <path
           d={`M${position.x},${position.y} m0,${d6Edge} l${
             (d6Edge * Math.sqrt(3)) / 2
@@ -155,7 +163,7 @@ export const Dice: FC<DiceProps> = (props) => {
 
   if (sides === 8)
     return (
-      <g opacity={transparent ? 0.5 : 1}>
+      <g opacity={(transparent ? 0.5 : 1) * (overloaded ? 0.5 : 1)}>
         <path
           d={`M${position.x},${position.y} m0,${d6Edge} l${
             (d6Edge * Math.sqrt(3)) / 2
@@ -226,15 +234,13 @@ export const Dice: FC<DiceProps> = (props) => {
   return null;
 };
 
-export const Dices: FC<DicesProps> = (props) => {
-  const { transparent, currentHidden } = props;
-
-  const { currentDice, dices } = useDice();
+export const Dices: FC<DicesProps> = ({ transparent, hidden }) => {
+  const { dices } = useDice();
 
   return (
     <>
       {dices.map((dice) => {
-        if (currentHidden && dice.id === currentDice?.id) return null;
+        if (hidden && dice.id === hidden) return null;
 
         return <Dice key={dice.id} transparent={transparent} {...dice} />;
       })}

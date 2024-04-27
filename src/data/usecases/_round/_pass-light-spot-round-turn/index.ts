@@ -37,11 +37,12 @@ export class PassLightSpotRoundTurnUsecase
     players.sort((player1, player2) => player1.order - player2.order);
 
     const nextPlayer = players.find(
-      (player) => round.i !== null && player.order > round.i,
+      (player) => round.i === null || player.order > round.i,
     );
 
     const dto = await this.roundDAO.update(round.id, {
       i: nextPlayer?.order ?? null,
+      clockwise: round.clockwise ? undefined : 'clockwise',
       finished: nextPlayer === undefined,
     });
 

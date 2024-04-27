@@ -11,6 +11,7 @@ export class CentralPulseHydrator implements ICentralPulseHydrator {
       gap: dto.gap,
       amount: dto.amount,
       landmarkID: dto.landmarkID,
+      overloaded: false,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };

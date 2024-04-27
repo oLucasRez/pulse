@@ -1,6 +1,7 @@
 import { ISubjectHydrator } from '@data/hydration';
 
 import {
+  makeDiceDAO,
   makeLightSpotDAO,
   makePlayerDAO,
   makeSubjectPulseDAO,
@@ -8,9 +9,15 @@ import {
 import { SubjectHydrator } from '@main/hydration';
 
 export function makeSubjectHydrator(): ISubjectHydrator {
+  const diceDAO = makeDiceDAO();
   const lightSpotDAO = makeLightSpotDAO();
   const playerDAO = makePlayerDAO();
   const subjectPulseDAO = makeSubjectPulseDAO();
 
-  return new SubjectHydrator({ lightSpotDAO, playerDAO, subjectPulseDAO });
+  return new SubjectHydrator({
+    diceDAO,
+    lightSpotDAO,
+    playerDAO,
+    subjectPulseDAO,
+  });
 }

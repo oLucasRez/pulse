@@ -19,7 +19,6 @@ import {
   makeRoundContextProvider,
   makeSubjectContextProvider,
   makeSubjectPulseContextProvider,
-  makeUserContextProvider,
 } from '@main/factories';
 
 const GamePage = lazy(() => import('@presentation/pages/_game'));
@@ -38,20 +37,17 @@ export function makeGamePage(): ReactElement {
     makePlayerContextProvider,
     makeRoundContextProvider,
     makeGameContextProvider,
-    makeUserContextProvider,
     // outer
   ].reduce<ReactElement>(
     (children, wrapper) => wrapper({ children }),
     <Suspense fallback={<GlobalLoading />}>
-      <AuthProxy>
-        <GameExistsProxy>
-          <CreatePlayerProxy>
-            <GamePage />
-          </CreatePlayerProxy>
-        </GameExistsProxy>
-      </AuthProxy>
+      <GameExistsProxy>
+        <CreatePlayerProxy>
+          <GamePage />
+        </CreatePlayerProxy>
+      </GameExistsProxy>
     </Suspense>,
   );
 
-  return page;
+  return <AuthProxy>{page}</AuthProxy>;
 }

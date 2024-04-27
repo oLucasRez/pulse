@@ -33,6 +33,8 @@ export class DiceHydrator implements IDiceHydrator {
         ? Vector.fromJSON(oldestSubject.position)
         : null,
       color: owner?.color ?? null,
+      overloadCount: dto.overloadCount,
+      overloaded: dto.overloaded,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };
