@@ -5,23 +5,26 @@ import { CreateAnswerUsecase } from '@data/usecases';
 import {
   makeAnswerDAO,
   makeAnswerHydrator,
+  makeExpireQuestionVotesUsecase,
   makeGetMyPlayerUsecase,
   makeNextGameStateUsecase,
-  makeSetVotingAnswerUsecase,
+  makeVoteQuestionFactUsecase,
 } from '@main/factories';
 
 export function makeCreateAnswerUsecase(): ICreateAnswerUsecase {
   const answerDAO = makeAnswerDAO();
   const answerHydrator = makeAnswerHydrator();
-  const nextGameState = makeNextGameStateUsecase();
+  const expireQuestionVotes = makeExpireQuestionVotesUsecase();
   const getMyPlayer = makeGetMyPlayerUsecase();
-  const setVotingAnswer = makeSetVotingAnswerUsecase();
+  const nextGameState = makeNextGameStateUsecase();
+  const voteQuestionFact = makeVoteQuestionFactUsecase();
 
   return new CreateAnswerUsecase({
     answerDAO,
     answerHydrator,
+    expireQuestionVotes,
     getMyPlayer,
     nextGameState,
-    setVotingAnswer,
+    voteQuestionFact,
   });
 }

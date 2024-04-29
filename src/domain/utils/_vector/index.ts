@@ -62,6 +62,14 @@ export class Vector {
     else return Vector.mult(this, a);
   }
 
+  public dot(u: Vector): number {
+    return this.x * u.x + this.y * u.y;
+  }
+
+  public div(a: number): Vector {
+    return this.mult(1 / a);
+  }
+
   public static mod(u: Vector): number {
     return Math.sqrt(u.x * u.x + u.y * u.y);
   }
@@ -79,13 +87,25 @@ export class Vector {
     return Vector.norm(this);
   }
 
+  public proj(on: Vector): Vector {
+    return on.mult(this.dot(on) / (on.mag() * on.mag()));
+  }
+
+  public bounce(axis: Vector): Vector {
+    const x = this.proj(axis);
+    const y = this.sub(x);
+
+    return y.sum(x).mult(-1);
+  }
+
   public static flip(u: Vector, axis: 'x' | 'y'): Vector {
     if (axis === 'x') return new Vector([-u.x, u.y]);
     return new Vector([u.x, -u.y]);
   }
 
   public flip(axis: 'x' | 'y'): Vector {
-    return Vector.flip(this, axis);
+    if (axis === 'x') return this.bounce(new Vector([1, 0]));
+    return this.bounce(new Vector([0, 1]));
   }
 
   public projX(): Vector {

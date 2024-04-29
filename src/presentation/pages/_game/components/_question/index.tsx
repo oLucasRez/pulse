@@ -1,4 +1,4 @@
-import { FC, Fragment, KeyboardEvent } from 'react';
+import { FC, KeyboardEvent } from 'react';
 
 import { Input, P } from '@presentation/components';
 import {
@@ -10,12 +10,14 @@ import {
 import { getColor } from '@presentation/styles/mixins';
 import { alertError } from '@presentation/utils';
 
+import { StarCheckbox } from './components';
+
 import { QuestionProps, QuestionsProps } from './types';
 
 import { Landmark, useMapContext } from '..';
 
 export const Question: FC<QuestionProps> = (props) => {
-  const { id, description, color, solved, onAnswer } = props;
+  const { id, description, color, votes, factID, onAnswer } = props;
 
   const [s, set] = useStates({
     active: false,
@@ -24,11 +26,14 @@ export const Question: FC<QuestionProps> = (props) => {
 
   const { openBakingPaper, closeBakingPaper } = useMapContext();
   const { myPlayer, currentPlayer } = usePlayer();
-  const { answers, pendingMyVote, voteAnswer } = useAnswer();
+  const { answers } = useAnswer();
+  const { voteQuestionFact } = useQuestion();
 
-  function handleVoteClick(value: boolean) {
+  const myVote = myPlayer && votes[myPlayer.id];
+
+  function handleVoteClick(answerID: string | null) {
     return () => {
-      voteAnswer(value).catch(alertError);
+      voteQuestionFact(id, answerID).catch(alertError);
       closeBakingPaper();
     };
   }
@@ -43,53 +48,68 @@ export const Question: FC<QuestionProps> = (props) => {
   }
 
   function renderAnswers() {
-    return answers
+    const questionAnswers = answers
       .filter(({ questionID }) => questionID === id)
-      .map((answer) => (
-        <Fragment key={answer.id}>
-          <P
-            // style
-            className='handwriting'
-            style={{
-              color: getColor(answer.color),
-              textDecoration: answer.state === 'fact' ? 'underline' : undefined,
-            }}
-          >
-            {answer.description}
-          </P>
+      .sort(
+        (answer1, answer2) =>
+          answer1.createdAt.getTime() - answer2.createdAt.getTime(),
+      );
 
-          {answer.state === 'voting' && pendingMyVote && (
-            <P className='handwriting' style={{ fontSize: '0.75rem' }}>
-              {'('} Turn in fact?{' '}
-              <button
-                // style
-                className='handwriting'
-                style={{ fontSize: '0.75rem' }}
-                // handle
-                onClick={handleVoteClick(true)}
-              >
-                Yes
-              </button>{' '}
-              <button
-                // style
-                className='handwriting'
-                style={{ fontSize: '0.75rem' }}
-                // handle
-                onClick={handleVoteClick(false)}
-              >
-                No
-              </button>{' '}
-              {')'}
+    return (
+      <>
+        {questionAnswers.map((answer) => (
+          <div
+            key={answer.id}
+            style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+          >
+            <StarCheckbox
+              checked={myVote?.answerID === answer.id}
+              expired={!myVote?.upToDate}
+              color={answer.color}
+              onCheck={handleVoteClick(answer.id)}
+            />
+
+            <P
+              // style
+              className='handwriting'
+              style={{
+                color: getColor(answer.color),
+                textDecoration: factID === answer.id ? 'underline' : undefined,
+              }}
+            >
+              {answer.description}
             </P>
-          )}
-        </Fragment>
-      ));
+          </div>
+        ))}
+
+        {!!questionAnswers.length && (
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <StarCheckbox
+              checked={myVote?.answerID === null}
+              expired={!myVote?.upToDate}
+              onCheck={handleVoteClick(null)}
+            />
+
+            <P
+              // style
+              className='handwriting'
+              style={{
+                color: getColor(),
+                fontSize: '0.75rem',
+              }}
+            >
+              None of the answers
+            </P>
+          </div>
+        )}
+      </>
+    );
   }
 
   function renderAnswerInput() {
     if (!onAnswer) return null;
     if (!myPlayer) return null;
-    if (solved) return null;
+    if (factID) return null;
 
     return (
       <Input

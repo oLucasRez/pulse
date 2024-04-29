@@ -32,6 +32,8 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
 
   const createQuestion = useUsecase(props.createQuestion);
 
+  const voteQuestionFact = useUsecase(props.voteQuestionFact);
+
   useWatch(async () => {
     if (currentGame)
       return watchQuestions.execute((questions) =>
@@ -44,6 +46,7 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
       value={{
         questions,
         createQuestion,
+        voteQuestionFact,
       }}
     >
       {children}

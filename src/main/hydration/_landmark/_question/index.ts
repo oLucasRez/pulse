@@ -2,16 +2,12 @@ import { NotFoundError } from '@domain/errors';
 import { QuestionModel } from '@domain/models';
 import { Vector } from '@domain/utils';
 
-import { IAnswerDAO, IPlayerDAO } from '@data/dao';
+import { IPlayerDAO } from '@data/dao';
 import { IQuestionHydrator } from '@data/hydration';
 
-import { getAnswerState } from '@main/hydration/helpers';
-
 export class QuestionHydrator implements IQuestionHydrator {
-  private readonly answerDAO: IAnswerDAO;
   private readonly playerDAO: IPlayerDAO;
-  public constructor({ answerDAO, playerDAO }: Deps) {
-    this.answerDAO = answerDAO;
+  public constructor({ playerDAO }: Deps) {
     this.playerDAO = playerDAO;
   }
 
@@ -23,23 +19,26 @@ export class QuestionHydrator implements IQuestionHydrator {
         metadata: { entity: 'Player', prop: 'order', value: dto.order },
       });
 
-    const answers = await this.answerDAO.getByQuestionID(dto.id);
+    const players = await this.playerDAO.getUnbanned();
 
-    const solved = (
-      await Promise.all(
-        answers.map((answerDTO) =>
-          getAnswerState(answerDTO, { playerDAO: this.playerDAO }),
-        ),
-      )
-    ).some((state) => state === 'fact');
+    const factID = players.reduce((factID, { id }) => {
+      if (!(id in dto.votes)) return null;
+      if (!factID) return null;
+
+      if (factID === dto.votes[id]?.answerID && dto.votes[id]?.upToDate)
+        return factID;
+
+      return null;
+    }, Object.values(dto.votes)[0]?.answerID as string | null);
 
     return {
       id: dto.id,
       description: dto.description,
       position: Vector.fromJSON(dto.position),
       color: author.color,
+      votes: dto.votes,
+      factID,
       authorID: author.id,
-      solved,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };
@@ -47,6 +46,5 @@ export class QuestionHydrator implements IQuestionHydrator {
 }
 
 type Deps = {
-  answerDAO: IAnswerDAO;
   playerDAO: IPlayerDAO;
 };

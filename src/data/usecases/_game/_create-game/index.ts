@@ -41,7 +41,6 @@ export class CreateGameUsecase implements ICreateGameUsecase {
       centralPulseID: null,
       roundID: null,
       lightSpotRoundID: null,
-      votingAnswerID: null,
     });
 
     const game = await this.gameHydrator.hydrate(dto);

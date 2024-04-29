@@ -13,7 +13,6 @@ export class GameHydrator implements IGameHydrator {
       centralPulseID: dto.centralPulseID,
       roundID: dto.roundID,
       lightSpotRoundID: dto.lightSpotRoundID,
-      votingAnswerID: dto.votingAnswerID,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };

@@ -1,5 +1,5 @@
 import { Color } from '@domain/enums';
-import { PlayerModel } from '@domain/models';
+import { AnswerModel, PlayerModel } from '@domain/models';
 import { Vector } from '@domain/utils';
 
 import { LandmarkModel } from '..';
@@ -7,13 +7,27 @@ import { LandmarkModel } from '..';
 export interface QuestionModel extends LandmarkModel {
   position: Vector;
   color: Color;
-  solved: boolean;
   authorID: PlayerModel['id'];
+  factID: AnswerModel['id'] | null;
+  votes: Record<
+    PlayerModel['id'],
+    {
+      answerID: AnswerModel['id'] | null;
+      upToDate: boolean;
+    }
+  >;
 }
 
 export namespace QuestionModel {
   export interface DTO extends LandmarkModel.DTO {
     position: Vector.JSON;
     order: number;
+    votes: Record<
+      string,
+      {
+        answerID: string | null;
+        upToDate: boolean;
+      }
+    >;
   }
 }

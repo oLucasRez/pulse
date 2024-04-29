@@ -4,8 +4,6 @@ import { AnswerModel } from '@domain/models';
 import { IPlayerDAO } from '@data/dao';
 import { IAnswerHydrator } from '@data/hydration';
 
-import { getAnswerState } from '../helpers';
-
 export class AnswerHydrator implements IAnswerHydrator {
   private readonly playerDAO: IPlayerDAO;
   public constructor({ playerDAO }: Deps) {
@@ -13,8 +11,6 @@ export class AnswerHydrator implements IAnswerHydrator {
   }
 
   public async hydrate(dto: AnswerModel.DTO): Promise<AnswerModel> {
-    const state = await getAnswerState(dto, { playerDAO: this.playerDAO });
-
     const author = await this.playerDAO.getByID(dto.authorID);
 
     if (!author)
@@ -28,8 +24,6 @@ export class AnswerHydrator implements IAnswerHydrator {
       color: author.color,
       questionID: dto.questionID,
       authorID: dto.authorID,
-      state,
-      votes: dto.votes,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };

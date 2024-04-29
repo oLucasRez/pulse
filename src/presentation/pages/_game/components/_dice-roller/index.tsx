@@ -51,7 +51,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
         if (s.origin && s.target) {
           const vel = s.target.sub(s.origin);
 
-          if (vel.mag() < 3) {
+          if (vel.mag() < 1) {
             alert('Click and drag to roll the dice');
 
             s.origin = null;
@@ -80,20 +80,14 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     s.interval = setInterval(() => {
       if (!s.vel || !s.target) return;
 
-      const { left, right, top, bottom } = bounds;
+      const { right } = bounds;
 
       let newTarget = s.target.sum(s.vel);
       let newVel = s.vel.mult(0.9);
 
-      if (left > newTarget.x || right < newTarget.x) {
-        newVel = newVel.flip('x');
-        if (left > newTarget.x) newTarget = new Vector([left, newTarget.y]);
-        if (right < newTarget.x) newTarget = new Vector([right, newTarget.y]);
-      }
-      if (top > newTarget.y || bottom < newTarget.y) {
-        newVel = newVel.flip('y');
-        if (top > newTarget.y) newTarget = new Vector([newTarget.x, top]);
-        if (bottom < newTarget.y) newTarget = new Vector([newTarget.x, bottom]);
+      if (newTarget.mag() > right) {
+        newTarget = newTarget.norm().mult(right);
+        newVel = newVel.bounce(newTarget);
       }
 
       s.target = newTarget;

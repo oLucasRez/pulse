@@ -2,30 +2,34 @@ import { NotFoundError } from '@domain/errors';
 import { AnswerModel } from '@domain/models';
 import {
   ICreateAnswerUsecase,
+  IExpireQuestionVotesUsecase,
   IGetMyPlayerUsecase,
   INextGameStateUsecase,
-  ISetVotingAnswerUsecase,
+  IVoteQuestionFactUsecase,
 } from '@domain/usecases';
 
 import { IAnswerDAO } from '@data/dao';
 import { IAnswerHydrator } from '@data/hydration';
 
 export class CreateAnswerUsecase implements ICreateAnswerUsecase {
+  private readonly expireQuestionVotes: IExpireQuestionVotesUsecase;
   private readonly getMyPlayer: IGetMyPlayerUsecase;
   private readonly nextGameState: INextGameStateUsecase;
-  private readonly setVotingAnswer: ISetVotingAnswerUsecase;
+  private readonly voteQuestionFact: IVoteQuestionFactUsecase;
   private readonly answerDAO: IAnswerDAO;
   private readonly answerHydrator: IAnswerHydrator;
   public constructor({
+    expireQuestionVotes,
     getMyPlayer,
     nextGameState,
-    setVotingAnswer,
+    voteQuestionFact,
     answerDAO,
     answerHydrator,
   }: Deps) {
+    this.expireQuestionVotes = expireQuestionVotes;
     this.getMyPlayer = getMyPlayer;
     this.nextGameState = nextGameState;
-    this.setVotingAnswer = setVotingAnswer;
+    this.voteQuestionFact = voteQuestionFact;
     this.answerDAO = answerDAO;
     this.answerHydrator = answerHydrator;
   }
@@ -44,10 +48,11 @@ export class CreateAnswerUsecase implements ICreateAnswerUsecase {
       description,
       questionID,
       authorID: myPlayer.id,
-      votes: { [myPlayer.id]: true },
     });
 
-    await this.setVotingAnswer.execute(dto.id);
+    await this.expireQuestionVotes.execute(questionID);
+
+    await this.voteQuestionFact.execute(questionID, dto.id);
 
     await this.nextGameState.execute();
 
@@ -56,9 +61,10 @@ export class CreateAnswerUsecase implements ICreateAnswerUsecase {
 }
 
 type Deps = {
+  expireQuestionVotes: IExpireQuestionVotesUsecase;
   getMyPlayer: IGetMyPlayerUsecase;
   nextGameState: INextGameStateUsecase;
-  setVotingAnswer: ISetVotingAnswerUsecase;
+  voteQuestionFact: IVoteQuestionFactUsecase;
   answerDAO: IAnswerDAO;
   answerHydrator: IAnswerHydrator;
 };

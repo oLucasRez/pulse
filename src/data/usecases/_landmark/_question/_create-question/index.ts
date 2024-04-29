@@ -69,6 +69,7 @@ export class CreateQuestionUsecase implements ICreateQuestionUsecase {
       description,
       color: null,
       order: myPlayer.order,
+      votes: {},
     });
 
     await this.nextGameState.execute();
