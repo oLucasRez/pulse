@@ -10,19 +10,25 @@ import { getRandomEmoji } from '@presentation/utils';
 
 import { FormData as SubjectFormFormData, SubjectFormProps } from './types';
 
-export const SubjectForm: FC<SubjectFormProps> = ({ onSubmit }) => {
+export const SubjectForm: FC<SubjectFormProps> = ({
+  defaultValues,
+  hidden,
+  onSubmit,
+}) => {
   const [s, set] = useStates({
-    color: undefined as Color | undefined,
-    icon: getRandomEmoji([
-      'Smileys & Emotion',
-      'People & Body',
-      'Animals & Nature',
-      'Food & Drink',
-      'Travel & Places',
-      'Activites',
-      'Objects',
-    ]),
-    description: '',
+    color: defaultValues?.color,
+    icon:
+      defaultValues?.icon ??
+      getRandomEmoji([
+        'Smileys & Emotion',
+        'People & Body',
+        'Animals & Nature',
+        'Food & Drink',
+        'Travel & Places',
+        'Activites',
+        'Objects',
+      ]),
+    description: defaultValues?.description ?? '',
   });
 
   function handleInputKeyDown(event: KeyboardEvent) {
@@ -72,38 +78,42 @@ export const SubjectForm: FC<SubjectFormProps> = ({ onSubmit }) => {
         gap: '1rem',
       }}
     >
-      <div
-        style={{
-          width: '4rem',
-          height: '4rem',
-          borderRadius: '50rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '2rem',
-          background: s.color ? getColor(s.color) : 'lightgray',
-        }}
-      >
-        {s.icon}
-      </div>
+      {!hidden?.icon && (
+        <div
+          style={{
+            width: '4rem',
+            height: '4rem',
+            borderRadius: '50rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '2rem',
+            background: s.color ? getColor(s.color) : 'lightgray',
+          }}
+        >
+          {s.icon}
+        </div>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <Input
-          // style
-          style={{ fontSize: '1.5rem', color: getColor(s.color) }}
-          autoFocus
-          variant='baking-paper'
-          placeholderOpacity={0.5}
-          placeholderColor={getColor(s.color)}
-          // params
-          placeholder='Description'
-          defaultValue={s.description}
-          // handle
-          onChange={set('description')}
-          onKeyDown={handleInputKeyDown}
-        />
+        {!hidden?.description && (
+          <Input
+            // style
+            style={{ fontSize: '1.5rem', color: getColor(s.color) }}
+            autoFocus
+            variant='baking-paper'
+            placeholderOpacity={0.5}
+            placeholderColor={getColor(s.color)}
+            // params
+            placeholder='Description'
+            defaultValue={s.description}
+            // handle
+            onChange={set('description')}
+            onKeyDown={handleInputKeyDown}
+          />
+        )}
 
-        {renderColors()}
+        {!hidden?.color && renderColors()}
       </div>
     </div>
   );

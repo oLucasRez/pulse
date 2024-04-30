@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { LandmarkModel, PulseModel } from '@domain/models';
+
 import { PulseHookReturn } from './types';
 
 import { useCentralPulse } from '../_use-central-pulse';
@@ -11,7 +13,7 @@ export function usePulse(): PulseHookReturn {
   const { lightSpots } = useLightSpot();
   const { subjectPulses } = useSubjectPulse();
 
-  const pulses = useMemo(() => {
+  const pulses = useMemo<PulseModel<LandmarkModel>[]>(() => {
     if (centralPulse) return [centralPulse, ...lightSpots, ...subjectPulses];
     return [...lightSpots, ...subjectPulses];
   }, [centralPulse, lightSpots, subjectPulses]);

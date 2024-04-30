@@ -66,7 +66,9 @@ const Scale: FC<ScaleProps> = ({
     return cloneElement(child, {
       style: {
         transition: `transform ${ms}ms`,
-        transform: `scale(${active ? activeFactor : inactiveFactor})`,
+        transform: `${child.props.style.transform} scale(${
+          active ? activeFactor : inactiveFactor
+        })`,
         transformOrigin: 'center',
         transformBox: 'border-box',
       },

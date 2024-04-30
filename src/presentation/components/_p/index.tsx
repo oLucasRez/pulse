@@ -50,13 +50,27 @@ export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
         <p
           {...props}
           style={{
+            padding: `${strokeWidth}px`,
             ...props.style,
             WebkitTextStrokeWidth: strokeWidth * 2,
             WebkitTextStrokeColor: stroke,
+            // padding: props.style?.padding
+            //   ? `calc(${props.style.padding} + ${strokeWidth}px)`
+            //   : `${strokeWidth}px`,
           }}
         />
       )}
-      <p ref={_ref} {...props} />
+      <p
+        ref={_ref}
+        {...props}
+        style={{
+          padding: `${strokeWidth}px`,
+          ...props.style,
+          // padding: props.style?.padding
+          //   ? `calc(${props.style.padding} + ${strokeWidth}px)`
+          //   : `${strokeWidth}px`,
+        }}
+      />
     </>,
   );
 });

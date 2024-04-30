@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import { Vector } from '@domain/utils';
 
@@ -15,6 +15,7 @@ import { alertError } from '@presentation/utils';
 
 import {
   CentralFact,
+  CentralFactForm,
   Dice,
   DiceRoller,
   Dices,
@@ -23,44 +24,31 @@ import {
   Subjects,
 } from '../../components';
 
-import { Container } from './styles';
-
 export const CreatingCentralFactState: FC = () => {
   const { myPlayer, currentPlayer } = usePlayer();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { currentDice, rollCurrentDice } = useDice();
   const { centralPulse } = useCentralPulse();
+  const { centralFact, changeCentralFact } = useCentralFact();
 
   const {
     state: [, state],
   } = currentGame ?? { state: [] };
 
-  const { centralFact, changeCentralFact } = useCentralFact();
+  const mapRef = useRef<Map.Ref>(null);
 
-  const [s, set] = useStates({
-    description: centralFact?.description,
-    changingCentralFact: false,
+  const [s] = useStates({
     dicePosition: mySubject?.position ?? null,
     dicePositioned: false,
   });
 
-  useEffect(() => {
-    s.description = centralFact?.description;
-  }, [centralFact?.description]);
-
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
-  const submitDisabled = s.description === centralFact?.description;
+  function handleSubmitButtonClick(data: CentralFactForm.FormData) {
+    changeCentralFact({ description: data.description }).catch(alertError);
 
-  function handleSubmitButtonClick() {
-    if (!s.description) return;
-
-    s.changingCentralFact = true;
-
-    changeCentralFact({ description: s.description })
-      .catch(alertError)
-      .finally(set('changingCentralFact', false));
+    mapRef.current?.closeBakingPaper();
   }
 
   function handleMapMouseMove(vector: Vector) {
@@ -91,13 +79,28 @@ export const CreatingCentralFactState: FC = () => {
     rollCurrentDice().catch(alertError);
   }
 
+  useEffect(() => {
+    if (!isMyTurn || state !== 'change:centralFact') return;
+
+    mapRef.current?.openBakingPaper(
+      <CentralFactForm
+        defaultValues={{ description: centralFact?.description }}
+        onSubmit={handleSubmitButtonClick}
+      />,
+    );
+  }, [isMyTurn, state]);
+
   const isRollDiceState = isMyTurn && state === 'roll:dice' && currentDice;
 
   if (!currentGame) return null;
 
   return (
     <>
-      <Map onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
+      <Map
+        ref={mapRef}
+        onMouseMove={handleMapMouseMove}
+        onClick={handleMapClick}
+      >
         <Pulses />
         <Dices
           hidden={isRollDiceState ? currentDice.id : undefined}
@@ -120,38 +123,6 @@ export const CreatingCentralFactState: FC = () => {
         <p className='legend handwriting'>
           {currentPlayer.name} is writing the central fact...
         </p>
-      )}
-
-      {isMyTurn && state === 'change:centralFact' && (
-        <Container>
-          <article className='modal' onClick={(e) => e.stopPropagation()}>
-            <header>
-              <h2>Change central fact</h2>
-            </header>
-
-            <main>
-              <textarea
-                autoFocus
-                defaultValue={s.description}
-                onChange={(e) => (s.description = e.target.value)}
-              />
-            </main>
-
-            <footer>
-              <button
-                disabled={submitDisabled}
-                onClick={handleSubmitButtonClick}
-              >
-                {s.changingCentralFact && (
-                  <>
-                    <span className='loading'>⏳</span>{' '}
-                  </>
-                )}
-                Edit
-              </button>
-            </footer>
-          </article>
-        </Container>
       )}
     </>
   );

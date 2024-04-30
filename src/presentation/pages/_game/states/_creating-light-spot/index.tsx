@@ -11,9 +11,9 @@ import {
   Pulses,
   Questions,
   RollDiceEvent,
+  SubjectForm,
   Subjects,
 } from '../../components';
-import { SubjectForm } from './components';
 
 export const CreatingLightSpotState: FC = () => {
   const { currentGame } = useGame();

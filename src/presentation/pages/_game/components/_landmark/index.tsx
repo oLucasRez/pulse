@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { Vector } from '@domain/utils';
 
 import { P, Text, Transition } from '@presentation/components';
-import { useStates } from '@presentation/hooks';
+import { useLandmark, useStates } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 import { beginPath } from '@presentation/utils';
 
@@ -23,7 +23,28 @@ export const Landmark: FC<LandmarkProps> = ({
     active: false,
   });
 
+  const { landmarks } = useLandmark();
   const { mapSpace } = useMapContext();
+
+  const transform = useMemo(() => {
+    const samePosition = landmarks.filter(
+      ({ position }) =>
+        position &&
+        props.position &&
+        position.sub(props.position).mag() < 0.0001,
+    );
+
+    const i = samePosition.findIndex(({ id }) => id === props.id);
+    const n = samePosition.length;
+
+    let translate: Vector;
+
+    if (n === 1) translate = new Vector([0, 0]);
+    else if (n === 2) translate = new Vector([i === 0 ? -70 : 70, 0]);
+    else translate = new Vector([0, 0]);
+
+    return translate;
+  }, [landmarks, props.position, props.id]);
 
   if (!props.position) return null;
 
@@ -34,7 +55,9 @@ export const Landmark: FC<LandmarkProps> = ({
 
   return (
     <>
-      <Transition.Fade active={s.active} ms={200}>
+      <circle cx={position.x} cy={position.y} r={2} fill={color} />
+
+      <Transition.Fade active={s.active && !!description} ms={200}>
         <g>
           <path
             // style
@@ -95,13 +118,16 @@ export const Landmark: FC<LandmarkProps> = ({
           fill={color}
           stroke='white'
           strokeWidth={3}
+          style={{
+            transform: `translate(${transform.x}%, ${transform.y}%)`,
+          }}
           // params
           x={position.x}
           y={position.y}
           // handle
           onMouseEnter={set('active', true)}
           onMouseOut={set('active', false)}
-          onClick={onClick}
+          onClick={description ? onClick : undefined}
         >
           {symbol}
         </Text>

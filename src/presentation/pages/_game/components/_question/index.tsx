@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent } from 'react';
+import { FC, Fragment, KeyboardEvent, useMemo } from 'react';
 
 import { Input, P } from '@presentation/components';
 import {
@@ -17,7 +17,7 @@ import { QuestionProps, QuestionsProps } from './types';
 import { Landmark, useMapContext } from '..';
 
 export const Question: FC<QuestionProps> = (props) => {
-  const { id, description, color, votes, factID, onAnswer } = props;
+  const { id, description, color, votes, factID, authorID, onAnswer } = props;
 
   const [s, set] = useStates({
     active: false,
@@ -25,11 +25,16 @@ export const Question: FC<QuestionProps> = (props) => {
   });
 
   const { openBakingPaper, closeBakingPaper } = useMapContext();
-  const { myPlayer, currentPlayer } = usePlayer();
+  const { myPlayer, currentPlayer, players } = usePlayer();
   const { answers } = useAnswer();
   const { voteQuestionFact } = useQuestion();
 
   const myVote = myPlayer && votes[myPlayer.id];
+
+  const author = useMemo(
+    () => players.find(({ id }) => id === authorID) ?? null,
+    [players, authorID],
+  );
 
   function handleVoteClick(answerID: string | null) {
     return () => {
@@ -55,51 +60,201 @@ export const Question: FC<QuestionProps> = (props) => {
           answer1.createdAt.getTime() - answer2.createdAt.getTime(),
       );
 
+    const fact = answers.find(({ id }) => id === factID) ?? null;
+
     return (
       <>
-        {questionAnswers.map((answer) => (
-          <div
-            key={answer.id}
-            style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
-          >
-            <StarCheckbox
-              checked={myVote?.answerID === answer.id}
-              expired={!myVote?.upToDate}
-              color={answer.color}
-              onCheck={handleVoteClick(answer.id)}
-            />
+        {fact && (
+          <>
+            {!!questionAnswers.length && (
+              <p
+                className='handwriting'
+                style={{
+                  fontSize: '0.75rem',
+                  opacity: 0.75,
+                  width: '100%',
+                  maxWidth: '30rem',
+                  marginBottom: '-0.5rem',
+                }}
+              >
+                Fato
+              </p>
+            )}
 
-            <P
-              // style
-              className='handwriting'
+            <div
               style={{
-                color: getColor(answer.color),
-                textDecoration: factID === answer.id ? 'underline' : undefined,
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center',
               }}
             >
-              {answer.description}
-            </P>
-          </div>
-        ))}
+              <StarCheckbox
+                checked={myVote?.answerID === fact.id}
+                expired={!myVote?.upToDate}
+                color={fact.color}
+                onCheck={handleVoteClick(fact.id)}
+              />
+
+              <P
+                // style
+                className='handwriting'
+                style={{
+                  color: getColor(fact.color),
+                  transform: 'translateY(0.05rem)',
+                  border: `2px solid ${getColor(fact.color)}88`,
+                  borderRadius: '50%',
+                  padding: '0.5rem 1rem',
+                  margin: '-0.5rem -1rem',
+                }}
+              >
+                {fact.description}
+              </P>
+            </div>
+
+            {author && (
+              <span
+                className='handwriting'
+                style={{
+                  color: getColor(fact.color),
+                  fontStyle: 'italic',
+                  fontSize: '0.75rem',
+                  lineHeight: 1,
+                  marginTop: '-0.125rem',
+                  textAlign: 'end',
+                }}
+              >
+                {players.map(({ color, id }) => (
+                  <span
+                    key={id}
+                    style={{
+                      width: '0.5rem',
+                      height: '0.5rem',
+                      marginRight: '0.5rem',
+                      borderRadius: '50rem',
+                      background: getColor(color),
+                    }}
+                  />
+                ))}
+                — {author.name}
+              </span>
+            )}
+          </>
+        )}
 
         {!!questionAnswers.length && (
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <StarCheckbox
-              checked={myVote?.answerID === null}
-              expired={!myVote?.upToDate}
-              onCheck={handleVoteClick(null)}
-            />
+          <p
+            className='handwriting'
+            style={{
+              fontSize: '0.75rem',
+              opacity: 0.75,
+              width: '100%',
+              maxWidth: '30rem',
+              marginBottom: '-0.5rem',
+            }}
+          >
+            Conjecturas
+          </p>
+        )}
 
-            <P
-              // style
-              className='handwriting'
-              style={{
-                color: getColor(),
-                fontSize: '0.75rem',
-              }}
-            >
-              None of the answers
-            </P>
+        {!!questionAnswers.length && (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+          >
+            {questionAnswers.map((answer) => {
+              if (factID === answer.id) return null;
+
+              const author =
+                players.find(({ id }) => id === answer.authorID) ?? null;
+
+              const votesColors = players.filter(
+                ({ id }) => votes[id]?.answerID === answer.id,
+              );
+
+              return (
+                <Fragment key={answer.id}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '0.5rem',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <StarCheckbox
+                      checked={myVote?.answerID === answer.id}
+                      expired={!myVote?.upToDate}
+                      color={answer.color}
+                      onCheck={handleVoteClick(answer.id)}
+                    />
+
+                    <P
+                      // style
+                      className='handwriting'
+                      style={{
+                        color: getColor(answer.color),
+                        textDecoration:
+                          factID === answer.id ? 'underline' : undefined,
+                        transform: 'translateY(0.05rem)',
+                      }}
+                    >
+                      {answer.description}
+                    </P>
+                  </div>
+
+                  {author && (
+                    <span
+                      className='handwriting'
+                      style={{
+                        color: getColor(answer.color),
+                        fontStyle: 'italic',
+                        fontSize: '0.75rem',
+                        lineHeight: 1,
+                        marginTop: '-0.125rem',
+                        textAlign: 'end',
+                      }}
+                    >
+                      {votesColors.map(({ color, id }) => (
+                        <span
+                          key={id}
+                          style={{
+                            width: '0.5rem',
+                            height: '0.5rem',
+                            marginRight: '0.5rem',
+                            borderRadius: '50rem',
+                            background: getColor(color),
+                          }}
+                        />
+                      ))}
+                      — {author.name}
+                    </span>
+                  )}
+                </Fragment>
+              );
+            })}
+
+            {!!questionAnswers.length && (
+              <div
+                style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+              >
+                <StarCheckbox
+                  checked={myVote?.answerID === null}
+                  expired={!myVote?.upToDate}
+                  onCheck={handleVoteClick(null)}
+                />
+
+                <P
+                  // style
+                  className='handwriting'
+                  style={{
+                    opacity: 0.75,
+                    fontStyle: 'italic',
+                    fontSize: '0.875rem',
+                    transform: 'translateY(0.05rem)',
+                  }}
+                >
+                  Nenhuma resposta é satisfatória
+                </P>
+              </div>
+            )}
           </div>
         )}
       </>
@@ -112,25 +267,40 @@ export const Question: FC<QuestionProps> = (props) => {
     if (factID) return null;
 
     return (
-      <Input
-        // style
-        variant='baking-paper'
-        className='handwriting'
-        placeholderColor={getColor(myPlayer.color)}
-        placeholderOpacity={0.6}
-        style={{
-          color: getColor(myPlayer.color),
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          outline: 'none',
-        }}
-        // params
-        placeholder='Answer...'
-        // handle
-        onChange={set('answerDescription')}
-        onKeyDown={handleInputKeyDown}
-      />
+      <>
+        <p
+          className='handwriting'
+          style={{
+            fontSize: '0.75rem',
+            opacity: 0.75,
+            width: '100%',
+            maxWidth: '30rem',
+            marginBottom: '-0.5rem',
+          }}
+        >
+          Nova Conjectura
+        </p>
+
+        <Input
+          // style
+          variant='baking-paper'
+          className='handwriting'
+          placeholderColor={getColor(myPlayer.color)}
+          placeholderOpacity={0.6}
+          style={{
+            color: getColor(myPlayer.color),
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            outline: 'none',
+          }}
+          // params
+          placeholder='Descreva...'
+          // handle
+          onChange={set('answerDescription')}
+          onKeyDown={handleInputKeyDown}
+        />
+      </>
     );
   }
 
@@ -160,11 +330,36 @@ export const Question: FC<QuestionProps> = (props) => {
                 flexDirection: 'column',
                 maxWidth: '30rem',
                 lineHeight: 1.1,
-                gap: '0.6rem',
+                gap: '1rem',
               }}
               // handle
               onClick={(e) => e.stopPropagation()}
             >
+              <label
+                className='handwriting'
+                style={{
+                  width: '100%',
+                  maxWidth: '30rem',
+                  marginBottom: '-0.5rem',
+                }}
+              >
+                Investigação{' '}
+                {author && (
+                  <>
+                    (aberta por{' '}
+                    {
+                      <em
+                        className='handwriting'
+                        style={{ color: getColor(author.color) }}
+                      >
+                        {myPlayer?.id === author.id ? 'Você' : author.name}
+                      </em>
+                    }
+                    )
+                  </>
+                )}
+              </label>
+
               <P
                 // style
                 className='handwriting'
@@ -172,7 +367,9 @@ export const Question: FC<QuestionProps> = (props) => {
               >
                 {description}
               </P>
+
               {renderAnswers()}
+
               {renderAnswerInput()}
             </div>
           </div>,

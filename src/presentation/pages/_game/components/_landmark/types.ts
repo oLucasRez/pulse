@@ -1,6 +1,6 @@
 import { LandmarkModel } from '@domain/models';
 
 export interface LandmarkProps extends LandmarkModel {
-  symbol: '#' | '?';
+  symbol: string;
   onClick?(): void;
 }

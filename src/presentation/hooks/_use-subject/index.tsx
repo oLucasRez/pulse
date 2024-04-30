@@ -37,6 +37,11 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
     return subjects.find(({ id }) => id === myPlayer?.subjectID) ?? null;
   }, [subjects, myPlayer]);
 
+  const otherSubjects = useMemo(
+    () => subjects.filter(({ id }) => id !== mySubject?.id),
+    [subjects, mySubject],
+  );
+
   function replaceAll(subjects: SubjectModel[]): void {
     queryClient.setQueryData<SubjectModel[]>(queryKey, () => subjects);
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'dices'] });
@@ -69,6 +74,7 @@ export const SubjectContextProvider: FC<SubjectContextProviderProps> = ({
       value={{
         subjects,
         mySubject,
+        otherSubjects,
         createSubject,
         createMySubject,
         createLightSpotSubject,

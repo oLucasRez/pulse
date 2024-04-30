@@ -7,4 +7,5 @@ export interface DicesProps {
 
 export type DiceProps = DiceModel & {
   transparent?: boolean;
+  onClick?(): void;
 };

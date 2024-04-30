@@ -4,6 +4,7 @@ export * from './_use-central-pulse';
 export * from './_use-dice';
 export * from './_use-event';
 export * from './_use-game';
+export * from './_use-get-subjects-by-crossing';
 export * from './_use-interval';
 export * from './_use-landmark';
 export * from './_use-light-spot';

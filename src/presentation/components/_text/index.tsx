@@ -1,22 +1,39 @@
 import { forwardRef, SVGTextElementAttributes } from 'react';
 
+function getOutline(weight: number, color: string) {
+  const outline = [`0px 0px ${weight}px ${color}`];
+
+  const resolution = 30;
+
+  for (let i = 0; i < resolution; i++)
+    outline.push(
+      `${weight * Math.cos((i * 2 * Math.PI) / resolution)}px ${
+        weight * Math.sin((i * 2 * Math.PI) / resolution)
+      }px 0px ${color}`,
+    );
+
+  return outline.join(', ');
+}
+
 export const Text = forwardRef<
   SVGTextElement,
   SVGTextElementAttributes<SVGTextElement>
->(function Text(props, ref) {
-  const { strokeWidth, stroke, ...rest } = props;
-
+>(function Text({ strokeWidth, stroke, ...props }, ref) {
   return (
     <>
       {!!strokeWidth && !!stroke && (
         <text
-          {...rest}
+          {...props}
           fill={stroke}
           stroke={stroke}
-          strokeWidth={Number(strokeWidth) * 2}
+          style={{
+            textShadow: getOutline(Number(strokeWidth), stroke),
+            ...props.style,
+            transformBox: 'content-box',
+          }}
         />
       )}
-      <text ref={ref} {...rest} />
+      <text ref={ref} {...props} />
     </>
   );
 });

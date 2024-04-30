@@ -22,6 +22,7 @@ import { MapContextValue, MapProps } from './types';
 const Context = createContext<MapContextValue>({
   mapSpace: VectorSpace.identity,
   bounds: { top: -0, left: -0, right: 0, bottom: 0 },
+  limit: 0,
   onMouseMove: () => () => {},
   onMouseDown: () => () => {},
   onMouseUp: () => () => {},
@@ -127,6 +128,7 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
   const contextValue: MapContextValue = {
     mapSpace,
     bounds,
+    limit,
     onMouseMove: mouseMove.on,
     onMouseDown: mouseDown.on,
     onMouseUp: mouseUp.on,
@@ -138,7 +140,7 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
   useImperativeHandle(ref, () => contextValue, []);
 
   function renderOutside() {
-    const border = Math.abs(s.width - s.height) / 2;
+    const border = Math.min(s.width, s.height) / 2;
     const min = Math.min(s.width, s.height);
 
     return (

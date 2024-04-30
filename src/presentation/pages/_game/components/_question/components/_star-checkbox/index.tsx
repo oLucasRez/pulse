@@ -18,9 +18,11 @@ export const StarCheckbox: FC<StarCheckboxProps> = ({
         onClick={expired ? onCheck : undefined}
         style={{
           fontSize: '1.25rem',
+          minWidth: '1.25rem',
           fill: getColor(color),
           cursor: 'pointer',
           fillOpacity: expired ? 0.3 : 1,
+          marginBottom: 'auto',
         }}
       />
     );
@@ -30,8 +32,10 @@ export const StarCheckbox: FC<StarCheckboxProps> = ({
       onClick={onCheck}
       style={{
         fontSize: '1.25rem',
+        minWidth: '1.25rem',
         fill: getColor(color),
         cursor: 'pointer',
+        marginBottom: 'auto',
       }}
     />
   );

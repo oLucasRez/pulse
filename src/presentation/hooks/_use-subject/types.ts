@@ -14,6 +14,7 @@ import { ContextProviderProps } from '@presentation/types';
 export type SubjectContextValue = {
   subjects: SubjectModel[];
   mySubject: SubjectModel | null;
+  otherSubjects: SubjectModel[];
   createMySubject: ICreateMySubjectUsecase['execute'];
   createLightSpotSubject: ICreateLightSpotSubjectUsecase['execute'];
   createSubject: ICreateSubjectUsecase['execute'];

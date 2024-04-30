@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useRef } from 'react';
 
 import { Circle, Vector } from '@domain/utils';
 
@@ -6,6 +6,7 @@ import { P } from '@presentation/components';
 import {
   useDice,
   useGame,
+  useGetSubjectsByCrossing,
   usePlayer,
   useQuestion,
   useStates,
@@ -23,32 +24,29 @@ import {
   Map,
   PulseCreator,
   Pulses,
+  QuestionForm,
   Questions,
   Subjects,
 } from '../../components';
 
-import { Container } from './styles';
-
 export const CreatingQuestionsState: FC = () => {
   const [s, set] = useStates({
-    description: '',
     creatingQuestion: false,
     selectedCrossing: null as Vector | null,
   });
 
-  const { myPlayer, currentPlayer } = usePlayer();
+  const { isMyTurn, currentPlayer } = usePlayer();
   const { currentDice, rollCurrentDice } = useDice();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { subjectPulses, createSubjectPulse } = useSubjectPulse();
+  const { createQuestion } = useQuestion();
 
   const {
     state: [, state],
   } = currentGame ?? { state: [] };
 
-  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
-
-  const submitDisabled = !s.description;
+  const mapRef = useRef<Map.Ref>(null);
 
   const currentSubjectPulse = useMemo(
     () => subjectPulses.find(({ id }) => id === mySubject?.pulseIDs[0]),
@@ -65,19 +63,33 @@ export const CreatingQuestionsState: FC = () => {
     [currentSubjectPulse],
   );
 
-  const { createQuestion } = useQuestion();
+  const getSubjectsByCrossing = useGetSubjectsByCrossing();
 
-  async function handleSubmitButtonClick() {
-    if (!s.description || !currentDice) return;
-
-    s.creatingQuestion = true;
-
+  async function handleSubmitButtonClick(data: QuestionForm.FormData) {
     createQuestion({
-      description: s.description,
-    })
-      .catch(alertError)
-      .finally(set('creatingQuestion', false));
+      description: data.description,
+    }).catch(alertError);
+
+    mapRef.current?.closeBakingPaper();
   }
+
+  useEffect(() => {
+    if (
+      !isMyTurn ||
+      state !== 'create:question' ||
+      !currentPlayer ||
+      !currentDice?.position
+    )
+      return;
+
+    mapRef.current?.openBakingPaper(
+      <QuestionForm
+        subjects={getSubjectsByCrossing(currentDice.position)}
+        color={currentPlayer.color}
+        onSubmit={handleSubmitButtonClick}
+      />,
+    );
+  }, [isMyTurn, state, !currentPlayer, !currentDice?.position]);
 
   function handleRollDice() {
     rollCurrentDice().catch(alertError);
@@ -96,6 +108,7 @@ export const CreatingQuestionsState: FC = () => {
   return (
     <>
       <Map
+        ref={mapRef}
         onClick={() =>
           s.selectedCrossing &&
           changeMySubjectPosition(s.selectedCrossing).catch(alertError)
@@ -114,7 +127,8 @@ export const CreatingQuestionsState: FC = () => {
         {isMyTurn &&
           state === 'create:subjectPulse' &&
           currentDice?.value &&
-          mySubject?.position && (
+          mySubject?.position &&
+          currentPlayer?.color && (
             <PulseCreator
               origin={mySubject.position}
               amount={currentDice.value}
@@ -135,38 +149,6 @@ export const CreatingQuestionsState: FC = () => {
         <P className='legend handwriting'>
           {currentPlayer.name} is writing a question...
         </P>
-      )}
-
-      {isMyTurn && state === 'create:question' && (
-        <Container>
-          <article className='modal' onClick={(e) => e.stopPropagation()}>
-            <header>
-              <h2>Create question</h2>
-            </header>
-
-            <main>
-              <textarea
-                autoFocus
-                defaultValue={s.description}
-                onChange={(e) => (s.description = e.target.value)}
-              />
-            </main>
-
-            <footer>
-              <button
-                disabled={submitDisabled}
-                onClick={handleSubmitButtonClick}
-              >
-                {s.creatingQuestion && (
-                  <>
-                    <span className='loading'>⏳</span>{' '}
-                  </>
-                )}
-                Create
-              </button>
-            </footer>
-          </article>
-        </Container>
       )}
     </>
   );
