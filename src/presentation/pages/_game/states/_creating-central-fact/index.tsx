@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, Fragment, useEffect, useRef } from 'react';
 
 import { Vector } from '@domain/utils';
 
@@ -10,8 +10,15 @@ import {
   usePlayer,
   useStates,
   useSubject,
+  useToast,
 } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
+
+import {
+  useChangeCentralFactToast,
+  useRollDiceToast,
+  useUpdateDicePositionToast,
+} from './hooks';
 
 import {
   CentralFact,
@@ -24,8 +31,10 @@ import {
   Subjects,
 } from '../../components';
 
+const toastID = 'creating-central-fact';
+
 export const CreatingCentralFactState: FC = () => {
-  const { myPlayer, currentPlayer } = usePlayer();
+  const { isMyTurn, currentPlayer, turnIsSafe } = usePlayer();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { currentDice, rollCurrentDice } = useDice();
@@ -42,8 +51,6 @@ export const CreatingCentralFactState: FC = () => {
     dicePosition: mySubject?.position ?? null,
     dicePositioned: false,
   });
-
-  const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
 
   function handleSubmitButtonClick(data: CentralFactForm.FormData) {
     changeCentralFact({ description: data.description }).catch(alertError);
@@ -80,7 +87,9 @@ export const CreatingCentralFactState: FC = () => {
   }
 
   useEffect(() => {
-    if (!isMyTurn || state !== 'change:centralFact') return;
+    if (!turnIsSafe) return;
+    if (!isMyTurn) return;
+    if (state !== 'change:centralFact') return;
 
     mapRef.current?.openBakingPaper(
       <CentralFactForm
@@ -88,42 +97,73 @@ export const CreatingCentralFactState: FC = () => {
         onSubmit={handleSubmitButtonClick}
       />,
     );
-  }, [isMyTurn, state]);
+
+    return () => mapRef.current?.closeBakingPaper();
+  }, [turnIsSafe, isMyTurn, state]);
+
+  const toast = useToast();
+
+  useChangeCentralFactToast();
+  useRollDiceToast();
+  useUpdateDicePositionToast();
+
+  useEffect(() => {
+    if (!turnIsSafe) return;
+    if (!currentPlayer) return;
+    if (state !== 'change:centralFact') return;
+    if (!isMyTurn) return;
+
+    toast.fire('tip', {
+      id: toastID,
+      title: (
+        <>
+          O que é o <em>Fato Central</em>?
+        </>
+      ),
+      description: (
+        <>
+          <p>
+            O <em>Fato Central</em> é a cena final da nossa história, envolvendo
+            todos os Elementos. Lacunas ou questões em aberto serão respondidas
+            ao longo do jogo.
+          </p>
+          <p>
+            Seja criativo e ajude a montar uma cena com vários mistérios a serem
+            solucionados e com potencial para construir uma história incrível!
+          </p>
+        </>
+      ),
+    });
+  }, [turnIsSafe, isMyTurn, state]);
+
+  useEffect(() => () => toast.dismiss(toastID), []);
 
   const isRollDiceState = isMyTurn && state === 'roll:dice' && currentDice;
+  const isUpdateDicePositionState =
+    isMyTurn &&
+    state === 'update:dice:position' &&
+    currentDice &&
+    s.dicePosition;
 
   if (!currentGame) return null;
 
   return (
-    <>
-      <Map
-        ref={mapRef}
-        onMouseMove={handleMapMouseMove}
-        onClick={handleMapClick}
-      >
-        <Pulses />
-        <Dices
-          hidden={isRollDiceState ? currentDice.id : undefined}
-          transparent
-        />
-        <Subjects />
-        <CentralFact />
+    <Map ref={mapRef} onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
+      <Pulses />
+      <Dices
+        hidden={isRollDiceState ? currentDice.id : undefined}
+        transparent
+      />
+      <Subjects />
+      <CentralFact />
 
-        {isMyTurn &&
-          state === 'update:dice:position' &&
-          currentDice &&
-          s.dicePosition && <Dice {...currentDice} position={s.dicePosition} />}
-
-        {isRollDiceState && (
-          <DiceRoller dice={currentDice} onRollDice={handleDiceRoll} />
-        )}
-      </Map>
-
-      {!isMyTurn && currentPlayer && (
-        <p className='legend handwriting'>
-          {currentPlayer.name} is writing the central fact...
-        </p>
+      {isRollDiceState && (
+        <DiceRoller dice={currentDice} onRollDice={handleDiceRoll} />
       )}
-    </>
+
+      {isUpdateDicePositionState && (
+        <Dice {...currentDice} position={s.dicePosition} />
+      )}
+    </Map>
   );
 };

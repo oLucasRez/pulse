@@ -1,4 +1,4 @@
-import { FC, Fragment, KeyboardEvent } from 'react';
+import { FC, KeyboardEvent } from 'react';
 
 import { Input } from '@presentation/components';
 import { useStates } from '@presentation/hooks';
@@ -6,11 +6,7 @@ import { getColor } from '@presentation/styles/mixins';
 
 import { FormData as QuestionFormFormData, QuestionFormProps } from './types';
 
-export const QuestionForm: FC<QuestionFormProps> = ({
-  color,
-  subjects,
-  onSubmit,
-}) => {
+export const QuestionForm: FC<QuestionFormProps> = ({ color, onSubmit }) => {
   const [s, set] = useStates({
     description: '',
   });
@@ -36,34 +32,6 @@ export const QuestionForm: FC<QuestionFormProps> = ({
         padding: '3rem',
       }}
     >
-      <p
-        className='handwriting'
-        style={{
-          fontSize: '0.75rem',
-          opacity: 0.75,
-          width: '100%',
-          maxWidth: '30rem',
-        }}
-      >
-        A história ainda tem lacunas que precisam ser explicadas. Abra uma
-        investigação por meio de uma pergunta que será respondida mais tarde.
-        Sua pergunta pode envolver apenas{' '}
-        {subjects.length === 1 ? 'o elemento' : 'os elementos'}{' '}
-        {subjects.map(({ id, icon, description, color }, i) => (
-          <Fragment key={id}>
-            <em className='handwriting' style={{ color: getColor(color) }}>
-              {icon} {description}
-            </em>
-            {i === subjects.length - 2
-              ? ' e '
-              : i === subjects.length - 1
-              ? ''
-              : ', '}
-          </Fragment>
-        ))}
-        .
-      </p>
-
       <label
         className='handwriting'
         style={{

@@ -8,20 +8,24 @@ import {
 
 import {
   make404Page,
+  makeCentralFactPage,
   makeGamePage,
   makeHomePage,
   makeLoginPage,
   makeLogoutPage,
   makeRegisterPage,
   makeRootPage,
+  makeSubjectPage,
 } from '../pages';
 
 import {
+  makeCentralFactPath,
   makeGamePath,
   makeLoginPath,
   makeLogoutPath,
   makeRegisterPath,
   makeRootPath,
+  makeSubjectPaths,
 } from './_paths';
 
 export function makeRouter(): ReactElement {
@@ -39,6 +43,12 @@ export function makeRouter(): ReactElement {
   const gamePath = makeGamePath();
   const gamePage = makeGamePage();
 
+  const subjectPaths = makeSubjectPaths();
+  const subjectPage = makeSubjectPage();
+
+  const centralFactPath = makeCentralFactPath();
+  const centralFactPage = makeCentralFactPage();
+
   const logoutPath = makeLogoutPath();
   const logoutPage = makeLogoutPage();
 
@@ -53,7 +63,12 @@ export function makeRouter(): ReactElement {
 
           <Route index element={homePage} />
 
-          <Route path={gamePath} element={gamePage} />
+          <Route path={gamePath} element={gamePage}>
+            {subjectPaths.map((path) => (
+              <Route key={path} path={path} element={subjectPage} />
+            ))}
+            <Route path={centralFactPath} element={centralFactPage} />
+          </Route>
         </Route>
 
         <Route path={logoutPath} element={logoutPage} />

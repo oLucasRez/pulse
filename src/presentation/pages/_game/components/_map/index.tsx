@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
 } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { Vector, VectorSpace } from '@domain/utils';
 
@@ -169,6 +170,8 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
           {renderOutside()}
           {typeof children === 'function' ? children(contextValue) : children}
         </ViewBox>
+
+        <Outlet />
 
         <Transition.Fade active={!!s.portal} ms={200}>
           <div

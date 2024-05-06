@@ -1,7 +1,7 @@
-import { FC, Fragment, KeyboardEvent } from 'react';
+import { FC, KeyboardEvent } from 'react';
 
 import { Input } from '@presentation/components';
-import { useStates, useSubject } from '@presentation/hooks';
+import { useStates } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 import {
@@ -13,8 +13,6 @@ export const CentralFactForm: FC<CentralFactFormProps> = ({
   defaultValues,
   onSubmit,
 }) => {
-  const { mySubject, otherSubjects } = useSubject();
-
   const [s, set] = useStates({
     description: defaultValues?.description ?? '',
   });
@@ -40,49 +38,6 @@ export const CentralFactForm: FC<CentralFactFormProps> = ({
         padding: '3rem',
       }}
     >
-      <p
-        className='handwriting'
-        style={{
-          fontSize: '0.75rem',
-          opacity: 0.75,
-          width: '100%',
-          maxWidth: '30rem',
-        }}
-      >
-        Contribua para o Fato Central da história. Descreva uma parte do cenário
-        final, citando seu próprio elemento
-        {mySubject && (
-          <>
-            {' '}
-            (
-            <em
-              className='handwriting'
-              style={{ color: getColor(mySubject.color) }}
-            >
-              {mySubject.icon} {mySubject.description}
-            </em>
-            )
-          </>
-        )}{' '}
-        e relacionando-o a outro
-        {!!otherSubjects.length && (
-          <>
-            {' '}
-            (
-            {otherSubjects.map(({ id, icon, description, color }, i) => (
-              <Fragment key={id}>
-                <em className='handwriting' style={{ color: getColor(color) }}>
-                  {icon} {description}
-                </em>
-                {i === otherSubjects.length - 1 ? '' : ', '}
-              </Fragment>
-            ))}
-            )
-          </>
-        )}
-        .
-      </p>
-
       <label
         className='handwriting'
         style={{
@@ -109,7 +64,7 @@ export const CentralFactForm: FC<CentralFactFormProps> = ({
         placeholderOpacity={0.5}
         placeholderColor={getColor()}
         // params
-        placeholder='Description'
+        placeholder='Descreva...'
         defaultValue={s.description}
         // handle
         onChange={set('description')}

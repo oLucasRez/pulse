@@ -16,12 +16,12 @@ export const GameExistsProxy: FC<GameExistsProxyProps> = (props) => {
   const params = useParams();
 
   useEffect(() => {
-    if (!params.id) navigateToLogin();
+    if (!params.gameID) navigateToLogin();
   }, []);
 
   if (fetchingGames) return <GlobalLoading />;
 
-  if (!games.find(({ id }) => id === params.id)) return <Navigate.toHome />;
+  if (!games.find(({ id }) => id === params.gameID)) return <Navigate.toHome />;
 
   return children;
 };

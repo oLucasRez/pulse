@@ -3,6 +3,8 @@ import { FC } from 'react';
 import { useAnswer, useGame, usePlayer, useStates } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
+import { useCreateAnswerToast, useVoteAnswerToast } from './hooks';
+
 import {
   AnswerEvent,
   CentralFact,
@@ -38,26 +40,21 @@ export const CreatingAnswersState: FC = () => {
       .finally(set('creatingAnswer', false));
   }
 
+  useCreateAnswerToast();
+  useVoteAnswerToast();
+
   const onAnswer =
     state === 'create:answer' && isMyTurn ? handleAnswer : undefined;
 
   if (!currentGame) return null;
 
   return (
-    <>
-      <Map>
-        <Pulses />
-        <Dices transparent />
-        <Subjects />
-        <CentralFact />
-        <Questions onAnswer={onAnswer} />
-      </Map>
-
-      {!isMyTurn && currentPlayer && (
-        <p className='legend handwriting'>
-          {currentPlayer.name} is writing an answer...
-        </p>
-      )}
-    </>
+    <Map>
+      <Pulses />
+      <Dices transparent />
+      <Subjects />
+      <CentralFact />
+      <Questions onAnswer={onAnswer} />
+    </Map>
   );
 };

@@ -24,10 +24,10 @@ export const AuthProxy: FC<AuthProxyProps> = (props) => {
   const params = useParams();
 
   async function handleAuth() {
-    if (!params.id) return;
+    if (!params.gameID) return;
 
     s.settingCurrentGame = true;
-    setCurrentGame(params.id)
+    setCurrentGame(params.gameID)
       .catch((err) => {
         logError(err);
         navigateToHome();

@@ -24,6 +24,10 @@ module.exports = (config) => ({
         test: /\.(png|jpg|gif|svg|ico)$/,
         loader: 'file-loader',
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
   resolve: {

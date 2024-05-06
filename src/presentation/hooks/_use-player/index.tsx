@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createContext, FC, useContext, useMemo } from 'react';
+import { createContext, FC, useContext, useEffect, useMemo } from 'react';
 
 import { PlayerModel, UserModel } from '@domain/models';
 
@@ -7,6 +7,7 @@ import { PlayerContextProviderProps, PlayerContextValue } from './types';
 
 import { useGame } from '../_use-game';
 import { useRound } from '../_use-round';
+import { useStates } from '../_use-states';
 import { useUsecase } from '../_use-usecase';
 import { useWatch } from '../_use-watch';
 
@@ -56,6 +57,27 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
   );
 
   const isMyTurn = !!currentPlayer && currentPlayer?.id === myPlayer?.id;
+  const [s] = useStates({
+    turnIsSafe: false,
+    lastGameState: currentGame?.state,
+  });
+
+  useEffect(() => {
+    if (!round || round.i === null) s.turnIsSafe = false;
+  }, [round?.i]);
+
+  useEffect(() => {
+    if (!currentGame) return;
+    if (
+      currentGame.state[0] === s.lastGameState?.[0] &&
+      currentGame.state[1] === s.lastGameState?.[1]
+    )
+      return;
+    if (!s.lastGameState) s.lastGameState = currentGame.state;
+
+    s.turnIsSafe = true;
+  }, [currentGame]);
+
   const isMyLightSpotTurn =
     !!currentLightSpotPlayer && currentLightSpotPlayer?.id === myPlayer?.id;
 
@@ -88,6 +110,7 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
         currentLightSpotPlayer,
         fetchingPlayers,
         isMyTurn,
+        turnIsSafe: s.turnIsSafe,
         isMyLightSpotTurn,
         createPlayer,
         changePlayer,

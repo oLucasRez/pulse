@@ -1,52 +1,33 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect } from 'react';
 
-import { useGame, usePlayer, useSubject } from '@presentation/hooks';
-import { alertError } from '@presentation/utils';
+import { useGame, useNavigate, usePlayer } from '@presentation/hooks';
 
-import { Map, Pulses, SubjectForm, Subjects } from '../../components';
+import { useCretingSubjectsToast } from './hooks';
+
+import { Map, Pulses, Subjects } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
   const { currentGame } = useGame();
-  const { currentPlayer, myPlayer, isMyTurn } = usePlayer();
-  const { createMySubject } = useSubject();
+  const { isMyTurn, turnIsSafe } = usePlayer();
 
   const [state] = currentGame?.state ?? [];
 
-  const mapRef = useRef<Map.Ref>(null);
-
-  function handleCreateSubject(data: SubjectForm.FormData) {
-    createMySubject({
-      icon: data.icon,
-      description: data.description,
-    }).catch(alertError);
-
-    mapRef.current?.closeBakingPaper();
-  }
+  const { navigateToSubject } = useNavigate();
 
   useEffect(() => {
-    if (!isMyTurn || state !== 'creating:subjects') return;
+    if (!turnIsSafe) return;
+    if (!isMyTurn) return;
+    if (state !== 'creating:subjects') return;
 
-    mapRef.current?.openBakingPaper(
-      <SubjectForm
-        defaultValues={{ color: myPlayer?.color }}
-        hidden={{ color: true }}
-        onSubmit={handleCreateSubject}
-      />,
-    );
-  }, [isMyTurn, state]);
+    navigateToSubject();
+  }, [turnIsSafe, isMyTurn, state]);
+
+  useCretingSubjectsToast();
 
   return (
-    <>
-      <Map ref={mapRef}>
-        <Pulses />
-        <Subjects />
-      </Map>
-
-      {!isMyTurn && (
-        <p className='legend handwriting'>
-          {currentPlayer?.name} is creating his subject...
-        </p>
-      )}
-    </>
+    <Map>
+      <Pulses />
+      <Subjects />
+    </Map>
   );
 };

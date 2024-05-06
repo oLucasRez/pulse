@@ -3,6 +3,8 @@ import { FC, useEffect, useRef } from 'react';
 import { useDice, useGame, usePlayer, useSubject } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
+import { useCreateLightSpotToast, useRollDiceToast } from './hooks';
+
 import {
   CentralFact,
   DiceRoller,
@@ -17,7 +19,7 @@ import {
 
 export const CreatingLightSpotState: FC = () => {
   const { currentGame } = useGame();
-  const { isMyLightSpotTurn, currentLightSpotPlayer } = usePlayer();
+  const { isMyLightSpotTurn } = usePlayer();
   const { currentLightSpotDice, rollCurrentLightSpotDice } = useDice();
   const { createLightSpotSubject } = useSubject();
 
@@ -52,31 +54,26 @@ export const CreatingLightSpotState: FC = () => {
     );
   }, [isMyLightSpotTurn, state]);
 
+  useRollDiceToast();
+  useCreateLightSpotToast();
+
   const isRollDiceState =
     isMyLightSpotTurn && state === 'roll:dice' && currentLightSpotDice;
 
   return (
-    <>
-      <Map ref={mapRef}>
-        <Pulses />
-        <Dices
-          transparent
-          hidden={isRollDiceState ? currentLightSpotDice.id : undefined}
-        />
-        <Subjects />
-        <CentralFact />
-        <Questions />
+    <Map ref={mapRef}>
+      <Pulses />
+      <Dices
+        transparent
+        hidden={isRollDiceState ? currentLightSpotDice.id : undefined}
+      />
+      <Subjects />
+      <CentralFact />
+      <Questions />
 
-        {isRollDiceState && (
-          <DiceRoller dice={currentLightSpotDice} onRollDice={handleRollDice} />
-        )}
-      </Map>
-
-      {!isMyLightSpotTurn && currentLightSpotPlayer && (
-        <p className='legend handwriting'>
-          {currentLightSpotPlayer.name} is creating a light-spot...
-        </p>
+      {isRollDiceState && (
+        <DiceRoller dice={currentLightSpotDice} onRollDice={handleRollDice} />
       )}
-    </>
+    </Map>
   );
 };

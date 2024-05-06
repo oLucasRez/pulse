@@ -40,9 +40,11 @@ function getCircles(pulse: PulseModel<LandmarkModel>): Circle[] {
   return circles;
 }
 
-export const Crossings: FC<CrossingsProps> = (props) => {
-  const { targetCircle, onSelectCrossing } = props;
-
+export const Crossings: FC<CrossingsProps> = ({
+  targetCircle,
+  onSelectCrossing,
+  onCrossingsExists,
+}) => {
   const [s, set] = useStates({
     mouse: new Vector([0, 0]),
     nearest: null as Vector | null,
@@ -64,6 +66,10 @@ export const Crossings: FC<CrossingsProps> = (props) => {
 
     return value;
   }, [targetCircle, pulses]);
+
+  useEffect(() => {
+    onCrossingsExists?.(!!crossings.length);
+  }, [!crossings.length]);
 
   useEffect(() => onMouseMove(set('mouse')), []);
 

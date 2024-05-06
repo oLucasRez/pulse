@@ -9,3 +9,8 @@ if (container) {
 
   root.render(makeApp());
 }
+
+// colocar timeline
+// enxugar e refinar usecases
+// adicionar toasts
+// melhorar design

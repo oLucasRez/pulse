@@ -1,4 +1,9 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, css } from 'styled-components';
+
+import { Color } from '@domain/enums';
+import { mapEnum } from '@domain/utils';
+
+import { getColor } from './mixins';
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
@@ -100,5 +105,18 @@ export const GlobalStyle = createGlobalStyle`
 
   .sans-serif {
     font-family: 'Poppins', sans-serif;
+  }
+
+  ${mapEnum(
+    Color,
+    (color) => css`
+      em.${color} {
+        color: ${getColor(color)};
+      }
+    `,
+  )}
+
+  em {
+    font-family: inherit;
   }
 `;

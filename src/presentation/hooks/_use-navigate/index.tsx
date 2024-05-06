@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNavigate as useDefaultNavigate } from 'react-router-dom';
+import { useNavigate as useDefaultNavigate, useParams } from 'react-router-dom';
 
 import { NavigateHookReturn } from './types';
 
@@ -15,9 +15,30 @@ export function useNavigate(): NavigateHookReturn {
     [navigate],
   );
 
+  const params = useParams();
+
   const navigateToGame = useCallback(
-    (id: string) => navigate(`/game/${id}`, { replace: replaceIfIsLogout() }),
-    [navigate],
+    (id: string | undefined = params.gameID) =>
+      navigate(id ? `/game/${id}` : '/', { replace: replaceIfIsLogout() }),
+    [navigate, params.gameID],
+  );
+
+  const navigateToSubject = useCallback(
+    (id?: string) =>
+      params.gameID &&
+      navigate(`/game/${params.gameID}/subject${id ? `/${id}` : ''}`, {
+        replace: replaceIfIsLogout(),
+      }),
+    [navigate, params.gameID],
+  );
+
+  const navigateToCentralFact = useCallback(
+    () =>
+      params.gameID &&
+      navigate(`/game/${params.gameID}/central-fact`, {
+        replace: replaceIfIsLogout(),
+      }),
+    [navigate, params.gameID],
   );
 
   const navigateToLogin = useCallback(
@@ -37,6 +58,8 @@ export function useNavigate(): NavigateHookReturn {
   return {
     navigateToHome,
     navigateToGame,
+    navigateToSubject,
+    navigateToCentralFact,
     navigateToLogin,
     navigateToRegister,
     navigateToLogout,

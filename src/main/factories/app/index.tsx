@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 
 import { GlobalStyle } from '@presentation/styles';
 
+import { ToastContainer } from './styles';
+
 import { makeRouter } from '..';
 
 const queryClient = new QueryClient();
@@ -12,6 +14,7 @@ export function makeApp(): ReactNode {
     <QueryClientProvider client={queryClient}>
       <GlobalStyle />
       {makeRouter()}
+      <ToastContainer />
     </QueryClientProvider>
   );
 }

@@ -1,9 +1,15 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 
 import { GameModel } from '@domain/models';
 
 import { Navigate } from '@presentation/components';
-import { useGame, useNavigate, usePlayer, useUser } from '@presentation/hooks';
+import {
+  useGame,
+  useNavigate,
+  usePlayer,
+  useToast,
+  useUser,
+} from '@presentation/hooks';
 
 import {
   CreatingAnswersState,
@@ -68,6 +74,9 @@ const GamePage: FC = () => {
       </span>
     );
   }
+
+  const toast = useToast();
+  useEffect(() => () => toast.dismissAll(), []);
 
   if (!currentGame) return <Navigate.toHome />;
 

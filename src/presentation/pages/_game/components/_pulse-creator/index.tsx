@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect, useMemo } from 'react';
 
-import { Circle, Vector } from '@domain/utils';
+import { Circle } from '@domain/utils';
 
 import { useStates } from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
@@ -14,7 +14,7 @@ export const PulseCreator: FC<PulseCreatorProps> = (props) => {
 
   const [s, set] = useStates({
     gap: 0,
-    crossing: null as Vector | null,
+    hasCrossings: false,
   });
 
   const { mapSpace, onMouseMove, onClick } = useMapContext();
@@ -27,7 +27,7 @@ export const PulseCreator: FC<PulseCreatorProps> = (props) => {
   useEffect(
     () =>
       onClick(() => {
-        if (!s.crossing) return;
+        if (!s.hasCrossings) return;
 
         onCreatePulse?.({ amount, gap: s.gap, origin });
       }),
@@ -61,7 +61,7 @@ export const PulseCreator: FC<PulseCreatorProps> = (props) => {
     <>
       <Crossings
         targetCircle={targetCircle}
-        onSelectCrossing={set('crossing')}
+        onCrossingsExists={set('hasCrossings')}
       />
 
       {circles}

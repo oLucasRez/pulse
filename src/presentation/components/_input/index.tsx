@@ -4,10 +4,10 @@ import { DivContainer, InputContainer, TextareaContainer } from './styles';
 
 import { InputProps } from './types';
 
-export const Input = forwardRef<
-  HTMLTextAreaElement & HTMLDivElement & HTMLInputElement,
-  InputProps
->(function Input({ onChange, variant = 'single-line', ...props }, ref) {
+export const Input = forwardRef<Input.Element, InputProps>(function Input(
+  { onChange, variant = 'single-line', ...props },
+  ref,
+) {
   const defaultValue = useMemo(() => props.defaultValue, []);
 
   if (variant === 'multiline')
@@ -23,18 +23,11 @@ export const Input = forwardRef<
     return (
       <DivContainer
         ref={ref}
-        className='handwriting'
         onInput={(e: any) => onChange?.(e.target.innerText, e)}
         contentEditable={!props.disabled}
         suppressContentEditableWarning
         {...props}
-        style={{
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          outline: 'none',
-          ...props.style,
-        }}
+        className={[props.className, 'handwriting'].join(' ')}
       >
         {defaultValue}
       </DivContainer>
@@ -48,3 +41,7 @@ export const Input = forwardRef<
     />
   );
 });
+
+export namespace Input {
+  export type Element = HTMLTextAreaElement & HTMLDivElement & HTMLInputElement;
+}

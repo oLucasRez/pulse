@@ -51,3 +51,6 @@ export function makeGamePage(): ReactElement {
 
   return <AuthProxy>{page}</AuthProxy>;
 }
+
+export * from './_central-fact';
+export * from './_subject';

@@ -80,6 +80,13 @@ export class PassRoundTurnUsecase implements IPassRoundTurnUsecase {
       ),
     );
 
+    // const finished = nextPlayer === undefined;
+
+    // const dto = await this.roundDAO.update(round.id, {
+    //   i: !finished ? nextPlayer?.order : undefined,
+    //   clockwise,
+    //   finished,
+    // });
     const dto = await this.roundDAO.update(round.id, {
       i: nextPlayer?.order ?? null,
       clockwise,

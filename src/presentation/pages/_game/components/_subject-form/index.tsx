@@ -1,10 +1,7 @@
 import { FC, KeyboardEvent } from 'react';
 
-import { Color } from '@domain/enums';
-import { enumToArray } from '@domain/utils';
-
 import { Input } from '@presentation/components';
-import { useStates } from '@presentation/hooks';
+import { useAvailableColors, useStates } from '@presentation/hooks';
 import { darken, getColor } from '@presentation/styles/mixins';
 import { getRandomEmoji } from '@presentation/utils';
 
@@ -38,10 +35,12 @@ export const SubjectForm: FC<SubjectFormProps> = ({
     onSubmit?.({ color: s.color, icon: s.icon, description: s.description });
   }
 
+  const availableColors = useAvailableColors();
+
   function renderColors() {
     return (
       <div style={{ display: 'flex', gap: '0.25rem' }}>
-        {enumToArray(Color).map((color) => {
+        {availableColors.map((color) => {
           const styledColor = getColor(color);
 
           return (
@@ -81,21 +80,25 @@ export const SubjectForm: FC<SubjectFormProps> = ({
       {!hidden?.icon && (
         <div
           style={{
-            width: '4rem',
-            height: '4rem',
-            borderRadius: '50rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '2rem',
-            background: s.color ? getColor(s.color) : 'lightgray',
+            fontSize: '2.5rem',
+            lineHeight: 1,
           }}
         >
           {s.icon}
         </div>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <label
+          className='handwriting'
+          style={{
+            marginBottom: '0.25rem',
+            opacity: 0.75,
+          }}
+        >
+          <em className={s.color}>Seu</em> Elemento
+        </label>
+
         {!hidden?.description && (
           <Input
             // style
@@ -105,7 +108,7 @@ export const SubjectForm: FC<SubjectFormProps> = ({
             placeholderOpacity={0.5}
             placeholderColor={getColor(s.color)}
             // params
-            placeholder='Description'
+            placeholder='Descreva...'
             defaultValue={s.description}
             // handle
             onChange={set('description')}
