@@ -1,12 +1,12 @@
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { Circle, Vector } from '@domain/utils';
 
 import {
   useDice,
   useGame,
+  useNavigate,
   usePlayer,
-  useQuestion,
   useStates,
   useSubject,
   useSubjectPulse,
@@ -30,7 +30,6 @@ import {
   Map,
   PulseCreator,
   Pulses,
-  QuestionForm,
   Questions,
   Subjects,
 } from '../../components';
@@ -48,13 +47,8 @@ export const CreatingQuestionsState: FC = () => {
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { subjectPulses, createSubjectPulse } = useSubjectPulse();
-  const { createQuestion } = useQuestion();
 
-  const {
-    state: [, state],
-  } = currentGame ?? { state: [] };
-
-  const mapRef = useRef<Map.Ref>(null);
+  const [, state] = currentGame?.state ?? [];
 
   const currentSubjectPulse = useMemo(
     () => subjectPulses.find(({ id }) => id === mySubject?.pulseIDs[0]),
@@ -71,13 +65,7 @@ export const CreatingQuestionsState: FC = () => {
     [currentSubjectPulse],
   );
 
-  async function handleSubmitButtonClick(data: QuestionForm.FormData) {
-    createQuestion({
-      description: data.description,
-    }).catch(alertError);
-
-    mapRef.current?.closeBakingPaper();
-  }
+  const { navigateToInvestigation } = useNavigate();
 
   useEffect(() => {
     if (!turnIsSafe) return;
@@ -85,14 +73,7 @@ export const CreatingQuestionsState: FC = () => {
     if (state !== 'create:question') return;
     if (!currentPlayer) return;
 
-    mapRef.current?.openBakingPaper(
-      <QuestionForm
-        color={currentPlayer.color}
-        onSubmit={handleSubmitButtonClick}
-      />,
-    );
-
-    return () => mapRef.current?.closeBakingPaper();
+    navigateToInvestigation();
   }, [turnIsSafe, isMyTurn, state, !currentPlayer]);
 
   useRollDiceToast();
@@ -101,31 +82,6 @@ export const CreatingQuestionsState: FC = () => {
   useCreateQuestionToast();
 
   const toast = useToast();
-
-  useEffect(() => {
-    if (!turnIsSafe) return;
-    if (state !== 'create:question') return;
-    if (!isMyTurn) return;
-
-    if (!currentDice?.position) return;
-
-    toast.fire('tip', {
-      id: toastID,
-      title: (
-        <>
-          O que é uma <em>Investigação</em>?
-        </>
-      ),
-      description: (
-        <>
-          <p>
-            <em>Investigações</em> são pontos da história que ainda são
-            incertos, lacunas no enredo que ainda precisam ser preenchidas.
-          </p>
-        </>
-      ),
-    });
-  }, [turnIsSafe, isMyTurn, state, !currentDice?.position]);
 
   useEffect(() => () => toast.dismiss(toastID), []);
 
@@ -141,11 +97,8 @@ export const CreatingQuestionsState: FC = () => {
     );
   }
 
-  if (!currentGame) return null;
-
   return (
     <Map
-      ref={mapRef}
       onClick={() =>
         s.selectedCrossing &&
         changeMySubjectPosition(s.selectedCrossing).catch(alertError)

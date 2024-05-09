@@ -27,7 +27,6 @@ export const DivContainer = styled.div<StyledContaienr>`
   border: none;
   padding: 0;
   outline: none;
-  margin: 0.5rem 0;
 
   &:focus {
     text-decoration: underline;

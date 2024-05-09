@@ -1,4 +1,6 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+
+import { useToast } from '@presentation/hooks';
 
 import {
   CentralFact,
@@ -10,17 +12,21 @@ import {
 } from '../../components';
 
 export const FinalState: FC = () => {
-  return (
-    <>
-      <Map>
-        <Pulses />
-        <Dices transparent />
-        <Subjects />
-        <CentralFact />
-        <Questions />
-      </Map>
+  const toast = useToast();
+  useEffect(() => {
+    toast.fire('notification', {
+      title: 'Fim de jogo',
+      description: 'Obrigado por jogar!',
+    });
+  }, []);
 
-      <p className='legend handwriting'>The game is over!!</p>
-    </>
+  return (
+    <Map>
+      <Pulses />
+      <Dices transparent />
+      <Subjects />
+      <CentralFact />
+      <Questions />
+    </Map>
   );
 };

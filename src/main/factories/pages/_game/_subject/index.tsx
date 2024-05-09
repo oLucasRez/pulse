@@ -1,6 +1,10 @@
 import { lazy, ReactElement, Suspense } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
+import {
+  CreatingInCorrectStateProxy,
+  SubjectExistsProxy,
+} from '@presentation/pages/_game/pages/_subject/proxies';
 
 const SubjectPage = lazy(
   () => import('@presentation/pages/_game/pages/_subject'),
@@ -9,7 +13,11 @@ const SubjectPage = lazy(
 export function makeSubjectPage(): ReactElement {
   return (
     <Suspense fallback={<GlobalLoading />}>
-      <SubjectPage />
+      <CreatingInCorrectStateProxy>
+        <SubjectExistsProxy>
+          <SubjectPage />
+        </SubjectExistsProxy>
+      </CreatingInCorrectStateProxy>
     </Suspense>
   );
 }

@@ -54,9 +54,6 @@ export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
             ...props.style,
             WebkitTextStrokeWidth: strokeWidth * 2,
             WebkitTextStrokeColor: stroke,
-            // padding: props.style?.padding
-            //   ? `calc(${props.style.padding} + ${strokeWidth}px)`
-            //   : `${strokeWidth}px`,
           }}
         />
       )}
@@ -66,9 +63,6 @@ export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
         style={{
           padding: `${strokeWidth}px`,
           ...props.style,
-          // padding: props.style?.padding
-          //   ? `calc(${props.style.padding} + ${strokeWidth}px)`
-          //   : `${strokeWidth}px`,
         }}
       />
     </>,

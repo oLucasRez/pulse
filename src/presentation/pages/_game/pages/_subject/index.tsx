@@ -6,7 +6,6 @@ import {
   useMemo,
   useRef,
 } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { Input } from '@presentation/components';
 import {
@@ -20,7 +19,9 @@ import {
 import { getColor } from '@presentation/styles/mixins';
 import { getRandomEmoji } from '@presentation/utils';
 
-import { useShowColorsSelector, useTipToast } from './hooks';
+import { useTipToast } from './hooks';
+
+import { SubjectExistsProxy } from './proxies';
 
 import { Container } from '../styles';
 import {
@@ -32,23 +33,16 @@ import {
   Label,
 } from './styles';
 
-const SubjectPage: FC = () => {
-  const params = useParams();
-
-  const newSubject = !params.subjectID;
+const SubjectPage: FC<SubjectExistsProxy.ChildrenProps> = ({ subject }) => {
+  const newSubject = !subject;
 
   const { navigateToGame } = useNavigate();
 
-  const { subjects, mySubject, createMySubject } = useSubject();
-  const { players, myPlayer, isMyTurn } = usePlayer();
+  const { mySubject, createMySubject, createLightSpotSubject } = useSubject();
+  const { players, myPlayer, isMyTurn, isMyLightSpotTurn } = usePlayer();
   const { currentGame } = useGame();
 
-  const [state] = currentGame?.state ?? [];
-
-  const subject = useMemo(
-    () => subjects.find(({ id }) => id === params.subjectID) ?? null,
-    [subjects, params.subjectID],
-  );
+  const [state, subState] = currentGame?.state ?? [];
 
   const author = useMemo(
     () => players.find(({ id }) => id === subject?.authorID),
@@ -60,7 +54,7 @@ const SubjectPage: FC = () => {
     : undefined;
 
   const [s, set] = useStates({
-    editing: false,
+    editing: newSubject,
     loading: false,
     color: subject?.color ?? firstNewSubjectColor,
     icon:
@@ -77,13 +71,6 @@ const SubjectPage: FC = () => {
     description: subject?.description ?? '',
   });
 
-  const navigateBackToGame = () =>
-    params.gameID && navigateToGame(params.gameID);
-
-  useEffect(() => {
-    if (params.subjectID && !subject) navigateBackToGame();
-  }, [subject]);
-
   const descriptionRef = useRef<Input.Element>(null);
 
   useEffect(() => {
@@ -92,11 +79,17 @@ const SubjectPage: FC = () => {
 
   useTipToast();
 
-  const showClorsSelector = useShowColorsSelector();
+  const isNotMyMainSubject = subject?.id !== mySubject?.id;
+
+  const showColorsSelector = isNotMyMainSubject && s.editing;
 
   const availableColors = useAvailableColors();
 
   const isCreatingMySubject = state === 'creating:subjects' && isMyTurn;
+  const isCreatingLightSpot =
+    state === 'creating:lightSpot' &&
+    subState === 'create:subject' &&
+    isMyLightSpotTurn;
 
   function handleInputKeyDown(event: KeyboardEvent) {
     if (event.key !== 'Enter') return;
@@ -105,15 +98,31 @@ const SubjectPage: FC = () => {
       if (!s.icon || !s.description) return;
 
       createMySubject({ icon: s.icon, description: s.description }).finally(
-        navigateBackToGame,
+        navigateToGame,
       );
+    }
+
+    if (isCreatingLightSpot) {
+      if (!s.icon || !s.color || !s.description) return;
+
+      createLightSpotSubject({
+        icon: s.icon,
+        color: s.color,
+        description: s.description,
+      }).finally(navigateToGame);
     }
   }
 
   function renderLabel() {
     let children: ReactNode = null;
 
-    if (!params.subjectID || params.subjectID === mySubject?.id)
+    if (isCreatingLightSpot)
+      children = (
+        <>
+          <em className={s.color}>Seu</em> Elemento
+        </>
+      );
+    else if (!subject?.id || subject.id === mySubject?.id)
       children = (
         <>
           <em className={s.color}>Seu</em> Elemento
@@ -133,8 +142,9 @@ const SubjectPage: FC = () => {
     <Container
       onClick={() => {
         if (isCreatingMySubject) return;
+        if (isCreatingLightSpot) return;
 
-        navigateBackToGame();
+        navigateToGame();
       }}
     >
       <Content onClick={(e) => e.stopPropagation()}>
@@ -168,18 +178,19 @@ const SubjectPage: FC = () => {
           placeholder='Descreva...'
           disabled={!newSubject || s.loading}
           defaultValue={s.description}
-          loading={s.loading}
+          $loading={s.loading}
           // handle
           onChange={set('description')}
           onKeyDown={handleInputKeyDown}
         />
-        {showClorsSelector && (
+        {showColorsSelector && (
           <Colors>
             {availableColors.map((color) => (
               <ColorButton
                 key={color}
                 value={color}
-                selected={color === s.color}
+                selected={!s.color || color === s.color}
+                onClick={set('color', s.color !== color ? color : undefined)}
               />
             ))}
           </Colors>

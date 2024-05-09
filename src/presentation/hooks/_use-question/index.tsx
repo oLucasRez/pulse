@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useContext, useMemo } from 'react';
 
 import { QuestionModel } from '@domain/models';
 
 import { QuestionContextProviderProps, QuestionContextValue } from './types';
 
 import { useGame } from '../_use-game';
+import { usePlayer } from '../_use-player';
 import { useUsecase } from '../_use-usecase';
 import { useWatch } from '../_use-watch';
 
@@ -20,6 +21,7 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
   ...props
 }) => {
   const { currentGame } = useGame();
+  const { players } = usePlayer();
 
   const queryClient = useQueryClient();
 
@@ -29,6 +31,16 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
     queryKey,
     queryFn: () => getQuestions.execute(),
   });
+
+  const unvotedQuestion = useMemo(
+    () =>
+      questions.find(
+        ({ votes }) =>
+          Object.keys(votes).length &&
+          players.some(({ id }) => !votes[id]?.upToDate),
+      ) ?? null,
+    [questions, players],
+  );
 
   const createQuestion = useUsecase(props.createQuestion);
 
@@ -45,6 +57,7 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
     <Context.Provider
       value={{
         questions,
+        unvotedQuestion,
         createQuestion,
         voteQuestionFact,
       }}

@@ -11,6 +11,7 @@ import {
   makeCentralFactPage,
   makeGamePage,
   makeHomePage,
+  makeInvestigationPage,
   makeLoginPage,
   makeLogoutPage,
   makeRegisterPage,
@@ -21,6 +22,7 @@ import {
 import {
   makeCentralFactPath,
   makeGamePath,
+  makeInvestigationPaths,
   makeLoginPath,
   makeLogoutPath,
   makeRegisterPath,
@@ -49,6 +51,9 @@ export function makeRouter(): ReactElement {
   const centralFactPath = makeCentralFactPath();
   const centralFactPage = makeCentralFactPage();
 
+  const investigationPaths = makeInvestigationPaths();
+  const investigationPage = makeInvestigationPage();
+
   const logoutPath = makeLogoutPath();
   const logoutPage = makeLogoutPage();
 
@@ -68,6 +73,9 @@ export function makeRouter(): ReactElement {
               <Route key={path} path={path} element={subjectPage} />
             ))}
             <Route path={centralFactPath} element={centralFactPage} />
+            {investigationPaths.map((path) => (
+              <Route key={path} path={path} element={investigationPage} />
+            ))}
           </Route>
         </Route>
 

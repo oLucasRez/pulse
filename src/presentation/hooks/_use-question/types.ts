@@ -10,6 +10,7 @@ import { ContextProviderProps } from '@presentation/types';
 
 export type QuestionContextValue = {
   questions: QuestionModel[];
+  unvotedQuestion: QuestionModel | null;
   createQuestion: ICreateQuestionUsecase['execute'];
   voteQuestionFact: IVoteQuestionFactUsecase['execute'];
 };

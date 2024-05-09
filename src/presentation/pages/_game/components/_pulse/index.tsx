@@ -41,7 +41,7 @@ export const Pulse: FC<PulseProps> = ({
         cx={c.x}
         cy={c.y}
         r={r}
-        fill='none'
+        fill='transparent'
         stroke={getColor(landmark?.color)}
         strokeDasharray={!landmark || overloaded ? 3 : undefined}
       />,

@@ -1,12 +1,12 @@
-import { FC, Fragment, useEffect, useRef } from 'react';
+import { FC, useEffect } from 'react';
 
 import { Vector } from '@domain/utils';
 
 import {
-  useCentralFact,
   useCentralPulse,
   useDice,
   useGame,
+  useNavigate,
   usePlayer,
   useStates,
   useSubject,
@@ -22,7 +22,6 @@ import {
 
 import {
   CentralFact,
-  CentralFactForm,
   Dice,
   DiceRoller,
   Dices,
@@ -34,29 +33,20 @@ import {
 const toastID = 'creating-central-fact';
 
 export const CreatingCentralFactState: FC = () => {
-  const { isMyTurn, currentPlayer, turnIsSafe } = usePlayer();
+  const { isMyTurn, turnIsSafe } = usePlayer();
   const { currentGame } = useGame();
   const { mySubject, changeMySubjectPosition } = useSubject();
   const { currentDice, rollCurrentDice } = useDice();
   const { centralPulse } = useCentralPulse();
-  const { centralFact, changeCentralFact } = useCentralFact();
 
   const {
     state: [, state],
   } = currentGame ?? { state: [] };
 
-  const mapRef = useRef<Map.Ref>(null);
-
   const [s] = useStates({
     dicePosition: mySubject?.position ?? null,
     dicePositioned: false,
   });
-
-  function handleSubmitButtonClick(data: CentralFactForm.FormData) {
-    changeCentralFact({ description: data.description }).catch(alertError);
-
-    mapRef.current?.closeBakingPaper();
-  }
 
   function handleMapMouseMove(vector: Vector) {
     if (!isMyTurn) return;
@@ -86,19 +76,14 @@ export const CreatingCentralFactState: FC = () => {
     rollCurrentDice().catch(alertError);
   }
 
+  const { navigateToCentralFact } = useNavigate();
+
   useEffect(() => {
     if (!turnIsSafe) return;
     if (!isMyTurn) return;
     if (state !== 'change:centralFact') return;
 
-    mapRef.current?.openBakingPaper(
-      <CentralFactForm
-        defaultValues={{ description: centralFact?.description }}
-        onSubmit={handleSubmitButtonClick}
-      />,
-    );
-
-    return () => mapRef.current?.closeBakingPaper();
+    navigateToCentralFact();
   }, [turnIsSafe, isMyTurn, state]);
 
   const toast = useToast();
@@ -106,35 +91,6 @@ export const CreatingCentralFactState: FC = () => {
   useChangeCentralFactToast();
   useRollDiceToast();
   useUpdateDicePositionToast();
-
-  useEffect(() => {
-    if (!turnIsSafe) return;
-    if (!currentPlayer) return;
-    if (state !== 'change:centralFact') return;
-    if (!isMyTurn) return;
-
-    toast.fire('tip', {
-      id: toastID,
-      title: (
-        <>
-          O que é o <em>Fato Central</em>?
-        </>
-      ),
-      description: (
-        <>
-          <p>
-            O <em>Fato Central</em> é a cena final da nossa história, envolvendo
-            todos os Elementos. Lacunas ou questões em aberto serão respondidas
-            ao longo do jogo.
-          </p>
-          <p>
-            Seja criativo e ajude a montar uma cena com vários mistérios a serem
-            solucionados e com potencial para construir uma história incrível!
-          </p>
-        </>
-      ),
-    });
-  }, [turnIsSafe, isMyTurn, state]);
 
   useEffect(() => () => toast.dismiss(toastID), []);
 
@@ -145,10 +101,8 @@ export const CreatingCentralFactState: FC = () => {
     currentDice &&
     s.dicePosition;
 
-  if (!currentGame) return null;
-
   return (
-    <Map ref={mapRef} onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
+    <Map onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
       <Pulses />
       <Dices
         hidden={isRollDiceState ? currentDice.id : undefined}

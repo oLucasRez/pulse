@@ -7,6 +7,7 @@ export interface AnswerModel extends Model {
   color: Color;
   questionID: QuestionModel['id'];
   authorID: PlayerModel['id'];
+  authorName: string;
 }
 
 export namespace AnswerModel {

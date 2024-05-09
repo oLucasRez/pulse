@@ -4,4 +4,5 @@ import styled from 'styled-components';
 
 export const ToastContainer = styled(ReactToastify.ToastContainer)`
   --toastify-toast-width: 25rem;
+  --toastify-color-progress-light: #cdcdcd;
 `;

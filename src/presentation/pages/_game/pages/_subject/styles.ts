@@ -30,11 +30,13 @@ export const Icon = styled.div<StyledIconProps>`
   grid-area: icon;
   justify-items: center;
   cursor: default;
+  pointer-events: none;
 
   ${({ disabled }) =>
     !disabled &&
     css`
       cursor: pointer;
+      pointer-events: unset;
 
       transition: 0.2s;
       &:hover {
@@ -53,7 +55,7 @@ export const Description = styled(Input)<StyledDescriptionProps>`
   width: max-content;
   font-size: 1.5rem;
   color: ${({ color }) => getColor(color)};
-  opacity: ${({ loading }) => loading && 0.5};
+  opacity: ${({ $loading }) => $loading && 0.5};
 `;
 
 export const Colors = styled.div`

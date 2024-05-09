@@ -1,3 +1,4 @@
 export interface NavigateToGameProps {
-  id: string;
+  id?: string;
+  replace?: boolean;
 }

@@ -44,4 +44,5 @@ export const Input = forwardRef<Input.Element, InputProps>(function Input(
 
 export namespace Input {
   export type Element = HTMLTextAreaElement & HTMLDivElement & HTMLInputElement;
+  export type Props = InputProps;
 }

@@ -6,11 +6,11 @@ export interface StyledIconProps {
 
 export interface StyledDescriptionProps {
   color?: Color;
-  loading: boolean;
+  $loading?: boolean;
 }
 
 export interface StyledColorButtonProps {
   value: Color;
   selected?: boolean;
-  loading?: boolean;
+  $loading?: boolean;
 }

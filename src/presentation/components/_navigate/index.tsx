@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Navigate as DefaultNavigate } from 'react-router-dom';
+import { Navigate as DefaultNavigate, useParams } from 'react-router-dom';
 
 import { NavigateToGameProps } from './types';
 
@@ -11,10 +11,15 @@ const NavigateToHome: FC = () => {
   return <DefaultNavigate to='/' replace={replaceIfIsLogout()} />;
 };
 
-const NavigateToGame: FC<NavigateToGameProps> = (props) => {
-  const { id } = props;
+const NavigateToGame: FC<NavigateToGameProps> = ({ id, replace }) => {
+  const params = useParams();
 
-  return <DefaultNavigate to={`/game/${id}`} replace={replaceIfIsLogout()} />;
+  return (
+    <DefaultNavigate
+      to={`/game/${id ?? params.gameID}`}
+      replace={replace ?? replaceIfIsLogout()}
+    />
+  );
 };
 
 const NavigateToLogin: FC = () => {

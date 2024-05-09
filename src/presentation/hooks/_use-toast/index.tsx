@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { toast, ToastOptions, ToastPosition } from 'react-toastify';
 
+import { DomainError } from '@domain/errors';
+
 import {
   ActionButton,
   Container,
@@ -41,7 +43,9 @@ export function useToast(): ToastHookReturn {
                 <DescriptionContainer>{description}</DescriptionContainer>
               )}
               {actionLabel && action && (
-                <ActionButton color={color}>{actionLabel}</ActionButton>
+                <ActionButton color={color} onClick={action}>
+                  {actionLabel}
+                </ActionButton>
               )}
             </Content>
           )}
@@ -80,13 +84,15 @@ export function useToast(): ToastHookReturn {
 
   const dismiss = useCallback((id: string) => {
     toast.dismiss(id);
-    // console.log('ue');
   }, []);
 
   const dismissAll = useCallback(() => {
     toast.dismiss();
-    // console.log('ao');
   }, []);
 
-  return { fire, dismiss, dismissAll };
+  const error = useCallback((error: DomainError) => {
+    toast.error(error.message);
+  }, []);
+
+  return { fire, dismiss, dismissAll, error };
 }

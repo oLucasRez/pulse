@@ -1,6 +1,6 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect } from 'react';
 
-import { useDice, useGame, usePlayer, useSubject } from '@presentation/hooks';
+import { useDice, useGame, useNavigate, usePlayer } from '@presentation/hooks';
 import { alertError } from '@presentation/utils';
 
 import { useCreateLightSpotToast, useRollDiceToast } from './hooks';
@@ -13,7 +13,6 @@ import {
   Pulses,
   Questions,
   RollDiceEvent,
-  SubjectForm,
   Subjects,
 } from '../../components';
 
@@ -21,37 +20,20 @@ export const CreatingLightSpotState: FC = () => {
   const { currentGame } = useGame();
   const { isMyLightSpotTurn } = usePlayer();
   const { currentLightSpotDice, rollCurrentLightSpotDice } = useDice();
-  const { createLightSpotSubject } = useSubject();
 
-  const mapRef = useRef<Map.Ref>(null);
-
-  if (!currentGame) return null;
-
-  const {
-    state: [, state],
-  } = currentGame;
+  const [, state] = currentGame?.state ?? [];
 
   const handleRollDice = (event: RollDiceEvent) => {
     rollCurrentLightSpotDice(event.position).catch(alertError);
   };
 
-  function handleCreateSubject(data: SubjectForm.FormData) {
-    createLightSpotSubject({
-      icon: data.icon,
-      color: data.color,
-      description: data.description,
-    }).catch(alertError);
-
-    mapRef.current?.closeBakingPaper();
-  }
+  const { navigateToSubject } = useNavigate();
 
   useEffect(() => {
     if (!isMyLightSpotTurn) return;
     if (state !== 'create:subject') return;
 
-    mapRef.current?.openBakingPaper(
-      <SubjectForm onSubmit={handleCreateSubject} />,
-    );
+    navigateToSubject();
   }, [isMyLightSpotTurn, state]);
 
   useRollDiceToast();
@@ -61,7 +43,7 @@ export const CreatingLightSpotState: FC = () => {
     isMyLightSpotTurn && state === 'roll:dice' && currentLightSpotDice;
 
   return (
-    <Map ref={mapRef}>
+    <Map>
       <Pulses />
       <Dices
         transparent

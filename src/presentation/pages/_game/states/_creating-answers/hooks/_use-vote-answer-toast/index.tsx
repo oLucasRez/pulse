@@ -1,15 +1,27 @@
 import { ReactNode, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
-import { useGame, usePlayer, useToast } from '@presentation/hooks';
+import {
+  useGame,
+  useNavigate,
+  usePlayer,
+  useQuestion,
+  useToast,
+} from '@presentation/hooks';
 import { getColor } from '@presentation/styles/mixins';
 
 export function useVoteAnswerToast(): void {
   const { currentGame } = useGame();
   const { currentPlayer, myPlayer, isMyTurn, turnIsSafe } = usePlayer();
+  const { unvotedQuestion } = useQuestion();
 
   const [state, subState] = currentGame?.state ?? [];
 
   const toast = useToast();
+
+  const { navigateToInvestigation } = useNavigate();
+
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (!turnIsSafe) return;
@@ -37,6 +49,11 @@ export function useVoteAnswerToast(): void {
         </p>
       );
     } else {
+      if (pathname.includes('investigation')) {
+        toast.dismiss(state + 'step');
+        return;
+      }
+
       title = (
         <>
           Etapa de <em>Conjecturas</em>
@@ -53,7 +70,11 @@ export function useVoteAnswerToast(): void {
       );
 
       actionLabel = 'Votar';
-      action = () => {};
+      if (unvotedQuestion)
+        action = () => {
+          navigateToInvestigation(unvotedQuestion.id);
+          toast.dismiss(state + 'step');
+        };
     }
 
     toast.fire('step', {
@@ -66,7 +87,7 @@ export function useVoteAnswerToast(): void {
       action,
       step: 2 / 2,
     });
-  }, [turnIsSafe, subState, currentPlayer, myPlayer, isMyTurn]);
+  }, [pathname, turnIsSafe, subState, currentPlayer, myPlayer, isMyTurn]);
 
   useEffect(() => () => toast.dismissAll(), []);
 }

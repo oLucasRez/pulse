@@ -3,6 +3,7 @@ export type NavigateHookReturn = {
   navigateToGame(id?: string): void;
   navigateToSubject(id?: string): void;
   navigateToCentralFact(): void;
+  navigateToInvestigation(id?: string): void;
   navigateToLogin(): void;
   navigateToRegister(): void;
   navigateToLogout(): void;

@@ -24,6 +24,7 @@ export class AnswerHydrator implements IAnswerHydrator {
       color: author.color,
       questionID: dto.questionID,
       authorID: dto.authorID,
+      authorName: author.name,
       updatedAt: new Date(dto.updatedAt),
       createdAt: new Date(dto.createdAt),
     };
