@@ -27,6 +27,7 @@ export function useToast(): ToastHookReturn {
         step,
         id = Date.now() + '',
         actionLabel,
+        position,
         action,
       }: FireOptions = {},
     ) => {
@@ -54,13 +55,15 @@ export function useToast(): ToastHookReturn {
       );
 
       const options: ToastOptions = {
-        position: (
-          {
-            notification: 'top-right',
-            step: 'bottom-right',
-            tip: 'top-center',
-          } as Record<ToastType, ToastPosition>
-        )[type],
+        position:
+          position ??
+          (
+            {
+              notification: 'top-right',
+              step: 'bottom-right',
+              tip: 'top-center',
+            } as Record<ToastType, ToastPosition>
+          )[type],
         theme: 'light',
         autoClose: false,
         progress: color ? step && (step >= 1 ? 0.9999 : step) : 0,

@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ToastPosition } from 'react-toastify';
 
 import { Color } from '@domain/enums';
 import { DomainError } from '@domain/errors';
@@ -11,6 +12,7 @@ export type FireOptions = {
   color?: Color;
   step?: number;
   actionLabel?: ReactNode;
+  position?: ToastPosition;
   action?(): void;
 };
 
