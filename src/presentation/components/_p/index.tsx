@@ -1,4 +1,12 @@
-import { forwardRef, ReactElement, useImperativeHandle, useRef } from 'react';
+import {
+  forwardRef,
+  ReactElement,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+
+import { useStates } from '@presentation/hooks';
 
 import { PProps } from './types';
 
@@ -27,8 +35,15 @@ export const P = forwardRef<HTMLParagraphElement, PProps>(function Text(
     [],
   );
 
+  const [s] = useStates({
+    isInsideSVG: false,
+  });
+  useEffect(() => {
+    s.isInsideSVG = !!_ref.current && isInsideSVG(_ref.current);
+  }, []);
+
   function wrapForeignObject(children: ReactElement) {
-    if (_ref.current && isInsideSVG(_ref.current))
+    if (s.isInsideSVG)
       return (
         <foreignObject
           x={0}

@@ -1,4 +1,5 @@
 export * from './_central-fact';
+export * from './_color-selector';
 export * from './_crossings';
 export * from './_dice';
 export * from './_dice-roller';

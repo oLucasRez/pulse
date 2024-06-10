@@ -4,12 +4,12 @@ export function getColor(color?: Color | null): string {
   if (!color) return '#757575';
 
   const map: Record<Color, string> = {
-    [Color.RED]: '#ff2f2f',
+    [Color.RED]: '#FF544B',
     [Color.GREEN]: '#22b122',
     [Color.BLUE]: '#6868e3',
     [Color.CYAN]: '#0ddddd',
     [Color.PURPLE]: '#c636c6',
-    [Color.YELLOW]: '#f0de22',
+    [Color.YELLOW]: '#F2BC29',
     [Color.OCHRE]: '#cd7721',
     [Color.ORANGE]: '#ffa110',
     [Color.PINK]: '#f88095',

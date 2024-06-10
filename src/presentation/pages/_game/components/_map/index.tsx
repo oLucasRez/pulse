@@ -2,7 +2,6 @@ import {
   createContext,
   forwardRef,
   MouseEventHandler,
-  ReactNode,
   useContext,
   useImperativeHandle,
   useMemo,
@@ -12,11 +11,26 @@ import { Outlet } from 'react-router-dom';
 
 import { Vector, VectorSpace } from '@domain/utils';
 
-import { Transition } from '@presentation/components';
+import { Button, Icon, IconButton } from '@presentation/components';
 import { ms } from '@presentation/constants';
-import { useDice, useEvent, useInterval, useStates } from '@presentation/hooks';
+import {
+  useDice,
+  useEvent,
+  useGame,
+  useInterval,
+  useNavigate,
+  usePlayer,
+  useStates,
+  useToast,
+} from '@presentation/hooks';
 
-import { Container, ViewBox } from './styles';
+import {
+  Children,
+  ConfirmDialog,
+  ConfirmText,
+  Container,
+  ViewBox,
+} from './styles';
 
 import { MapContextValue, MapProps } from './types';
 
@@ -28,22 +42,18 @@ const Context = createContext<MapContextValue>({
   onMouseDown: () => () => {},
   onMouseUp: () => () => {},
   onClick: () => () => {},
-  openBakingPaper: () => {},
-  closeBakingPaper: () => {},
 });
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map = forwardRef<MapContextValue, MapProps>(function Map(
-  props,
+  { children, outsideSVG, ...props },
   ref,
 ) {
-  const { children } = props;
-
   const [s, set] = useStates({
     width: 0,
     height: 0,
-    portal: null as ReactNode,
+    confirmDialogIsOpen: false,
   });
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -126,6 +136,23 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     click.notify(vector);
   };
 
+  const { imHost, currentGame, deleteGame } = useGame();
+  const { navigateToHome } = useNavigate();
+  const toast = useToast();
+
+  function handleTurnBackButtonClick() {
+    if (!imHost) return navigateToHome();
+
+    s.confirmDialogIsOpen = true;
+  }
+
+  function handleConfirmDeleteGameButtonClick() {
+    navigateToHome();
+    if (currentGame) deleteGame(currentGame.id).catch(toast.error);
+  }
+
+  const { myPlayer } = usePlayer();
+
   const contextValue: MapContextValue = {
     mapSpace,
     bounds,
@@ -134,8 +161,6 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     onMouseDown: mouseDown.on,
     onMouseUp: mouseUp.on,
     onClick: click.on,
-    openBakingPaper: set('portal'),
-    closeBakingPaper: set('portal', null),
   };
 
   useImperativeHandle(ref, () => contextValue, []);
@@ -168,26 +193,45 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
           onClick={handleClick}
         >
           {renderOutside()}
-          {typeof children === 'function' ? children(contextValue) : children}
+          {!outsideSVG &&
+            (typeof children === 'function'
+              ? children(contextValue)
+              : children)}
+
+          <g id='landmark-above' />
         </ViewBox>
 
-        <Outlet />
+        {outsideSVG && (
+          <Children>
+            {typeof children === 'function' ? children(contextValue) : children}
+          </Children>
+        )}
 
-        <Transition.Fade active={!!s.portal} ms={200}>
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: s.width,
-              height: s.height,
-              backdropFilter: 'blur(7px)',
-              pointerEvents: s.portal ? undefined : 'none',
-            }}
-          >
-            {s.portal}
-          </div>
-        </Transition.Fade>
+        <IconButton
+          className='turn-back'
+          icon={<Icon.TurnBack />}
+          onClick={handleTurnBackButtonClick}
+        />
+
+        {s.confirmDialogIsOpen && (
+          <ConfirmDialog>
+            <ConfirmText>
+              Tem certeza que deseja sair? O jogo será excluído permanentemente!
+            </ConfirmText>
+
+            <Button onClick={set('confirmDialogIsOpen', false)}>
+              Não, ficar aqui
+            </Button>
+            <Button
+              onClick={handleConfirmDeleteGameButtonClick}
+              color={myPlayer?.color}
+            >
+              Sim, sair
+            </Button>
+          </ConfirmDialog>
+        )}
+
+        <Outlet />
       </Container>
     </Context.Provider>
   );

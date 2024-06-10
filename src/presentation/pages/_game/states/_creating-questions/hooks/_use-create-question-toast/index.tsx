@@ -7,7 +7,6 @@ import {
   usePlayer,
   useToast,
 } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useCreateQuestionToast(): void {
   const { currentGame } = useGame();
@@ -81,7 +80,7 @@ export function useCreateQuestionToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 4 / 4,
     });
   }, [turnIsSafe, subState, currentPlayer, isMyTurn, !currentDice?.position]);

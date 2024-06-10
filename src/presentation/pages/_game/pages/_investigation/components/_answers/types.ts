@@ -15,7 +15,6 @@ export interface $StarCheckboxProps {
 }
 
 export interface $DescriptionInputProps extends Input.Props {
-  $color: Color;
   $fact?: boolean;
 }
 

@@ -1,7 +1,7 @@
-import { KeyboardEvent, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Input } from '@presentation/components';
+import { Button, Input } from '@presentation/components';
 import {
   useAnswer,
   useGame,
@@ -13,12 +13,10 @@ import {
 
 import { useTipToast } from './hooks';
 
-import { Label } from '../../styles';
-import { Description } from './styles';
-
 export const NewAnswer = () => {
   const [s, set] = useStates({
     description: '',
+    loading: false,
   });
 
   const { currentGame } = useGame();
@@ -36,17 +34,18 @@ export const NewAnswer = () => {
 
   const toast = useToast();
 
-  function handleInputKeyDown(event: KeyboardEvent) {
-    if (event.key !== 'Enter') return;
-
+  function handleSubmit() {
     if (!s.description || !params.questionID) return;
+
+    s.loading = true;
 
     createAnswer({
       questionID: params.questionID,
       description: s.description,
-    }).catch(toast.error);
-
-    navigateToGame();
+    })
+      .catch(toast.error)
+      .finally(navigateToGame)
+      .finally(set('loading', false));
   }
 
   useTipToast();
@@ -56,21 +55,32 @@ export const NewAnswer = () => {
     descriptionRef.current?.focus();
   }, []);
 
+  const submitDisabled = !s.description;
+
   if (!isCreatingAnswerState) return null;
 
   return (
     <>
-      <Label htmlFor='answer-description'>Nova Conjectura</Label>
-
-      <Description
+      <Input
         ref={descriptionRef}
-        id='answer-description'
+        className='answer-description'
+        variant='baking-paper'
+        label='Nova Conjectura'
         placeholder='Descreva...'
         color={currentPlayer?.color}
         disabled={!isCreatingAnswerState}
         onChange={set('description')}
-        onKeyDown={handleInputKeyDown}
       />
+
+      <Button
+        className='answer-submit'
+        color={currentPlayer?.color}
+        disabled={submitDisabled}
+        loading={s.loading}
+        onClick={handleSubmit}
+      >
+        Responder
+      </Button>
     </>
   );
 };

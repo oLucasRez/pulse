@@ -5,6 +5,7 @@ import { ContextProviderProps } from '@presentation/types';
 
 import {
   makeCreateQuestionUsecase,
+  makeEditQuestionUsecase,
   makeGetQuestionsUsecase,
   makeVoteQuestionFactUsecase,
   makeWatchQuestionsUsecase,
@@ -16,6 +17,7 @@ export function makeQuestionContextProvider(
   const getQuestions = makeGetQuestionsUsecase();
   const watchQuestions = makeWatchQuestionsUsecase();
   const createQuestion = makeCreateQuestionUsecase();
+  const editQuestion = makeEditQuestionUsecase();
   const voteQuestionFact = makeVoteQuestionFactUsecase();
 
   return (
@@ -23,6 +25,7 @@ export function makeQuestionContextProvider(
       getQuestions={getQuestions}
       watchQuestions={watchQuestions}
       createQuestion={createQuestion}
+      editQuestion={editQuestion}
       voteQuestionFact={voteQuestionFact}
       {...props}
     />

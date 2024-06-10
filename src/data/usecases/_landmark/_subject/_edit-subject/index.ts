@@ -30,7 +30,7 @@ export class EditSubjectUsecase implements IEditSubjectUsecase {
     id: string,
     payload: IEditSubjectUsecase.Payload,
   ): Promise<SubjectModel> {
-    const { description } = payload;
+    const { icon, description, color } = payload;
 
     const myPlayer = await this.getMyPlayer.execute();
 
@@ -50,7 +50,9 @@ export class EditSubjectUsecase implements IEditSubjectUsecase {
       });
 
     const dto = await this.subjectDAO.update(id, {
+      icon,
       description,
+      color,
     });
 
     return this.subjectHydrator.hydrate(dto);

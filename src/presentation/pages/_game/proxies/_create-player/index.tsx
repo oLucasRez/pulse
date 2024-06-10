@@ -1,25 +1,22 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 import { GlobalLoading } from '@presentation/components';
-import { usePlayer } from '@presentation/hooks';
-
-import { useMutatePlayerModal } from '../../hooks';
+import { useNavigate, usePlayer } from '@presentation/hooks';
 
 import { CreatePlayerProxyProps } from './types';
 
-export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = (props) => {
-  const { children } = props;
-
+export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = ({ children }) => {
   const { myPlayer, fetchingPlayers } = usePlayer();
 
-  const { renderMutatePlayerModal } = useMutatePlayerModal({
-    unclosable: true,
-    open: true,
-  });
+  const { navigateToPlayer } = useNavigate();
+
+  useEffect(() => {
+    if (fetchingPlayers || myPlayer) return;
+
+    navigateToPlayer();
+  }, [fetchingPlayers, myPlayer]);
 
   if (fetchingPlayers) return <GlobalLoading />;
 
-  if (myPlayer) return children;
-
-  return renderMutatePlayerModal();
+  return children;
 };

@@ -1,7 +1,8 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { AnswerModel, PlayerModel } from '@domain/models';
 
+import { Button, Icon, IconButton } from '@presentation/components';
 import {
   useAnswer,
   usePlayer,
@@ -11,7 +12,9 @@ import {
 } from '@presentation/hooks';
 
 import {
+  AnswerContainer,
   Author,
+  Buttons,
   Container,
   Description,
   DescriptionInput,
@@ -24,11 +27,14 @@ import {
 import { AnswersProps } from './types';
 
 export const Answers: FC<AnswersProps> = ({ question }) => {
-  const { answers: allAnswers } = useAnswer();
+  const { answers: allAnswers, editAnswer } = useAnswer();
   const { myPlayer, players } = usePlayer();
   const { voteQuestionFact } = useQuestion();
 
   const [s, set] = useStates({
+    editMode: undefined as string | undefined,
+    editingDescription: undefined as string | undefined,
+    editLoading: false,
     loading: false,
   });
 
@@ -48,7 +54,7 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
           (answer1, answer2) =>
             answer1.createdAt.getTime() - answer2.createdAt.getTime(),
         ),
-    [allAnswers, question.id],
+    [allAnswers, question.id, s.editMode],
   );
 
   const fact = useMemo(
@@ -57,8 +63,6 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
   );
 
   const toast = useToast();
-
-  if (!conjectures.length && !fact) return null;
 
   function handleVote(value: string | null) {
     return () => {
@@ -69,8 +73,27 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
     };
   }
 
-  function renderAnswer({ id, description, color, authorName }: AnswerModel) {
+  useEffect(() => {
+    s.editingDescription = undefined;
+  }, [s.editMode]);
+
+  if (!conjectures.length && !fact) return null;
+
+  function renderAnswer({
+    id,
+    description,
+    color,
+    authorName,
+    authorID,
+  }: AnswerModel) {
     const isFact = fact?.id === id;
+    const inputDisabled = s.editLoading || s.editMode !== id;
+    const showEditButton = !s.editMode && authorID === myPlayer?.id;
+    const showButtons = s.editMode === id;
+    const editDisabled =
+      s.editLoading ||
+      !s.editingDescription ||
+      s.editingDescription === description;
 
     const votingPlayers: PlayerModel[] = [];
     Object.entries(question.votes).map(([playerID, { answerID }]) => {
@@ -81,8 +104,19 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
       if (player) votingPlayers.push(player);
     });
 
+    function handleSubmit() {
+      s.editLoading = true;
+      editAnswer(id, { description: s.editingDescription })
+        .catch(toast.error)
+        .finally(set('editMode', undefined))
+        .finally(set('editLoading', false));
+    }
+
+    const descriptionValue =
+      s.editMode === id ? s.editingDescription || description : description;
+
     return (
-      <Container key={id}>
+      <AnswerContainer key={id}>
         <StarCheckbox
           $checked={checked(id)}
           $expired={expired}
@@ -91,10 +125,12 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
           onClick={handleVote(id)}
         />
         <DescriptionInput
-          disabled
+          disabled={inputDisabled}
           defaultValue={description}
-          $color={color}
+          value={descriptionValue}
+          color={color}
           $fact={isFact}
+          onChange={set('editingDescription')}
         />
         <Votes>
           {votingPlayers.map(({ id, color }) => (
@@ -102,12 +138,44 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
           ))}
         </Votes>
         <Author $color={color}>— {authorName}</Author>
-      </Container>
+
+        {showEditButton && (
+          <IconButton
+            className='edit'
+            icon={<Icon.Pencil />}
+            size='small'
+            onClick={set('editMode', id)}
+          />
+        )}
+
+        {showButtons && (
+          <Buttons>
+            <Button
+              disabled={s.editLoading}
+              onClick={() => {
+                s.editMode = undefined;
+                s.editingDescription = undefined;
+              }}
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              color={color}
+              disabled={editDisabled}
+              loading={s.editLoading}
+              onClick={handleSubmit}
+            >
+              Editar
+            </Button>
+          </Buttons>
+        )}
+      </AnswerContainer>
     );
   }
 
   return (
-    <>
+    <Container>
       {fact && (
         <>
           <Label>Fato</Label>
@@ -119,7 +187,7 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
         <Label>Conjecturas</Label>
         {conjectures.map(renderAnswer)}
 
-        <Container>
+        <AnswerContainer>
           <StarCheckbox
             $checked={checked(null)}
             $expired={expired}
@@ -127,8 +195,8 @@ export const Answers: FC<AnswersProps> = ({ question }) => {
             onClick={handleVote(null)}
           />
           <Description>Nenhuma resposta é satisfatória</Description>
-        </Container>
+        </AnswerContainer>
       </>
-    </>
+    </Container>
   );
 };

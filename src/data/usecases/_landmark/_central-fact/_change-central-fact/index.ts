@@ -3,6 +3,7 @@ import { CentralFactModel } from '@domain/models';
 import {
   IChangeCentralFactUsecase,
   IGetCentralFactUsecase,
+  IGetCurrentGameUsecase,
   INextGameStateUsecase,
 } from '@domain/usecases';
 
@@ -11,16 +12,19 @@ import { ICentralFactHydrator } from '@data/hydration';
 
 export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
   private readonly getCentralFact: IGetCentralFactUsecase;
+  private readonly getCurrentGame: IGetCurrentGameUsecase;
   private readonly nextGameState: INextGameStateUsecase;
   private readonly centralFactDAO: ICentralFactDAO;
   private readonly centralFactHydrator: ICentralFactHydrator;
   public constructor({
     getCentralFact,
+    getCurrentGame,
     nextGameState,
     centralFactDAO,
     centralFactHydrator,
   }: Deps) {
     this.getCentralFact = getCentralFact;
+    this.getCurrentGame = getCurrentGame;
     this.nextGameState = nextGameState;
     this.centralFactDAO = centralFactDAO;
     this.centralFactHydrator = centralFactHydrator;
@@ -30,6 +34,10 @@ export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
     payload: IChangeCentralFactUsecase.Payload,
   ): Promise<CentralFactModel> {
     const { description } = payload;
+
+    const currentGame = await this.getCurrentGame.execute();
+    if (!currentGame)
+      throw new NotFoundError({ metadata: { entity: 'CurrentGame' } });
 
     let centralFact = await this.getCentralFact.execute();
 
@@ -42,7 +50,11 @@ export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
 
     centralFact = await this.centralFactHydrator.hydrate(dto);
 
-    await this.nextGameState.execute();
+    if (
+      currentGame.state[0] === 'creating:centralFact' &&
+      currentGame.state[1] === 'change:centralFact'
+    )
+      this.nextGameState.execute();
 
     return centralFact;
   }
@@ -50,6 +62,7 @@ export class ChangeCentralFactUsecase implements IChangeCentralFactUsecase {
 
 type Deps = {
   getCentralFact: IGetCentralFactUsecase;
+  getCurrentGame: IGetCurrentGameUsecase;
   nextGameState: INextGameStateUsecase;
   centralFactDAO: ICentralFactDAO;
   centralFactHydrator: ICentralFactHydrator;

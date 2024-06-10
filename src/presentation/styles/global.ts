@@ -1,9 +1,21 @@
-import { createGlobalStyle, css } from 'styled-components';
+import { createGlobalStyle, css, keyframes } from 'styled-components';
 
 import { Color } from '@domain/enums';
 import { mapEnum } from '@domain/utils';
 
 import { getColor } from './mixins';
+
+const ripple = keyframes`
+  from {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(10);
+  }
+`;
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
@@ -37,12 +49,30 @@ export const GlobalStyle = createGlobalStyle`
     list-style: none;
   }
 
+  span.ripple {
+    position: absolute;
+    border-radius: 50rem;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+
+    animation: ${ripple} 1s;
+    opacity: 0;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
   // temporary
   * {
-    font-family: 'Poppins', sans-serif;
-    color: #778;
+    font-family: 'Montserrat', sans-serif;
+    color: ${({ theme }): string => theme.foreground.dark};
 
-    button {
+    /* button {
       padding: 0.25rem 0.5rem;
       border-radius: 0.5rem;
       border: none;
@@ -66,9 +96,9 @@ export const GlobalStyle = createGlobalStyle`
           opacity: 0.4;
         }
       }
-    }
+    } */
 
-    label {
+    /* label {
       font-size: small;
       transform: translateY(0.25rem);
       color: darkgray;
@@ -91,10 +121,10 @@ export const GlobalStyle = createGlobalStyle`
       border-top: 2px solid lightgray;
       background: buttonface;
       padding: 0 0.5rem;
-    }
+    } */
   }
 
-  .handwriting, input, textarea {
+  .handwriting {
     font-family: "Shantell Sans", cursive;
     font-optical-sizing: auto;
     font-variation-settings:
@@ -104,7 +134,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .sans-serif {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
 
   ${mapEnum(

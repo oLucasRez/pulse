@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { Color } from '@domain/enums';
 import { DomainError } from '@domain/errors';
 
 export type FireOptions = {
@@ -7,7 +8,7 @@ export type FireOptions = {
   icon?: ReactNode;
   title?: ReactNode;
   description?: ReactNode;
-  color?: string;
+  color?: Color;
   step?: number;
   actionLabel?: ReactNode;
   action?(): void;
@@ -19,6 +20,7 @@ export type ToastHookReturn = {
   fire(type: ToastType, options?: FireOptions): void;
   dismiss(id: string): void;
   dismissAll(): void;
+  success(message: string): void;
   error(error: DomainError): void;
 };
 

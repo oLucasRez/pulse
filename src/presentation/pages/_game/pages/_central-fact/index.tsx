@@ -1,6 +1,12 @@
-import { FC, KeyboardEvent, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
-import { Input } from '@presentation/components';
+import {
+  BakingPaper,
+  Button,
+  Icon,
+  IconButton,
+  Input,
+} from '@presentation/components';
 import {
   useCentralFact,
   useGame,
@@ -8,15 +14,15 @@ import {
   usePlayer,
   useStates,
 } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 import { useTipToast } from './hooks';
 
-import { Container } from '../styles';
-import { Content, Description, Label } from './styles';
+import { Buttons, Content } from './styles';
 
 const CentralFactPage: FC = () => {
   const [s, set] = useStates({
+    editMode: false,
+    loading: false,
     description: '',
   });
 
@@ -33,14 +39,24 @@ const CentralFactPage: FC = () => {
     subState === 'change:centralFact' &&
     isMyTurn;
 
-  function handleInputKeyDown(event: KeyboardEvent) {
-    if (event.key !== 'Enter') return;
-
+  function handleSubmit() {
     if (isChangingCentralFact) {
       if (!s.description) return;
 
-      changeCentralFact({ description: s.description }).finally(navigateToGame);
+      s.loading = true;
+
+      changeCentralFact({ description: s.description })
+        .finally(navigateToGame)
+        .finally(set('loading', false));
+
+      return;
     }
+
+    s.loading = true;
+
+    changeCentralFact({ description: s.description })
+      .finally(set('editMode', false))
+      .finally(set('loading', false));
   }
 
   const descriptionRef = useRef<Input.Element>(null);
@@ -49,15 +65,21 @@ const CentralFactPage: FC = () => {
     descriptionRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    if (isChangingCentralFact) s.editMode = true;
+  }, [isChangingCentralFact]);
+
   useTipToast();
 
-  const disabled =
-    !isMyTurn ||
-    currentGame?.state[0] !== 'creating:centralFact' ||
-    currentGame.state[1] !== 'change:centralFact';
+  const showCancelButton = subState !== 'change:centralFact';
+
+  const showEditButton = !s.editMode;
+
+  const cancelDisabled = s.loading;
+  const submitDisabled = !s.description || s.loading;
 
   return (
-    <Container
+    <BakingPaper
       onClick={() => {
         if (isChangingCentralFact) return;
 
@@ -65,24 +87,52 @@ const CentralFactPage: FC = () => {
       }}
     >
       <Content onClick={(e) => e.stopPropagation()}>
-        <Label>Fato Central</Label>
-        <Description
+        <Input
           // style
           variant='baking-paper'
-          placeholderOpacity={0.5}
-          placeholderColor={getColor()}
           // params
           ref={descriptionRef}
           id='description'
           placeholder='Descreva...'
+          label='Fato Central'
           defaultValue={centralFact?.description}
-          disabled={disabled}
+          value={centralFact?.description}
+          disabled={!s.editMode}
           // handle
           onChange={set('description')}
-          onKeyDown={handleInputKeyDown}
         />
+
+        {s.editMode && (
+          <Buttons>
+            {showCancelButton && (
+              <Button
+                disabled={cancelDisabled}
+                onClick={set('editMode', false)}
+              >
+                Cancelar
+              </Button>
+            )}
+
+            <Button
+              disabled={submitDisabled}
+              loading={s.loading}
+              onClick={handleSubmit}
+            >
+              Editar
+            </Button>
+          </Buttons>
+        )}
+
+        {showEditButton && (
+          <IconButton
+            className='edit'
+            icon={<Icon.Pencil />}
+            size='small'
+            onClick={set('editMode', true)}
+          />
+        )}
       </Content>
-    </Container>
+    </BakingPaper>
   );
 };
 

@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useSubject, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useChangeCentralFactToast(): void {
   const { currentGame } = useGame();
@@ -79,7 +78,7 @@ export function useChangeCentralFactToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 1 / 3,
     });
   }, [turnIsSafe, subState, currentPlayer, isMyTurn]);

@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useSubject, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useCretingSubjectsToast(): void {
   const { currentGame } = useGame();
@@ -80,7 +79,7 @@ export function useCretingSubjectsToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 1 / 1,
     });
   }, [turnIsSafe, state, currentPlayer, isMyTurn]);

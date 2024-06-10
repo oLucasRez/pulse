@@ -104,7 +104,7 @@ export namespace Matrix {
       // Divide a linha pelo pivô para tornar o pivô igual a 1
       const pivot = clonedMatrix[i][i];
       if (pivot === 0) {
-        throw new Error('A matriz não é inversível.');
+        return [[]];
       }
       clonedMatrix[i] = multiplyRow(clonedMatrix[i], 1 / pivot);
       identityMatrix[i] = multiplyRow(identityMatrix[i], 1 / pivot);

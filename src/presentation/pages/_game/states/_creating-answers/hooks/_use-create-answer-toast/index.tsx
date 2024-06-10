@@ -1,7 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useCreateAnswerToast(): void {
   const { currentGame } = useGame();
@@ -53,7 +52,7 @@ export function useCreateAnswerToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 1 / 2,
     });
   }, [turnIsSafe, subState, currentPlayer, isMyTurn]);

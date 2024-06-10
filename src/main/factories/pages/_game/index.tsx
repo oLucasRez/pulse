@@ -54,4 +54,5 @@ export function makeGamePage(): ReactElement {
 
 export * from './_central-fact';
 export * from './_investigation';
+export * from './_player';
 export * from './_subject';

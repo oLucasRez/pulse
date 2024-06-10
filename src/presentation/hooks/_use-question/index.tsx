@@ -44,6 +44,8 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
 
   const createQuestion = useUsecase(props.createQuestion);
 
+  const editQuestion = useUsecase(props.editQuestion);
+
   const voteQuestionFact = useUsecase(props.voteQuestionFact);
 
   useWatch(async () => {
@@ -59,6 +61,7 @@ export const QuestionContextProvider: FC<QuestionContextProviderProps> = ({
         questions,
         unvotedQuestion,
         createQuestion,
+        editQuestion,
         voteQuestionFact,
       }}
     >

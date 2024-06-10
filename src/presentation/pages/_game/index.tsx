@@ -28,9 +28,11 @@ const GamePage: FC = () => {
 
   const { myPlayer } = usePlayer();
 
-  const { navigateToHome, navigateToLogout } = useNavigate();
+  const { navigateToHome } = useNavigate();
 
   const { me } = useUser();
+
+  const toast = useToast();
 
   if (!me) return null;
 
@@ -59,43 +61,11 @@ const GamePage: FC = () => {
     return <Main>{map[currentGame.state[0]]}</Main>;
   }
 
-  function renderMyHeader() {
-    return (
-      <span className='greetings'>
-        {myPlayer?.avatar} Hello
-        {me?.name ? (
-          <>
-            , <b>{me.name}</b>
-          </>
-        ) : (
-          ''
-        )}
-        !
-      </span>
-    );
-  }
-
-  const toast = useToast();
   useEffect(() => () => toast.dismissAll(), []);
 
   if (!currentGame) return <Navigate.toHome />;
 
-  return (
-    <Container>
-      <header>
-        <button onClick={navigateToHome}>🔙</button>
-
-        <h2>
-          <b>{currentGame.title}</b>
-        </h2>
-
-        {renderMyHeader()}
-        <button onClick={navigateToLogout}>🚪</button>
-      </header>
-
-      {renderMain()}
-    </Container>
-  );
+  return <Container>{renderMain()}</Container>;
 };
 
 export default GamePage;

@@ -10,13 +10,12 @@ export type MapContextValue = {
   onMouseDown(callback: (mouse: Vector) => void): () => void;
   onMouseUp(callback: (mouse: Vector) => void): () => void;
   onClick(callback: (mouse: Vector) => void): () => void;
-  openBakingPaper(children: ReactNode): void;
-  closeBakingPaper(): void;
 };
 
 export interface MapProps {
   ref?: Ref<MapContextValue>;
   children?: ReactNode | ((props: MapContextValue) => ReactNode);
+  outsideSVG?: boolean;
   onMouseMove?(vector: Vector): void;
   onClick?(): void;
 }

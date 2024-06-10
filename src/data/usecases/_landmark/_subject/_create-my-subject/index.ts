@@ -50,7 +50,7 @@ export class CreateMySubjectUsecase implements ICreateMySubjectUsecase {
       color: myPlayer.color,
     });
 
-    await this.nextGameState.execute();
+    this.nextGameState.execute();
 
     return mySubject;
   }

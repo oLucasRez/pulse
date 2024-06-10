@@ -37,6 +37,8 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
 
   const createAnswer = useUsecase(props.createAnswer);
 
+  const editAnswer = useUsecase(props.editAnswer);
+
   useWatch(async () => {
     if (currentGame)
       return watchAnswers.execute((answers) => replaceAll(answers));
@@ -47,6 +49,7 @@ export const AnswerContextProvider: FC<AnswerContextProviderProps> = ({
       value={{
         answers,
         createAnswer,
+        editAnswer,
       }}
     >
       {children}

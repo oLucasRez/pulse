@@ -23,6 +23,15 @@ export function useNavigate(): NavigateHookReturn {
     [navigate, params.gameID],
   );
 
+  const navigateToPlayer = useCallback(
+    (id?: string) =>
+      params.gameID &&
+      navigate(`/game/${params.gameID}/player${id ? `/${id}` : ''}`, {
+        replace: replaceIfIsLogout(),
+      }),
+    [navigate, params.gameID],
+  );
+
   const navigateToSubject = useCallback(
     (id?: string) =>
       params.gameID &&
@@ -67,6 +76,7 @@ export function useNavigate(): NavigateHookReturn {
   return {
     navigateToHome,
     navigateToGame,
+    navigateToPlayer,
     navigateToSubject,
     navigateToCentralFact,
     navigateToInvestigation,

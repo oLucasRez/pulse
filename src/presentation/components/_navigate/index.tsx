@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Navigate as DefaultNavigate, useParams } from 'react-router-dom';
 
-import { NavigateToGameProps } from './types';
+import { NavigateToGameProps, NavigateToPlayerProps } from './types';
 
 function replaceIfIsLogout(): boolean {
   return location.pathname === '/logout';
@@ -22,6 +22,17 @@ const NavigateToGame: FC<NavigateToGameProps> = ({ id, replace }) => {
   );
 };
 
+const NavigateToPlayer: FC<NavigateToPlayerProps> = ({ id }) => {
+  const params = useParams();
+
+  return (
+    <DefaultNavigate
+      to={`/game/${params.gameID}/player${id ? `/${id}` : ''}`}
+      replace={replaceIfIsLogout()}
+    />
+  );
+};
+
 const NavigateToLogin: FC = () => {
   return <DefaultNavigate to='/login' replace={replaceIfIsLogout()} />;
 };
@@ -37,6 +48,7 @@ const NavigateToLogout: FC = () => {
 export const Navigate = {
   toHome: NavigateToHome,
   toGame: NavigateToGame,
+  toPlayer: NavigateToPlayer,
   toLogin: NavigateToLogin,
   toRegister: NavigateToRegister,
   toLogout: NavigateToLogout,

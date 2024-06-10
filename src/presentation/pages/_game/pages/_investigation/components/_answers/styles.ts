@@ -11,23 +11,43 @@ import {
   $VoteProps,
 } from './types';
 
-export const Label = styled.label.attrs({
-  className: 'handwriting',
-})`
+export const Label = styled.label`
+  font-weight: 500;
   font-size: 0.75rem;
-  opacity: 0.75;
   width: max-content;
+  color: ${({ theme }) => theme.foreground.light};
 `;
 
 export const Container = styled.div`
+  grid-area: answers;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const AnswerContainer = styled.div`
   display: grid;
-  grid-template-columns: max-content auto auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: max-content auto auto max-content;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
-    'star description description'
-    'star votes       author';
+    'star description description edit'
+    'star votes       author      edit'
+    'star buttons     buttons     edit';
   column-gap: 0.5rem;
   row-gap: 0.25rem;
+
+  > .IconButton.edit {
+    grid-area: edit;
+    justify-self: end;
+  }
+`;
+
+export const Buttons = styled.div`
+  grid-area: buttons;
+  justify-self: end;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 `;
 
 export const StarCheckbox = styled(FaStar)<$StarCheckboxProps>`
@@ -60,22 +80,17 @@ export const StarCheckbox = styled(FaStar)<$StarCheckboxProps>`
     `}
 `;
 
-export const DescriptionInput = styled(Input).attrs<$DescriptionInputProps>(
-  ({ $color }) =>
-    ({
-      variant: 'baking-paper',
-      placeholderOpacity: 0.5,
-      placeholderColor: getColor($color),
-    } satisfies Input.Props),
-)<$DescriptionInputProps>`
+export const DescriptionInput = styled(Input).attrs<$DescriptionInputProps>({
+  variant: 'baking-paper',
+})<$DescriptionInputProps>`
   grid-area: description;
-  color: ${({ $color }) => getColor($color)};
+  color: ${({ color }) => getColor(color)};
   width: fit-content;
 
-  ${({ $fact, $color }) =>
+  ${({ $fact, color }) =>
     $fact &&
     css`
-      border: 2px solid ${getColor($color)}88;
+      border: 2px solid ${getColor(color)}88;
       border-radius: 50%;
       padding: 0.5rem 1rem;
       margin: -0.5rem -1rem;

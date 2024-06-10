@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import { ActionButtonStyledProps } from './types';
-
 export const Container = styled.div`
   display: flex;
   gap: 0.5rem;
@@ -12,6 +10,11 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  > .Button {
+    width: fit-content;
+    margin-left: auto;
+  }
 `;
 
 export const IconContainer = styled.div`
@@ -41,18 +44,4 @@ export const DescriptionContainer = styled.div.attrs({
   em {
     font-weight: 600;
   }
-`;
-
-export const ActionButton = styled.button<ActionButtonStyledProps>`
-  width: fit-content;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  line-height: 1.6;
-  padding: 0.25rem 0.75rem;
-  background: ${({ color }) => color};
-  color: white;
-  font-weight: 500;
-  margin-left: auto;
-  border: none;
-  box-shadow: 0px 2px 3px 0px #00000021;
 `;

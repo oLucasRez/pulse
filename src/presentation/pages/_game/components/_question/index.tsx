@@ -9,10 +9,13 @@ import { Landmark } from '..';
 export const Question: FC<QuestionModel> = (props) => {
   const { navigateToInvestigation } = useNavigate();
 
+  const solved = !!props.factID;
+
   return (
     <Landmark
       {...props}
-      symbol='?'
+      symbol={solved ? '!' : '?'}
+      solved={solved}
       onClick={() => navigateToInvestigation(props.id)}
     />
   );

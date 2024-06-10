@@ -14,6 +14,7 @@ import {
   makeInvestigationPage,
   makeLoginPage,
   makeLogoutPage,
+  makePlayerPage,
   makeRegisterPage,
   makeRootPage,
   makeSubjectPage,
@@ -25,6 +26,7 @@ import {
   makeInvestigationPaths,
   makeLoginPath,
   makeLogoutPath,
+  makePlayerPaths,
   makeRegisterPath,
   makeRootPath,
   makeSubjectPaths,
@@ -44,6 +46,9 @@ export function makeRouter(): ReactElement {
 
   const gamePath = makeGamePath();
   const gamePage = makeGamePage();
+
+  const playerPaths = makePlayerPaths();
+  const playerPage = makePlayerPage();
 
   const subjectPaths = makeSubjectPaths();
   const subjectPage = makeSubjectPage();
@@ -69,6 +74,9 @@ export function makeRouter(): ReactElement {
           <Route index element={homePage} />
 
           <Route path={gamePath} element={gamePage}>
+            {playerPaths.map((path) => (
+              <Route key={path} path={path} element={playerPage} />
+            ))}
             {subjectPaths.map((path) => (
               <Route key={path} path={path} element={subjectPage} />
             ))}

@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useDice, useGame, usePlayer, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useCreateSubjectPulseToast(): void {
   const { currentGame } = useGame();
@@ -57,7 +56,7 @@ export function useCreateSubjectPulseToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 2 / 4,
     });
   }, [turnIsSafe, subState, currentPlayer, isMyTurn, !currentDice?.value]);

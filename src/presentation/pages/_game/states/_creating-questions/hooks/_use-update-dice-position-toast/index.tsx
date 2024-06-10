@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useDice, useGame, usePlayer, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useUpdateDicePositionToast(): void {
   const { currentGame } = useGame();
@@ -56,7 +55,7 @@ export function useUpdateDicePositionToast(): void {
       icon: currentPlayer.avatar,
       title,
       description,
-      color: getColor(currentPlayer.color),
+      color: currentPlayer.color,
       step: 3 / 4,
     });
   }, [turnIsSafe, subState, currentPlayer, isMyTurn, !currentDice?.value]);

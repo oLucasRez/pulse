@@ -14,6 +14,7 @@ export type GameContextValue = {
   games: GameModel[];
   currentGame: GameModel | null;
   fetchingGames: boolean;
+  imHost: boolean;
   createGame: ICreateGameUsecase['execute'];
   changeGame: IChangeGameUsecase['execute'];
   deleteGame: IDeleteGameUsecase['execute'];

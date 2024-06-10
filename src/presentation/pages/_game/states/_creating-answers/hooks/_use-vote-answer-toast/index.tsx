@@ -8,7 +8,6 @@ import {
   useQuestion,
   useToast,
 } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useVoteAnswerToast(): void {
   const { currentGame } = useGame();
@@ -82,7 +81,7 @@ export function useVoteAnswerToast(): void {
       icon: myPlayer.avatar,
       title,
       description,
-      color: getColor(myPlayer.color),
+      color: myPlayer.color,
       actionLabel,
       action,
       step: 2 / 2,

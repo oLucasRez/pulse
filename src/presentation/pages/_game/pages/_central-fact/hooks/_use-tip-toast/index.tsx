@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 
-import { useGame, useToast } from '@presentation/hooks';
+import { useGame, usePlayer, useToast } from '@presentation/hooks';
 
 const toastID = 'central-fact-page-tip-toast';
 
 export function useTipToast(): void {
   const { currentGame } = useGame();
+  const { isMyTurn } = usePlayer();
 
   const [state] = currentGame?.state ?? [];
 
@@ -13,6 +14,7 @@ export function useTipToast(): void {
 
   useEffect(() => {
     if (state !== 'creating:centralFact') return;
+    if (!isMyTurn) return;
 
     toast.fire('tip', {
       id: toastID,
@@ -35,7 +37,7 @@ export function useTipToast(): void {
         </>
       ),
     });
-  }, [state]);
+  }, [state, isMyTurn]);
 
   useEffect(() => () => toast.dismiss(toastID), []);
 }

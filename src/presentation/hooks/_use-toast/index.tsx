@@ -3,8 +3,9 @@ import { toast, ToastOptions, ToastPosition } from 'react-toastify';
 
 import { DomainError } from '@domain/errors';
 
+import { Button } from '@presentation/components';
+
 import {
-  ActionButton,
   Container,
   Content,
   DescriptionContainer,
@@ -43,9 +44,9 @@ export function useToast(): ToastHookReturn {
                 <DescriptionContainer>{description}</DescriptionContainer>
               )}
               {actionLabel && action && (
-                <ActionButton color={color} onClick={action}>
+                <Button color={color} onClick={action}>
                   {actionLabel}
-                </ActionButton>
+                </Button>
               )}
             </Content>
           )}
@@ -90,9 +91,13 @@ export function useToast(): ToastHookReturn {
     toast.dismiss();
   }, []);
 
+  const success = useCallback((message: string) => {
+    toast.success(message);
+  }, []);
+
   const error = useCallback((error: DomainError) => {
     toast.error(error.message);
   }, []);
 
-  return { fire, dismiss, dismissAll, error };
+  return { fire, dismiss, dismissAll, success, error };
 }

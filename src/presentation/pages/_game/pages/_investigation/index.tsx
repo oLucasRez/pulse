@@ -1,7 +1,14 @@
-import { FC, KeyboardEvent, useEffect, useRef } from 'react';
+import { FC, useEffect, useMemo, useRef } from 'react';
 
-import { Input } from '@presentation/components';
 import {
+  BakingPaper,
+  Button,
+  Icon,
+  IconButton,
+  Input,
+} from '@presentation/components';
+import {
+  useAnswer,
   useGame,
   useNavigate,
   usePlayer,
@@ -16,19 +23,23 @@ import { Answers, NewAnswer } from './components';
 
 import { QuestionExistsProxy } from './proxies';
 
-import { Container } from '../styles';
-import { Content, Description, Label } from './styles';
+import { Buttons, Content } from './styles';
 
 const InvestigationPage: FC<QuestionExistsProxy.ChildrenProps> = ({
   question,
 }) => {
+  const newQuestion = !question;
+
   const [s, set] = useStates({
+    editMode: newQuestion,
     description: question?.description,
+    loading: false,
   });
 
   const { currentGame } = useGame();
   const { myPlayer, players, currentPlayer, isMyTurn } = usePlayer();
-  const { createQuestion } = useQuestion();
+  const { createQuestion, editQuestion } = useQuestion();
+  const { answers } = useAnswer();
 
   const { navigateToGame } = useNavigate();
 
@@ -39,24 +50,49 @@ const InvestigationPage: FC<QuestionExistsProxy.ChildrenProps> = ({
 
   const author = players.find(({ id }) => id === question?.authorID) ?? null;
 
-  const isNewQuestion = !question;
+  const solver = useMemo(() => {
+    const fact = answers.find(({ id }) => id === question?.factID);
 
-  const color = isNewQuestion ? currentPlayer?.color : author?.color;
+    return players.find(({ id }) => id === fact?.authorID) || null;
+  }, [answers, players]);
+
+  const isMyQuestion = newQuestion || myPlayer?.id === author?.id;
+
+  const color = newQuestion ? currentPlayer?.color : author?.color;
 
   useTipToast();
 
   const toast = useToast();
 
-  function handleInputKeyDown(event: KeyboardEvent) {
-    if (event.key !== 'Enter') return;
+  useEffect(() => {
+    if (!question) return;
+    s.description = question.description;
+  }, [question?.description, s.editMode]);
 
+  function handleSubmit() {
     if (isCreatingQuestionState) {
       if (!s.description) return;
 
-      createQuestion({ description: s.description }).catch(toast.error);
+      s.loading = true;
+
+      createQuestion({ description: s.description })
+        .catch(toast.error)
+        .finally(navigateToGame)
+        .finally(set('loading', false));
 
       navigateToGame();
+
+      return;
     }
+
+    if (!question) return;
+
+    s.loading = true;
+
+    editQuestion(question.id, { description: s.description })
+      .catch(toast.error)
+      .finally(set('loading', false))
+      .finally(set('editMode', false));
   }
 
   const descriptionRef = useRef<Input.Element>(null);
@@ -74,17 +110,37 @@ const InvestigationPage: FC<QuestionExistsProxy.ChildrenProps> = ({
           <em className={author.color}>
             {author.id === myPlayer?.id ? 'você' : author.name}
           </em>
+          {solver ? (
+            <>
+              , resolvida por{' '}
+              <em className={solver.color}>
+                {solver.id === myPlayer?.id ? 'você' : solver.name}
+              </em>
+            </>
+          ) : (
+            ''
+          )}
           )
         </>
       )}
     </>
   );
 
+  const descriptionInputDisabled = !s.editMode;
+
+  const showCancelButton = !newQuestion;
+
+  const showEditButton = isMyQuestion && !s.editMode;
+
+  const cancelDisabled = s.loading;
+  const submitDisabled =
+    !s.description || s.loading || s.description === question?.description;
+
   const showAnswers = !!question;
   const showNewAnswer = !question?.factID;
 
   return (
-    <Container
+    <BakingPaper
       onClick={() => {
         if (isCreatingQuestionState) return;
 
@@ -92,23 +148,58 @@ const InvestigationPage: FC<QuestionExistsProxy.ChildrenProps> = ({
       }}
     >
       <Content onClick={(e) => e.stopPropagation()}>
-        <Label htmlFor='question-description'>{label}</Label>
-        <Description
-          ref={descriptionRef}
-          id='question-description'
-          placeholder='Descreva...'
+        <Input
+          // style
+          className='question-description'
           color={color}
+          variant='baking-paper'
+          label={label}
+          // params
+          ref={descriptionRef}
+          id='description'
+          placeholder='Descreva...'
+          disabled={descriptionInputDisabled}
           defaultValue={s.description}
-          disabled={!isCreatingQuestionState}
+          value={s.description}
+          // handle
           onChange={set('description')}
-          onKeyDown={handleInputKeyDown}
         />
+
+        {showEditButton && (
+          <IconButton
+            icon={<Icon.Pencil />}
+            size='small'
+            onClick={set('editMode', true)}
+          />
+        )}
+
+        {s.editMode && (
+          <Buttons>
+            {showCancelButton && (
+              <Button
+                disabled={cancelDisabled}
+                onClick={set('editMode', false)}
+              >
+                Cancelar
+              </Button>
+            )}
+
+            <Button
+              color={color}
+              loading={s.loading}
+              disabled={submitDisabled}
+              onClick={handleSubmit}
+            >
+              {newQuestion ? 'Criar' : 'Editar'}
+            </Button>
+          </Buttons>
+        )}
 
         {showAnswers && <Answers question={question} />}
 
         {showNewAnswer && <NewAnswer />}
       </Content>
-    </Container>
+    </BakingPaper>
   );
 };
 

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 
-import { useGame, useToast } from '@presentation/hooks';
+import { useGame, usePlayer, useToast } from '@presentation/hooks';
 
 const toastID = 'investigation-page-tip-toast';
 
 export function useTipToast(): void {
   const { currentGame } = useGame();
+  const { isMyTurn } = usePlayer();
 
   const [state, subState] = currentGame?.state ?? [];
 
@@ -14,6 +15,7 @@ export function useTipToast(): void {
   useEffect(() => {
     if (state !== 'creating:questions') return;
     if (subState !== 'create:question') return;
+    if (!isMyTurn) return;
 
     toast.fire('tip', {
       id: toastID,
@@ -35,7 +37,7 @@ export function useTipToast(): void {
         </>
       ),
     });
-  }, [state, subState]);
+  }, [state, subState, isMyTurn]);
 
   useEffect(() => () => toast.dismiss(toastID), []);
 }

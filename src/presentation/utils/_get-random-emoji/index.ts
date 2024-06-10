@@ -1,4 +1,4 @@
-type Category =
+export type EmojiCategory =
   | 'Smileys & Emotion'
   | 'People & Body'
   | 'Component'
@@ -10,7 +10,7 @@ type Category =
   | 'Symbols'
   | 'Flags';
 
-type Emojis = Record<Category, Record<string, string[]>>;
+type Emojis = Record<EmojiCategory, Record<string, string[]>>;
 
 const emojis: Emojis = {
   'Smileys & Emotion': {
@@ -1749,13 +1749,13 @@ const emojis: Emojis = {
   },
 };
 
-export function getRandomEmoji(categories: Category[]): string {
+export function getRandomEmoji(categories: EmojiCategory[]): string {
   const random = (array: string[]): string =>
     array[~~(Math.random() * array.length)];
 
   let cat = categories[~~(Math.random() * categories.length)];
 
-  if (!emojis[cat]) cat = random(Object.keys(emojis)) as Category;
+  if (!emojis[cat]) cat = random(Object.keys(emojis)) as EmojiCategory;
 
   const sub = random(Object.keys(emojis[cat]));
 

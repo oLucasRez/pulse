@@ -1,7 +1,6 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useToast } from '@presentation/hooks';
-import { getColor } from '@presentation/styles/mixins';
 
 export function useCreateLightSpotToast(): void {
   const { currentGame } = useGame();
@@ -54,7 +53,7 @@ export function useCreateLightSpotToast(): void {
       icon: currentLightSpotPlayer.avatar,
       title,
       description,
-      color: getColor(currentLightSpotPlayer.color),
+      color: currentLightSpotPlayer.color,
       step: 2 / 2,
     });
   }, [subState, currentLightSpotPlayer, isMyLightSpotTurn]);

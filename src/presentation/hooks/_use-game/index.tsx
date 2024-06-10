@@ -37,6 +37,8 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
     [games, me],
   );
 
+  const imHost = !!me && currentGame?.uid === me.uid;
+
   function replaceAll(games: GameModel[]): void {
     queryClient.setQueryData<GameModel[]>(queryKey, () => games);
     queryClient.invalidateQueries({ queryKey: [currentGame?.id, 'answers'] });
@@ -90,6 +92,7 @@ export const GameContextProvider: FC<GameContextProviderProps> = ({
         games,
         currentGame,
         fetchingGames,
+        imHost,
         createGame,
         changeGame,
         deleteGame,

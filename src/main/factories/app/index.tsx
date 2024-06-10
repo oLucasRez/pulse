@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 
-import { GlobalStyle } from '@presentation/styles';
+import { GlobalStyle, Theme } from '@presentation/styles';
 
 import { ToastContainer } from './styles';
 
@@ -12,9 +12,11 @@ const queryClient = new QueryClient();
 export function makeApp(): ReactNode {
   return (
     <QueryClientProvider client={queryClient}>
-      <GlobalStyle />
-      {makeRouter()}
-      <ToastContainer />
+      <Theme>
+        <GlobalStyle />
+        {makeRouter()}
+        <ToastContainer />
+      </Theme>
     </QueryClientProvider>
   );
 }

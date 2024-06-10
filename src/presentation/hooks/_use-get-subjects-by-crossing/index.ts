@@ -19,6 +19,8 @@ export function useGetSubjectsByCrossing(): GetSubjectsByCrossingHookReturn {
       const crossedPulses: PulseModel<LandmarkModel>[] = [];
 
       for (const pulse of pulses) {
+        if (pulse.overloaded) continue;
+
         const u = crossing.sub(pulse.origin).mag();
 
         if (u > pulse.amount * pulse.gap + tolerance) continue;
