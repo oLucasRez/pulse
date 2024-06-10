@@ -11,7 +11,12 @@ import { Outlet } from 'react-router-dom';
 
 import { Vector, VectorSpace } from '@domain/utils';
 
-import { Button, Icon, IconButton } from '@presentation/components';
+import {
+  Button,
+  GlobalLoading,
+  Icon,
+  IconButton,
+} from '@presentation/components';
 import { ms } from '@presentation/constants';
 import {
   useDice,
@@ -54,6 +59,7 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     width: 0,
     height: 0,
     confirmDialogIsOpen: false,
+    deletingGame: false,
   });
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -147,8 +153,14 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
   }
 
   function handleConfirmDeleteGameButtonClick() {
-    navigateToHome();
-    if (currentGame) deleteGame(currentGame.id).catch(toast.error);
+    if (currentGame) {
+      s.deletingGame = true;
+
+      deleteGame(currentGame.id)
+        .catch(toast.error)
+        .finally(navigateToHome)
+        .finally(set('deletingGame', false));
+    }
   }
 
   const { myPlayer } = usePlayer();
@@ -181,6 +193,8 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
       />
     );
   }
+
+  if (s.deletingGame) return <GlobalLoading />;
 
   return (
     <Context.Provider value={contextValue}>

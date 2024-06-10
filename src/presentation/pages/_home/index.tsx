@@ -36,7 +36,11 @@ const HomePage: FC = () => {
 
   useEffect(() => {
     const currentGame = games.find((game) => game.id === me?.currentGameID);
-    if (!currentGame) return;
+
+    if (!currentGame) {
+      toast.dismiss('return-to-game');
+      return;
+    }
 
     toast.fire('notification', {
       id: 'return-to-game',
@@ -49,7 +53,7 @@ const HomePage: FC = () => {
         toast.dismiss('return-to-game');
       },
     });
-  }, [me?.currentGameID]);
+  }, [me?.currentGameID, games]);
 
   return (
     <Container>
