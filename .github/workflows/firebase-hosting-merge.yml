@@ -12,10 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 'Create env file'
-        run: |
-          touch .env.production
-          echo $ENV_PRODUCTION > .env.production
-          cat .env.production
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+          file_name: .env.production
+          fail_on_empty: true
+          sort_keys: false
+        # run: |
+        #   touch .env.production
+        #   echo $ENV_PRODUCTION > .env.production
+        #   cat .env.production
       # - run: echo "$ENV_PRODUCTION" > .env.production
       - run: yarn
       - run: yarn build
