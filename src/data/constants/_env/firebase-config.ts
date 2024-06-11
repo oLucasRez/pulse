@@ -8,6 +8,8 @@ const requiredError = new RequiredError({
   metadata: { entity: 'Firebase config env' },
 });
 
+console.log('bla', process.env.FIREBASE_CONFIG);
+
 if (!process.env.FIREBASE_CONFIG) throw requiredError;
 
 let FIREBASE_CONFIG: FirebaseOptions = {};
