@@ -1,6 +1,8 @@
 import { FC, FocusEvent, useRef } from 'react';
 import { useOutlet } from 'react-router-dom';
 
+import { Color } from '@domain/enums';
+
 import {
   BakingPaper,
   Button,
@@ -95,13 +97,20 @@ export const InitialState: FC = () => {
             <Name $color={color}>{name}</Name>
           </Player>
         ))}
+        {players.length < 3 &&
+          Array.from({ length: 3 - players.length }).map((_, i) => (
+            <Player key={i}>
+              <Avatar icon='' $empty />
+              <Name $color={Color.GREY}>Jogador {players.length + i + 1}</Name>
+            </Player>
+          ))}
       </Players>
     );
   }
 
   const showStartButton = imHost;
   const startButtonLoading = s.startingGame;
-  const startButtonDisabled = s.startingGame;
+  const startButtonDisabled = s.startingGame || players.length < 3;
 
   return (
     <Map outsideSVG>

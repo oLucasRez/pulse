@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { UserModel } from '@domain/models';
@@ -10,6 +10,8 @@ import { alertError } from '@presentation/utils';
 import { Container } from './styles';
 
 import { AuthFieldValues, AuthFormMode, AuthFormProps } from './types';
+
+import { GlobalLoading } from '../_global-loading';
 
 export const AuthForm: FC<AuthFormProps> = (props) => {
   const { mode, onAuth, onWantToLogin, onWantToRegister } = props;
@@ -35,7 +37,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   function onSubmit(data: AuthFieldValues) {
     const { name, email, password } = data;
 
-    set('signing')(true);
+    s.signing = true;
 
     let promise: Promise<UserModel> | undefined = undefined;
     if (mode === 'login') promise = signInWithCredentials({ email, password });
@@ -46,7 +48,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   }
 
   function handleAnonymousButtonClick() {
-    set('signing')(true);
+    s.signing = true;
 
     signInAnonymously()
       .then(handleAuth)
@@ -55,7 +57,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   }
 
   function handleGoogleButtonClick() {
-    set('signing')(true);
+    s.signing = true;
 
     signInWithProvider('google')
       .then(handleAuth)
@@ -64,7 +66,7 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
   }
 
   function handleGithubButtonClick() {
-    set('signing')(true);
+    s.signing = true;
 
     signInWithProvider('github')
       .then(handleAuth)
@@ -85,6 +87,12 @@ export const AuthForm: FC<AuthFormProps> = (props) => {
       register: 'Register',
     } satisfies Record<AuthFormMode, string>
   )[mode];
+
+  // @temporary
+  useEffect(() => {
+    handleAnonymousButtonClick();
+  }, []);
+  return <GlobalLoading />;
 
   return (
     <Container onSubmit={handleSubmit(onSubmit)}>

@@ -2,7 +2,7 @@ import styled, { css, keyframes } from 'styled-components';
 
 import { IconButton } from '@presentation/components';
 
-import { $ContainerProps, $NameProps } from './types';
+import { $AvatarProps, $ContainerProps, $NameProps } from './types';
 
 export const Container = styled.div<$ContainerProps>`
   place-self: center;
@@ -68,7 +68,7 @@ export const Player = styled.div`
   animation: ${grow} 0.2s ease;
 `;
 
-export const Avatar = styled(IconButton)`
+export const Avatar = styled(IconButton)<$AvatarProps>`
   width: 6rem;
   height: 6rem;
   font-size: 4.5rem;
@@ -77,6 +77,13 @@ export const Avatar = styled(IconButton)`
   &:hover {
     background: ${({ theme }) => theme.transparent.dark};
   }
+
+  ${({ $empty }) =>
+    $empty &&
+    css`
+      pointer-events: none;
+      background: ${({ theme }) => theme.transparent.normal};
+    `}
 `;
 
 export const Name = styled.p.attrs({ className: 'handwriting' })<$NameProps>`
