@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+      - run: echo "$ENV_PRODUCTION" > .env.production
       - run: yarn
       - run: yarn build
       - uses: FirebaseExtended/action-hosting-deploy@v0
