@@ -111,6 +111,7 @@ export const InitialState: FC = () => {
   const showStartButton = imHost;
   const startButtonLoading = s.startingGame;
   const startButtonDisabled = s.startingGame || players.length < 3;
+  // const startButtonDisabled = s.startingGame;
 
   return (
     <Map outsideSVG>

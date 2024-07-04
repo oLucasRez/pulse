@@ -23,9 +23,23 @@ export const lightTheme: DefaultTheme = {
   },
   color(color: Color) {
     return {
-      light: lighten(getColor(color), 0.2),
-      normal: getColor(color),
-      dark: darken(getColor(color), 0.1),
+      light: [Color.PINK].includes(color)
+        ? lighten(getColor(color), 0.1)
+        : lighten(getColor(color), 0.2),
+      normal: [Color.CYAN].includes(color)
+        ? darken(getColor(color), 0.05)
+        : [Color.PURPLE, Color.BROWN, Color.CRIMSON].includes(color)
+        ? lighten(getColor(color), 0.075)
+        : getColor(color),
+      dark: darken(
+        getColor(color),
+        [Color.RED, Color.BEIGE].includes(color) ? 0.2 : 0.1,
+      ),
+      contrast: [Color.CYAN, Color.YELLOW, Color.GREY].includes(color)
+        ? darken(color, 0.3)
+        : [Color.BEIGE].includes(color)
+        ? darken(color, 0.6)
+        : 'white',
     };
   },
   elevation: {

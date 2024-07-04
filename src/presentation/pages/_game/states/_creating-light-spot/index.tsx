@@ -13,6 +13,7 @@ import {
   Pulses,
   Questions,
   RollDiceEvent,
+  Round,
   Subjects,
 } from '../../components';
 
@@ -52,6 +53,7 @@ export const CreatingLightSpotState: FC = () => {
       <Subjects />
       <CentralFact />
       <Questions />
+      <Round />
 
       {isRollDiceState && (
         <DiceRoller dice={currentLightSpotDice} onRollDice={handleRollDice} />

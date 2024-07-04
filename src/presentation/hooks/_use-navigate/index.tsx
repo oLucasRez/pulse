@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate as useDefaultNavigate, useParams } from 'react-router-dom';
 
-import { NavigateHookReturn } from './types';
+import { NavigateHookReturn, Options } from './types';
 
 function replaceIfIsLogout(): boolean {
   return location.pathname === '/logout';
@@ -24,10 +24,10 @@ export function useNavigate(): NavigateHookReturn {
   );
 
   const navigateToPlayer = useCallback(
-    (id?: string) =>
+    (id?: string, { replace }: Options = {}) =>
       params.gameID &&
       navigate(`/game/${params.gameID}/player${id ? `/${id}` : ''}`, {
-        replace: replaceIfIsLogout(),
+        replace: replace || replaceIfIsLogout(),
       }),
     [navigate, params.gameID],
   );

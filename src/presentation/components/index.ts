@@ -8,6 +8,7 @@ export * from './_input';
 export * from './_link';
 export * from './_loading';
 export * from './_navigate';
+export * from './_new-button';
 export * from './_p';
 export * from './_popover';
 export * from './_ripple';

@@ -5,6 +5,7 @@ export interface GameModel extends Model {
   title: string | null;
   config: GameModel.Config;
   state: GameModel.State;
+  stateProgress: number;
   centralPulseID: CentralPulseModel['id'] | null;
   roundID: RoundModel['id'] | null;
   lightSpotRoundID: RoundModel['id'] | null;
@@ -32,6 +33,37 @@ export namespace GameModel {
     | ['creating:answers', 'create:answer' | 'vote:answer']
     | ['creating:lightSpot', 'roll:dice' | 'create:subject']
     | ['final:state'];
+
+  export const STATES: { value: State[0]; states?: { value: State[1] }[] }[] = [
+    { value: 'initial:state' },
+    { value: 'creating:subjects' },
+    {
+      value: 'creating:centralFact',
+      states: [
+        { value: 'change:centralFact' },
+        { value: 'roll:dice' },
+        { value: 'update:dice:position' },
+      ],
+    },
+    {
+      value: 'creating:questions',
+      states: [
+        { value: 'roll:dice' },
+        { value: 'create:subjectPulse' },
+        { value: 'update:dice:position' },
+        { value: 'create:question' },
+      ],
+    },
+    {
+      value: 'creating:answers',
+      states: [{ value: 'create:answer' }, { value: 'vote:answer' }],
+    },
+    {
+      value: 'creating:lightSpot',
+      states: [{ value: 'roll:dice' }, { value: 'create:subject' }],
+    },
+    { value: 'final:state' },
+  ];
 
   export type Config = {
     maxPlayers: number;

@@ -1,7 +1,9 @@
-import { FC, useEffect } from 'react';
+import { FC, Fragment, ReactNode, useEffect, useRef } from 'react';
 
-import { PulseLogo } from '@presentation/assets';
-import { Icon, IconButton } from '@presentation/components';
+import { Color } from '@domain/enums';
+import { Vector } from '@domain/utils';
+
+import { Button } from '@presentation/components';
 import {
   useGame,
   useNavigate,
@@ -10,7 +12,7 @@ import {
   useUser,
 } from '@presentation/hooks';
 
-import { Body, Container, Label } from './styles';
+import { BackgroundPattern, Container, PulseLogo, Version } from './styles';
 
 const HomePage: FC = () => {
   const [s, set] = useStates({
@@ -55,18 +57,65 @@ const HomePage: FC = () => {
     });
   }, [me?.currentGameID, games]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  function renderCircles() {
+    const circles: ReactNode[] = [];
+
+    const containerWidth = containerRef.current?.clientWidth || 0;
+    const containerHeight = containerRef.current?.clientHeight || 0;
+    const containerSize = new Vector([containerWidth, containerHeight]);
+
+    const gap = 10;
+
+    for (
+      let i = 0;
+      i < Math.floor((containerWidth * containerHeight) / 10000);
+      i++
+    ) {
+      const amount = Math.floor(Math.random() * 10) + 1;
+      const pos = containerSize.mult(Math.random(), Math.random());
+
+      circles.push(
+        <Fragment key={i}>
+          <circle cx={pos.x} cy={pos.y} r='2' className='filled' />
+
+          {Array.from({ length: amount }).map((_, j) => (
+            <circle
+              key={j}
+              cx={pos.x}
+              cy={pos.y}
+              r={gap * (j + 1)}
+              className='outlined'
+            />
+          ))}
+        </Fragment>,
+      );
+    }
+
+    return (
+      <BackgroundPattern $width={containerWidth} $height={containerHeight}>
+        {circles}
+      </BackgroundPattern>
+    );
+  }
+
   return (
-    <Container>
+    <Container ref={containerRef}>
+      {renderCircles()}
+
       <PulseLogo />
-      <Body>
-        <Label>Criar jogo instantâneo</Label>
-        <IconButton
-          icon={<Icon.Plus />}
-          size='large'
-          onClick={handleCreateGameButtonClick}
-          loading={s.creatingGame}
-        />
-      </Body>
+
+      <Version>v. alpha</Version>
+
+      <Button
+        size='large'
+        color={Color.ORANGE}
+        onClick={handleCreateGameButtonClick}
+        loading={s.creatingGame}
+      >
+        Novo jogo
+      </Button>
     </Container>
   );
 };

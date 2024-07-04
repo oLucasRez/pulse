@@ -111,6 +111,7 @@ const PlayerPage: FC<PlayerExistsProxy.ChildrenProps> = ({ player }) => {
     (s.color === player?.color &&
       s.avatar === player.avatar &&
       s.name === player.name);
+  const showCancelButton = !newPlayer;
   const showButtons = isMyPlayer && s.editMode;
 
   const showEditOption = isMyPlayer && !s.editMode;
@@ -152,9 +153,14 @@ const PlayerPage: FC<PlayerExistsProxy.ChildrenProps> = ({ player }) => {
         )}
         {showButtons && (
           <Buttons>
-            <Button disabled={cancelDisabled} onClick={set('editMode', false)}>
-              Cancelar
-            </Button>
+            {showCancelButton && (
+              <Button
+                disabled={cancelDisabled}
+                onClick={set('editMode', false)}
+              >
+                Cancelar
+              </Button>
+            )}
 
             <Button
               color={s.color}

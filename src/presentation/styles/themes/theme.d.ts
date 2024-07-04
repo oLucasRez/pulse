@@ -7,6 +7,7 @@ declare module 'styled-components' {
     light: string;
     normal: string;
     dark: string;
+    contrast?: string;
   };
 
   export interface DefaultTheme {

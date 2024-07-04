@@ -6,6 +6,8 @@ export type MapContextValue = {
   mapSpace: VectorSpace;
   bounds: { top: number; left: number; right: number; bottom: number };
   limit: number;
+  width: number;
+  height: number;
   onMouseMove(callback: (mouse: Vector) => void): () => void;
   onMouseDown(callback: (mouse: Vector) => void): () => void;
   onMouseUp(callback: (mouse: Vector) => void): () => void;

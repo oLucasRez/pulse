@@ -22,11 +22,19 @@ export class VectorSpace {
   }
 
   public mult(vector: Vector): Vector;
+  public mult(x: number, y: number): Vector;
   public mult(scalar: number): number;
-  public mult(value: Vector | number): Vector | number {
-    if (typeof value === 'number') return this.scale * value;
+  public mult(value: Vector | number, y?: number): Vector | number {
+    if (typeof value === 'number' && y === undefined) return this.scale * value;
 
-    const v = Matrix.transpose(value.toMatrix());
+    const v = Matrix.transpose(
+      (y !== undefined && typeof value === 'number'
+        ? new Vector([value, y])
+        : typeof value === 'number'
+        ? new Vector([0, 0])
+        : value
+      ).toMatrix(),
+    );
 
     return Matrix.toVector(Matrix.dot(this._matrix, v));
   }

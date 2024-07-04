@@ -4,7 +4,7 @@ import { useGame, useNavigate, usePlayer } from '@presentation/hooks';
 
 import { useCretingSubjectsToast } from './hooks';
 
-import { Map, Pulses, Subjects } from '../../components';
+import { Map, Pulses, Round, Subjects } from '../../components';
 
 export const CreatingSubjectsState: FC = () => {
   const { currentGame } = useGame();
@@ -28,6 +28,7 @@ export const CreatingSubjectsState: FC = () => {
     <Map>
       <Pulses />
       <Subjects />
+      <Round />
     </Map>
   );
 };

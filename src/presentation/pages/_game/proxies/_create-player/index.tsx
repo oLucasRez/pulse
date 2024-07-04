@@ -13,7 +13,7 @@ export const CreatePlayerProxy: FC<CreatePlayerProxyProps> = ({ children }) => {
   useEffect(() => {
     if (fetchingPlayers || myPlayer) return;
 
-    navigateToPlayer();
+    navigateToPlayer(undefined, { replace: true });
   }, [fetchingPlayers, myPlayer]);
 
   if (fetchingPlayers) return <GlobalLoading />;

@@ -38,7 +38,11 @@ export class Vector {
 
     return space.mult(new Vector([normU.x + normV.x, normU.y + normV.y]));
   }
-  public sum(v: Vector): Vector {
+  public sum(v: Vector): Vector;
+  public sum(x: number, y: number): Vector;
+  public sum(v: Vector | number, y?: number): Vector {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    if (typeof v === 'number') return Vector.sum(this, new Vector([v, y!]));
     return Vector.sum(this, v);
   }
 
@@ -51,13 +55,19 @@ export class Vector {
 
   public static mult(u: Vector, a: Vector): Vector;
   public static mult(u: Vector, a: number): Vector;
-  public static mult(u: Vector, a: Vector | number): Vector {
+  public static mult(u: Vector, a: number, b: number): Vector;
+  public static mult(u: Vector, a: Vector | number, b?: number): Vector {
+    if (b !== undefined && typeof a === 'number')
+      return new Vector([u.x * a, u.y * b]);
     if (typeof a === 'number') return new Vector([u.x * a, u.y * a]);
     else return new Vector([u.x * a.x, u.y * a.y]);
   }
   public mult(a: Vector): Vector;
   public mult(a: number): Vector;
-  public mult(a: Vector | number): Vector {
+  public mult(a: number, b: number): Vector;
+  public mult(a: Vector | number, b?: number): Vector {
+    if (b !== undefined && typeof a === 'number')
+      return Vector.mult(this, new Vector([a, b]));
     if (typeof a === 'number') return Vector.mult(this, a);
     else return Vector.mult(this, a);
   }

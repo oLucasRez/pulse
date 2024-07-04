@@ -8,6 +8,7 @@ import {
   Map,
   Pulses,
   Questions,
+  Round,
   Subjects,
 } from '../../components';
 
@@ -22,6 +23,7 @@ export const CreatingAnswersState: FC = () => {
       <Subjects />
       <CentralFact />
       <Questions />
+      <Round />
     </Map>
   );
 };

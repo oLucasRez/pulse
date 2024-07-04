@@ -65,6 +65,7 @@ const Scale: FC<ScaleProps> = ({
   if (isValidElement<{ style: CSSProperties }>(child))
     return cloneElement(child, {
       style: {
+        ...child.props.style,
         transition: `transform ${ms}ms`,
         transform: `${child.props.style.transform} scale(${
           active ? activeFactor : inactiveFactor

@@ -8,6 +8,7 @@ import {
   Map,
   Pulses,
   Questions,
+  Round,
   Subjects,
 } from '../../components';
 
@@ -27,6 +28,7 @@ export const FinalState: FC = () => {
       <Subjects />
       <CentralFact />
       <Questions />
+      <Round />
     </Map>
   );
 };

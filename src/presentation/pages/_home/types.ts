@@ -8,3 +8,8 @@ export interface HomeLoaderArgs extends LoaderFunctionArgs {
 }
 
 export type HomeLoaderData = UserModel;
+
+export interface $BackgroundPatternProps {
+  $width: number;
+  $height: number;
+}

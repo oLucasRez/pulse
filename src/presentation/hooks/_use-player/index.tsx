@@ -34,10 +34,11 @@ export const PlayerContextProvider: FC<PlayerContextProviderProps> = ({
 
   const fetchingPlayers = isLoading || !currentGame;
 
-  const players = useMemo(
-    () => allPlayers.filter(({ banned }) => !banned),
-    [allPlayers],
-  );
+  const players = useMemo(() => {
+    const value = allPlayers.filter(({ banned }) => !banned);
+    value.sort((a, b) => a.order - b.order);
+    return value;
+  }, [allPlayers]);
 
   const myPlayer = useMemo(() => {
     const me = queryClient.getQueryData<UserModel | null>(['me']) ?? null;

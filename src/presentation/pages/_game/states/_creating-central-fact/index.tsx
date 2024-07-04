@@ -27,6 +27,7 @@ import {
   Dices,
   Map,
   Pulses,
+  Round,
   Subjects,
 } from '../../components';
 
@@ -110,6 +111,7 @@ export const CreatingCentralFactState: FC = () => {
       />
       <Subjects />
       <CentralFact />
+      <Round />
 
       {isRollDiceState && (
         <DiceRoller dice={currentDice} onRollDice={handleDiceRoll} />

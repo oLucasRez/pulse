@@ -52,6 +52,10 @@ export const ConfirmDialog = styled.div`
     'no   yes';
   gap: 1rem;
 
+  > .Button {
+    height: auto;
+  }
+
   > .Button:first-child {
     grid-area: no;
   }

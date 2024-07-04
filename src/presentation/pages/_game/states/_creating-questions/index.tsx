@@ -31,6 +31,7 @@ import {
   PulseCreator,
   Pulses,
   Questions,
+  Round,
   Subjects,
 } from '../../components';
 
@@ -109,6 +110,7 @@ export const CreatingQuestionsState: FC = () => {
       <Subjects />
       <CentralFact />
       <Questions />
+      <Round />
 
       {isMyTurn && state === 'roll:dice' && currentDice && (
         <DiceRoller dice={currentDice} onRollDice={handleRollDice} />
