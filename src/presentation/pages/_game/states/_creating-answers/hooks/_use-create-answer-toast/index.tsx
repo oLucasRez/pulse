@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 export function useCreateAnswerToast(): void {
   const { currentGame } = useGame();
@@ -30,6 +31,8 @@ export function useCreateAnswerToast(): void {
         <p>
           Escolha uma dentre as investigações abertas e formule uma hipótese
           para respondê-la.
+          {isTouchDevice() &&
+            ' Toque em um ponto do mapa para ver sua descrição e mantenha pressionado para abri-lo.'}
         </p>
       );
     } else {

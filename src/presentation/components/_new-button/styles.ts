@@ -45,10 +45,12 @@ export const Container = styled.button<$ContainerProps>`
   position: relative;
   font-size: ${sizes('0.5rem', '0.75rem', '1rem')};
 
-  &:hover {
-    border-bottom-width: ${sizes('4px', '6px', '8px')};
-    box-shadow: rgba(0, 0, 0, 0.15) 0px ${sizes('4px', '7px', '10px')} 0px;
-    margin-top: -2px;
+  @media (hover: hover) {
+    &:hover {
+      border-bottom-width: ${sizes('4px', '6px', '8px')};
+      box-shadow: rgba(0, 0, 0, 0.15) 0px ${sizes('4px', '7px', '10px')} 0px;
+      margin-top: -2px;
+    }
   }
 
   &:active {

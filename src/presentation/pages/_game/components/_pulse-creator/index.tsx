@@ -17,10 +17,11 @@ export const PulseCreator: FC<PulseCreatorProps> = (props) => {
     hasCrossings: false,
   });
 
-  const { mapSpace, onMouseMove, onClick } = useMapContext();
+  const { mapSpace, onPointerMove, onClick } = useMapContext();
 
   useEffect(
-    () => onMouseMove((mouse) => (s.gap = origin.sub(mouse).mag() / amount)),
+    () =>
+      onPointerMove((pointer) => (s.gap = origin.sub(pointer).mag() / amount)),
     [],
   );
 

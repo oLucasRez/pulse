@@ -74,8 +74,10 @@ export const Avatar = styled(IconButton)<$AvatarProps>`
   font-size: 4.5rem;
   line-height: 1;
 
-  &:hover {
-    background: ${({ theme }) => theme.transparent.dark};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ theme }) => theme.transparent.dark};
+    }
   }
 
   ${({ $empty }) =>

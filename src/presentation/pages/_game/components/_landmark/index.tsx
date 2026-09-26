@@ -1,4 +1,11 @@
-import { FC, useEffect, useMemo } from 'react';
+import {
+  FC,
+  PointerEvent,
+  PointerEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import { Vector } from '@domain/utils';
@@ -17,6 +24,9 @@ const bottomLeftDescriptionOffset = new Vector([50, -50]);
 const topRightDescriptionOffset = new Vector([-50, 50]);
 const topLeftDescriptionOffset = new Vector([50, 50]);
 
+const longPressMs = 500;
+const tapTolerancePx = 10;
+
 export const Landmark: FC<LandmarkProps> = ({
   description,
   symbol,
@@ -24,7 +34,7 @@ export const Landmark: FC<LandmarkProps> = ({
   onClick,
   ...props
 }) => {
-  const [s, set] = useStates({
+  const [s] = useStates({
     active: false,
     landmarkAbove: null as HTMLElement | null,
   });
@@ -57,6 +67,108 @@ export const Landmark: FC<LandmarkProps> = ({
       ? document.getElementById('landmark-above')
       : null;
   }, [s.active]);
+
+  const touchRef = useRef<{
+    start: Vector;
+    timeoutID?: NodeJS.Timeout;
+    longPressed: boolean;
+  } | null>(null);
+
+  const lastPointerTypeRef = useRef('mouse');
+
+  function cancelLongPress() {
+    clearTimeout(touchRef.current?.timeoutID);
+    touchRef.current = null;
+  }
+
+  useEffect(() => cancelLongPress, []);
+
+  useEffect(() => {
+    if (!s.active || lastPointerTypeRef.current === 'mouse') return;
+
+    const handleOutsidePointerDown = (event: Event) => {
+      const target = event.target as Element | null;
+
+      if (target?.closest?.(`[data-landmark="${props.id}"]`)) return;
+
+      s.active = false;
+    };
+
+    document.addEventListener('pointerdown', handleOutsidePointerDown, true);
+
+    return () =>
+      document.removeEventListener(
+        'pointerdown',
+        handleOutsidePointerDown,
+        true,
+      );
+  }, [s.active, props.id]);
+
+  const handlePointerEnter: PointerEventHandler = (event) => {
+    if (event.pointerType === 'mouse') s.active = true;
+  };
+
+  const handlePointerLeave: PointerEventHandler = (event) => {
+    if (event.pointerType === 'mouse') s.active = false;
+  };
+
+  const handlePointerDown: PointerEventHandler = (event) => {
+    lastPointerTypeRef.current = event.pointerType;
+
+    if (event.pointerType === 'mouse') return;
+
+    cancelLongPress();
+
+    const touch = {
+      start: new Vector([event.clientX, event.clientY]),
+      longPressed: false,
+      timeoutID: undefined as NodeJS.Timeout | undefined,
+    };
+
+    if (description && onClick)
+      touch.timeoutID = setTimeout(() => {
+        touch.longPressed = true;
+        navigator.vibrate?.(20);
+        onClick();
+      }, longPressMs);
+
+    touchRef.current = touch;
+  };
+
+  function movedTooFar(start: Vector, event: PointerEvent): boolean {
+    return (
+      start.sub(new Vector([event.clientX, event.clientY])).mag() >
+      tapTolerancePx
+    );
+  }
+
+  const handlePointerMove: PointerEventHandler = (event) => {
+    if (event.pointerType === 'mouse') return;
+
+    if (touchRef.current && movedTooFar(touchRef.current.start, event))
+      cancelLongPress();
+  };
+
+  // A tap (or long press) on a landmark is consumed here, so it doesn't
+  // confirm whatever action the map is waiting for.
+  const handlePointerUp: PointerEventHandler = (event) => {
+    if (event.pointerType === 'mouse') return;
+
+    const touch = touchRef.current;
+
+    cancelLongPress();
+
+    if (!touch || movedTooFar(touch.start, event)) return;
+
+    event.stopPropagation();
+
+    if (!touch.longPressed) s.active = true;
+  };
+
+  const handleClick = () => {
+    if (lastPointerTypeRef.current !== 'mouse') return;
+    if (description) onClick?.();
+  };
 
   if (!props.position) return null;
 
@@ -157,11 +269,15 @@ export const Landmark: FC<LandmarkProps> = ({
             // params
             x={position.x}
             y={position.y}
+            data-landmark={props.id}
             // handle
-            onMouseEnter={set('active', true)}
-            onMouseOut={set('active', false)}
-            onMouseLeave={set('active', false)}
-            onClick={description ? onClick : undefined}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={cancelLongPress}
+            onClick={handleClick}
           >
             {symbol}
           </Text>

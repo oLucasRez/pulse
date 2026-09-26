@@ -35,13 +35,15 @@ export const Container = styled.button<$ContainerProps>`
     top: calc(50% - 1.25rem / 2);
   }
 
-  &:hover {
-    background: ${({ theme, $color }) =>
-      $color ? theme.color($color).dark : theme.background.normal};
-    ${({ theme, $color }) =>
-      !$color &&
-      css`
-        color: ${theme.foreground.dark};
-      `}
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ theme, $color }) =>
+        $color ? theme.color($color).dark : theme.background.normal};
+      ${({ theme, $color }) =>
+        !$color &&
+        css`
+          color: ${theme.foreground.dark};
+        `}
+    }
   }
 `;

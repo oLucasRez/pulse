@@ -1,6 +1,7 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useDice, useGame, usePlayer, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 export function useCreateSubjectPulseToast(): void {
   const { currentGame } = useGame();
@@ -34,6 +35,8 @@ export function useCreateSubjectPulseToast(): void {
           Partindo da posição do seu dado, desenhe {currentDice.value} pulso
           {currentDice.value > 1 && 's'}, cruzando o último pulso com algum
           outro já desenhado no mapa.
+          {isTouchDevice() &&
+            ' Toque e arraste para ajustar o tamanho dos pulsos e solte para confirmar.'}
         </p>
       );
     } else {

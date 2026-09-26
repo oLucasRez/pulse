@@ -20,6 +20,7 @@ export const Label = styled.label`
 
 export const Container = styled.div`
   grid-area: answers;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -27,7 +28,7 @@ export const Container = styled.div`
 
 export const AnswerContainer = styled.div`
   display: grid;
-  grid-template-columns: max-content auto auto max-content;
+  grid-template-columns: max-content minmax(0, 1fr) auto max-content;
   grid-template-rows: auto auto auto;
   grid-template-areas:
     'star description description edit'
@@ -61,8 +62,10 @@ export const StarCheckbox = styled(FaStar)<$StarCheckboxProps>`
   fill: ${({ $checked, $color }) => ($checked ? getColor($color) : 'none')};
   fill-opacity: ${({ $expired }) => ($expired ? 0.25 : 1)};
 
-  &:hover {
-    transform: scale(1.1);
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 
   ${({ $loading }) =>
@@ -86,6 +89,7 @@ export const DescriptionInput = styled(Input).attrs<$DescriptionInputProps>({
   grid-area: description;
   color: ${({ color }) => getColor(color)};
   width: fit-content;
+  max-width: 100%;
 
   ${({ $fact, color }) =>
     $fact &&

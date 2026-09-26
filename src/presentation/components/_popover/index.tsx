@@ -54,7 +54,9 @@ export const Popover: FC<PopoverProps> = ({
         ref={ref}
         $left={s.left}
         $top={s.top}
-        onMouseLeave={set('active', false)}
+        onPointerLeave={(event) => {
+          if (event.pointerType === 'mouse') s.active = false;
+        }}
       >
         {children}
       </Container>

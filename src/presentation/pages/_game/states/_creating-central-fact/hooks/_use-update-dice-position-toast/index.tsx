@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 
 import { useDice, useGame, usePlayer, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 export function useUpdateDicePositionToast(): void {
   const { currentGame } = useGame();
@@ -29,6 +30,8 @@ export function useUpdateDicePositionToast(): void {
         <p>
           Escolha qualquer posição no {currentDice.value}º pulso central para
           colocar seu dado.
+          {isTouchDevice() &&
+            ' Toque e arraste para posicioná-lo e depois toque em Confirmar.'}
         </p>
       );
     } else {

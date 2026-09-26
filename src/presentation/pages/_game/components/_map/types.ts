@@ -8,16 +8,19 @@ export type MapContextValue = {
   limit: number;
   width: number;
   height: number;
-  onMouseMove(callback: (mouse: Vector) => void): () => void;
-  onMouseDown(callback: (mouse: Vector) => void): () => void;
-  onMouseUp(callback: (mouse: Vector) => void): () => void;
-  onClick(callback: (mouse: Vector) => void): () => void;
+  onPointerMove(callback: (pointer: Vector) => void): () => void;
+  onPointerDown(callback: (pointer: Vector) => void): () => void;
+  onPointerUp(callback: (pointer: Vector) => void): () => void;
+  onClick(callback: (pointer: Vector) => void): () => void;
 };
+
+export type MapPointerEvent = { position: Vector; pointerType: string };
 
 export interface MapProps {
   ref?: Ref<MapContextValue>;
   children?: ReactNode | ((props: MapContextValue) => ReactNode);
   outsideSVG?: boolean;
-  onMouseMove?(vector: Vector): void;
-  onClick?(): void;
+  overlay?: ReactNode;
+  onPointerMove?(event: MapPointerEvent): void;
+  onClick?(event: MapPointerEvent): void;
 }

@@ -25,11 +25,13 @@ export const Container = styled.button<$ContainerProps>`
     fill: ${({ theme }) => theme.foreground.normal};
   }
 
-  :hover {
-    background: ${({ theme }) => theme.transparent.light};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ theme }) => theme.transparent.light};
 
-    > .Icon {
-      fill: ${({ theme }) => theme.foreground.dark};
+      > .Icon {
+        fill: ${({ theme }) => theme.foreground.dark};
+      }
     }
   }
 `;

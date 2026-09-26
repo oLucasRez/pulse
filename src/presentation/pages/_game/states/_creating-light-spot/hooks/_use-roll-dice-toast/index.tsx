@@ -1,6 +1,7 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useGame, usePlayer, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 export function useRollDiceToast(): void {
   const { currentGame } = useGame();
@@ -23,8 +24,9 @@ export function useRollDiceToast(): void {
 
       description = (
         <p>
-          Clique no seu dado no canto da tela, depois clique e arraste dentro do
-          mapa para lançá-lo.
+          {isTouchDevice()
+            ? 'Toque no seu dado no canto da tela, depois toque e arraste dentro do mapa para dar impulso. Solte para lançá-lo.'
+            : 'Clique no seu dado no canto da tela, depois clique e arraste dentro do mapa para lançá-lo.'}
         </p>
       );
     } else {

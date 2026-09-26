@@ -23,7 +23,13 @@ export const ViewBox: StyledSVG<ViewBoxProps> = styled.svg.attrs<ViewBoxProps>(
     viewBox: `0 0 ${props.size[0]} ${props.size[1]}`,
     xmlns: 'https://www.w3.org/2000/svg',
   }),
-)``;
+)`
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+`;
 
 export const Children = styled.div`
   overflow: hidden;
@@ -32,6 +38,15 @@ export const Children = styled.div`
   top: 0;
   right: 0;
   bottom: 0;
+`;
+
+export const Overlay = styled.div`
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
 `;
 
 export const ConfirmDialog = styled.div`

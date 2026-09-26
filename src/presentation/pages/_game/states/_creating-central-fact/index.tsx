@@ -1,7 +1,6 @@
 import { FC, useEffect } from 'react';
 
-import { Vector } from '@domain/utils';
-
+import { Button } from '@presentation/components';
 import {
   useCentralPulse,
   useDice,
@@ -26,6 +25,7 @@ import {
   DiceRoller,
   Dices,
   Map,
+  MapPointerEvent,
   Pulses,
   Round,
   Subjects,
@@ -47,19 +47,29 @@ export const CreatingCentralFactState: FC = () => {
   const [s] = useStates({
     dicePosition: mySubject?.position ?? null,
     dicePositioned: false,
+    waitingConfirmation: false,
   });
 
-  function handleMapMouseMove(vector: Vector) {
+  function handleMapPointerMove({ position, pointerType }: MapPointerEvent) {
     if (!isMyTurn) return;
     if (currentGame && state !== 'update:dice:position') return;
     if (!centralPulse) return;
     if (!currentDice?.value) return;
     if (s.dicePositioned) return;
 
-    s.dicePosition = vector.norm().mult(currentDice.value);
+    s.dicePosition = position.norm().mult(currentDice.value);
+    s.waitingConfirmation = pointerType !== 'mouse';
   }
 
-  function handleMapClick() {
+  // On touch, releasing the finger only previews the position; it is set by
+  // the confirm button.
+  function handleMapClick({ pointerType }: MapPointerEvent) {
+    if (pointerType !== 'mouse') return;
+
+    confirmDicePosition();
+  }
+
+  function confirmDicePosition() {
     if (!isMyTurn) return;
     if (currentGame && state !== 'update:dice:position') return;
     if (!currentDice) return;
@@ -69,6 +79,7 @@ export const CreatingCentralFactState: FC = () => {
 
     s.dicePosition = null;
     s.dicePositioned = true;
+    s.waitingConfirmation = false;
 
     changeMySubjectPosition(dicePosition).catch(alertError);
   }
@@ -103,7 +114,21 @@ export const CreatingCentralFactState: FC = () => {
     s.dicePosition;
 
   return (
-    <Map onMouseMove={handleMapMouseMove} onClick={handleMapClick}>
+    <Map
+      onPointerMove={handleMapPointerMove}
+      onClick={handleMapClick}
+      overlay={
+        isUpdateDicePositionState &&
+        s.waitingConfirmation && (
+          <Button
+            color={currentDice.color ?? undefined}
+            onClick={confirmDicePosition}
+          >
+            Confirmar
+          </Button>
+        )
+      }
+    >
       <Pulses />
       <Dices
         hidden={isRollDiceState ? currentDice.id : undefined}

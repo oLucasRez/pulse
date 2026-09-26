@@ -58,8 +58,10 @@ export const OptionItem = styled.li`
   display: flex;
   gap: 0.5rem;
 
-  &:hover {
-    background: ${({ theme }) => theme.background.normal};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ theme }) => theme.background.normal};
+    }
   }
 
   > .Icon {

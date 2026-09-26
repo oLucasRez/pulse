@@ -2,11 +2,15 @@ import { FC, useEffect } from 'react';
 
 import { Vector } from '@domain/utils';
 
-import { useStates } from '@presentation/hooks';
+import { useStates, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 import { DiceRollerProps } from './types';
 
 import { Dice, useMapContext } from '..';
+
+const dragTipID = 'dice-roller-drag';
+const hitAreaRadius = 28;
 
 export const DiceRoller: FC<DiceRollerProps> = (props) => {
   const { dice, onRollDice } = props;
@@ -20,32 +24,36 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     value: 0,
   });
 
-  const { mapSpace, bounds, limit, onMouseMove, onMouseDown, onMouseUp } =
+  const { mapSpace, bounds, limit, onPointerMove, onPointerDown, onPointerUp } =
     useMapContext();
+
+  const toast = useToast();
+
+  useEffect(() => () => toast.dismiss(dragTipID), []);
 
   useEffect(
     () =>
       s.active && !s.vel
-        ? onMouseDown((mouse) => {
+        ? onPointerDown((pointer) => {
             if (s.vel) return;
 
-            s.origin = mouse;
-            s.target = mouse;
+            s.origin = pointer;
+            s.target = pointer;
           })
         : undefined,
     [s.active, !s.vel],
   );
 
   useEffect(
-    () => (s.active && !s.vel ? onMouseMove(set('target')) : undefined),
+    () => (s.active && !s.vel ? onPointerMove(set('target')) : undefined),
     [s.active, !s.vel],
   );
 
   useEffect(
     () =>
       s.active && !s.vel
-        ? onMouseUp((mouse) => {
-            if (mouse.mag() > limit) {
+        ? onPointerUp((pointer) => {
+            if (pointer.mag() > limit) {
               s.active = false;
               s.origin = null;
               s.target = null;
@@ -57,13 +65,24 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
               const vel = s.target.sub(s.origin);
 
               if (vel.mag() < 1) {
-                alert('Click and drag to roll the dice');
+                toast.fire('tip', {
+                  id: dragTipID,
+                  description: (
+                    <p>
+                      {isTouchDevice()
+                        ? 'Toque e arraste dentro do mapa para dar impulso ao dado. Solte para lançá-lo.'
+                        : 'Clique e arraste dentro do mapa para dar impulso ao dado. Solte para lançá-lo.'}
+                    </p>
+                  ),
+                });
 
                 s.origin = null;
                 s.target = null;
 
                 return;
               }
+
+              toast.dismiss(dragTipID);
 
               s.vel = vel;
             }
@@ -116,6 +135,9 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
   const origin = s.origin && mapSpace.mult(s.origin);
   const target = s.target && mapSpace.mult(s.target);
 
+  const restPosition = new Vector([bounds.left + 1, bounds.bottom - 1]);
+  const parsedRestPosition = mapSpace.mult(restPosition);
+
   return (
     <>
       {origin && target && (
@@ -132,11 +154,33 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
       {target && <Dice {...dice} position={s.target} />}
 
       {!target && (
-        <Dice
-          {...dice}
-          position={new Vector([bounds.left + 1, bounds.bottom - 1])}
-          onClick={set('active', true)}
-        />
+        <g pointerEvents={s.active ? 'none' : undefined}>
+          <Dice
+            {...dice}
+            position={restPosition}
+            onClick={set('active', true)}
+          />
+
+          {s.active && (
+            <circle
+              cx={parsedRestPosition.x}
+              cy={parsedRestPosition.y}
+              r={hitAreaRadius}
+              fill='none'
+              stroke='darkgray'
+              strokeDasharray='5 5'
+            />
+          )}
+
+          <circle
+            cx={parsedRestPosition.x}
+            cy={parsedRestPosition.y}
+            r={hitAreaRadius}
+            fill='transparent'
+            cursor='pointer'
+            onClick={set('active', true)}
+          />
+        </g>
       )}
     </>
   );

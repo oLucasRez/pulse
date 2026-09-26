@@ -15,8 +15,10 @@ export const Container = styled.button<$ContainerProps>`
   ${({ theme }) => theme.elevation[0]}
   transition: 0.1s;
 
-  :hover {
-    background: ${({ theme }) => theme.transparent.light};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ theme }) => theme.transparent.light};
+    }
   }
 
   > svg {
@@ -56,8 +58,10 @@ export const ColorOption = styled.button<$ColorProps>`
   border: none;
   transition: 0.1s;
 
-  :hover {
-    transform: scale(1.1);
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 `;
 

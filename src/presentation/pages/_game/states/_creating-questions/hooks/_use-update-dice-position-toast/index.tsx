@@ -1,6 +1,7 @@
 import { Fragment, ReactNode, useEffect } from 'react';
 
 import { useDice, useGame, usePlayer, useToast } from '@presentation/hooks';
+import { isTouchDevice } from '@presentation/utils';
 
 export function useUpdateDicePositionToast(): void {
   const { currentGame } = useGame();
@@ -33,6 +34,8 @@ export function useUpdateDicePositionToast(): void {
         <p>
           Escolha qualquer cruzamento no último pulso recém criado para
           reposicionar seu dado no mapa.
+          {isTouchDevice() &&
+            ' Arraste o dedo até um cruzamento e solte para confirmar.'}
         </p>
       );
     } else {

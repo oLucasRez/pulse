@@ -89,8 +89,10 @@ export const IconOption = styled.button`
   transition: 0.1s;
   background: none;
 
-  :hover {
-    transform: scale(1.1);
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.1);
+    }
   }
 `;
 

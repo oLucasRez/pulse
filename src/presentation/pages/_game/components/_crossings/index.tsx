@@ -46,11 +46,11 @@ export const Crossings: FC<CrossingsProps> = ({
   onCrossingsExists,
 }) => {
   const [s, set] = useStates({
-    mouse: new Vector([0, 0]),
+    pointer: new Vector([0, 0]),
     nearest: null as Vector | null,
   });
 
-  const { mapSpace, onMouseMove } = useMapContext();
+  const { mapSpace, onPointerMove } = useMapContext();
 
   const { pulses } = usePulse();
 
@@ -71,20 +71,20 @@ export const Crossings: FC<CrossingsProps> = ({
     onCrossingsExists?.(!!crossings.length);
   }, [!crossings.length]);
 
-  useEffect(() => onMouseMove(set('mouse')), []);
+  useEffect(() => onPointerMove(set('pointer')), []);
 
   useEffect(() => {
     let nearest: Vector | null = null;
 
     for (const crossing of crossings)
-      if (crossing.sub(s.mouse).mag() < 1) {
+      if (crossing.sub(s.pointer).mag() < 1) {
         if (!nearest) nearest = crossing;
-        else if (crossing.sub(s.mouse).mag() < nearest.sub(s.mouse).mag())
+        else if (crossing.sub(s.pointer).mag() < nearest.sub(s.pointer).mag())
           nearest = crossing;
       }
 
     s.nearest = nearest;
-  }, [s.mouse, crossings]);
+  }, [s.pointer, crossings]);
 
   useEffect(() => {
     onSelectCrossing?.(s.nearest);

@@ -1,7 +1,9 @@
 import {
   createContext,
   forwardRef,
+  MouseEvent,
   MouseEventHandler,
+  PointerEventHandler,
   useContext,
   useImperativeHandle,
   useMemo,
@@ -34,6 +36,7 @@ import {
   ConfirmDialog,
   ConfirmText,
   Container,
+  Overlay,
   ViewBox,
 } from './styles';
 
@@ -45,16 +48,16 @@ const Context = createContext<MapContextValue>({
   limit: 0,
   width: 0,
   height: 0,
-  onMouseMove: () => () => {},
-  onMouseDown: () => () => {},
-  onMouseUp: () => () => {},
+  onPointerMove: () => () => {},
+  onPointerDown: () => () => {},
+  onPointerUp: () => () => {},
   onClick: () => () => {},
 });
 
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map = forwardRef<MapContextValue, MapProps>(function Map(
-  { children, outsideSVG, ...props },
+  { children, outsideSVG, overlay, ...props },
   ref,
 ) {
   const [s, set] = useStates({
@@ -96,52 +99,69 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     [s.width, s.height],
   );
 
-  const mouseMove = useEvent<(mouse: Vector) => void>();
-  const mouseDown = useEvent<(mouse: Vector) => void>();
-  const mouseUp = useEvent<(mouse: Vector) => void>();
-  const click = useEvent<(mouse: Vector) => void>();
+  const pointerMove = useEvent<(pointer: Vector) => void>();
+  const pointerDown = useEvent<(pointer: Vector) => void>();
+  const pointerUp = useEvent<(pointer: Vector) => void>();
+  const click = useEvent<(pointer: Vector) => void>();
 
-  const handleMouseMove: MouseEventHandler<SVGSVGElement> = (event) => {
+  const pointerTypeRef = useRef('mouse');
+
+  function toWorld(event: MouseEvent<SVGSVGElement>): Vector {
     const { x, y } = event.currentTarget.getBoundingClientRect();
 
-    const vector = mapSpace
+    return mapSpace
       .inverse()
       .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+  }
 
-    props.onMouseMove?.(vector);
+  function notifyMove(vector: Vector, pointerType: string) {
+    props.onPointerMove?.({ position: vector, pointerType });
+    pointerMove.notify(vector);
+  }
 
-    mouseMove.notify(vector);
+  function notifyClick(vector: Vector, pointerType: string) {
+    props.onClick?.({ position: vector, pointerType });
+    click.notify(vector);
+  }
+
+  // Touch has no hover: a touch starts "hovering" on pointer down and
+  // confirms (clicks) on pointer up, so dragging previews and releasing sets.
+  const handlePointerMove: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!event.isPrimary) return;
+
+    notifyMove(toWorld(event), event.pointerType);
   };
 
-  const handleMouseDown: MouseEventHandler<SVGSVGElement> = (event) => {
-    const { x, y } = event.currentTarget.getBoundingClientRect();
+  const handlePointerDown: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!event.isPrimary) return;
 
-    const vector = mapSpace
-      .inverse()
-      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+    pointerTypeRef.current = event.pointerType;
 
-    mouseDown.notify(vector);
+    const vector = toWorld(event);
+
+    if (event.pointerType !== 'mouse') notifyMove(vector, event.pointerType);
+
+    pointerDown.notify(vector);
   };
 
-  const handleMouseUp: MouseEventHandler<SVGSVGElement> = (event) => {
-    const { x, y } = event.currentTarget.getBoundingClientRect();
+  const handlePointerUp: PointerEventHandler<SVGSVGElement> = (event) => {
+    if (!event.isPrimary) return;
 
-    const vector = mapSpace
-      .inverse()
-      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+    const vector = toWorld(event);
 
-    mouseUp.notify(vector);
+    pointerUp.notify(vector);
+
+    if (event.pointerType !== 'mouse') notifyClick(vector, event.pointerType);
   };
 
   const handleClick: MouseEventHandler<SVGSVGElement> = (event) => {
-    const { x, y } = event.currentTarget.getBoundingClientRect();
+    if (pointerTypeRef.current !== 'mouse') return;
 
-    const vector = mapSpace
-      .inverse()
-      .mult(new Vector([event.clientX - x, event.clientY - y], mapSpace));
+    notifyClick(toWorld(event), 'mouse');
+  };
 
-    props.onClick?.();
-    click.notify(vector);
+  const handleContextMenu: MouseEventHandler<SVGSVGElement> = (event) => {
+    if (pointerTypeRef.current !== 'mouse') event.preventDefault();
   };
 
   const { imHost, currentGame, deleteGame } = useGame();
@@ -173,9 +193,9 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     limit,
     width: s.width,
     height: s.height,
-    onMouseMove: mouseMove.on,
-    onMouseDown: mouseDown.on,
-    onMouseUp: mouseUp.on,
+    onPointerMove: pointerMove.on,
+    onPointerDown: pointerDown.on,
+    onPointerUp: pointerUp.on,
     onClick: click.on,
   };
 
@@ -205,10 +225,11 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
       <Container ref={divRef}>
         <ViewBox
           size={[s.width, s.height]}
-          onMouseMove={handleMouseMove}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          onPointerMove={handlePointerMove}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
           onClick={handleClick}
+          onContextMenu={handleContextMenu}
         >
           {renderOutside()}
           {!outsideSVG &&
@@ -224,6 +245,8 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
             {typeof children === 'function' ? children(contextValue) : children}
           </Children>
         )}
+
+        {overlay && <Overlay>{overlay}</Overlay>}
 
         <IconButton
           className='turn-back'
@@ -254,6 +277,8 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     </Context.Provider>
   );
 });
+
+export { MapPointerEvent } from './types';
 
 export namespace Map {
   export type Ref = MapContextValue;
