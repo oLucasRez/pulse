@@ -1,4 +1,5 @@
 import {
+  CSSProperties,
   FC,
   PointerEvent,
   PointerEventHandler,
@@ -27,10 +28,22 @@ const topLeftDescriptionOffset = new Vector([50, 50]);
 const longPressMs = 500;
 const tapTolerancePx = 10;
 
+const lineClampStyle: CSSProperties = {
+  color: 'inherit',
+  fontFamily: 'inherit',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+};
+
 export const Landmark: FC<LandmarkProps> = ({
   description,
   symbol,
-  solved,
+  subtitle,
+  subtitleItalic,
+  subtitleColor,
   onClick,
   ...props
 }) => {
@@ -70,7 +83,7 @@ export const Landmark: FC<LandmarkProps> = ({
 
   const touchRef = useRef<{
     start: Vector;
-    timeoutID?: NodeJS.Timeout;
+    timeoutID?: ReturnType<typeof setTimeout>;
     longPressed: boolean;
   } | null>(null);
 
@@ -122,7 +135,7 @@ export const Landmark: FC<LandmarkProps> = ({
     const touch = {
       start: new Vector([event.clientX, event.clientY]),
       longPressed: false,
-      timeoutID: undefined as NodeJS.Timeout | undefined,
+      timeoutID: undefined as ReturnType<typeof setTimeout> | undefined,
     };
 
     if (description && onClick)
@@ -237,18 +250,23 @@ export const Landmark: FC<LandmarkProps> = ({
                 color,
                 maxWidth: '17.5ch',
                 lineHeight: 1.2,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
                 transform: `translateY(${
                   bottomLeft || bottomRight ? '-100%' : 0
                 })`,
-                textDecoration: solved ? 'line-through' : undefined,
               }}
             >
-              {description}
+              <span style={lineClampStyle}>{description}</span>
+              {!!subtitle && (
+                <span
+                  style={{
+                    ...lineClampStyle,
+                    fontStyle: subtitleItalic ? 'italic' : undefined,
+                    color: subtitleColor ? getColor(subtitleColor) : 'inherit',
+                  }}
+                >
+                  {subtitle}
+                </span>
+              )}
             </P>
           </g>
         </Transition.Fade>

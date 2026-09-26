@@ -1,7 +1,10 @@
+import { Color } from '@domain/enums';
 import { LandmarkModel } from '@domain/models';
 
 export interface LandmarkProps extends LandmarkModel {
   symbol: string;
-  solved?: boolean;
+  subtitle?: string;
+  subtitleItalic?: boolean;
+  subtitleColor?: Color;
   onClick?(): void;
 }

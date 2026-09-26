@@ -20,7 +20,7 @@ export const DiceRoller: FC<DiceRollerProps> = (props) => {
     origin: null as Vector | null,
     target: null as Vector | null,
     vel: null as Vector | null,
-    interval: undefined as NodeJS.Timer | undefined,
+    interval: undefined as ReturnType<typeof setInterval> | undefined,
     value: 0,
   });
 
