@@ -32,6 +32,7 @@ import {
 } from '@presentation/hooks';
 
 import {
+  AnchoredOverlay,
   Children,
   ConfirmDialog,
   ConfirmText,
@@ -41,6 +42,9 @@ import {
 } from './styles';
 
 import { MapContextValue, MapProps } from './types';
+
+const overlayAnchorFlipMargin = 96;
+const overlayAnchorEdgeMargin = 64;
 
 const Context = createContext<MapContextValue>({
   mapSpace: VectorSpace.identity,
@@ -57,7 +61,7 @@ const Context = createContext<MapContextValue>({
 export const useMapContext = (): MapContextValue => useContext(Context);
 
 export const Map = forwardRef<MapContextValue, MapProps>(function Map(
-  { children, outsideSVG, overlay, ...props },
+  { children, outsideSVG, overlay, overlayAnchor, ...props },
   ref,
 ) {
   const [s, set] = useStates({
@@ -218,6 +222,25 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
     );
   }
 
+  function renderOverlay() {
+    if (!overlayAnchor) return <Overlay>{overlay}</Overlay>;
+
+    const { x, y } = mapSpace.mult(overlayAnchor);
+    const above = y > s.height - overlayAnchorFlipMargin;
+
+    return (
+      <AnchoredOverlay
+        style={{
+          left: `clamp(${overlayAnchorEdgeMargin}px, ${x}px, calc(100% - ${overlayAnchorEdgeMargin}px))`,
+          top: y,
+        }}
+        $above={above}
+      >
+        {overlay}
+      </AnchoredOverlay>
+    );
+  }
+
   if (s.deletingGame) return <GlobalLoading />;
 
   return (
@@ -246,7 +269,7 @@ export const Map = forwardRef<MapContextValue, MapProps>(function Map(
           </Children>
         )}
 
-        {overlay && <Overlay>{overlay}</Overlay>}
+        {overlay && renderOverlay()}
 
         <IconButton
           className='turn-back'

@@ -34,10 +34,13 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
-  
+
   #app {
     min-height: 100vh;
+    min-height: 100dvh;
   }
 
   img, picture, svg, video {

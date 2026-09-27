@@ -21,6 +21,7 @@ export interface MapProps {
   children?: ReactNode | ((props: MapContextValue) => ReactNode);
   outsideSVG?: boolean;
   overlay?: ReactNode;
+  overlayAnchor?: Vector | null;
   onPointerMove?(event: MapPointerEvent): void;
   onClick?(event: MapPointerEvent): void;
 }

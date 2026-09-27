@@ -49,6 +49,17 @@ export const Overlay = styled.div`
   gap: 0.5rem;
 `;
 
+type AnchoredOverlayProps = { $above: boolean };
+export const AnchoredOverlay = styled.div<AnchoredOverlayProps>`
+  position: absolute;
+  transform: translate(
+    -50%,
+    ${({ $above }) => ($above ? 'calc(-100% - 2rem)' : '2rem')}
+  );
+  display: flex;
+  gap: 0.5rem;
+`;
+
 export const ConfirmDialog = styled.div`
   position: absolute;
   padding: 2rem;

@@ -12,12 +12,14 @@ const grow = keyframes`
 export const Container = styled.div`
   font-weight: 500;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
 `;
 
 export const Main = styled.main`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   flex: 1;
   display: flex;
   flex-direction: column;

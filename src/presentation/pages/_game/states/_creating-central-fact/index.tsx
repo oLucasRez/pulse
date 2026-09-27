@@ -117,6 +117,7 @@ export const CreatingCentralFactState: FC = () => {
     <Map
       onPointerMove={handleMapPointerMove}
       onClick={handleMapClick}
+      overlayAnchor={s.dicePosition}
       overlay={
         isUpdateDicePositionState &&
         s.waitingConfirmation && (

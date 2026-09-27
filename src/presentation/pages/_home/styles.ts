@@ -6,8 +6,11 @@ import { lighten } from '@presentation/styles/mixins';
 import { $BackgroundPatternProps } from './types';
 
 export const Container = styled.div`
-  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -27,7 +27,7 @@ export const Container = styled(IconButton)<$ContainerProps>`
 export const PopoverContent = styled.div`
   line-height: 1.3;
   max-height: 10rem;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin: -0.5rem 0;
   padding: 0.5rem 0;
 
